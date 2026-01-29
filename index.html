@@ -676,6 +676,56 @@
             cursor: pointer;
         }
 
+        .rating-scale-10 {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .rating-scale-10 label {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            font-weight: normal;
+            margin: 0;
+            padding: 8px 12px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .rating-scale-10 label:hover {
+            background: #e0e0e0;
+        }
+
+        .rating-scale-10 input[type="radio"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .rating-scale-10 input[type="radio"]:checked + span,
+        .rating-scale-10 label:has(input:checked) {
+            background: #2c5282;
+            color: white;
+        }
+
+        body.dark-mode .rating-scale-10 label {
+            background: #444;
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .rating-scale-10 label:hover {
+            background: #555;
+        }
+
+        body.dark-mode .rating-scale-10 label:has(input:checked) {
+            background: #4a90e2;
+            color: white;
+        }
+
         .info-text {
             font-size: 0.85em;
             color: #666;
@@ -1333,6 +1383,27 @@
                             <textarea id="personal_review" placeholder="이 사케에 대한 개인적인 생각, 추천 음식 페어링, 재구매 의향 등을 자유롭게 작성하세요"></textarea>
                         </div>
 
+                        <div class="section-title">종합 평점</div>
+
+                        <div class="form-group">
+                            <label>이 사케에 몇 점을 주시겠어요?</label>
+                            <div class="rating-item" style="flex-direction: column; align-items: flex-start; gap: 15px;">
+                                <div class="rating-scale-10">
+                                    <label><input type="radio" name="overall_rating" value="1"> 1</label>
+                                    <label><input type="radio" name="overall_rating" value="2"> 2</label>
+                                    <label><input type="radio" name="overall_rating" value="3"> 3</label>
+                                    <label><input type="radio" name="overall_rating" value="4"> 4</label>
+                                    <label><input type="radio" name="overall_rating" value="5" checked> 5</label>
+                                    <label><input type="radio" name="overall_rating" value="6"> 6</label>
+                                    <label><input type="radio" name="overall_rating" value="7"> 7</label>
+                                    <label><input type="radio" name="overall_rating" value="8"> 8</label>
+                                    <label><input type="radio" name="overall_rating" value="9"> 9</label>
+                                    <label><input type="radio" name="overall_rating" value="10"> 10</label>
+                                </div>
+                                <div class="info-text">1: 다시는 안 마심 → 10: 인생 사케!</div>
+                            </div>
+                        </div>
+
                         <button type="submit" class="btn btn-primary" id="submitBtn">💾 저장하기</button>
                     </form>
                 </div>
@@ -1701,7 +1772,8 @@
                 dominant_aroma: document.getElementById('dominant_aroma').value,
                 dominant_taste: document.getElementById('dominant_taste').value,
                 flavor_description: document.getElementById('flavor_description').value,
-                personal_review: document.getElementById('personal_review').value
+                personal_review: document.getElementById('personal_review').value,
+                overall_rating: getRadioValue('overall_rating')
             };
 
             try {
@@ -2001,6 +2073,20 @@
                     </div>
                     ` : ''}
 
+                    <div class="section-title">종합 평점</div>
+                    <div class="detail-section" style="text-align: center;">
+                        <div style="font-size: 3em; color: #2c5282; font-weight: bold;">
+                            ${note.overall_rating || '-'}<span style="font-size: 0.4em; color: #888;">/10</span>
+                        </div>
+                        <div style="margin-top: 10px; color: #666;">
+                            ${note.overall_rating >= 9 ? '🌟 인생 사케!' : 
+                              note.overall_rating >= 7 ? '👍 추천해요!' : 
+                              note.overall_rating >= 5 ? '😊 괜찮아요' : 
+                              note.overall_rating >= 3 ? '😐 그저 그래요' : 
+                              note.overall_rating ? '👎 별로예요' : '평점 없음'}
+                        </div>
+                    </div>
+
                     <button class="edit-btn" onclick="editNote('${note.id}')">✏️ 수정</button>
                     <button class="delete-btn" onclick="deleteNote('${note.id}')">🗑️ 삭제</button>
                 `;
@@ -2048,6 +2134,7 @@
                 setRadioValue('complexity_taste', note.complexity_taste);
                 setRadioValue('acidity', note.acidity);
                 setRadioValue('aftertaste', note.aftertaste);
+                setRadioValue('overall_rating', note.overall_rating || 5);
 
                 document.getElementById('dominant_aroma').value = note.dominant_aroma || '';
                 document.getElementById('dominant_taste').value = note.dominant_taste || '';
