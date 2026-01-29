@@ -176,7 +176,7 @@
             const sakes = new Set(notes.map(n => n.sake_name)).size;
             let avg = 0;
             if (notes.length > 0) {
-                const sum = notes.reduce((s, n) => s + ((n.color_rating||0) + (n.transparency_rating||0) + (n.aroma_rating||0) + (n.taste_rating||0)) / 4, 0);
+                const sum = notes.reduce((s, n) => s + ((n.clarity_rating||0) + (n.transparency||0) + (n.aroma_intensity||0) + (n.flavor||0)) / 4, 0);
                 avg = (sum / notes.length).toFixed(1);
             }
 
@@ -238,10 +238,10 @@
             notes.forEach(n => {
                 if (!stats[n.sake_name]) stats[n.sake_name] = { count: 0, c: 0, t: 0, a: 0, ta: 0 };
                 stats[n.sake_name].count++;
-                stats[n.sake_name].c += n.color_rating || 0;
-                stats[n.sake_name].t += n.transparency_rating || 0;
-                stats[n.sake_name].a += n.aroma_rating || 0;
-                stats[n.sake_name].ta += n.taste_rating || 0;
+                stats[n.sake_name].c += n.clarity_rating || 0;
+                stats[n.sake_name].t += n.transparency || 0;
+                stats[n.sake_name].a += n.aroma_intensity || 0;
+                stats[n.sake_name].ta += n.flavor || 0;
             });
 
             let html = '';
@@ -254,7 +254,7 @@
             html = '';
             notes.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 30).forEach(n => {
                 const d = new Date(n.created_at).toLocaleDateString('ko-KR');
-                html += `<tr><td>${d}</td><td>${n.user_email}</td><td>${n.sake_name}</td><td>${n.color_rating||'-'}</td><td>${n.transparency_rating||'-'}</td><td>${n.aroma_rating||'-'}</td><td>${n.taste_rating||'-'}</td></tr>`;
+                html += `<tr><td>${d}</td><td>${n.user_email || '-'}</td><td>${n.sake_name}</td><td>${n.clarity_rating||'-'}</td><td>${n.transparency||'-'}</td><td>${n.aroma_intensity||'-'}</td><td>${n.flavor||'-'}</td></tr>`;
             });
             document.getElementById('notesTable').innerHTML = html || '<tr><td colspan="7">데이터 없음</td></tr>';
         }
