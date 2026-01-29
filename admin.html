@@ -162,6 +162,9 @@
                 document.getElementById('loginPage').style.display = 'none';
                 document.getElementById('dashboard').classList.add('active');
                 await loadAllData();
+                
+                // 30초마다 자동 새로고침
+                setInterval(loadAllData, 30000);
             } catch (e) {
                 err.textContent = '로그인 실패: ' + e.message;
             }
@@ -175,24 +178,40 @@
         }
 
         async function loadAllData() {
-            const { data: notes } = await client.from('tasting_notes').select('*');
-            if (!notes) return;
+            try {
+                const { data: notes, error } = await client.from('tasting_notes').select('*');
+                
+                if (error) {
+                    console.error('조회 에러:', error);
+                    return;
+                }
+                
+                if (!notes) {
+                    console.log('notes가 null');
+                    return;
+                }
 
-            const users = new Set(notes.map(n => n.user_email)).size;
-            const sakes = new Set(notes.map(n => n.sake_name)).size;
-            let avg = 0;
-            if (notes.length > 0) {
-                const sum = notes.reduce((s, n) => s + ((n.clarity_rating||0) + (n.transparency||0) + (n.aroma_intensity||0) + (n.flavor||0)) / 4, 0);
-                avg = (sum / notes.length).toFixed(1);
+                console.log('조회된 노트 수:', notes.length);
+                console.log('첫 번째 노트:', notes[0]);
+
+                const users = new Set(notes.map(n => n.user_id)).size;
+                const sakes = new Set(notes.map(n => n.sake_name)).size;
+                let avg = 0;
+                if (notes.length > 0) {
+                    const sum = notes.reduce((s, n) => s + ((n.clarity_rating||0) + (n.transparency||0) + (n.aroma_intensity||0) + (n.flavor||0)) / 4, 0);
+                    avg = (sum / notes.length).toFixed(1);
+                }
+
+                document.getElementById('totalUsers').textContent = users;
+                document.getElementById('totalNotes').textContent = notes.length;
+                document.getElementById('totalSakes').textContent = sakes;
+                document.getElementById('avgRating').textContent = avg;
+
+                drawCharts(notes);
+                drawTables(notes);
+            } catch (error) {
+                console.error('loadAllData 에러:', error);
             }
-
-            document.getElementById('totalUsers').textContent = users;
-            document.getElementById('totalNotes').textContent = notes.length;
-            document.getElementById('totalSakes').textContent = sakes;
-            document.getElementById('avgRating').textContent = avg;
-
-            drawCharts(notes);
-            drawTables(notes);
         }
 
         function drawCharts(notes) {
