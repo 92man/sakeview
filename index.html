@@ -14,7 +14,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #2c5282 0%, #8b4513 100%);
             min-height: 100vh;
             padding: 20px;
             transition: background 0.3s, color 0.3s;
@@ -95,7 +95,176 @@
         }
 
         body.dark-mode .auth-switch a {
-            color: #667eea;
+            color: #2c5282;
+        }
+
+        /* 이번 주의 추천 섹션 */
+        .featured-section {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(44, 82, 130, 0.15);
+            margin-bottom: 30px;
+        }
+
+        body.dark-mode .featured-section {
+            background: #2a2a2a;
+        }
+
+        .featured-content-wrapper {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 0;
+        }
+
+        .featured-image-container {
+            width: 100%;
+            height: 100%;
+            min-height: 300px;
+            background: linear-gradient(135deg, #2c5282 0%, #8b4513 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .featured-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .featured-image-container .placeholder {
+            font-size: 6em;
+        }
+
+        .featured-content-text {
+            padding: 40px;
+        }
+
+        .featured-label {
+            color: #8b4513;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        body.dark-mode .featured-label {
+            color: #d4af37;
+        }
+
+        .featured-title {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #2c5282;
+            margin-bottom: 15px;
+        }
+
+        body.dark-mode .featured-title {
+            color: #4a90e2;
+        }
+
+        .featured-kanji {
+            color: #666;
+            font-size: 0.9em;
+            margin-left: 8px;
+        }
+
+        body.dark-mode .featured-kanji {
+            color: #999;
+        }
+
+        .featured-desc {
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        body.dark-mode .featured-desc {
+            color: #b0b0b0;
+        }
+
+        .featured-meta {
+            display: flex;
+            gap: 20px;
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        body.dark-mode .featured-meta {
+            color: #888;
+        }
+
+        @media (max-width: 768px) {
+            .featured-content-wrapper {
+                grid-template-columns: 1fr;
+            }
+            
+            .featured-image-container {
+                min-height: 250px;
+            }
+            
+            .featured-content-text {
+                padding: 25px;
+            }
+        }
+
+        /* 카드 그리드 스타일 개선 */
+        .notes-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .note-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .note-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(44, 82, 130, 0.2);
+        }
+
+        .note-card-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #2c5282 0%, #8b4513 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+        }
+
+        .note-card-content {
+            padding: 20px;
+        }
+
+        .note-card-name {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #2c5282;
+            margin-bottom: 10px;
+        }
+
+        .note-card-date {
+            color: #8b4513;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .note-card-summary {
+            color: #666;
+            font-size: 0.9em;
+            line-height: 1.5;
         }
 
         .container {
@@ -198,7 +367,7 @@
 
         .auth-title {
             font-size: 2em;
-            color: #667eea;
+            color: #2c5282;
             text-align: center;
             margin-bottom: 30px;
         }
@@ -220,12 +389,12 @@
 
         .auth-input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #2c5282;
         }
 
         .auth-btn {
             padding: 15px;
-            background: #667eea;
+            background: #2c5282;
             color: white;
             border: none;
             border-radius: 8px;
@@ -236,7 +405,7 @@
         }
 
         .auth-btn:hover {
-            background: #5568d3;
+            background: #1e3a5f;
             transform: translateY(-2px);
         }
 
@@ -247,7 +416,7 @@
         }
 
         .auth-switch a {
-            color: #667eea;
+            color: #2c5282;
             text-decoration: none;
             font-weight: 600;
             cursor: pointer;
@@ -284,7 +453,7 @@
 
         .tab.active {
             background: white;
-            color: #667eea;
+            color: #2c5282;
             font-weight: bold;
         }
 
@@ -434,77 +603,22 @@
         }
 
         .btn-primary {
-            background: #667eea;
+            background: #2c5282;
             color: white;
             width: 100%;
             margin-top: 20px;
         }
 
         .btn-primary:hover {
-            background: #5568d3;
+            background: #1e3a5f;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 5px 15px rgba(44, 82, 130, 0.4);
         }
 
         .btn-primary:disabled {
             background: #ccc;
             cursor: not-allowed;
             transform: none;
-        }
-
-        .notes-list {
-            display: grid;
-            gap: 20px;
-        }
-
-        .note-card {
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            padding: 20px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .note-card:hover {
-            border-color: #667eea;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .note-card-header {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 15px;
-        }
-
-        .note-card-photo {
-            width: 120px;
-            height: 120px;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-
-        .note-card-info {
-            flex: 1;
-        }
-
-        .note-card-name {
-            font-size: 1.4em;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 8px;
-        }
-
-        .note-card-date {
-            color: #666;
-            font-size: 0.95em;
-            margin-bottom: 10px;
-        }
-
-        .note-card-summary {
-            color: #777;
-            font-size: 0.9em;
-            line-height: 1.5;
         }
 
         .empty-state {
@@ -552,10 +666,10 @@
         .section-title {
             font-size: 1.2em;
             font-weight: bold;
-            color: #667eea;
+            color: #2c5282;
             margin: 30px 0 15px 0;
             padding-bottom: 10px;
-            border-bottom: 2px solid #667eea;
+            border-bottom: 2px solid #2c5282;
         }
 
         .back-btn {
@@ -590,7 +704,7 @@
 
         .detail-label {
             font-weight: 600;
-            color: #667eea;
+            color: #2c5282;
             margin-bottom: 8px;
             font-size: 1.05em;
         }
@@ -603,7 +717,7 @@
         .loading {
             text-align: center;
             padding: 40px;
-            color: #667eea;
+            color: #2c5282;
             font-size: 1.2em;
         }
 
@@ -664,6 +778,33 @@
                 </div>
                 <h1>🍶 사케 다이어리</h1>
                 <p>나만의 사케 기록을 남겨보세요</p>
+            </div>
+
+            <!-- 이번 주의 추천 -->
+            <div class="featured-section">
+                <div class="featured-content-wrapper">
+                    <div class="featured-image-container">
+                        <img src="https://sake-times.com/wp-content/uploads/2019/04/dassai23.jpg" alt="獺祭" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="placeholder" style="display:none;">🍶</div>
+                    </div>
+                    <div class="featured-content-text">
+                        <div class="featured-label">✨ 이번 주의 추천</div>
+                        <div class="featured-title">
+                            닷사이 <span class="featured-kanji">(獺祭 純米大吟醸 磨き二割三分)</span>
+                        </div>
+                        <div class="featured-desc">
+                            야마구치현의 명품 사케 닷사이. 23% 정미보합의 순미대음양주로, 
+                            극도로 정제된 쌀로 만들어져 깨끗하고 섬세한 맛이 특징입니다.
+                            과일향이 풍부하며 부드러운 단맛과 산미의 균형이 완벽합니다.
+                            세계적으로 인정받은 일본 사케의 대표주자입니다.
+                        </div>
+                        <div class="featured-meta">
+                            <span>🏭 아사히슈조</span>
+                            <span>📍 야마구치현</span>
+                            <span>🌾 야마다니시키</span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="tabs">
@@ -1221,14 +1362,16 @@
                 <div class="notes-list">
                     ${notes.map(note => `
                         <div class="note-card" onclick="showDetail('${note.id}')">
-                            <div class="note-card-header">
-                                ${note.photo ? `<img src="${note.photo}" class="note-card-photo" alt="사케">` : ''}
-                                <div class="note-card-info">
-                                    <div class="note-card-name">${escapeHtml(note.sake_name)}</div>
-                                    <div class="note-card-date">📅 ${note.date}</div>
-                                    <div class="note-card-summary">
-                                        ${note.dominant_aroma ? escapeHtml(note.dominant_aroma.substring(0, 80) + (note.dominant_aroma.length > 80 ? '...' : '')) : ''}
-                                    </div>
+                            ${note.photo ? `
+                                <img src="${note.photo}" class="note-card-image" alt="사케">
+                            ` : `
+                                <div class="note-card-image">🍶</div>
+                            `}
+                            <div class="note-card-content">
+                                <div class="note-card-name">${escapeHtml(note.sake_name)}</div>
+                                <div class="note-card-date">📅 ${note.date}</div>
+                                <div class="note-card-summary">
+                                    ${note.dominant_aroma ? escapeHtml(note.dominant_aroma.substring(0, 60) + (note.dominant_aroma.length > 60 ? '...' : '')) : ''}
                                 </div>
                             </div>
                         </div>
