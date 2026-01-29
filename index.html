@@ -1333,6 +1333,14 @@
                             <textarea id="personal_review" placeholder="이 사케에 대한 개인적인 생각, 추천 음식 페어링, 재구매 의향 등을 자유롭게 작성하세요"></textarea>
                         </div>
 
+                        <div class="form-group">
+                            <label>평점 (1-10)</label>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <input type="range" id="overall_rating" min="1" max="10" value="5" style="flex: 1;">
+                                <span id="ratingDisplay" style="font-size: 1.2em; font-weight: bold; min-width: 30px;">5</span>
+                            </div>
+                        </div>
+
                         <button type="submit" class="btn btn-primary" id="submitBtn">💾 저장하기</button>
                     </form>
                 </div>
@@ -1669,6 +1677,11 @@
         }
 
         // 테이스팅 노트 저장
+        // 평점 슬라이더 업데이트
+        document.getElementById('overall_rating').addEventListener('input', function() {
+            document.getElementById('ratingDisplay').textContent = this.value;
+        });
+
         async function saveTastingNote(event) {
             event.preventDefault();
             
@@ -1701,7 +1714,8 @@
                 dominant_aroma: document.getElementById('dominant_aroma').value,
                 dominant_taste: document.getElementById('dominant_taste').value,
                 flavor_description: document.getElementById('flavor_description').value,
-                personal_review: document.getElementById('personal_review').value
+                personal_review: document.getElementById('personal_review').value,
+                overall_rating: parseInt(document.getElementById('overall_rating').value)
             };
 
             try {
@@ -1998,6 +2012,7 @@
                     <div class="section-title">개인적인 감상평</div>
                     <div class="detail-section">
                         <div class="detail-value">${escapeHtml(note.personal_review)}</div>
+                        ${note.overall_rating ? `<div style="margin-top: 10px; font-size: 1.2em; font-weight: bold;">⭐ ${note.overall_rating}/10</div>` : ''}
                     </div>
                     ` : ''}
 
@@ -2053,6 +2068,8 @@
                 document.getElementById('dominant_taste').value = note.dominant_taste || '';
                 document.getElementById('flavor_description').value = note.flavor_description || '';
                 document.getElementById('personal_review').value = note.personal_review || '';
+                document.getElementById('overall_rating').value = note.overall_rating || 5;
+                document.getElementById('ratingDisplay').textContent = note.overall_rating || 5;
 
                 const submitBtn = document.getElementById('submitBtn');
                 submitBtn.textContent = '✏️ 수정 완료';

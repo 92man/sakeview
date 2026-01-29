@@ -72,10 +72,6 @@
                     <h3>사케 종류</h3>
                     <div class="number" id="totalSakes">0</div>
                 </div>
-                <div class="stat-card">
-                    <h3>평균 평점</h3>
-                    <div class="number" id="avgRating">0.0</div>
-                </div>
             </div>
 
             <div class="chart-container">
@@ -99,6 +95,7 @@
                         <tr>
                             <th>사케 이름</th>
                             <th>기록</th>
+                            <th>평균평점</th>
                             <th>색감</th>
                             <th>투명도</th>
                             <th>점도</th>
@@ -112,7 +109,7 @@
                         </tr>
                     </thead>
                     <tbody id="sakeTable">
-                        <tr><td colspan="12">데이터 로딩 중...</td></tr>
+                        <tr><td colspan="13">데이터 로딩 중...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -196,16 +193,10 @@
 
                 const users = new Set(notes.map(n => n.user_id)).size;
                 const sakes = new Set(notes.map(n => n.sake_name)).size;
-                let avg = 0;
-                if (notes.length > 0) {
-                    const sum = notes.reduce((s, n) => s + ((n.clarity_rating||0) + (n.transparency||0) + (n.aroma_intensity||0) + (n.flavor||0)) / 4, 0);
-                    avg = (sum / notes.length).toFixed(1);
-                }
 
                 document.getElementById('totalUsers').textContent = users;
                 document.getElementById('totalNotes').textContent = notes.length;
                 document.getElementById('totalSakes').textContent = sakes;
-                document.getElementById('avgRating').textContent = avg;
 
                 drawCharts(notes);
                 drawTables(notes);
@@ -263,6 +254,7 @@
             notes.forEach(n => {
                 if (!stats[n.sake_name]) stats[n.sake_name] = { 
                     count: 0, 
+                    overall_rating_sum: 0,
                     clarity: 0, 
                     transparency: 0,
                     viscosity: 0,
@@ -275,6 +267,7 @@
                     aftertaste: 0
                 };
                 stats[n.sake_name].count++;
+                stats[n.sake_name].overall_rating_sum += n.overall_rating || 0;
                 stats[n.sake_name].clarity += n.clarity_rating || 0;
                 stats[n.sake_name].transparency += n.transparency || 0;
                 stats[n.sake_name].viscosity += n.viscosity || 0;
@@ -289,9 +282,11 @@
 
             let html = '';
             Object.entries(stats).sort((a, b) => b[1].count - a[1].count).forEach(([sake, s]) => {
+                const avgOverall = (s.overall_rating_sum / s.count).toFixed(1);
                 html += `<tr>
                     <td>${sake}</td>
                     <td>${s.count}</td>
+                    <td>${avgOverall}</td>
                     <td>${(s.clarity/s.count).toFixed(1)}</td>
                     <td>${(s.transparency/s.count).toFixed(1)}</td>
                     <td>${(s.viscosity/s.count).toFixed(1)}</td>
@@ -304,7 +299,7 @@
                     <td>${(s.aftertaste/s.count).toFixed(1)}</td>
                 </tr>`;
             });
-            document.getElementById('sakeTable').innerHTML = html || '<tr><td colspan="12">데이터 없음</td></tr>';
+            document.getElementById('sakeTable').innerHTML = html || '<tr><td colspan="13">데이터 없음</td></tr>';
 
             // Recent Notes
             html = '';
