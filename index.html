@@ -1912,7 +1912,8 @@
 
         // 정책 페이지 표시 함수
         function showPolicyPage(type) {
-            const mainContent = document.getElementById('mainContent');
+            const mainApp = document.getElementById('mainApp');
+            const content = mainApp.querySelector('.content');
             let html = '';
 
             if (type === 'privacy') {
@@ -2197,27 +2198,29 @@
                 `;
             }
 
-            mainContent.innerHTML = html;
-            mainContent.style.display = 'block';
-            document.getElementById('auth').style.display = 'none';
-            document.getElementById('tabs').style.display = 'none';
+            content.innerHTML = html;
+            document.querySelector('.tabs').style.display = 'none';
             document.getElementById('appFooter').style.display = 'none';
             window.scrollTo(0, 0);
         }
 
         function hidePolicyPage() {
             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const content = document.querySelector('.content');
+            const tabs = document.querySelector('.tabs');
+            
+            // content를 기본 상태로 리셋
+            content.innerHTML = '';
+            
             if (currentUser) {
-                document.getElementById('auth').style.display = 'none';
-                document.getElementById('tabs').style.display = 'block';
-                document.getElementById('mainContent').style.display = 'block';
+                tabs.style.display = 'block';
                 document.getElementById('appFooter').style.display = 'block';
+                switchTab('list'); // 저장된 노트로 이동
             } else {
-                document.getElementById('auth').style.display = 'block';
-                document.getElementById('tabs').style.display = 'none';
-                document.getElementById('mainContent').style.display = 'none';
+                tabs.style.display = 'none';
                 document.getElementById('appFooter').style.display = 'none';
             }
+            window.scrollTo(0, 0);
         }
 
         // 사케 가이드 페이지 함수 (4번 작업에서 사용될 예정)
