@@ -822,18 +822,19 @@
         .footer-links {
             display: flex;
             justify-content: center;
-            flex-wrap: wrap;
-            gap: 25px;
+            flex-wrap: nowrap;
+            gap: 15px;
             margin-bottom: 20px;
         }
 
         .footer-link {
             color: #2c5282;
             text-decoration: none;
-            font-size: 0.95em;
+            font-size: 0.85em;
             cursor: pointer;
             transition: color 0.3s;
             display: inline-block;
+            white-space: nowrap;
         }
 
         .footer-link:hover {
@@ -843,6 +844,7 @@
 
         .footer-divider {
             color: #ccc;
+            font-size: 0.8em;
         }
 
         .footer-info {
@@ -907,6 +909,98 @@
             0%, 20% { content: '.'; }
             40% { content: '..'; }
             60%, 100% { content: '...'; }
+        }
+
+        /* 모바일 최적화 (768px 이하) */
+        @media (max-width: 768px) {
+            .header {
+                min-height: 240px;
+                padding-top: 60px;
+                padding-bottom: 20px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+                letter-spacing: 0.5px;
+                margin-top: 15px;
+            }
+
+            .header p {
+                font-size: 0.85em;
+                margin-top: 12px;
+            }
+
+            .theme-toggle {
+                top: 10px;
+                left: 15px;
+                padding: 8px 12px;
+                font-size: 1.2em;
+            }
+
+            .user-info {
+                top: 8px;
+                right: 15px;
+                font-size: 0.8em;
+            }
+
+            #userEmail {
+                font-size: 0.75em;
+            }
+
+            .login-btn,
+            .logout-btn {
+                padding: 8px 15px;
+                font-size: 0.9em;
+            }
+
+            .featured-content-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .featured-image-container {
+                min-height: 250px;
+            }
+
+            .featured-content-text {
+                padding: 20px;
+            }
+
+            .featured-title {
+                font-size: 1.4em;
+            }
+
+            .featured-desc {
+                font-size: 0.9em;
+            }
+
+            .content {
+                padding: 15px;
+            }
+        }
+
+        /* 작은 모바일 (480px 이하) */
+        @media (max-width: 480px) {
+            .header {
+                min-height: 260px;
+                padding-top: 70px;
+            }
+
+            .header h1 {
+                font-size: 1.5em;
+                letter-spacing: 0.3px;
+            }
+
+            .header p {
+                font-size: 0.75em;
+            }
+
+            .featured-title {
+                font-size: 1.2em;
+            }
+
+            .featured-content-text {
+                padding: 15px;
+            }
         }
     </style>
 </head>
