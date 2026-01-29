@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>사케 다이어리</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * {
             margin: 0;
@@ -43,6 +44,8 @@
 
         body.dark-mode input[type="text"],
         body.dark-mode input[type="date"],
+        body.dark-mode input[type="email"],
+        body.dark-mode input[type="password"],
         body.dark-mode textarea {
             background: #333333;
             border-color: #4a4a4a;
@@ -81,6 +84,18 @@
 
         body.dark-mode .back-btn:hover {
             background: #4a4a4a;
+        }
+
+        body.dark-mode .auth-container {
+            background: #2a2a2a;
+        }
+
+        body.dark-mode .auth-switch {
+            color: #a0a0a0;
+        }
+
+        body.dark-mode .auth-switch a {
+            color: #667eea;
         }
 
         .container {
@@ -126,6 +141,110 @@
 
         body.dark-mode .theme-toggle:hover {
             background: rgba(255, 255, 255, 0.2);
+        }
+
+        .user-info {
+            position: absolute;
+            top: 0;
+            left: 0;
+            color: white;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Auth Container */
+        .auth-container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            margin: 50px auto;
+        }
+
+        .auth-title {
+            font-size: 2em;
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .auth-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .auth-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .auth-btn {
+            padding: 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .auth-btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .auth-switch {
+            text-align: center;
+            color: #666;
+            margin-top: 20px;
+        }
+
+        .auth-switch a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .auth-switch a:hover {
+            text-decoration: underline;
+        }
+
+        .auth-error {
+            color: #ff4757;
+            text-align: center;
+            font-size: 0.9em;
+            margin-top: 10px;
         }
 
         .tabs {
@@ -182,6 +301,8 @@
 
         input[type="text"],
         input[type="date"],
+        input[type="email"],
+        input[type="password"],
         textarea {
             width: 100%;
             padding: 12px;
@@ -193,6 +314,8 @@
 
         input[type="text"]:focus,
         input[type="date"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus,
         textarea:focus {
             outline: none;
             border-color: #667eea;
@@ -229,31 +352,6 @@
             max-width: 100%;
             max-height: 300px;
             border-radius: 8px;
-        }
-
-        .checkbox-group {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-        }
-
-        .checkbox-item input {
-            margin-right: 8px;
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-        }
-
-        .checkbox-item label {
-            margin: 0;
-            font-weight: normal;
-            cursor: pointer;
         }
 
         .rating-group {
@@ -329,6 +427,12 @@
             background: #5568d3;
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
         }
 
         .notes-list {
@@ -479,252 +583,401 @@
             line-height: 1.8;
         }
 
-        .rating-display {
-            display: inline-block;
-            background: #667eea;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 15px;
-            font-size: 0.9em;
-            margin-right: 8px;
-            margin-bottom: 5px;
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+            font-size: 1.2em;
         }
 
-        .scale-indicator {
-            font-size: 0.75em;
-            color: #999;
-            margin-top: 5px;
+        .loading:after {
+            content: '...';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="테마 전환">☀️</button>
-            <h1>🍶 사케 다이어리</h1>
-            <p>나만의 사케 기록을 남겨보세요</p>
-        </div>
-
-        <div class="tabs">
-            <button class="tab active" onclick="switchTab('new')">새 노트</button>
-            <button class="tab" onclick="switchTab('list')">저장된 노트</button>
-        </div>
-
-        <div class="content">
-            <!-- 새 노트 작성 -->
-            <div id="newView" class="view active">
-                <form id="tastingForm" onsubmit="saveTastingNote(event)">
-                    <div class="form-group">
-                        <label>날짜 *</label>
-                        <input type="date" id="date" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label>사케 사진</label>
-                        <div class="photo-upload" onclick="document.getElementById('photoInput').click()">
-                            <input type="file" id="photoInput" accept="image/*" onchange="handlePhotoUpload(event)">
-                            <div id="uploadText">📷 사진을 선택하세요</div>
-                            <div id="photoPreview" class="photo-preview"></div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>사케 이름 *</label>
-                        <input type="text" id="sakeName" placeholder="예: 獺祭 純米大吟醸" required>
-                    </div>
-
-                    <div class="section-title">색조</div>
-                    
-                    <div class="form-group">
-                        <label>청량도</label>
-                        <div class="info-text">무색투명 ~ 진한 위스키색 중 어느 정도인지 나타내는 척도</div>
-                        <div class="rating-item">
-                            <div class="rating-scale">
-                                <label><input type="radio" name="clarity_rating" value="1"> 1</label>
-                                <label><input type="radio" name="clarity_rating" value="2"> 2</label>
-                                <label><input type="radio" name="clarity_rating" value="3" checked> 3</label>
-                                <label><input type="radio" name="clarity_rating" value="4"> 4</label>
-                                <label><input type="radio" name="clarity_rating" value="5"> 5</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>투명도</label>
-                        <div class="rating-item">
-                            <div class="rating-scale">
-                                <label><input type="radio" name="transparency" value="1"> 1</label>
-                                <label><input type="radio" name="transparency" value="2"> 2</label>
-                                <label><input type="radio" name="transparency" value="3" checked> 3</label>
-                                <label><input type="radio" name="transparency" value="4"> 4</label>
-                                <label><input type="radio" name="transparency" value="5"> 5</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>점도</label>
-                        <div class="rating-item">
-                            <div class="rating-scale">
-                                <label><input type="radio" name="viscosity" value="1"> 1</label>
-                                <label><input type="radio" name="viscosity" value="2"> 2</label>
-                                <label><input type="radio" name="viscosity" value="3" checked> 3</label>
-                                <label><input type="radio" name="viscosity" value="4"> 4</label>
-                                <label><input type="radio" name="viscosity" value="5"> 5</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="section-title">향</div>
-
-                    <div class="form-group">
-                        <label>향기의 강도</label>
-                        <div class="rating-item">
-                            <div class="rating-scale">
-                                <label><input type="radio" name="aroma_intensity" value="1"> 1</label>
-                                <label><input type="radio" name="aroma_intensity" value="2"> 2</label>
-                                <label><input type="radio" name="aroma_intensity" value="3" checked> 3</label>
-                                <label><input type="radio" name="aroma_intensity" value="4"> 4</label>
-                                <label><input type="radio" name="aroma_intensity" value="5"> 5</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>복잡성</label>
-                        <div class="rating-item">
-                            <div class="rating-scale">
-                                <label><input type="radio" name="complexity_aroma" value="1"> 1</label>
-                                <label><input type="radio" name="complexity_aroma" value="2"> 2</label>
-                                <label><input type="radio" name="complexity_aroma" value="3" checked> 3</label>
-                                <label><input type="radio" name="complexity_aroma" value="4"> 4</label>
-                                <label><input type="radio" name="complexity_aroma" value="5"> 5</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>선명도</label>
-                        <div class="rating-item">
-                            <div class="rating-scale">
-                                <label><input type="radio" name="sharpness" value="1"> 1</label>
-                                <label><input type="radio" name="sharpness" value="2"> 2</label>
-                                <label><input type="radio" name="sharpness" value="3" checked> 3</label>
-                                <label><input type="radio" name="sharpness" value="4"> 4</label>
-                                <label><input type="radio" name="sharpness" value="5"> 5</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="section-title">맛</div>
-
-                    <div class="form-group">
-                        <label>맛</label>
-                        <div class="rating-item">
-                            <div class="rating-scale">
-                                <label><input type="radio" name="flavor" value="1"> 1</label>
-                                <label><input type="radio" name="flavor" value="2"> 2</label>
-                                <label><input type="radio" name="flavor" value="3" checked> 3</label>
-                                <label><input type="radio" name="flavor" value="4"> 4</label>
-                                <label><input type="radio" name="flavor" value="5"> 5</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>복잡성</label>
-                        <div class="rating-item">
-                            <div class="rating-scale">
-                                <label><input type="radio" name="complexity_taste" value="1"> 1</label>
-                                <label><input type="radio" name="complexity_taste" value="2"> 2</label>
-                                <label><input type="radio" name="complexity_taste" value="3" checked> 3</label>
-                                <label><input type="radio" name="complexity_taste" value="4"> 4</label>
-                                <label><input type="radio" name="complexity_taste" value="5"> 5</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>산미</label>
-                        <div class="rating-item">
-                            <div class="rating-scale">
-                                <label><input type="radio" name="acidity" value="1"> 1</label>
-                                <label><input type="radio" name="acidity" value="2"> 2</label>
-                                <label><input type="radio" name="acidity" value="3" checked> 3</label>
-                                <label><input type="radio" name="acidity" value="4"> 4</label>
-                                <label><input type="radio" name="acidity" value="5"> 5</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>애프터 테이스트</label>
-                        <div class="rating-item">
-                            <div class="rating-scale">
-                                <label><input type="radio" name="aftertaste" value="1"> 1</label>
-                                <label><input type="radio" name="aftertaste" value="2"> 2</label>
-                                <label><input type="radio" name="aftertaste" value="3" checked> 3</label>
-                                <label><input type="radio" name="aftertaste" value="4"> 4</label>
-                                <label><input type="radio" name="aftertaste" value="5"> 5</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="section-title">주체적인 향기와 맛</div>
-
-                    <div class="form-group">
-                        <label>1. 주체가 되는 향</label>
-                        <textarea id="dominant_aroma" placeholder="예: 은은한 사과 향과 함께 꽃향기가 느껴짐"></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label>2. 주체가 되는 맛</label>
-                        <textarea id="dominant_taste" placeholder="예: 부드러운 단맛이 입안을 감싸며 산미가 조화롭게 느껴짐"></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label>3. 향미에 관한 서술</label>
-                        <textarea id="flavor_description" placeholder="전반적인 인상과 특징을 자유롭게 기록하세요"></textarea>
-                    </div>
-
-                    <div class="section-title">개인적인 감상평</div>
-
-                    <div class="form-group">
-                        <label>감상평</label>
-                        <textarea id="personal_review" placeholder="이 사케에 대한 개인적인 생각, 추천 음식 페어링, 재구매 의향 등을 자유롭게 작성하세요"></textarea>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">💾 저장하기</button>
+        <!-- Auth Container (로그인/회원가입) -->
+        <div id="authContainer" class="auth-container" style="display: none;">
+            <h2 class="auth-title">🍶 사케 다이어리</h2>
+            
+            <!-- 로그인 폼 -->
+            <div id="loginForm">
+                <form class="auth-form" onsubmit="handleLogin(event)">
+                    <input type="email" class="auth-input" id="loginEmail" placeholder="이메일" required>
+                    <input type="password" class="auth-input" id="loginPassword" placeholder="비밀번호" required>
+                    <button type="submit" class="auth-btn">로그인</button>
+                    <div id="loginError" class="auth-error"></div>
                 </form>
+                <div class="auth-switch">
+                    계정이 없으신가요? <a onclick="showSignup()">회원가입</a>
+                </div>
             </div>
 
-            <!-- 저장된 노트 목록 -->
-            <div id="listView" class="view">
-                <div id="notesList"></div>
+            <!-- 회원가입 폼 -->
+            <div id="signupForm" style="display: none;">
+                <form class="auth-form" onsubmit="handleSignup(event)">
+                    <input type="email" class="auth-input" id="signupEmail" placeholder="이메일" required>
+                    <input type="password" class="auth-input" id="signupPassword" placeholder="비밀번호 (최소 6자)" required minlength="6">
+                    <input type="password" class="auth-input" id="signupPasswordConfirm" placeholder="비밀번호 확인" required minlength="6">
+                    <button type="submit" class="auth-btn">회원가입</button>
+                    <div id="signupError" class="auth-error"></div>
+                </form>
+                <div class="auth-switch">
+                    이미 계정이 있으신가요? <a onclick="showLogin()">로그인</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main App (로그인 후 표시) -->
+        <div id="mainApp" style="display: none;">
+            <div class="header">
+                <div class="user-info">
+                    <span id="userEmail"></span>
+                    <button class="logout-btn" onclick="handleLogout()">로그아웃</button>
+                </div>
+                <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="테마 전환">☀️</button>
+                <h1>🍶 사케 다이어리</h1>
+                <p>나만의 사케 기록을 남겨보세요</p>
             </div>
 
-            <!-- 상세 보기 -->
-            <div id="detailView" class="view">
-                <button class="back-btn" onclick="switchTab('list')">← 목록으로</button>
-                <div id="detailContent"></div>
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('new')">새 노트</button>
+                <button class="tab" onclick="switchTab('list')">저장된 노트</button>
+            </div>
+
+            <div class="content">
+                <!-- 새 노트 작성 -->
+                <div id="newView" class="view active">
+                    <form id="tastingForm" onsubmit="saveTastingNote(event)">
+                        <div class="form-group">
+                            <label>날짜 *</label>
+                            <input type="date" id="date" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>사케 사진</label>
+                            <div class="photo-upload" onclick="document.getElementById('photoInput').click()">
+                                <input type="file" id="photoInput" accept="image/*" onchange="handlePhotoUpload(event)">
+                                <div id="uploadText">📷 사진을 선택하세요</div>
+                                <div id="photoPreview" class="photo-preview"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>사케 이름 *</label>
+                            <input type="text" id="sakeName" placeholder="예: 獺祭 純米大吟醸" required>
+                        </div>
+
+                        <div class="section-title">색조</div>
+                        
+                        <div class="form-group">
+                            <label>청량도</label>
+                            <div class="info-text">무색투명 ~ 진한 위스키색 중 어느 정도인지 나타내는 척도</div>
+                            <div class="rating-item">
+                                <div class="rating-scale">
+                                    <label><input type="radio" name="clarity_rating" value="1"> 1</label>
+                                    <label><input type="radio" name="clarity_rating" value="2"> 2</label>
+                                    <label><input type="radio" name="clarity_rating" value="3" checked> 3</label>
+                                    <label><input type="radio" name="clarity_rating" value="4"> 4</label>
+                                    <label><input type="radio" name="clarity_rating" value="5"> 5</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>투명도</label>
+                            <div class="rating-item">
+                                <div class="rating-scale">
+                                    <label><input type="radio" name="transparency" value="1"> 1</label>
+                                    <label><input type="radio" name="transparency" value="2"> 2</label>
+                                    <label><input type="radio" name="transparency" value="3" checked> 3</label>
+                                    <label><input type="radio" name="transparency" value="4"> 4</label>
+                                    <label><input type="radio" name="transparency" value="5"> 5</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>점도</label>
+                            <div class="rating-item">
+                                <div class="rating-scale">
+                                    <label><input type="radio" name="viscosity" value="1"> 1</label>
+                                    <label><input type="radio" name="viscosity" value="2"> 2</label>
+                                    <label><input type="radio" name="viscosity" value="3" checked> 3</label>
+                                    <label><input type="radio" name="viscosity" value="4"> 4</label>
+                                    <label><input type="radio" name="viscosity" value="5"> 5</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section-title">향</div>
+
+                        <div class="form-group">
+                            <label>향기의 강도</label>
+                            <div class="rating-item">
+                                <div class="rating-scale">
+                                    <label><input type="radio" name="aroma_intensity" value="1"> 1</label>
+                                    <label><input type="radio" name="aroma_intensity" value="2"> 2</label>
+                                    <label><input type="radio" name="aroma_intensity" value="3" checked> 3</label>
+                                    <label><input type="radio" name="aroma_intensity" value="4"> 4</label>
+                                    <label><input type="radio" name="aroma_intensity" value="5"> 5</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>복잡성</label>
+                            <div class="rating-item">
+                                <div class="rating-scale">
+                                    <label><input type="radio" name="complexity_aroma" value="1"> 1</label>
+                                    <label><input type="radio" name="complexity_aroma" value="2"> 2</label>
+                                    <label><input type="radio" name="complexity_aroma" value="3" checked> 3</label>
+                                    <label><input type="radio" name="complexity_aroma" value="4"> 4</label>
+                                    <label><input type="radio" name="complexity_aroma" value="5"> 5</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>선명도</label>
+                            <div class="rating-item">
+                                <div class="rating-scale">
+                                    <label><input type="radio" name="sharpness" value="1"> 1</label>
+                                    <label><input type="radio" name="sharpness" value="2"> 2</label>
+                                    <label><input type="radio" name="sharpness" value="3" checked> 3</label>
+                                    <label><input type="radio" name="sharpness" value="4"> 4</label>
+                                    <label><input type="radio" name="sharpness" value="5"> 5</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section-title">맛</div>
+
+                        <div class="form-group">
+                            <label>맛</label>
+                            <div class="rating-item">
+                                <div class="rating-scale">
+                                    <label><input type="radio" name="flavor" value="1"> 1</label>
+                                    <label><input type="radio" name="flavor" value="2"> 2</label>
+                                    <label><input type="radio" name="flavor" value="3" checked> 3</label>
+                                    <label><input type="radio" name="flavor" value="4"> 4</label>
+                                    <label><input type="radio" name="flavor" value="5"> 5</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>복잡성</label>
+                            <div class="rating-item">
+                                <div class="rating-scale">
+                                    <label><input type="radio" name="complexity_taste" value="1"> 1</label>
+                                    <label><input type="radio" name="complexity_taste" value="2"> 2</label>
+                                    <label><input type="radio" name="complexity_taste" value="3" checked> 3</label>
+                                    <label><input type="radio" name="complexity_taste" value="4"> 4</label>
+                                    <label><input type="radio" name="complexity_taste" value="5"> 5</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>산미</label>
+                            <div class="rating-item">
+                                <div class="rating-scale">
+                                    <label><input type="radio" name="acidity" value="1"> 1</label>
+                                    <label><input type="radio" name="acidity" value="2"> 2</label>
+                                    <label><input type="radio" name="acidity" value="3" checked> 3</label>
+                                    <label><input type="radio" name="acidity" value="4"> 4</label>
+                                    <label><input type="radio" name="acidity" value="5"> 5</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>애프터 테이스트</label>
+                            <div class="rating-item">
+                                <div class="rating-scale">
+                                    <label><input type="radio" name="aftertaste" value="1"> 1</label>
+                                    <label><input type="radio" name="aftertaste" value="2"> 2</label>
+                                    <label><input type="radio" name="aftertaste" value="3" checked> 3</label>
+                                    <label><input type="radio" name="aftertaste" value="4"> 4</label>
+                                    <label><input type="radio" name="aftertaste" value="5"> 5</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section-title">주체적인 향기와 맛</div>
+
+                        <div class="form-group">
+                            <label>1. 주체가 되는 향</label>
+                            <textarea id="dominant_aroma" placeholder="예: 은은한 사과 향과 함께 꽃향기가 느껴짐"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>2. 주체가 되는 맛</label>
+                            <textarea id="dominant_taste" placeholder="예: 부드러운 단맛이 입안을 감싸며 산미가 조화롭게 느껴짐"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>3. 향미에 관한 서술</label>
+                            <textarea id="flavor_description" placeholder="전반적인 인상과 특징을 자유롭게 기록하세요"></textarea>
+                        </div>
+
+                        <div class="section-title">개인적인 감상평</div>
+
+                        <div class="form-group">
+                            <label>감상평</label>
+                            <textarea id="personal_review" placeholder="이 사케에 대한 개인적인 생각, 추천 음식 페어링, 재구매 의향 등을 자유롭게 작성하세요"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" id="submitBtn">💾 저장하기</button>
+                    </form>
+                </div>
+
+                <!-- 저장된 노트 목록 -->
+                <div id="listView" class="view">
+                    <div id="notesList"></div>
+                </div>
+
+                <!-- 상세 보기 -->
+                <div id="detailView" class="view">
+                    <button class="back-btn" onclick="switchTab('list')">← 목록으로</button>
+                    <div id="detailContent"></div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // 테마 설정 불러오기
+        // Supabase 초기화
+        const SUPABASE_URL = 'https://atgfrwohilgucmheyuzu.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0Z2Zyd29oaWxndWNtaGV5dXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk2NTY5MDgsImV4cCI6MjA4NTIzMjkwOH0.kNHfOWZ736sg4tvAoCBaRA_Dz3zVze4KXq8fZ-00w4I';
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let currentUser = null;
+        let currentPhotoData = null;
+        let editingNoteId = null;
+
+        // 페이지 로드 시 인증 상태 확인
+        async function checkAuth() {
+            const { data: { session } } = await supabase.auth.getSession();
+            
+            if (session) {
+                currentUser = session.user;
+                showMainApp();
+            } else {
+                showAuthContainer();
+            }
+        }
+
+        // 인증 컨테이너 표시
+        function showAuthContainer() {
+            document.getElementById('authContainer').style.display = 'block';
+            document.getElementById('mainApp').style.display = 'none';
+        }
+
+        // 메인 앱 표시
+        function showMainApp() {
+            document.getElementById('authContainer').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+            document.getElementById('userEmail').textContent = currentUser.email;
+            loadNotes();
+        }
+
+        // 로그인/회원가입 폼 전환
+        function showLogin() {
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('signupForm').style.display = 'none';
+            document.getElementById('loginError').textContent = '';
+        }
+
+        function showSignup() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('signupForm').style.display = 'block';
+            document.getElementById('signupError').textContent = '';
+        }
+
+        // 로그인 처리
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const errorDiv = document.getElementById('loginError');
+
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email,
+                    password
+                });
+
+                if (error) throw error;
+
+                currentUser = data.user;
+                showMainApp();
+            } catch (error) {
+                errorDiv.textContent = '로그인 실패: ' + error.message;
+            }
+        }
+
+        // 회원가입 처리
+        async function handleSignup(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const passwordConfirm = document.getElementById('signupPasswordConfirm').value;
+            const errorDiv = document.getElementById('signupError');
+
+            if (password !== passwordConfirm) {
+                errorDiv.textContent = '비밀번호가 일치하지 않습니다.';
+                return;
+            }
+
+            try {
+                const { data, error } = await supabase.auth.signUp({
+                    email,
+                    password
+                });
+
+                if (error) throw error;
+
+                alert('회원가입이 완료되었습니다! 로그인해주세요.');
+                showLogin();
+            } catch (error) {
+                errorDiv.textContent = '회원가입 실패: ' + error.message;
+            }
+        }
+
+        // 로그아웃
+        async function handleLogout() {
+            if (confirm('로그아웃하시겠습니까?')) {
+                await supabase.auth.signOut();
+                currentUser = null;
+                showAuthContainer();
+            }
+        }
+
+        // 테마 설정
         function loadTheme() {
             const savedTheme = localStorage.getItem('sakeAppTheme');
             const themeToggle = document.getElementById('themeToggle');
             if (savedTheme === 'dark') {
                 document.body.classList.add('dark-mode');
-                themeToggle.textContent = '🌙';
+                if (themeToggle) themeToggle.textContent = '🌙';
             } else {
-                themeToggle.textContent = '☀️';
+                if (themeToggle) themeToggle.textContent = '☀️';
             }
         }
 
-        // 테마 토글
         function toggleTheme() {
             document.body.classList.toggle('dark-mode');
             const isDark = document.body.classList.contains('dark-mode');
@@ -733,28 +986,15 @@
             localStorage.setItem('sakeAppTheme', isDark ? 'dark' : 'light');
         }
 
-        // 페이지 로드 시 테마 적용
-        loadTheme();
-
-        // 오늘 날짜 기본값 설정
-        document.getElementById('date').valueAsDate = new Date();
-
-        let currentPhotoData = null;
-        let tastingNotes = [];
-        let editingNoteId = null; // 수정 중인 노트 ID
-
-        // 저장된 노트 불러오기
-        function loadNotes() {
-            const saved = localStorage.getItem('sakeTastingNotes');
-            if (saved) {
-                tastingNotes = JSON.parse(saved);
+        // 날짜 기본값
+        function setDefaultDate() {
+            const dateInput = document.getElementById('date');
+            if (dateInput) {
+                dateInput.valueAsDate = new Date();
             }
         }
 
-        // 초기 로드
-        loadNotes();
-
-        // 사진 업로드 처리
+        // 사진 업로드
         function handlePhotoUpload(event) {
             const file = event.target.files[0];
             if (file) {
@@ -777,15 +1017,13 @@
             if (tab === 'new') {
                 document.querySelector('.tab:first-child').classList.add('active');
                 document.getElementById('newView').classList.add('active');
-                // 수정 모드가 아닌 경우에만 폼 초기화
                 if (!editingNoteId) {
                     resetForm();
                 }
             } else if (tab === 'list') {
                 document.querySelector('.tab:last-child').classList.add('active');
                 document.getElementById('listView').classList.add('active');
-                displayNotesList();
-                // 목록으로 돌아올 때 수정 모드 해제
+                loadNotes();
                 if (editingNoteId) {
                     editingNoteId = null;
                     resetForm();
@@ -793,89 +1031,122 @@
             }
         }
 
+        // 라디오 버튼 값 가져오기
+        function getRadioValue(name) {
+            const radio = document.querySelector(`input[name="${name}"]:checked`);
+            return radio ? parseInt(radio.value) : 3;
+        }
+
+        // 라디오 버튼 값 설정
+        function setRadioValue(name, value) {
+            const radio = document.querySelector(`input[name="${name}"][value="${value}"]`);
+            if (radio) radio.checked = true;
+        }
+
         // 테이스팅 노트 저장
-        function saveTastingNote(event) {
+        async function saveTastingNote(event) {
             event.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '저장 중...';
 
             const noteData = {
+                user_id: currentUser.id,
                 date: document.getElementById('date').value,
                 photo: currentPhotoData,
-                sakeName: document.getElementById('sakeName').value,
-                
-                // 색조
+                sake_name: document.getElementById('sakeName').value,
                 clarity_rating: getRadioValue('clarity_rating'),
                 transparency: getRadioValue('transparency'),
                 viscosity: getRadioValue('viscosity'),
-                
-                // 향
                 aroma_intensity: getRadioValue('aroma_intensity'),
                 complexity_aroma: getRadioValue('complexity_aroma'),
                 sharpness: getRadioValue('sharpness'),
-                
-                // 맛
                 flavor: getRadioValue('flavor'),
                 complexity_taste: getRadioValue('complexity_taste'),
                 acidity: getRadioValue('acidity'),
                 aftertaste: getRadioValue('aftertaste'),
-                
-                // 주체적 서술
                 dominant_aroma: document.getElementById('dominant_aroma').value,
                 dominant_taste: document.getElementById('dominant_taste').value,
                 flavor_description: document.getElementById('flavor_description').value,
-                
-                // 개인적인 감상평
                 personal_review: document.getElementById('personal_review').value
             };
 
-            if (editingNoteId) {
-                // 수정 모드
-                const index = tastingNotes.findIndex(n => n.id === editingNoteId);
-                if (index !== -1) {
-                    tastingNotes[index] = { ...noteData, id: editingNoteId };
+            try {
+                if (editingNoteId) {
+                    // 수정
+                    const { error } = await supabase
+                        .from('tasting_notes')
+                        .update(noteData)
+                        .eq('id', editingNoteId)
+                        .eq('user_id', currentUser.id);
+
+                    if (error) throw error;
                     alert('✅ 테이스팅 노트가 수정되었습니다!');
+                    editingNoteId = null;
+                } else {
+                    // 새로 생성
+                    const { error } = await supabase
+                        .from('tasting_notes')
+                        .insert([noteData]);
+
+                    if (error) throw error;
+                    alert('✅ 테이스팅 노트가 저장되었습니다!');
                 }
-                editingNoteId = null;
-            } else {
-                // 새로운 노트 생성
-                const note = { ...noteData, id: Date.now() };
-                tastingNotes.unshift(note);
-                alert('✅ 테이스팅 노트가 저장되었습니다!');
+
+                resetForm();
+                switchTab('list');
+            } catch (error) {
+                alert('❌ 저장 실패: ' + error.message);
+                console.error('Save error:', error);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '💾 저장하기';
             }
-
-            localStorage.setItem('sakeTastingNotes', JSON.stringify(tastingNotes));
-            
-            // 폼 초기화
-            resetForm();
-
-            // 목록 탭으로 이동
-            switchTab('list');
         }
 
         // 폼 초기화
         function resetForm() {
             document.getElementById('tastingForm').reset();
-            document.getElementById('date').valueAsDate = new Date();
+            setDefaultDate();
             currentPhotoData = null;
             editingNoteId = null;
             document.getElementById('uploadText').style.display = 'block';
             document.getElementById('photoPreview').innerHTML = '';
             
-            // 버튼 텍스트 변경
-            const submitBtn = document.querySelector('.btn-primary');
+            const submitBtn = document.getElementById('submitBtn');
             submitBtn.textContent = '💾 저장하기';
         }
 
-        // 라디오 버튼 값 가져오기
-        function getRadioValue(name) {
-            const radio = document.querySelector(`input[name="${name}"]:checked`);
-            return radio ? radio.value : '3';
+        // 노트 목록 불러오기
+        async function loadNotes() {
+            const container = document.getElementById('notesList');
+            container.innerHTML = '<div class="loading">노트를 불러오는 중</div>';
+
+            try {
+                const { data, error } = await supabase
+                    .from('tasting_notes')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                displayNotesList(data);
+            } catch (error) {
+                container.innerHTML = `<div class="empty-state">
+                    <div class="empty-state-icon">❌</div>
+                    <h3>노트를 불러올 수 없습니다</h3>
+                    <p>${error.message}</p>
+                </div>`;
+            }
         }
 
         // 노트 목록 표시
-        function displayNotesList() {
+        function displayNotesList(notes) {
             const container = document.getElementById('notesList');
             
-            if (tastingNotes.length === 0) {
+            if (!notes || notes.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-state-icon">📝</div>
@@ -888,12 +1159,12 @@
 
             container.innerHTML = `
                 <div class="notes-list">
-                    ${tastingNotes.map(note => `
+                    ${notes.map(note => `
                         <div class="note-card" onclick="showDetail(${note.id})">
                             <div class="note-card-header">
                                 ${note.photo ? `<img src="${note.photo}" class="note-card-photo" alt="사케">` : ''}
                                 <div class="note-card-info">
-                                    <div class="note-card-name">${note.sakeName}</div>
+                                    <div class="note-card-name">${note.sake_name}</div>
                                     <div class="note-card-date">📅 ${note.date}</div>
                                     <div class="note-card-summary">
                                         ${note.dominant_aroma ? note.dominant_aroma.substring(0, 80) + (note.dominant_aroma.length > 80 ? '...' : '') : ''}
@@ -907,238 +1178,268 @@
         }
 
         // 상세 보기
-        function showDetail(id) {
-            const note = tastingNotes.find(n => n.id === id);
-            if (!note) return;
-
+        async function showDetail(id) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById('detailView').classList.add('active');
+            
+            const detailContent = document.getElementById('detailContent');
+            detailContent.innerHTML = '<div class="loading">노트를 불러오는 중</div>';
 
-            document.getElementById('detailContent').innerHTML = `
-                ${note.photo ? `<img src="${note.photo}" class="detail-photo" alt="사케">` : ''}
-                
-                <h2 style="color: #667eea; margin-bottom: 10px;">${note.sakeName}</h2>
-                <p style="color: #666; margin-bottom: 30px;">📅 ${note.date}</p>
+            try {
+                const { data: note, error } = await supabase
+                    .from('tasting_notes')
+                    .select('*')
+                    .eq('id', id)
+                    .eq('user_id', currentUser.id)
+                    .single();
 
-                <div class="section-title">색조</div>
-                <div class="detail-section">
-                    <div class="detail-label">청량도</div>
-                    <div class="detail-value">
-                        <div class="rating-scale">
-                            ${[1,2,3,4,5].map(i => `
-                                <label style="opacity: ${i == note.clarity_rating ? '1' : '0.3'}">
-                                    <input type="radio" disabled ${i == note.clarity_rating ? 'checked' : ''}> ${i}
-                                </label>
-                            `).join('')}
-                        </div>
-                    </div>
-                </div>
-                <div class="detail-section">
-                    <div class="detail-label">투명도</div>
-                    <div class="detail-value">
-                        <div class="rating-scale">
-                            ${[1,2,3,4,5].map(i => `
-                                <label style="opacity: ${i == note.transparency ? '1' : '0.3'}">
-                                    <input type="radio" disabled ${i == note.transparency ? 'checked' : ''}> ${i}
-                                </label>
-                            `).join('')}
-                        </div>
-                    </div>
-                </div>
-                <div class="detail-section">
-                    <div class="detail-label">점도</div>
-                    <div class="detail-value">
-                        <div class="rating-scale">
-                            ${[1,2,3,4,5].map(i => `
-                                <label style="opacity: ${i == note.viscosity ? '1' : '0.3'}">
-                                    <input type="radio" disabled ${i == note.viscosity ? 'checked' : ''}> ${i}
-                                </label>
-                            `).join('')}
-                        </div>
-                    </div>
-                </div>
+                if (error) throw error;
 
-                <div class="section-title">향</div>
-                <div class="detail-section">
-                    <div class="detail-label">향기의 강도</div>
-                    <div class="detail-value">
-                        <div class="rating-scale">
-                            ${[1,2,3,4,5].map(i => `
-                                <label style="opacity: ${i == note.aroma_intensity ? '1' : '0.3'}">
-                                    <input type="radio" disabled ${i == note.aroma_intensity ? 'checked' : ''}> ${i}
-                                </label>
-                            `).join('')}
-                        </div>
-                    </div>
-                </div>
-                <div class="detail-section">
-                    <div class="detail-label">복잡성</div>
-                    <div class="detail-value">
-                        <div class="rating-scale">
-                            ${[1,2,3,4,5].map(i => `
-                                <label style="opacity: ${i == note.complexity_aroma ? '1' : '0.3'}">
-                                    <input type="radio" disabled ${i == note.complexity_aroma ? 'checked' : ''}> ${i}
-                                </label>
-                            `).join('')}
-                        </div>
-                    </div>
-                </div>
-                <div class="detail-section">
-                    <div class="detail-label">선명도</div>
-                    <div class="detail-value">
-                        <div class="rating-scale">
-                            ${[1,2,3,4,5].map(i => `
-                                <label style="opacity: ${i == note.sharpness ? '1' : '0.3'}">
-                                    <input type="radio" disabled ${i == note.sharpness ? 'checked' : ''}> ${i}
-                                </label>
-                            `).join('')}
-                        </div>
-                    </div>
-                </div>
+                detailContent.innerHTML = `
+                    ${note.photo ? `<img src="${note.photo}" class="detail-photo" alt="사케">` : ''}
+                    
+                    <h2 style="color: #667eea; margin-bottom: 10px;">${note.sake_name}</h2>
+                    <p style="color: #666; margin-bottom: 30px;">📅 ${note.date}</p>
 
-                <div class="section-title">맛</div>
-                <div class="detail-section">
-                    <div class="detail-label">맛</div>
-                    <div class="detail-value">
-                        <div class="rating-scale">
-                            ${[1,2,3,4,5].map(i => `
-                                <label style="opacity: ${i == note.flavor ? '1' : '0.3'}">
-                                    <input type="radio" disabled ${i == note.flavor ? 'checked' : ''}> ${i}
-                                </label>
-                            `).join('')}
+                    <div class="section-title">색조</div>
+                    <div class="detail-section">
+                        <div class="detail-label">청량도</div>
+                        <div class="detail-value">
+                            <div class="rating-scale">
+                                ${[1,2,3,4,5].map(i => `
+                                    <label style="opacity: ${i == note.clarity_rating ? '1' : '0.3'}">
+                                        <input type="radio" disabled ${i == note.clarity_rating ? 'checked' : ''}> ${i}
+                                    </label>
+                                `).join('')}
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="detail-section">
-                    <div class="detail-label">복잡성</div>
-                    <div class="detail-value">
-                        <div class="rating-scale">
-                            ${[1,2,3,4,5].map(i => `
-                                <label style="opacity: ${i == note.complexity_taste ? '1' : '0.3'}">
-                                    <input type="radio" disabled ${i == note.complexity_taste ? 'checked' : ''}> ${i}
-                                </label>
-                            `).join('')}
+                    <div class="detail-section">
+                        <div class="detail-label">투명도</div>
+                        <div class="detail-value">
+                            <div class="rating-scale">
+                                ${[1,2,3,4,5].map(i => `
+                                    <label style="opacity: ${i == note.transparency ? '1' : '0.3'}">
+                                        <input type="radio" disabled ${i == note.transparency ? 'checked' : ''}> ${i}
+                                    </label>
+                                `).join('')}
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="detail-section">
-                    <div class="detail-label">산미</div>
-                    <div class="detail-value">
-                        <div class="rating-scale">
-                            ${[1,2,3,4,5].map(i => `
-                                <label style="opacity: ${i == note.acidity ? '1' : '0.3'}">
-                                    <input type="radio" disabled ${i == note.acidity ? 'checked' : ''}> ${i}
-                                </label>
-                            `).join('')}
+                    <div class="detail-section">
+                        <div class="detail-label">점도</div>
+                        <div class="detail-value">
+                            <div class="rating-scale">
+                                ${[1,2,3,4,5].map(i => `
+                                    <label style="opacity: ${i == note.viscosity ? '1' : '0.3'}">
+                                        <input type="radio" disabled ${i == note.viscosity ? 'checked' : ''}> ${i}
+                                    </label>
+                                `).join('')}
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="detail-section">
-                    <div class="detail-label">애프터 테이스트</div>
-                    <div class="detail-value">
-                        <div class="rating-scale">
-                            ${[1,2,3,4,5].map(i => `
-                                <label style="opacity: ${i == note.aftertaste ? '1' : '0.3'}">
-                                    <input type="radio" disabled ${i == note.aftertaste ? 'checked' : ''}> ${i}
-                                </label>
-                            `).join('')}
-                        </div>
-                    </div>
-                </div>
 
-                <div class="section-title">주체적인 향기와 맛</div>
-                ${note.dominant_aroma ? `
-                <div class="detail-section">
-                    <div class="detail-label">주체가 되는 향</div>
-                    <div class="detail-value">${note.dominant_aroma}</div>
-                </div>
-                ` : ''}
-                ${note.dominant_taste ? `
-                <div class="detail-section">
-                    <div class="detail-label">주체가 되는 맛</div>
-                    <div class="detail-value">${note.dominant_taste}</div>
-                </div>
-                ` : ''}
-                ${note.flavor_description ? `
-                <div class="detail-section">
-                    <div class="detail-label">향미에 관한 서술</div>
-                    <div class="detail-value">${note.flavor_description}</div>
-                </div>
-                ` : ''}
+                    <div class="section-title">향</div>
+                    <div class="detail-section">
+                        <div class="detail-label">향기의 강도</div>
+                        <div class="detail-value">
+                            <div class="rating-scale">
+                                ${[1,2,3,4,5].map(i => `
+                                    <label style="opacity: ${i == note.aroma_intensity ? '1' : '0.3'}">
+                                        <input type="radio" disabled ${i == note.aroma_intensity ? 'checked' : ''}> ${i}
+                                    </label>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">복잡성</div>
+                        <div class="detail-value">
+                            <div class="rating-scale">
+                                ${[1,2,3,4,5].map(i => `
+                                    <label style="opacity: ${i == note.complexity_aroma ? '1' : '0.3'}">
+                                        <input type="radio" disabled ${i == note.complexity_aroma ? 'checked' : ''}> ${i}
+                                    </label>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">선명도</div>
+                        <div class="detail-value">
+                            <div class="rating-scale">
+                                ${[1,2,3,4,5].map(i => `
+                                    <label style="opacity: ${i == note.sharpness ? '1' : '0.3'}">
+                                        <input type="radio" disabled ${i == note.sharpness ? 'checked' : ''}> ${i}
+                                    </label>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
 
-                ${note.personal_review ? `
-                <div class="section-title">개인적인 감상평</div>
-                <div class="detail-section">
-                    <div class="detail-value">${note.personal_review}</div>
-                </div>
-                ` : ''}
+                    <div class="section-title">맛</div>
+                    <div class="detail-section">
+                        <div class="detail-label">맛</div>
+                        <div class="detail-value">
+                            <div class="rating-scale">
+                                ${[1,2,3,4,5].map(i => `
+                                    <label style="opacity: ${i == note.flavor ? '1' : '0.3'}">
+                                        <input type="radio" disabled ${i == note.flavor ? 'checked' : ''}> ${i}
+                                    </label>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">복잡성</div>
+                        <div class="detail-value">
+                            <div class="rating-scale">
+                                ${[1,2,3,4,5].map(i => `
+                                    <label style="opacity: ${i == note.complexity_taste ? '1' : '0.3'}">
+                                        <input type="radio" disabled ${i == note.complexity_taste ? 'checked' : ''}> ${i}
+                                    </label>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">산미</div>
+                        <div class="detail-value">
+                            <div class="rating-scale">
+                                ${[1,2,3,4,5].map(i => `
+                                    <label style="opacity: ${i == note.acidity ? '1' : '0.3'}">
+                                        <input type="radio" disabled ${i == note.acidity ? 'checked' : ''}> ${i}
+                                    </label>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">애프터 테이스트</div>
+                        <div class="detail-value">
+                            <div class="rating-scale">
+                                ${[1,2,3,4,5].map(i => `
+                                    <label style="opacity: ${i == note.aftertaste ? '1' : '0.3'}">
+                                        <input type="radio" disabled ${i == note.aftertaste ? 'checked' : ''}> ${i}
+                                    </label>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
 
-                <button class="edit-btn" onclick="editNote(${note.id})">✏️ 수정</button>
-                <button class="delete-btn" onclick="deleteNote(${note.id})">🗑️ 삭제</button>
-            `;
+                    <div class="section-title">주체적인 향기와 맛</div>
+                    ${note.dominant_aroma ? `
+                    <div class="detail-section">
+                        <div class="detail-label">주체가 되는 향</div>
+                        <div class="detail-value">${note.dominant_aroma}</div>
+                    </div>
+                    ` : ''}
+                    ${note.dominant_taste ? `
+                    <div class="detail-section">
+                        <div class="detail-label">주체가 되는 맛</div>
+                        <div class="detail-value">${note.dominant_taste}</div>
+                    </div>
+                    ` : ''}
+                    ${note.flavor_description ? `
+                    <div class="detail-section">
+                        <div class="detail-label">향미에 관한 서술</div>
+                        <div class="detail-value">${note.flavor_description}</div>
+                    </div>
+                    ` : ''}
+
+                    ${note.personal_review ? `
+                    <div class="section-title">개인적인 감상평</div>
+                    <div class="detail-section">
+                        <div class="detail-value">${note.personal_review}</div>
+                    </div>
+                    ` : ''}
+
+                    <button class="edit-btn" onclick="editNote(${note.id})">✏️ 수정</button>
+                    <button class="delete-btn" onclick="deleteNote(${note.id})">🗑️ 삭제</button>
+                `;
+            } catch (error) {
+                detailContent.innerHTML = `<div class="empty-state">
+                    <div class="empty-state-icon">❌</div>
+                    <h3>노트를 불러올 수 없습니다</h3>
+                    <p>${error.message}</p>
+                </div>`;
+            }
         }
 
         // 노트 수정
-        function editNote(id) {
-            const note = tastingNotes.find(n => n.id === id);
-            if (!note) return;
+        async function editNote(id) {
+            try {
+                const { data: note, error } = await supabase
+                    .from('tasting_notes')
+                    .select('*')
+                    .eq('id', id)
+                    .eq('user_id', currentUser.id)
+                    .single();
 
-            // 수정 모드로 전환
-            editingNoteId = id;
-            switchTab('new');
+                if (error) throw error;
 
-            // 폼에 데이터 채우기
-            document.getElementById('date').value = note.date;
-            document.getElementById('sakeName').value = note.sakeName;
-            
-            // 사진
-            if (note.photo) {
-                currentPhotoData = note.photo;
-                document.getElementById('uploadText').style.display = 'none';
-                document.getElementById('photoPreview').innerHTML = 
-                    `<img src="${note.photo}" alt="사케 사진">`;
+                editingNoteId = id;
+                switchTab('new');
+
+                document.getElementById('date').value = note.date;
+                document.getElementById('sakeName').value = note.sake_name;
+                
+                if (note.photo) {
+                    currentPhotoData = note.photo;
+                    document.getElementById('uploadText').style.display = 'none';
+                    document.getElementById('photoPreview').innerHTML = 
+                        `<img src="${note.photo}" alt="사케 사진">`;
+                }
+
+                setRadioValue('clarity_rating', note.clarity_rating);
+                setRadioValue('transparency', note.transparency);
+                setRadioValue('viscosity', note.viscosity);
+                setRadioValue('aroma_intensity', note.aroma_intensity);
+                setRadioValue('complexity_aroma', note.complexity_aroma);
+                setRadioValue('sharpness', note.sharpness);
+                setRadioValue('flavor', note.flavor);
+                setRadioValue('complexity_taste', note.complexity_taste);
+                setRadioValue('acidity', note.acidity);
+                setRadioValue('aftertaste', note.aftertaste);
+
+                document.getElementById('dominant_aroma').value = note.dominant_aroma || '';
+                document.getElementById('dominant_taste').value = note.dominant_taste || '';
+                document.getElementById('flavor_description').value = note.flavor_description || '';
+                document.getElementById('personal_review').value = note.personal_review || '';
+
+                const submitBtn = document.getElementById('submitBtn');
+                submitBtn.textContent = '✏️ 수정 완료';
+
+                window.scrollTo(0, 0);
+            } catch (error) {
+                alert('❌ 노트를 불러올 수 없습니다: ' + error.message);
             }
-
-            // 평점들
-            setRadioValue('clarity_rating', note.clarity_rating);
-            setRadioValue('transparency', note.transparency);
-            setRadioValue('viscosity', note.viscosity);
-            setRadioValue('aroma_intensity', note.aroma_intensity);
-            setRadioValue('complexity_aroma', note.complexity_aroma);
-            setRadioValue('sharpness', note.sharpness);
-            setRadioValue('flavor', note.flavor);
-            setRadioValue('complexity_taste', note.complexity_taste);
-            setRadioValue('acidity', note.acidity);
-            setRadioValue('aftertaste', note.aftertaste);
-
-            // 텍스트 필드들
-            document.getElementById('dominant_aroma').value = note.dominant_aroma || '';
-            document.getElementById('dominant_taste').value = note.dominant_taste || '';
-            document.getElementById('flavor_description').value = note.flavor_description || '';
-            document.getElementById('personal_review').value = note.personal_review || '';
-
-            // 버튼 텍스트 변경
-            const submitBtn = document.querySelector('.btn-primary');
-            submitBtn.textContent = '✏️ 수정 완료';
-
-            // 스크롤을 맨 위로
-            window.scrollTo(0, 0);
-        }
-
-        // 라디오 버튼 값 설정 헬퍼 함수
-        function setRadioValue(name, value) {
-            const radio = document.querySelector(`input[name="${name}"][value="${value}"]`);
-            if (radio) radio.checked = true;
         }
 
         // 노트 삭제
-        function deleteNote(id) {
+        async function deleteNote(id) {
             if (confirm('정말 이 테이스팅 노트를 삭제하시겠습니까?')) {
-                tastingNotes = tastingNotes.filter(n => n.id !== id);
-                localStorage.setItem('sakeTastingNotes', JSON.stringify(tastingNotes));
-                switchTab('list');
+                try {
+                    const { error } = await supabase
+                        .from('tasting_notes')
+                        .delete()
+                        .eq('id', id)
+                        .eq('user_id', currentUser.id);
+
+                    if (error) throw error;
+
+                    alert('✅ 노트가 삭제되었습니다.');
+                    switchTab('list');
+                } catch (error) {
+                    alert('❌ 삭제 실패: ' + error.message);
+                }
             }
         }
+
+        // 초기화
+        loadTheme();
+        checkAuth();
+        setDefaultDate();
     </script>
 </body>
 </html>
