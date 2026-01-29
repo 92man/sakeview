@@ -2206,11 +2206,7 @@
 
         function hidePolicyPage() {
             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            const content = document.querySelector('.content');
             const tabs = document.querySelector('.tabs');
-            
-            // content를 기본 상태로 리셋
-            content.innerHTML = '';
             
             if (currentUser) {
                 tabs.style.display = 'block';
@@ -2219,6 +2215,7 @@
             } else {
                 tabs.style.display = 'none';
                 document.getElementById('appFooter').style.display = 'none';
+                switchTab('new'); // 새 노트로 이동
             }
             window.scrollTo(0, 0);
         }
