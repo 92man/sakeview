@@ -860,7 +860,8 @@
         const SUPABASE_URL = 'https://atgfrwohilgucmheyuzu.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0Z2Zyd29oaWxndWNtaGV5dXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk2NTY5MDgsImV4cCI6MjA4NTIzMjkwOH0.kNHfOWZ736sg4tvAoCBaRA_Dz3zVze4KXq8fZ-00w4I';
         
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const { createClient } = window.supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let currentUser = null;
         let currentPhotoData = null;
@@ -868,7 +869,7 @@
 
         // 페이지 로드 시 인증 상태 확인
         async function checkAuth() {
-            const { data: { session } } = await supabase.auth.getSession();
+            const { data: { session } } = await supabaseClientClient.auth.getSession();
             
             if (session) {
                 currentUser = session.user;
@@ -914,7 +915,7 @@
             const errorDiv = document.getElementById('loginError');
 
             try {
-                const { data, error } = await supabase.auth.signInWithPassword({
+                const { data, error } = await supabaseClientClient.auth.signInWithPassword({
                     email,
                     password
                 });
@@ -943,7 +944,7 @@
             }
 
             try {
-                const { data, error } = await supabase.auth.signUp({
+                const { data, error } = await supabaseClientClient.auth.signUp({
                     email,
                     password
                 });
@@ -960,7 +961,7 @@
         // 로그아웃
         async function handleLogout() {
             if (confirm('로그아웃하시겠습니까?')) {
-                await supabase.auth.signOut();
+                await supabaseClient.auth.signOut();
                 currentUser = null;
                 showAuthContainer();
             }
@@ -1075,7 +1076,7 @@
             try {
                 if (editingNoteId) {
                     // 수정
-                    const { error } = await supabase
+                    const { error } = await supabaseClientClient
                         .from('tasting_notes')
                         .update(noteData)
                         .eq('id', editingNoteId)
@@ -1086,7 +1087,7 @@
                     editingNoteId = null;
                 } else {
                     // 새로 생성
-                    const { error } = await supabase
+                    const { error } = await supabaseClientClient
                         .from('tasting_notes')
                         .insert([noteData]);
 
@@ -1124,7 +1125,7 @@
             container.innerHTML = '<div class="loading">노트를 불러오는 중</div>';
 
             try {
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClientClient
                     .from('tasting_notes')
                     .select('*')
                     .eq('user_id', currentUser.id)
@@ -1186,7 +1187,7 @@
             detailContent.innerHTML = '<div class="loading">노트를 불러오는 중</div>';
 
             try {
-                const { data: note, error } = await supabase
+                const { data: note, error } = await supabaseClientClient
                     .from('tasting_notes')
                     .select('*')
                     .eq('id', id)
@@ -1369,7 +1370,7 @@
         // 노트 수정
         async function editNote(id) {
             try {
-                const { data: note, error } = await supabase
+                const { data: note, error } = await supabaseClientClient
                     .from('tasting_notes')
                     .select('*')
                     .eq('id', id)
@@ -1420,7 +1421,7 @@
         async function deleteNote(id) {
             if (confirm('정말 이 테이스팅 노트를 삭제하시겠습니까?')) {
                 try {
-                    const { error } = await supabase
+                    const { error } = await supabaseClientClient
                         .from('tasting_notes')
                         .delete()
                         .eq('id', id)
