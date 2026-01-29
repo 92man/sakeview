@@ -1410,7 +1410,7 @@
                     <div class="footer-info">
                         <p>🍶 사케를 보다 (Sake View) - 당신의 사케 테이스팅 여정을 기록하세요</p>
                         <div class="footer-contact">
-                            문의: <a href="mailto:denturebur@naver.com">denturebur@naver.com</a>
+                            문의: <a href="/cdn-cgi/l/email-protection#096d6c677d7c7b6c6b7c7b4967687f6c7b276a6664"><span class="__cf_email__" data-cfemail="aacecfc4dedfd8cfc8dfd8eac4cbdccfd884c9c5c7">[email&#160;protected]</span></a>
                         </div>
                     </div>
                     
@@ -1423,7 +1423,7 @@
         </div>
     </div>
 
-    <script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         // Supabase 초기화
         const SUPABASE_URL = 'https://atgfrwohilgucmheyuzu.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0Z2Zyd29oaWxndWNtaGV5dXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk2NjAyNTUsImV4cCI6MjA4NTIzNjI1NX0.CoyHTds_3BRl5p6wAehlqaevrdkqp1BzymnTnqhzy2Y';
@@ -2053,8 +2053,8 @@
                     </div>
                     ` : ''}
 
-                    <button class="edit-btn" onclick="editNote(${note.id})">✏️ 수정</button>
-                    <button class="delete-btn" onclick="deleteNote(${note.id})">🗑️ 삭제</button>
+                    <button class="edit-btn" onclick="editNote(` + note.id + `)">✏️ 수정</button>
+                    <button class="delete-btn" onclick="deleteNote(` + note.id + `)">🗑️ 삭제</button>
                 `;
             } catch (error) {
                 detailContent.innerHTML = `<div class="empty-state">
@@ -2476,14 +2476,4 @@
                 document.getElementById('newView').style.display = 'block';
                 document.querySelector('.tab:first-child').classList.add('active');
             }
-            
-            window.scrollTo(0, 0);
-        }
-
-        // 사케 가이드 페이지 함수 (4번 작업에서 사용될 예정)
-        function showSakeGuide() {
-            showPolicyPage('guide');
-        }
-    </script>
-</body>
-</html>
+       
