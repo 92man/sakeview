@@ -1410,7 +1410,7 @@
                     <div class="footer-info">
                         <p>🍶 사케를 보다 (Sake View) - 당신의 사케 테이스팅 여정을 기록하세요</p>
                         <div class="footer-contact">
-                            문의: <a href="/cdn-cgi/l/email-protection#096d6c677d7c7b6c6b7c7b4967687f6c7b276a6664"><span class="__cf_email__" data-cfemail="aacecfc4dedfd8cfc8dfd8eac4cbdccfd884c9c5c7">[email&#160;protected]</span></a>
+                            문의: <a href="/cdn-cgi/l/email-protection#395d5c574d4c4b5c5b4c4b7957584f5c4b175a5654"><span class="__cf_email__" data-cfemail="e98d8c879d9c9b8c8b9c9ba987889f8c9bc78a8684">[email&#160;protected]</span></a>
                         </div>
                     </div>
                     
@@ -2053,8 +2053,8 @@
                     </div>
                     ` : ''}
 
-                    <button class="edit-btn" id="editBtn" onclick="editNote(${note.id})">✏️ 수정</button>
-                    <button class="delete-btn" id="deleteBtn" onclick="deleteNote(${note.id})">🗑️ 삭제</button>
+                    <button class="edit-btn" data-note-id="${note.id}" onclick="editNote(this.dataset.noteId)">✏️ 수정</button>
+                    <button class="delete-btn" data-note-id="${note.id}" onclick="deleteNote(this.dataset.noteId)">🗑️ 삭제</button>
                 `;
             } catch (error) {
                 detailContent.innerHTML = `<div class="empty-state">
