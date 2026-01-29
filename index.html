@@ -807,6 +807,7 @@
             font-size: 0.95em;
             cursor: pointer;
             transition: color 0.3s;
+            display: inline-block;
         }
 
         .footer-link:hover {
@@ -1173,13 +1174,13 @@
             <footer class="app-footer" id="appFooter">
                 <div class="footer-content">
                     <div class="footer-links">
-                        <a class="footer-link" onclick="showPolicyPage('about')">소개</a>
+                        <a href="#" class="footer-link" onclick="showPolicyPage('about'); return false;">소개</a>
                         <span class="footer-divider">|</span>
-                        <a class="footer-link" onclick="showPolicyPage('privacy')">개인정보처리방침</a>
+                        <a href="#" class="footer-link" onclick="showPolicyPage('privacy'); return false;">개인정보처리방침</a>
                         <span class="footer-divider">|</span>
-                        <a class="footer-link" onclick="showPolicyPage('terms')">이용약관</a>
+                        <a href="#" class="footer-link" onclick="showPolicyPage('terms'); return false;">이용약관</a>
                         <span class="footer-divider">|</span>
-                        <a class="footer-link" onclick="showSakeGuide()">사케 가이드</a>
+                        <a href="#" class="footer-link" onclick="showSakeGuide(); return false;">사케 가이드</a>
                     </div>
                     
                     <div class="footer-info">
