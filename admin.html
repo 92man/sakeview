@@ -291,7 +291,7 @@
             html = '';
             notes.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 30).forEach(n => {
                 const d = new Date(n.created_at).toLocaleDateString('ko-KR');
-                html += `<tr><td>${d}</td><td>${n.user_email || '-'}</td><td>${n.sake_name}</td><td>${n.clarity_rating||'-'}</td><td>${n.transparency||'-'}</td><td>${n.aroma_intensity||'-'}</td><td>${n.flavor||'-'}</td></tr>`;
+                html += `<tr><td>${d}</td><td>${n.user_id ? n.user_id.substring(0, 8) : '-'}</td><td>${n.sake_name}</td><td>${n.clarity_rating||'-'}</td><td>${n.transparency||'-'}</td><td>${n.aroma_intensity||'-'}</td><td>${n.flavor||'-'}</td></tr>`;
             });
             document.getElementById('notesTable').innerHTML = html || '<tr><td colspan="7">데이터 없음</td></tr>';
         }
