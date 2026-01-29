@@ -2053,9 +2053,12 @@
                     </div>
                     ` : ''}
 
-                    <button class="edit-btn" onclick="editNote(` + note.id + `)">✏️ 수정</button>
-                    <button class="delete-btn" onclick="deleteNote(` + note.id + `)">🗑️ 삭제</button>
+                    <button class="edit-btn" id="editBtn">✏️ 수정</button>
+                    <button class="delete-btn" id="deleteBtn">🗑️ 삭제</button>
                 `;
+                
+                document.getElementById('editBtn').onclick = function() { editNote(${note.id}); };
+                document.getElementById('deleteBtn').onclick = function() { deleteNote(${note.id}); };
             } catch (error) {
                 detailContent.innerHTML = `<div class="empty-state">
                     <div class="empty-state-icon">❌</div>
