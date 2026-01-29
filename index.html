@@ -2202,11 +2202,17 @@
             document.querySelector('.tabs').style.display = 'none';
             document.getElementById('appFooter').style.display = 'none';
             
-            // 돌아가기 버튼 event listener
-            const backBtn = content.querySelector('[data-action="back"]');
-            if (backBtn) {
-                backBtn.addEventListener('click', hidePolicyPage);
-            }
+            // 돌아가기 버튼 event listener - 모든 back-btn에 적용
+            setTimeout(() => {
+                const backBtns = content.querySelectorAll('[data-action="back"]');
+                backBtns.forEach(btn => {
+                    btn.onclick = function(e) {
+                        e.preventDefault();
+                        hidePolicyPage();
+                        return false;
+                    };
+                });
+            }, 0);
             
             window.scrollTo(0, 0);
         }
