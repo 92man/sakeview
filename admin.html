@@ -101,12 +101,18 @@
                             <th>기록</th>
                             <th>색감</th>
                             <th>투명도</th>
-                            <th>향</th>
+                            <th>향 강도</th>
+                            <th>향 복합도</th>
+                            <th>향 선명도</th>
                             <th>맛</th>
+                            <th>맛 복합도</th>
+                            <th>산미</th>
+                            <th>여운</th>
+                            <th>바디감</th>
                         </tr>
                     </thead>
                     <tbody id="sakeTable">
-                        <tr><td colspan="6">데이터 로딩 중...</td></tr>
+                        <tr><td colspan="12">데이터 로딩 중...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -236,19 +242,50 @@
             // Sake Stats
             const stats = {};
             notes.forEach(n => {
-                if (!stats[n.sake_name]) stats[n.sake_name] = { count: 0, c: 0, t: 0, a: 0, ta: 0 };
+                if (!stats[n.sake_name]) stats[n.sake_name] = { 
+                    count: 0, 
+                    clarity: 0, 
+                    transparency: 0, 
+                    aroma_intensity: 0,
+                    complexity_aroma: 0,
+                    sharpness: 0,
+                    flavor: 0,
+                    complexity_taste: 0,
+                    acidity: 0,
+                    aftertaste: 0,
+                    viscosity: 0
+                };
                 stats[n.sake_name].count++;
-                stats[n.sake_name].c += n.clarity_rating || 0;
-                stats[n.sake_name].t += n.transparency || 0;
-                stats[n.sake_name].a += n.aroma_intensity || 0;
-                stats[n.sake_name].ta += n.flavor || 0;
+                stats[n.sake_name].clarity += n.clarity_rating || 0;
+                stats[n.sake_name].transparency += n.transparency || 0;
+                stats[n.sake_name].aroma_intensity += n.aroma_intensity || 0;
+                stats[n.sake_name].complexity_aroma += n.complexity_aroma || 0;
+                stats[n.sake_name].sharpness += n.sharpness || 0;
+                stats[n.sake_name].flavor += n.flavor || 0;
+                stats[n.sake_name].complexity_taste += n.complexity_taste || 0;
+                stats[n.sake_name].acidity += n.acidity || 0;
+                stats[n.sake_name].aftertaste += n.aftertaste || 0;
+                stats[n.sake_name].viscosity += n.viscosity || 0;
             });
 
             let html = '';
             Object.entries(stats).sort((a, b) => b[1].count - a[1].count).forEach(([sake, s]) => {
-                html += `<tr><td>${sake}</td><td>${s.count}</td><td>${(s.c/s.count).toFixed(1)}</td><td>${(s.t/s.count).toFixed(1)}</td><td>${(s.a/s.count).toFixed(1)}</td><td>${(s.ta/s.count).toFixed(1)}</td></tr>`;
+                html += `<tr>
+                    <td>${sake}</td>
+                    <td>${s.count}</td>
+                    <td>${(s.clarity/s.count).toFixed(1)}</td>
+                    <td>${(s.transparency/s.count).toFixed(1)}</td>
+                    <td>${(s.aroma_intensity/s.count).toFixed(1)}</td>
+                    <td>${(s.complexity_aroma/s.count).toFixed(1)}</td>
+                    <td>${(s.sharpness/s.count).toFixed(1)}</td>
+                    <td>${(s.flavor/s.count).toFixed(1)}</td>
+                    <td>${(s.complexity_taste/s.count).toFixed(1)}</td>
+                    <td>${(s.acidity/s.count).toFixed(1)}</td>
+                    <td>${(s.aftertaste/s.count).toFixed(1)}</td>
+                    <td>${(s.viscosity/s.count).toFixed(1)}</td>
+                </tr>`;
             });
-            document.getElementById('sakeTable').innerHTML = html || '<tr><td colspan="6">데이터 없음</td></tr>';
+            document.getElementById('sakeTable').innerHTML = html || '<tr><td colspan="12">데이터 없음</td></tr>';
 
             // Recent Notes
             html = '';
