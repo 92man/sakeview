@@ -101,14 +101,14 @@
                             <th>기록</th>
                             <th>색감</th>
                             <th>투명도</th>
+                            <th>점도</th>
                             <th>향 강도</th>
                             <th>향 복합도</th>
                             <th>향 선명도</th>
-                            <th>맛</th>
+                            <th>맛의 강도</th>
                             <th>맛 복합도</th>
                             <th>산미</th>
                             <th>여운</th>
-                            <th>바디감</th>
                         </tr>
                     </thead>
                     <tbody id="sakeTable">
@@ -245,19 +245,20 @@
                 if (!stats[n.sake_name]) stats[n.sake_name] = { 
                     count: 0, 
                     clarity: 0, 
-                    transparency: 0, 
+                    transparency: 0,
+                    viscosity: 0,
                     aroma_intensity: 0,
                     complexity_aroma: 0,
                     sharpness: 0,
                     flavor: 0,
                     complexity_taste: 0,
                     acidity: 0,
-                    aftertaste: 0,
-                    viscosity: 0
+                    aftertaste: 0
                 };
                 stats[n.sake_name].count++;
                 stats[n.sake_name].clarity += n.clarity_rating || 0;
                 stats[n.sake_name].transparency += n.transparency || 0;
+                stats[n.sake_name].viscosity += n.viscosity || 0;
                 stats[n.sake_name].aroma_intensity += n.aroma_intensity || 0;
                 stats[n.sake_name].complexity_aroma += n.complexity_aroma || 0;
                 stats[n.sake_name].sharpness += n.sharpness || 0;
@@ -265,7 +266,6 @@
                 stats[n.sake_name].complexity_taste += n.complexity_taste || 0;
                 stats[n.sake_name].acidity += n.acidity || 0;
                 stats[n.sake_name].aftertaste += n.aftertaste || 0;
-                stats[n.sake_name].viscosity += n.viscosity || 0;
             });
 
             let html = '';
@@ -275,6 +275,7 @@
                     <td>${s.count}</td>
                     <td>${(s.clarity/s.count).toFixed(1)}</td>
                     <td>${(s.transparency/s.count).toFixed(1)}</td>
+                    <td>${(s.viscosity/s.count).toFixed(1)}</td>
                     <td>${(s.aroma_intensity/s.count).toFixed(1)}</td>
                     <td>${(s.complexity_aroma/s.count).toFixed(1)}</td>
                     <td>${(s.sharpness/s.count).toFixed(1)}</td>
@@ -282,7 +283,6 @@
                     <td>${(s.complexity_taste/s.count).toFixed(1)}</td>
                     <td>${(s.acidity/s.count).toFixed(1)}</td>
                     <td>${(s.aftertaste/s.count).toFixed(1)}</td>
-                    <td>${(s.viscosity/s.count).toFixed(1)}</td>
                 </tr>`;
             });
             document.getElementById('sakeTable').innerHTML = html || '<tr><td colspan="12">데이터 없음</td></tr>';
