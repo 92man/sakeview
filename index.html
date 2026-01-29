@@ -867,6 +867,14 @@
         let currentPhotoData = null;
         let editingNoteId = null;
 
+        // HTML 이스케이프 함수
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
         // 페이지 로드 시 인증 상태 확인
         async function checkAuth() {
             const { data: { session } } = await supabaseClient.auth.getSession();
@@ -1161,14 +1169,14 @@
             container.innerHTML = `
                 <div class="notes-list">
                     ${notes.map(note => `
-                        <div class="note-card" onclick="showDetail(${note.id})">
+                        <div class="note-card" onclick="showDetail('${note.id}')">
                             <div class="note-card-header">
                                 ${note.photo ? `<img src="${note.photo}" class="note-card-photo" alt="사케">` : ''}
                                 <div class="note-card-info">
-                                    <div class="note-card-name">${note.sake_name}</div>
+                                    <div class="note-card-name">${escapeHtml(note.sake_name)}</div>
                                     <div class="note-card-date">📅 ${note.date}</div>
                                     <div class="note-card-summary">
-                                        ${note.dominant_aroma ? note.dominant_aroma.substring(0, 80) + (note.dominant_aroma.length > 80 ? '...' : '') : ''}
+                                        ${note.dominant_aroma ? escapeHtml(note.dominant_aroma.substring(0, 80) + (note.dominant_aroma.length > 80 ? '...' : '')) : ''}
                                     </div>
                                 </div>
                             </div>
@@ -1199,7 +1207,7 @@
                 detailContent.innerHTML = `
                     ${note.photo ? `<img src="${note.photo}" class="detail-photo" alt="사케">` : ''}
                     
-                    <h2 style="color: #667eea; margin-bottom: 10px;">${note.sake_name}</h2>
+                    <h2 style="color: #667eea; margin-bottom: 10px;">${escapeHtml(note.sake_name)}</h2>
                     <p style="color: #666; margin-bottom: 30px;">📅 ${note.date}</p>
 
                     <div class="section-title">색조</div>
@@ -1332,26 +1340,26 @@
                     ${note.dominant_aroma ? `
                     <div class="detail-section">
                         <div class="detail-label">주체가 되는 향</div>
-                        <div class="detail-value">${note.dominant_aroma}</div>
+                        <div class="detail-value">${escapeHtml(note.dominant_aroma)}</div>
                     </div>
                     ` : ''}
                     ${note.dominant_taste ? `
                     <div class="detail-section">
                         <div class="detail-label">주체가 되는 맛</div>
-                        <div class="detail-value">${note.dominant_taste}</div>
+                        <div class="detail-value">${escapeHtml(note.dominant_taste)}</div>
                     </div>
                     ` : ''}
                     ${note.flavor_description ? `
                     <div class="detail-section">
                         <div class="detail-label">향미에 관한 서술</div>
-                        <div class="detail-value">${note.flavor_description}</div>
+                        <div class="detail-value">${escapeHtml(note.flavor_description)}</div>
                     </div>
                     ` : ''}
 
                     ${note.personal_review ? `
                     <div class="section-title">개인적인 감상평</div>
                     <div class="detail-section">
-                        <div class="detail-value">${note.personal_review}</div>
+                        <div class="detail-value">${escapeHtml(note.personal_review)}</div>
                     </div>
                     ` : ''}
 
