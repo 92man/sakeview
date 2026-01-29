@@ -2001,8 +2001,8 @@
                     </div>
                     ` : ''}
 
-                    <button class="edit-btn" onclick="editNote(${note.id})">✏️ 수정</button>
-                    <button class="delete-btn" onclick="deleteNote(${note.id})">🗑️ 삭제</button>
+                    <button class="edit-btn" onclick="editNote('${note.id}')">✏️ 수정</button>
+                    <button class="delete-btn" onclick="deleteNote('${note.id}')">🗑️ 삭제</button>
                 `;
             } catch (error) {
                 detailContent.innerHTML = `<div class="empty-state">
