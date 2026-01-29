@@ -118,7 +118,7 @@
         .theme-toggle {
             position: absolute;
             top: 0;
-            right: 0;
+            left: 0;
             background: rgba(255, 255, 255, 0.2);
             border: none;
             color: white;
@@ -146,12 +146,29 @@
         .user-info {
             position: absolute;
             top: 0;
-            left: 0;
+            right: 0;
             color: white;
             font-size: 0.9em;
             display: flex;
             align-items: center;
             gap: 10px;
+        }
+
+        .login-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .login-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
         }
 
         .logout-btn {
@@ -636,14 +653,15 @@
             </div>
         </div>
 
-        <!-- Main App (로그인 후 표시) -->
-        <div id="mainApp" style="display: none;">
+        <!-- Main App -->
+        <div id="mainApp">
             <div class="header">
-                <div class="user-info">
-                    <span id="userEmail"></span>
-                    <button class="logout-btn" onclick="handleLogout()">로그아웃</button>
-                </div>
                 <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="테마 전환">☀️</button>
+                <div class="user-info" id="userInfoSection">
+                    <span id="userEmail" style="display: none;"></span>
+                    <button class="logout-btn" id="logoutBtn" onclick="handleLogout()" style="display: none;">로그아웃</button>
+                    <button class="login-btn" id="loginBtn" onclick="showAuthContainer()">로그인</button>
+                </div>
                 <h1>🍶 사케 다이어리</h1>
                 <p>나만의 사케 기록을 남겨보세요</p>
             </div>
@@ -881,10 +899,10 @@
             
             if (session) {
                 currentUser = session.user;
-                showMainApp();
-            } else {
-                showAuthContainer();
             }
+            
+            // 항상 메인 앱 표시 (로그인 여부와 관계없이)
+            showMainApp();
         }
 
         // 인증 컨테이너 표시
@@ -897,8 +915,19 @@
         function showMainApp() {
             document.getElementById('authContainer').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
-            document.getElementById('userEmail').textContent = currentUser.email;
-            loadNotes();
+            
+            // 로그인 상태에 따라 버튼 표시/숨김
+            if (currentUser) {
+                document.getElementById('userEmail').style.display = 'inline';
+                document.getElementById('userEmail').textContent = currentUser.email;
+                document.getElementById('logoutBtn').style.display = 'inline-block';
+                document.getElementById('loginBtn').style.display = 'none';
+                loadNotes();
+            } else {
+                document.getElementById('userEmail').style.display = 'none';
+                document.getElementById('logoutBtn').style.display = 'none';
+                document.getElementById('loginBtn').style.display = 'inline-block';
+            }
         }
 
         // 로그인/회원가입 폼 전환
@@ -931,6 +960,7 @@
                 if (error) throw error;
 
                 currentUser = data.user;
+                alert('✅ 로그인 성공!');
                 showMainApp();
             } catch (error) {
                 errorDiv.textContent = '로그인 실패: ' + error.message;
@@ -971,7 +1001,8 @@
             if (confirm('로그아웃하시겠습니까?')) {
                 await supabaseClient.auth.signOut();
                 currentUser = null;
-                showAuthContainer();
+                alert('✅ 로그아웃되었습니다.');
+                showMainApp(); // 메인 앱으로 돌아가되 로그인 버튼 표시
             }
         }
 
@@ -1056,6 +1087,13 @@
         async function saveTastingNote(event) {
             event.preventDefault();
             
+            // 로그인 체크
+            if (!currentUser) {
+                alert('⚠️ 노트를 저장하려면 로그인이 필요합니다.');
+                showAuthContainer();
+                return;
+            }
+            
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
             submitBtn.textContent = '저장 중...';
@@ -1130,6 +1168,19 @@
         // 노트 목록 불러오기
         async function loadNotes() {
             const container = document.getElementById('notesList');
+            
+            // 로그인 체크
+            if (!currentUser) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🔒</div>
+                        <h3>로그인이 필요합니다</h3>
+                        <p>저장된 노트를 보려면 로그인해주세요.</p>
+                    </div>
+                `;
+                return;
+            }
+            
             container.innerHTML = '<div class="loading">노트를 불러오는 중</div>';
 
             try {
