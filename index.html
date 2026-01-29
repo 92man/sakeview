@@ -1919,7 +1919,7 @@
             if (type === 'privacy') {
                 html = `
                     <div style="max-width: 900px; margin: 0 auto; padding: 40px 20px;">
-                        <button class="back-btn" onclick="hidePolicyPage()">← 돌아가기</button>
+                        <button class="back-btn" data-action="back">← 돌아가기</button>
                         <h1 style="margin: 30px 0 20px; color: #2c5282;">개인정보처리방침</h1>
                         <div style="line-height: 1.8; color: #333;">
                             <p><strong>1. 수집하는 정보</strong></p>
@@ -1967,7 +1967,7 @@
             } else if (type === 'terms') {
                 html = `
                     <div style="max-width: 900px; margin: 0 auto; padding: 40px 20px;">
-                        <button class="back-btn" onclick="hidePolicyPage()">← 돌아가기</button>
+                        <button class="back-btn" data-action="back">← 돌아가기</button>
                         <h1 style="margin: 30px 0 20px; color: #2c5282;">이용약관</h1>
                         <div style="line-height: 1.8; color: #333;">
                             <p><strong>1. 서비스 개요</strong></p>
@@ -2020,7 +2020,7 @@
             } else if (type === 'about') {
                 html = `
                     <div style="max-width: 900px; margin: 0 auto; padding: 40px 20px;">
-                        <button class="back-btn" onclick="hidePolicyPage()">← 돌아가기</button>
+                        <button class="back-btn" data-action="back">← 돌아가기</button>
                         <div style="text-align: center; margin-bottom: 40px;">
                             <h1 style="font-size: 2.5em; margin: 20px 0; color: #2c5282;">🍶 사케를 보다</h1>
                             <p style="font-size: 1.2em; color: #666;">Sake View</p>
@@ -2079,7 +2079,7 @@
             } else if (type === 'guide') {
                 html = `
                     <div style="max-width: 1000px; margin: 0 auto; padding: 40px 20px;">
-                        <button class="back-btn" onclick="hidePolicyPage()">← 돌아가기</button>
+                        <button class="back-btn" data-action="back">← 돌아가기</button>
                         <div style="text-align: center; margin-bottom: 40px;">
                             <h1 style="font-size: 2.2em; margin: 20px 0; color: #2c5282;">🍶 사케 가이드</h1>
                             <p style="color: #666;">사케의 기초부터 테이스팅까지, 당신의 사케 여정을 위한 모든 것</p>
@@ -2201,6 +2201,13 @@
             content.innerHTML = html;
             document.querySelector('.tabs').style.display = 'none';
             document.getElementById('appFooter').style.display = 'none';
+            
+            // 돌아가기 버튼 event listener
+            const backBtn = content.querySelector('[data-action="back"]');
+            if (backBtn) {
+                backBtn.addEventListener('click', hidePolicyPage);
+            }
+            
             window.scrollTo(0, 0);
         }
 
