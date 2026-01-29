@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>사케를 보다 - 관리자 페이지</title>
+    <title>사케를 보다 - 관리자</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
@@ -14,13 +14,13 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: #f5f5f5;
             color: #333;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -37,7 +37,7 @@
         }
 
         .header h1 {
-            font-size: 2em;
+            font-size: 1.8em;
         }
 
         .logout-btn {
@@ -47,7 +47,6 @@
             padding: 10px 20px;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 1em;
             transition: all 0.3s;
         }
 
@@ -55,15 +54,7 @@
             background: rgba(255, 255, 255, 0.5);
         }
 
-        .admin-container {
-            display: none;
-        }
-
-        .admin-container.active {
-            display: block;
-        }
-
-        .login-container {
+        .login-page {
             max-width: 400px;
             margin: 100px auto;
             background: white;
@@ -72,28 +63,29 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        .login-container h2 {
-            margin-bottom: 20px;
+        .login-page h2 {
+            margin-bottom: 30px;
             color: #2c5282;
+            text-align: center;
         }
 
-        .login-form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+        .form-group {
+            margin-bottom: 15px;
         }
 
-        .login-form input {
+        .form-group input {
+            width: 100%;
             padding: 12px;
             border: 1px solid #ddd;
             border-radius: 6px;
             font-size: 1em;
         }
 
-        .login-form button {
+        .form-group button {
+            width: 100%;
+            padding: 12px;
             background: #2c5282;
             color: white;
-            padding: 12px;
             border: none;
             border-radius: 6px;
             font-size: 1em;
@@ -101,14 +93,22 @@
             transition: all 0.3s;
         }
 
-        .login-form button:hover {
+        .form-group button:hover {
             background: #1e3a5f;
         }
 
         .error {
             color: #e74c3c;
-            font-size: 0.9em;
             margin-top: 10px;
+            text-align: center;
+        }
+
+        .dashboard {
+            display: none;
+        }
+
+        .dashboard.active {
+            display: block;
         }
 
         .stats-grid {
@@ -156,7 +156,6 @@
         .chart-wrapper {
             position: relative;
             height: 400px;
-            margin-bottom: 30px;
         }
 
         .table-container {
@@ -165,6 +164,7 @@
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             overflow-x: auto;
+            margin-bottom: 30px;
         }
 
         .table-container h3 {
@@ -201,38 +201,7 @@
         .loading {
             text-align: center;
             padding: 40px;
-            color: #666;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #ddd;
-        }
-
-        .tab-btn {
-            padding: 12px 24px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1em;
-            color: #666;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s;
-        }
-
-        .tab-btn.active {
-            color: #2c5282;
-            border-bottom-color: #2c5282;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
+            color: #999;
         }
 
         @media (max-width: 768px) {
@@ -255,175 +224,137 @@
     </style>
 </head>
 <body>
-    <div class="login-container" id="loginContainer">
+    <!-- 로그인 페이지 -->
+    <div class="login-page" id="loginPage">
         <h2>🍶 관리자 로그인</h2>
-        <div class="login-form">
-            <input type="email" id="adminEmail" placeholder="관리자 이메일">
-            <input type="password" id="adminPassword" placeholder="비밀번호">
-            <button onclick="adminLogin()">로그인</button>
-            <div id="loginError" class="error"></div>
+        <div class="form-group">
+            <input type="email" id="email" placeholder="이메일" value="denturebur@naver.com">
         </div>
+        <div class="form-group">
+            <input type="password" id="password" placeholder="비밀번호">
+        </div>
+        <div class="form-group">
+            <button onclick="login()">로그인</button>
+        </div>
+        <div class="error" id="loginError"></div>
     </div>
 
-    <div class="admin-container" id="adminContainer">
+    <!-- 대시보드 -->
+    <div class="dashboard" id="dashboard">
         <div class="container">
             <div class="header">
-                <h1>📊 사케를 보다 - 관리자 대시보드</h1>
-                <button class="logout-btn" onclick="adminLogout()">로그아웃</button>
+                <h1>📊 관리자 대시보드</h1>
+                <button class="logout-btn" onclick="logout()">로그아웃</button>
             </div>
 
-            <div class="tabs">
-                <button class="tab-btn active" onclick="switchTab('overview')">개요</button>
-                <button class="tab-btn" onclick="switchTab('sake-stats')">사케 통계</button>
-                <button class="tab-btn" onclick="switchTab('users')">사용자 목록</button>
-                <button class="tab-btn" onclick="switchTab('notes')">노트 데이터</button>
-            </div>
-
-            <!-- 개요 탭 -->
-            <div class="tab-content active" id="overview">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <h3>총 사용자</h3>
-                        <div class="number" id="totalUsers">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <h3>총 테이스팅 노트</h3>
-                        <div class="number" id="totalNotes">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <h3>기록된 사케 종류</h3>
-                        <div class="number" id="totalSakes">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <h3>평균 평점</h3>
-                        <div class="number" id="avgRating">0.0</div>
-                    </div>
+            <!-- 통계 카드 -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>총 사용자</h3>
+                    <div class="number" id="totalUsers">0</div>
                 </div>
-
-                <div class="chart-container">
-                    <h3>📈 주별 노트 추가 현황</h3>
-                    <div class="chart-wrapper">
-                        <canvas id="weeklyChart"></canvas>
-                    </div>
+                <div class="stat-card">
+                    <h3>총 노트</h3>
+                    <div class="number" id="totalNotes">0</div>
                 </div>
-
-                <div class="chart-container">
-                    <h3>🍶 상위 10 사케</h3>
-                    <div class="chart-wrapper">
-                        <canvas id="topSakesChart"></canvas>
-                    </div>
+                <div class="stat-card">
+                    <h3>사케 종류</h3>
+                    <div class="number" id="totalSakes">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>평균 평점</h3>
+                    <div class="number" id="avgRating">0.0</div>
                 </div>
             </div>
 
-            <!-- 사케 통계 탭 -->
-            <div class="tab-content" id="sake-stats">
-                <div class="chart-container">
-                    <h3>평가 항목별 평균</h3>
-                    <div class="chart-wrapper">
-                        <canvas id="ratingChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="table-container">
-                    <h3>사케별 상세 통계</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>사케 이름</th>
-                                <th>기록 건수</th>
-                                <th>평균 색감도</th>
-                                <th>평균 투명도</th>
-                                <th>평균 향도</th>
-                                <th>평균 맛도</th>
-                            </tr>
-                        </thead>
-                        <tbody id="sakeStatsTable">
-                            <tr>
-                                <td colspan="6" style="text-align: center; color: #999;">데이터 로딩 중...</td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <!-- 주별 차트 -->
+            <div class="chart-container">
+                <h3>📈 주별 노트 추가</h3>
+                <div class="chart-wrapper">
+                    <canvas id="weeklyChart"></canvas>
                 </div>
             </div>
 
-            <!-- 사용자 목록 탭 -->
-            <div class="tab-content" id="users">
-                <div class="table-container">
-                    <h3>가입한 사용자 목록</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>이메일</th>
-                                <th>가입 날짜</th>
-                                <th>마지막 로그인</th>
-                                <th>노트 개수</th>
-                            </tr>
-                        </thead>
-                        <tbody id="usersTable">
-                            <tr>
-                                <td colspan="4" style="text-align: center; color: #999;">데이터 로딩 중...</td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <!-- 상위 사케 차트 -->
+            <div class="chart-container">
+                <h3>🏆 인기 사케 TOP 10</h3>
+                <div class="chart-wrapper">
+                    <canvas id="topSakesChart"></canvas>
                 </div>
             </div>
 
-            <!-- 노트 데이터 탭 -->
-            <div class="tab-content" id="notes">
-                <div class="table-container">
-                    <h3>최근 테이스팅 노트 (상위 50개)</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>날짜</th>
-                                <th>사용자 이메일</th>
-                                <th>사케 이름</th>
-                                <th>색감도</th>
-                                <th>투명도</th>
-                                <th>향도</th>
-                                <th>맛도</th>
-                            </tr>
-                        </thead>
-                        <tbody id="notesTable">
-                            <tr>
-                                <td colspan="7" style="text-align: center; color: #999;">데이터 로딩 중...</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <!-- 사케별 통계 테이블 -->
+            <div class="table-container">
+                <h3>사케별 상세 통계</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>사케 이름</th>
+                            <th>기록 건수</th>
+                            <th>평균 색감</th>
+                            <th>평균 투명도</th>
+                            <th>평균 향</th>
+                            <th>평균 맛</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sakeTable">
+                        <tr><td colspan="6" class="loading">데이터 로딩 중...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 최근 노트 테이블 -->
+            <div class="table-container">
+                <h3>최근 테이스팅 노트 (상위 30개)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>날짜</th>
+                            <th>사용자</th>
+                            <th>사케 이름</th>
+                            <th>색감</th>
+                            <th>투명도</th>
+                            <th>향</th>
+                            <th>맛</th>
+                        </tr>
+                    </thead>
+                    <tbody id="notesTable">
+                        <tr><td colspan="7" class="loading">데이터 로딩 중...</td></tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 
     <script>
+        // Supabase 설정
         const SUPABASE_URL = 'https://atgfrwohilgucmheyuzu.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0Z2Zyd29oaWxndWNtaGV5dXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk2NjAyNTUsImV4cCI6MjA4NTIzNjI1NX0.CoyHTds_3BRl5p6wAehlqaevrdkqp1BzymnTnqhzy2Y';
-        const ADMIN_EMAIL = 'denturebur@naver.com'; // 관리자 이메일 (본인 이메일로 변경)
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0Z2Zyd29oaWxndWNtaGV5dXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk2NjAyNTUsImV4cCI6MjA4NTIzNjI1NX0.CoyHTds_3BRl5p6wAehlqaevrdkqp1BzymnTnqhzy2Y';
+        const ADMIN_EMAIL = 'denturebur@naver.com';
 
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        let currentAdmin = null;
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         let charts = {};
 
-        // 초기 로드
-        document.addEventListener('DOMContentLoaded', async () => {
-            await checkAdminAuth();
+        // 초기화
+        window.addEventListener('load', async () => {
+            const session = await supabase.auth.getSession();
+            if (session.data.session && session.data.session.user.email === ADMIN_EMAIL) {
+                showDashboard();
+                await loadData();
+            } else {
+                showLogin();
+            }
         });
 
-        async function checkAdminAuth() {
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            if (session && session.user.email === ADMIN_EMAIL) {
-                currentAdmin = session.user;
-                showAdminDashboard();
-                await loadAllData();
-            } else {
-                showLoginForm();
-            }
-        }
-
-        async function adminLogin() {
-            const email = document.getElementById('adminEmail').value;
-            const password = document.getElementById('adminPassword').value;
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
             const errorDiv = document.getElementById('loginError');
+
+            if (!email || !password) {
+                errorDiv.textContent = '이메일과 비밀번호를 입력하세요.';
+                return;
+            }
 
             if (email !== ADMIN_EMAIL) {
                 errorDiv.textContent = '관리자만 접근 가능합니다.';
@@ -431,108 +362,154 @@
             }
 
             try {
-                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                const { data, error } = await supabase.auth.signInWithPassword({
                     email,
                     password
                 });
 
                 if (error) throw error;
 
-                currentAdmin = data.user;
-                showAdminDashboard();
-                await loadAllData();
+                showDashboard();
+                await loadData();
             } catch (error) {
                 errorDiv.textContent = '로그인 실패: ' + error.message;
             }
         }
 
-        async function adminLogout() {
-            await supabaseClient.auth.signOut();
-            currentAdmin = null;
-            showLoginForm();
+        async function logout() {
+            await supabase.auth.signOut();
+            showLogin();
         }
 
-        function showLoginForm() {
-            document.getElementById('loginContainer').style.display = 'block';
-            document.getElementById('adminContainer').classList.remove('active');
+        function showLogin() {
+            document.getElementById('loginPage').style.display = 'block';
+            document.getElementById('dashboard').classList.remove('active');
         }
 
-        function showAdminDashboard() {
-            document.getElementById('loginContainer').style.display = 'none';
-            document.getElementById('adminContainer').classList.add('active');
+        function showDashboard() {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('dashboard').classList.add('active');
         }
 
-        function switchTab(tabName) {
-            // 모든 탭 콘텐츠 숨기기
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // 모든 탭 버튼 비활성화
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-
-            // 선택된 탭 표시
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
-        }
-
-        async function loadAllData() {
+        async function loadData() {
             try {
-                await loadStats();
-                await loadSakeStats();
-                await loadUsers();
-                await loadNotes();
+                // 노트 데이터 가져오기
+                const { data: notes } = await supabase
+                    .from('tasting_notes')
+                    .select('*');
+
+                if (!notes) {
+                    console.log('노트 데이터 없음');
+                    return;
+                }
+
+                // 통계 계산
+                const totalNotes = notes.length;
+                const uniqueUsers = new Set(notes.map(n => n.user_email)).size;
+                const uniqueSakes = new Set(notes.map(n => n.sake_name)).size;
+
+                let avgRating = 0;
+                if (totalNotes > 0) {
+                    const totalRating = notes.reduce((sum, n) => {
+                        return sum + ((n.color_rating || 0) + (n.transparency_rating || 0) + 
+                                      (n.aroma_rating || 0) + (n.taste_rating || 0)) / 4;
+                    }, 0);
+                    avgRating = (totalRating / totalNotes).toFixed(1);
+                }
+
+                document.getElementById('totalUsers').textContent = uniqueUsers;
+                document.getElementById('totalNotes').textContent = totalNotes;
+                document.getElementById('totalSakes').textContent = uniqueSakes;
+                document.getElementById('avgRating').textContent = avgRating;
+
+                // 차트 그리기
+                drawWeeklyChart(notes);
+                drawTopSakesChart(notes);
+                drawSakeStats(notes);
+                drawRecentNotes(notes);
             } catch (error) {
                 console.error('데이터 로드 실패:', error);
             }
         }
 
-        async function loadStats() {
-            // 총 사용자
-            const { data: users } = await supabaseClient.auth.admin.listUsers();
-            const totalUsers = users?.users?.length || 0;
+        function drawWeeklyChart(notes) {
+            const ctx = document.getElementById('weeklyChart').getContext('2d');
+            const weeklyData = {};
 
-            // 총 노트
-            const { data: notes, count: totalNotes } = await supabaseClient
-                .from('tasting_notes')
-                .select('*', { count: 'exact' });
+            notes.forEach(note => {
+                const date = new Date(note.created_at);
+                const weekKey = `${date.getFullYear()}-W${Math.ceil((date.getDate() + new Date(date.getFullYear(), date.getMonth(), 1).getDay()) / 7)}`;
+                weeklyData[weekKey] = (weeklyData[weekKey] || 0) + 1;
+            });
 
-            // 기록된 사케 종류
-            const uniqueSakes = new Set(notes?.map(n => n.sake_name) || []);
-            const totalSakes = uniqueSakes.size;
+            if (charts.weekly) charts.weekly.destroy();
 
-            // 평균 평점
-            let avgRating = 0;
-            if (notes && notes.length > 0) {
-                const totalRating = notes.reduce((sum, n) => {
-                    return sum + ((n.color_rating || 0) + (n.transparency_rating || 0) + 
-                                  (n.aroma_rating || 0) + (n.taste_rating || 0)) / 4;
-                }, 0);
-                avgRating = (totalRating / notes.length).toFixed(1);
-            }
+            const sortedWeeks = Object.keys(weeklyData).sort().slice(-12);
+            const data = sortedWeeks.map(w => weeklyData[w]);
 
-            document.getElementById('totalUsers').textContent = totalUsers;
-            document.getElementById('totalNotes').textContent = totalNotes || 0;
-            document.getElementById('totalSakes').textContent = totalSakes;
-            document.getElementById('avgRating').textContent = avgRating;
-
-            // 주별 노트 차트
-            await drawWeeklyChart(notes);
-
-            // 상위 10 사케 차트
-            await drawTopSakesChart(notes);
+            charts.weekly = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: sortedWeeks,
+                    datasets: [{
+                        label: '추가된 노트',
+                        data: data,
+                        borderColor: '#2c5282',
+                        backgroundColor: 'rgba(44, 82, 130, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { stepSize: 1 }
+                        }
+                    }
+                }
+            });
         }
 
-        async function loadSakeStats() {
-            const { data: notes } = await supabaseClient
-                .from('tasting_notes')
-                .select('*');
+        function drawTopSakesChart(notes) {
+            const ctx = document.getElementById('topSakesChart').getContext('2d');
+            const sakeCount = {};
 
+            notes.forEach(note => {
+                sakeCount[note.sake_name] = (sakeCount[note.sake_name] || 0) + 1;
+            });
+
+            const sorted = Object.entries(sakeCount)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10);
+
+            if (charts.topSakes) charts.topSakes.destroy();
+
+            charts.topSakes = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: sorted.map(([s]) => s.substring(0, 20)),
+                    datasets: [{
+                        data: sorted.map(([, c]) => c),
+                        backgroundColor: [
+                            '#2c5282', '#8b4513', '#e74c3c', '#3498db', '#f39c12',
+                            '#27ae60', '#9b59b6', '#1abc9c', '#e67e22', '#34495e'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        function drawSakeStats(notes) {
             const sakeStats = {};
 
-            (notes || []).forEach(note => {
+            notes.forEach(note => {
                 if (!sakeStats[note.sake_name]) {
                     sakeStats[note.sake_name] = {
                         count: 0,
@@ -549,198 +526,52 @@
                 sakeStats[note.sake_name].tasteSum += note.taste_rating || 0;
             });
 
-            // 테이블 업데이트
-            const tbody = document.getElementById('sakeStatsTable');
+            const tbody = document.getElementById('sakeTable');
             tbody.innerHTML = '';
 
-            Object.entries(sakeStats).sort((a, b) => b[1].count - a[1].count).forEach(([sake, stats]) => {
-                const row = tbody.insertRow();
-                row.innerHTML = `
-                    <td>${sake}</td>
-                    <td>${stats.count}</td>
-                    <td>${(stats.colorSum / stats.count).toFixed(1)}</td>
-                    <td>${(stats.transparencySum / stats.count).toFixed(1)}</td>
-                    <td>${(stats.aromaSum / stats.count).toFixed(1)}</td>
-                    <td>${(stats.tasteSum / stats.count).toFixed(1)}</td>
-                `;
-            });
+            Object.entries(sakeStats)
+                .sort((a, b) => b[1].count - a[1].count)
+                .forEach(([sake, stats]) => {
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td>${sake}</td>
+                        <td>${stats.count}</td>
+                        <td>${(stats.colorSum / stats.count).toFixed(1)}</td>
+                        <td>${(stats.transparencySum / stats.count).toFixed(1)}</td>
+                        <td>${(stats.aromaSum / stats.count).toFixed(1)}</td>
+                        <td>${(stats.tasteSum / stats.count).toFixed(1)}</td>
+                    `;
+                });
 
-            // 평가 항목별 평균 차트
-            await drawRatingChart(sakeStats);
+            if (tbody.children.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="loading">데이터 없음</td></tr>';
+            }
         }
 
-        async function loadUsers() {
-            const { data: notes } = await supabaseClient
-                .from('tasting_notes')
-                .select('user_email');
-
-            const userNoteCount = {};
-            (notes || []).forEach(note => {
-                userNoteCount[note.user_email] = (userNoteCount[note.user_email] || 0) + 1;
-            });
-
-            // Supabase Auth의 사용자 목록은 관리자 API로만 가능하므로
-            // 대신 tasting_notes에서 고유한 user_email을 사용
-            const users = [...new Set(notes?.map(n => n.user_email) || [])];
-
-            const tbody = document.getElementById('usersTable');
-            tbody.innerHTML = '';
-
-            users.forEach(userEmail => {
-                const row = tbody.insertRow();
-                row.innerHTML = `
-                    <td>${userEmail}</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>${userNoteCount[userEmail] || 0}</td>
-                `;
-            });
-        }
-
-        async function loadNotes() {
-            const { data: notes } = await supabaseClient
-                .from('tasting_notes')
-                .select('*')
-                .order('created_at', { ascending: false })
-                .limit(50);
-
+        function drawRecentNotes(notes) {
             const tbody = document.getElementById('notesTable');
             tbody.innerHTML = '';
 
-            (notes || []).forEach(note => {
-                const date = new Date(note.created_at).toLocaleDateString('ko-KR');
-                const row = tbody.insertRow();
-                row.innerHTML = `
-                    <td>${date}</td>
-                    <td>${note.user_email}</td>
-                    <td>${note.sake_name}</td>
-                    <td>${note.color_rating || '-'}</td>
-                    <td>${note.transparency_rating || '-'}</td>
-                    <td>${note.aroma_rating || '-'}</td>
-                    <td>${note.taste_rating || '-'}</td>
-                `;
-            });
-        }
+            notes
+                .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+                .slice(0, 30)
+                .forEach(note => {
+                    const date = new Date(note.created_at).toLocaleDateString('ko-KR');
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td>${date}</td>
+                        <td>${note.user_email}</td>
+                        <td>${note.sake_name}</td>
+                        <td>${note.color_rating || '-'}</td>
+                        <td>${note.transparency_rating || '-'}</td>
+                        <td>${note.aroma_rating || '-'}</td>
+                        <td>${note.taste_rating || '-'}</td>
+                    `;
+                });
 
-        async function drawWeeklyChart(notes) {
-            const ctx = document.getElementById('weeklyChart').getContext('2d');
-            
-            // 최근 12주 데이터
-            const weeklyData = {};
-            const now = new Date();
-            
-            (notes || []).forEach(note => {
-                const noteDate = new Date(note.created_at);
-                const weekKey = `${noteDate.getFullYear()}-W${Math.ceil((noteDate.getDate() + new Date(noteDate.getFullYear(), noteDate.getMonth(), 1).getDay()) / 7)}`;
-                weeklyData[weekKey] = (weeklyData[weekKey] || 0) + 1;
-            });
-
-            if (charts.weekly) charts.weekly.destroy();
-            
-            charts.weekly = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: Object.keys(weeklyData).slice(-12),
-                    datasets: [{
-                        label: '추가된 노트',
-                        data: Object.values(weeklyData).slice(-12),
-                        borderColor: '#2c5282',
-                        backgroundColor: 'rgba(44, 82, 130, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: true
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                stepSize: 1
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        async function drawTopSakesChart(notes) {
-            const ctx = document.getElementById('topSakesChart').getContext('2d');
-            
-            const sakeCount = {};
-            (notes || []).forEach(note => {
-                sakeCount[note.sake_name] = (sakeCount[note.sake_name] || 0) + 1;
-            });
-
-            const sorted = Object.entries(sakeCount)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 10);
-
-            if (charts.topSakes) charts.topSakes.destroy();
-            
-            charts.topSakes = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: sorted.map(([sake]) => sake.substring(0, 15) + (sake.length > 15 ? '...' : '')),
-                    datasets: [{
-                        data: sorted.map(([, count]) => count),
-                        backgroundColor: [
-                            '#2c5282', '#8b4513', '#e74c3c', '#3498db', '#f39c12',
-                            '#27ae60', '#9b59b6', '#1abc9c', '#e67e22', '#34495e'
-                        ]
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'right'
-                        }
-                    }
-                }
-            });
-        }
-
-        async function drawRatingChart(sakeStats) {
-            const ctx = document.getElementById('ratingChart').getContext('2d');
-            
-            const avgColor = Object.values(sakeStats).reduce((sum, s) => sum + s.colorSum / s.count, 0) / Object.keys(sakeStats).length;
-            const avgTransparency = Object.values(sakeStats).reduce((sum, s) => sum + s.transparencySum / s.count, 0) / Object.keys(sakeStats).length;
-            const avgAroma = Object.values(sakeStats).reduce((sum, s) => sum + s.aromaSum / s.count, 0) / Object.keys(sakeStats).length;
-            const avgTaste = Object.values(sakeStats).reduce((sum, s) => sum + s.tasteSum / s.count, 0) / Object.keys(sakeStats).length;
-
-            if (charts.rating) charts.rating.destroy();
-            
-            charts.rating = new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: ['색감도', '투명도', '향도', '맛도'],
-                    datasets: [{
-                        label: '평균 평가',
-                        data: [avgColor, avgTransparency, avgAroma, avgTaste],
-                        borderColor: '#2c5282',
-                        backgroundColor: 'rgba(44, 82, 130, 0.2)',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        r: {
-                            beginAtZero: true,
-                            max: 5
-                        }
-                    }
-                }
-            });
+            if (tbody.children.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="loading">데이터 없음</td></tr>';
+            }
         }
     </script>
 </body>
