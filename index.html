@@ -1107,11 +1107,11 @@
         <!-- Main App -->
         <div id="mainApp">
             <div class="header">
-                <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="테마 전환">☀️</button>
+                <button class="theme-toggle" id="themeToggle" title="테마 전환">☀️</button>
                 <div class="user-info" id="userInfoSection">
                     <span id="userEmail" style="display: none;"></span>
-                    <button class="logout-btn" id="logoutBtn" onclick="handleLogout()" style="display: none;">로그아웃</button>
-                    <button class="login-btn" id="loginBtn" onclick="showAuthContainer()">로그인</button>
+                    <button class="logout-btn" id="logoutBtn" style="display: none;">로그아웃</button>
+                    <button class="login-btn" id="loginBtn">로그인</button>
                 </div>
                 <h1>사케를 보다 (Sake View)</h1>
                 <p>나만의 사케 테이스팅 노트를 남겨보세요</p>
@@ -2476,8 +2476,12 @@
                 document.getElementById('newView').style.display = 'block';
                 document.querySelector('.tab:first-child').classList.add('active');
             }
+            
+            // 이벤트 리스너 바인딩
+            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+            document.getElementById('loginBtn').addEventListener('click', showAuthContainer);
+            document.getElementById('logoutBtn').addEventListener('click', handleLogout);
         });
     </script>
 </body>
 </html>
-       
