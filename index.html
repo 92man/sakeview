@@ -1929,26 +1929,66 @@
 
         /* Footer Navigation Grid */
         .footer-nav {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 40px;
-            text-align: left;
+            display: flex;
+            justify-content: center;
+            gap: 60px;
             margin-bottom: 40px;
         }
 
         .footer-nav-section {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+            position: relative;
         }
 
         .footer-nav-title {
             color: var(--accent-gold);
-            font-size: 0.85em;
+            font-size: 0.9em;
             font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 8px;
+            letter-spacing: 1px;
+            cursor: pointer;
+            padding: 12px 20px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .footer-nav-title::after {
+            content: '▼';
+            font-size: 0.6em;
+            transition: transform 0.3s ease;
+        }
+
+        .footer-nav-section:hover .footer-nav-title {
+            color: var(--text-primary);
+            background: var(--accent-gold);
+            border-radius: 8px;
+        }
+
+        .footer-nav-section:hover .footer-nav-title::after {
+            transform: rotate(180deg);
+        }
+
+        .footer-dropdown {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--card-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 12px 0;
+            min-width: 180px;
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .footer-nav-section:hover .footer-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(-10px);
         }
 
         .footer-link {
@@ -1957,30 +1997,15 @@
             font-size: 0.9em;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.4s ease;
-            display: inline-block;
+            transition: all 0.3s ease;
+            display: block;
+            padding: 10px 20px;
             white-space: nowrap;
-            position: relative;
-            padding-bottom: 2px;
-        }
-
-        .footer-link::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 1px;
-            background: var(--accent-gold);
-            transition: width 0.3s ease;
         }
 
         .footer-link:hover {
             color: var(--accent-gold);
-        }
-
-        .footer-link:hover::after {
-            width: 100%;
+            background: var(--bg-tertiary);
         }
 
         .footer-divider-line {
@@ -2026,18 +2051,24 @@
 
         @media (max-width: 768px) {
             .footer-nav {
-                grid-template-columns: 1fr;
-                gap: 32px;
-                text-align: center;
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 10px;
+                justify-content: center;
             }
 
-            .footer-nav-section {
-                align-items: center;
+            .footer-nav-title {
+                font-size: 0.8em;
+                padding: 10px 14px;
             }
 
-            .footer-link::after {
-                left: 50%;
-                transform: translateX(-50%);
+            .footer-dropdown {
+                min-width: 160px;
+            }
+
+            .footer-link {
+                font-size: 0.85em;
+                padding: 8px 16px;
             }
         }
 
@@ -2688,24 +2719,30 @@
                     <div class="footer-nav">
                         <div class="footer-nav-section">
                             <h4 class="footer-nav-title">서비스</h4>
-                            <a href="#" class="footer-link" onclick="showPolicyPage('about'); return false;">소개</a>
-                            <a href="#" class="footer-link" onclick="showPolicyPage('howto'); return false;">사용법 가이드</a>
-                            <a href="#" class="footer-link" onclick="showPolicyPage('contact'); return false;">문의하기</a>
+                            <div class="footer-dropdown">
+                                <a href="#" class="footer-link" onclick="showPolicyPage('about'); return false;">소개</a>
+                                <a href="#" class="footer-link" onclick="showPolicyPage('howto'); return false;">사용법 가이드</a>
+                                <a href="#" class="footer-link" onclick="showPolicyPage('contact'); return false;">문의하기</a>
+                            </div>
                         </div>
                         <div class="footer-nav-section">
                             <h4 class="footer-nav-title">사케 가이드</h4>
-                            <a href="#" class="footer-link" onclick="showPolicyPage('guide'); return false;">사케 종류</a>
-                            <a href="#" class="footer-link" onclick="showPolicyPage('regions'); return false;">지역별 사케</a>
-                            <a href="#" class="footer-link" onclick="showPolicyPage('brewing'); return false;">양조 과정</a>
-                            <a href="#" class="footer-link" onclick="showPolicyPage('etiquette'); return false;">사케 에티켓</a>
-                            <a href="#" class="footer-link" onclick="showPolicyPage('recommendations'); return false;">추천 사케</a>
-                            <a href="#" class="footer-link" onclick="showPolicyPage('glossary'); return false;">용어사전</a>
-                            <a href="#" class="footer-link" onclick="showPolicyPage('faq'); return false;">자주 묻는 질문</a>
+                            <div class="footer-dropdown">
+                                <a href="#" class="footer-link" onclick="showPolicyPage('guide'); return false;">사케 종류</a>
+                                <a href="#" class="footer-link" onclick="showPolicyPage('regions'); return false;">지역별 사케</a>
+                                <a href="#" class="footer-link" onclick="showPolicyPage('brewing'); return false;">양조 과정</a>
+                                <a href="#" class="footer-link" onclick="showPolicyPage('etiquette'); return false;">사케 에티켓</a>
+                                <a href="#" class="footer-link" onclick="showPolicyPage('recommendations'); return false;">추천 사케</a>
+                                <a href="#" class="footer-link" onclick="showPolicyPage('glossary'); return false;">용어사전</a>
+                                <a href="#" class="footer-link" onclick="showPolicyPage('faq'); return false;">자주 묻는 질문</a>
+                            </div>
                         </div>
                         <div class="footer-nav-section">
                             <h4 class="footer-nav-title">법적 고지</h4>
-                            <a href="#" class="footer-link" onclick="showPolicyPage('privacy'); return false;">개인정보처리방침</a>
-                            <a href="#" class="footer-link" onclick="showPolicyPage('terms'); return false;">이용약관</a>
+                            <div class="footer-dropdown">
+                                <a href="#" class="footer-link" onclick="showPolicyPage('privacy'); return false;">개인정보처리방침</a>
+                                <a href="#" class="footer-link" onclick="showPolicyPage('terms'); return false;">이용약관</a>
+                            </div>
                         </div>
                     </div>
 
