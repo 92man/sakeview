@@ -55,6 +55,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://sakeview.pages.dev/#kikizakeshi</loc>
+    <lastmod>2026-01-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://sakeview.pages.dev/#howto</loc>
     <lastmod>2026-01-30</lastmod>
     <changefreq>monthly</changefreq>

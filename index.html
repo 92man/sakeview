@@ -2834,6 +2834,12 @@
                     </div>
                 </div>
                 <div class="top-nav-section">
+                    <h4 class="top-nav-title">키키자케시</h4>
+                    <div class="top-nav-dropdown">
+                        <a href="#" class="top-nav-link" onclick="showPolicyPage('kikizakeshi'); return false;">키키자케시란?</a>
+                    </div>
+                </div>
+                <div class="top-nav-section">
                     <h4 class="top-nav-title">법적 고지</h4>
                     <div class="top-nav-dropdown">
                         <a href="#" class="top-nav-link" onclick="showPolicyPage('privacy'); return false;">개인정보처리방침</a>
@@ -5453,6 +5459,161 @@
 
                             <p style="margin-top: 50px; color: var(--text-muted); font-size: 0.9em; text-align: center;">
                                 ※ 가격은 한국 시장 기준 참고가이며 변동될 수 있습니다.<br>
+                                마지막 업데이트: ${new Date().toLocaleDateString('ko-KR')}
+                            </p>
+                        </div>
+                    </div>
+                `;
+            } else if (type === 'kikizakeshi') {
+                html = `
+                    <div style="max-width: 1000px; margin: 0 auto; padding: 20px;">
+                        <div style="text-align: center; margin-bottom: 50px;">
+                            <h1 style="font-size: 2.5em; margin: 20px 0; color: var(--accent-primary); font-family: 'Cormorant Garamond', serif;">키키자케시</h1>
+                            <p style="color: var(--text-muted);">사케의 매력을 깨워주는 마법사, Kikizake-shi</p>
+                            <div style="width: 60px; height: 2px; background: linear-gradient(90deg, var(--accent-gold), var(--accent-rose)); margin: 20px auto;"></div>
+                        </div>
+
+                        <div style="line-height: 1.9; color: var(--text-primary);">
+                            <!-- 인트로 -->
+                            <div style="background: var(--bg-tertiary); padding: 40px; border-radius: 20px; margin-bottom: 50px; border-left: 4px solid var(--accent-gold);">
+                                <p style="font-size: 1.1em; color: var(--text-secondary); margin-bottom: 15px;">
+                                    이자카야나 일식 레스토랑에서 어떤 사케를 마실지 몰라 메뉴판만 한참 보신 적 있나요?
+                                </p>
+                                <p style="font-size: 1.1em; color: var(--text-secondary);">
+                                    이럴 때 구세주처럼 나타나 나에게 딱 맞는 사케를 골라주는 전문가, 바로 <strong style="color: var(--accent-gold);">'키키자케시(利き酒師)'</strong>입니다.
+                                </p>
+                            </div>
+
+                            <!-- 1. 키키자케시는 어떤 일을 하나요? -->
+                            <div style="background: var(--card-bg); padding: 35px; border-radius: 20px; margin-bottom: 40px; border: 1px solid var(--border-light);">
+                                <h2 style="color: var(--accent-primary); margin-bottom: 25px; font-family: 'Cormorant Garamond', serif; display: flex; align-items: center; gap: 12px;">
+                                    <span style="font-size: 1.5em;">🎓</span> 1. 키키자케시는 어떤 일을 하나요?
+                                </h2>
+                                <p style="font-size: 1.05em; margin-bottom: 20px;">
+                                    한마디로 <strong style="color: var(--accent-gold);">'사케 소믈리에'</strong>입니다.
+                                    일본주(사케)의 재료와 제조 공정을 파악해 맛을 감별하고, 고객의 취향과 음식에 가장 잘 어울리는 한 잔을 제안하는 서비스 전문가예요.
+                                </p>
+                                <p style="font-size: 1.05em; margin-bottom: 25px; padding: 20px; background: var(--bg-tertiary); border-radius: 12px; text-align: center;">
+                                    단순히 지식을 뽐내는 것이 아니라, <strong style="color: var(--accent-rose);">'가장 맛있는 순간'</strong>을 설계합니다.
+                                </p>
+
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                                    <div style="background: var(--bg-tertiary); padding: 25px; border-radius: 16px;">
+                                        <h4 style="color: var(--accent-gold); margin-bottom: 12px;">🌡️ 온도 조절</h4>
+                                        <p style="color: var(--text-secondary); font-size: 0.95em;">차갑게 마실지(히야), 따뜻하게 데울지(칸) 결정</p>
+                                    </div>
+                                    <div style="background: var(--bg-tertiary); padding: 25px; border-radius: 16px;">
+                                        <h4 style="color: var(--accent-gold); margin-bottom: 12px;">🍶 기물 선택</h4>
+                                        <p style="color: var(--text-secondary); font-size: 0.95em;">사케의 향을 극대화할 잔(도자기, 유리 등)을 매칭</p>
+                                    </div>
+                                    <div style="background: var(--bg-tertiary); padding: 25px; border-radius: 16px;">
+                                        <h4 style="color: var(--accent-gold); margin-bottom: 12px;">🍣 페어링</h4>
+                                        <p style="color: var(--text-secondary); font-size: 0.95em;">요리의 풍미를 살려주는 최적의 사케 추천</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 2. 사케의 4가지 스타일 -->
+                            <div style="background: var(--card-bg); padding: 35px; border-radius: 20px; margin-bottom: 40px; border: 1px solid var(--border-light);">
+                                <h2 style="color: var(--accent-primary); margin-bottom: 25px; font-family: 'Cormorant Garamond', serif; display: flex; align-items: center; gap: 12px;">
+                                    <span style="font-size: 1.5em;">🎯</span> 2. 키키자케시가 분류하는 사케의 4가지 얼굴
+                                </h2>
+                                <p style="margin-bottom: 25px; color: var(--text-secondary);">
+                                    사케는 향과 맛에 따라 크게 4가지 스타일로 나뉩니다. 키키자케시는 이 분류법을 통해 고객의 취향을 정확히 저격하죠!
+                                </p>
+
+                                <div style="overflow-x: auto;">
+                                    <table style="width: 100%; border-collapse: collapse; background: var(--bg-tertiary); border-radius: 16px; overflow: hidden;">
+                                        <thead>
+                                            <tr style="background: linear-gradient(135deg, var(--accent-gold), var(--accent-rose)); color: white;">
+                                                <th style="padding: 18px 15px; text-align: left; font-weight: 600;">유형</th>
+                                                <th style="padding: 18px 15px; text-align: left; font-weight: 600;">특징</th>
+                                                <th style="padding: 18px 15px; text-align: left; font-weight: 600;">한마디 요약</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody style="color: var(--text-secondary);">
+                                            <tr style="border-bottom: 1px solid var(--border-light);">
+                                                <td style="padding: 18px 15px;"><strong style="color: var(--accent-gold);">쿤슈(薫酒)</strong></td>
+                                                <td style="padding: 18px 15px;">과일과 꽃향이 화려하고 경쾌한 맛</td>
+                                                <td style="padding: 18px 15px;">"화사하고 향긋한 사케"</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px solid var(--border-light);">
+                                                <td style="padding: 18px 15px;"><strong style="color: var(--accent-gold);">소슈(爽酒)</strong></td>
+                                                <td style="padding: 18px 15px;">깔끔하고 청량감이 느껴지는 가벼운 맛</td>
+                                                <td style="padding: 18px 15px;">"시원하고 깔끔한 사케"</td>
+                                            </tr>
+                                            <tr style="border-bottom: 1px solid var(--border-light);">
+                                                <td style="padding: 18px 15px;"><strong style="color: var(--accent-gold);">준슈(醇酒)</strong></td>
+                                                <td style="padding: 18px 15px;">쌀 본연의 감칠맛과 묵직한 바디감</td>
+                                                <td style="padding: 18px 15px;">"진하고 구수한 사케"</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 18px 15px;"><strong style="color: var(--accent-gold);">주쿠슈(熟酒)</strong></td>
+                                                <td style="padding: 18px 15px;">잘 익은 과일과 향신료의 복합적인 풍미</td>
+                                                <td style="padding: 18px 15px;">"깊고 중후한 매력의 사케"</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- 3. 한국에서 키키자케시가 되는 방법 -->
+                            <div style="background: var(--card-bg); padding: 35px; border-radius: 20px; margin-bottom: 40px; border: 1px solid var(--border-light);">
+                                <h2 style="color: var(--accent-primary); margin-bottom: 25px; font-family: 'Cormorant Garamond', serif; display: flex; align-items: center; gap: 12px;">
+                                    <span style="font-size: 1.5em;">🇰🇷</span> 3. 한국에서 키키자케시가 되는 방법
+                                </h2>
+                                <p style="margin-bottom: 25px; color: var(--text-secondary);">
+                                    일본에 직접 가지 않아도 한국에서 세계적으로 공인되는 <strong>SSI(일본주서비스연구회)</strong> 인증 키키자케시 자격증을 취득할 수 있습니다.
+                                </p>
+
+                                <div style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(190, 140, 124, 0.1)); padding: 30px; border-radius: 16px; border: 1px solid var(--accent-gold); margin-bottom: 25px;">
+                                    <h3 style="color: var(--accent-gold); margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                                        🏫 숭실대학교 키키자케시 교육 과정
+                                    </h3>
+                                    <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                                        가장 대표적이고 공신력 있는 교육 기관이 바로 <strong>숭실대학교</strong>입니다.
+                                    </p>
+                                </div>
+
+                                <div style="display: grid; gap: 15px;">
+                                    <div style="background: var(--bg-tertiary); padding: 20px; border-radius: 12px; display: flex; gap: 15px; align-items: start;">
+                                        <span style="font-size: 1.5em;">📚</span>
+                                        <div>
+                                            <strong style="color: var(--accent-primary);">교육 과정</strong>
+                                            <p style="color: var(--text-secondary); margin-top: 5px; font-size: 0.95em;">숭실대학교 내 전문 교육 과정을 통해 이론부터 실습까지 체계적으로 배웁니다.</p>
+                                        </div>
+                                    </div>
+                                    <div style="background: var(--bg-tertiary); padding: 20px; border-radius: 12px; display: flex; gap: 15px; align-items: start;">
+                                        <span style="font-size: 1.5em;">✨</span>
+                                        <div>
+                                            <strong style="color: var(--accent-primary);">특징</strong>
+                                            <p style="color: var(--text-secondary); margin-top: 5px; font-size: 0.95em;">일본 현지와 동일한 커리큘럼을 한국어로 수강하고 시험까지 치를 수 있어 매우 효율적입니다.</p>
+                                        </div>
+                                    </div>
+                                    <div style="background: var(--bg-tertiary); padding: 20px; border-radius: 12px; display: flex; gap: 15px; align-items: start;">
+                                        <span style="font-size: 1.5em;">👥</span>
+                                        <div>
+                                            <strong style="color: var(--accent-primary);">추천 대상</strong>
+                                            <p style="color: var(--text-secondary); margin-top: 5px; font-size: 0.95em;">사케를 깊이 있게 즐기고 싶은 일반인부터, 전문성을 갖추고 싶은 주류/외식업계 종사자까지 모두에게 열려 있습니다.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 4. 왜 키키자케시가 매력적일까요? -->
+                            <div style="background: linear-gradient(135deg, var(--accent-gold), var(--accent-rose)); padding: 40px; border-radius: 20px; color: white; text-align: center;">
+                                <h2 style="margin-bottom: 20px; font-family: 'Cormorant Garamond', serif; font-size: 1.6em;">
+                                    🍶 왜 키키자케시가 매력적일까요?
+                                </h2>
+                                <p style="font-size: 1.05em; opacity: 0.95; line-height: 1.8; max-width: 700px; margin: 0 auto;">
+                                    사케 한 잔에 담긴 쌀의 풍미와 양조장의 철학을 이해하면,<br>
+                                    술자리는 단순한 모임을 넘어 <strong>하나의 문화적 체험</strong>이 됩니다.<br><br>
+                                    소중한 사람들에게 음식에 딱 맞는 사케를 추천해 주며<br>
+                                    즐거움을 선사하는 전문가의 삶, 정말 멋지지 않나요?
+                                </p>
+                            </div>
+
+                            <p style="margin-top: 50px; color: var(--text-muted); font-size: 0.9em; text-align: center;">
                                 마지막 업데이트: ${new Date().toLocaleDateString('ko-KR')}
                             </p>
                         </div>
