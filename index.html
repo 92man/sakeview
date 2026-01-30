@@ -5349,15 +5349,18 @@
             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
             const policyView = document.getElementById('policyView');
             const tabs = document.querySelector('.tabs');
-            
+
             policyView.style.display = 'none';
-            tabs.style.display = 'block';
+            tabs.style.display = 'flex';
             document.getElementById('appFooter').style.display = 'block';
             document.getElementById('topNav').style.display = 'flex';
 
             // 모든 view를 숨기고 해당 탭 view만 표시
             document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
-            
+
+            // 모든 탭에서 active 클래스 제거
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+
             if (currentUser) {
                 document.getElementById('listView').style.display = 'block';
                 document.querySelector('.tab:last-child').classList.add('active');
@@ -5366,7 +5369,7 @@
                 document.getElementById('newView').style.display = 'block';
                 document.querySelector('.tab:first-child').classList.add('active');
             }
-            
+
             window.scrollTo(0, 0);
         }
 
