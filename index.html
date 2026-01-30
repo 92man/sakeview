@@ -1927,6 +1927,121 @@
             z-index: 1;
         }
 
+        /* Top Navigation */
+        .top-nav {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            padding: 16px 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 16px;
+            margin: 0 20px 30px;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-card);
+        }
+
+        .top-nav-section {
+            position: relative;
+        }
+
+        .top-nav-title {
+            color: var(--text-primary);
+            font-size: 0.9em;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            padding: 10px 18px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-radius: 8px;
+            margin: 0;
+        }
+
+        .top-nav-title::after {
+            content: '▼';
+            font-size: 0.55em;
+            opacity: 0.6;
+            transition: transform 0.3s ease;
+        }
+
+        .top-nav-section:hover .top-nav-title {
+            color: white;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-rose));
+        }
+
+        .top-nav-section:hover .top-nav-title::after {
+            transform: rotate(180deg);
+            opacity: 1;
+        }
+
+        .top-nav-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--card-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 12px 0;
+            min-width: 180px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            margin-top: 8px;
+        }
+
+        .top-nav-section:hover .top-nav-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .top-nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            padding: 10px 20px;
+            white-space: nowrap;
+        }
+
+        .top-nav-link:hover {
+            color: var(--accent-gold);
+            background: var(--bg-tertiary);
+        }
+
+        @media (max-width: 768px) {
+            .top-nav {
+                gap: 10px;
+                padding: 12px 15px;
+                margin: 0 10px 20px;
+                flex-wrap: wrap;
+            }
+
+            .top-nav-title {
+                font-size: 0.8em;
+                padding: 8px 12px;
+            }
+
+            .top-nav-dropdown {
+                min-width: 150px;
+            }
+
+            .top-nav-link {
+                font-size: 0.85em;
+                padding: 8px 16px;
+            }
+        }
+
         /* Footer Navigation Grid */
         .footer-nav {
             display: flex;
@@ -2459,6 +2574,37 @@
                 <p>나만의 사케 테이스팅 노트를 기록하세요</p>
             </div>
 
+            <!-- Top Navigation -->
+            <div class="top-nav" id="topNav">
+                <div class="top-nav-section">
+                    <h4 class="top-nav-title">서비스</h4>
+                    <div class="top-nav-dropdown">
+                        <a href="#" class="top-nav-link" onclick="showPolicyPage('about'); return false;">소개</a>
+                        <a href="#" class="top-nav-link" onclick="showPolicyPage('howto'); return false;">사용법 가이드</a>
+                        <a href="#" class="top-nav-link" onclick="showPolicyPage('contact'); return false;">문의하기</a>
+                    </div>
+                </div>
+                <div class="top-nav-section">
+                    <h4 class="top-nav-title">사케 가이드</h4>
+                    <div class="top-nav-dropdown">
+                        <a href="#" class="top-nav-link" onclick="showPolicyPage('guide'); return false;">사케 종류</a>
+                        <a href="#" class="top-nav-link" onclick="showPolicyPage('regions'); return false;">지역별 사케</a>
+                        <a href="#" class="top-nav-link" onclick="showPolicyPage('brewing'); return false;">양조 과정</a>
+                        <a href="#" class="top-nav-link" onclick="showPolicyPage('etiquette'); return false;">사케 에티켓</a>
+                        <a href="#" class="top-nav-link" onclick="showPolicyPage('recommendations'); return false;">추천 사케</a>
+                        <a href="#" class="top-nav-link" onclick="showPolicyPage('glossary'); return false;">용어사전</a>
+                        <a href="#" class="top-nav-link" onclick="showPolicyPage('faq'); return false;">자주 묻는 질문</a>
+                    </div>
+                </div>
+                <div class="top-nav-section">
+                    <h4 class="top-nav-title">법적 고지</h4>
+                    <div class="top-nav-dropdown">
+                        <a href="#" class="top-nav-link" onclick="showPolicyPage('privacy'); return false;">개인정보처리방침</a>
+                        <a href="#" class="top-nav-link" onclick="showPolicyPage('terms'); return false;">이용약관</a>
+                    </div>
+                </div>
+            </div>
+
             <!-- 이번 주의 추천 -->
             <div class="featured-section" id="featuredSection">
                 <div class="featured-content-wrapper">
@@ -2715,39 +2861,6 @@
             <!-- Footer -->
             <footer class="app-footer" id="appFooter">
                 <div class="footer-content">
-                    <!-- Footer Navigation -->
-                    <div class="footer-nav">
-                        <div class="footer-nav-section">
-                            <h4 class="footer-nav-title">서비스</h4>
-                            <div class="footer-dropdown">
-                                <a href="#" class="footer-link" onclick="showPolicyPage('about'); return false;">소개</a>
-                                <a href="#" class="footer-link" onclick="showPolicyPage('howto'); return false;">사용법 가이드</a>
-                                <a href="#" class="footer-link" onclick="showPolicyPage('contact'); return false;">문의하기</a>
-                            </div>
-                        </div>
-                        <div class="footer-nav-section">
-                            <h4 class="footer-nav-title">사케 가이드</h4>
-                            <div class="footer-dropdown">
-                                <a href="#" class="footer-link" onclick="showPolicyPage('guide'); return false;">사케 종류</a>
-                                <a href="#" class="footer-link" onclick="showPolicyPage('regions'); return false;">지역별 사케</a>
-                                <a href="#" class="footer-link" onclick="showPolicyPage('brewing'); return false;">양조 과정</a>
-                                <a href="#" class="footer-link" onclick="showPolicyPage('etiquette'); return false;">사케 에티켓</a>
-                                <a href="#" class="footer-link" onclick="showPolicyPage('recommendations'); return false;">추천 사케</a>
-                                <a href="#" class="footer-link" onclick="showPolicyPage('glossary'); return false;">용어사전</a>
-                                <a href="#" class="footer-link" onclick="showPolicyPage('faq'); return false;">자주 묻는 질문</a>
-                            </div>
-                        </div>
-                        <div class="footer-nav-section">
-                            <h4 class="footer-nav-title">법적 고지</h4>
-                            <div class="footer-dropdown">
-                                <a href="#" class="footer-link" onclick="showPolicyPage('privacy'); return false;">개인정보처리방침</a>
-                                <a href="#" class="footer-link" onclick="showPolicyPage('terms'); return false;">이용약관</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="footer-divider-line"></div>
-
                     <div class="footer-info">
                         <p>사케를 보다 — 당신의 사케 테이스팅 여정을 기록하세요</p>
                         <div class="footer-contact">
@@ -5218,10 +5331,11 @@
             // 모든 view 숨기고 policyView만 표시
             document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
             policyView.style.display = 'block';
-            
+
             document.querySelector('.tabs').style.display = 'none';
             document.getElementById('appFooter').style.display = 'none';
-            
+            document.getElementById('topNav').style.display = 'none';
+
             // 돌아가기 버튼 클릭 이벤트
             policyBackBtn.onclick = hidePolicyPage;
             
@@ -5236,7 +5350,8 @@
             policyView.style.display = 'none';
             tabs.style.display = 'block';
             document.getElementById('appFooter').style.display = 'block';
-            
+            document.getElementById('topNav').style.display = 'flex';
+
             // 모든 view를 숨기고 해당 탭 view만 표시
             document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
             
