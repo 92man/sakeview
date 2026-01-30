@@ -2190,6 +2190,205 @@
             }
         }
 
+        /* Cookie Consent Banner */
+        .cookie-consent {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            border-top: 1px solid var(--border-light);
+            padding: 20px;
+            box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.15);
+            z-index: 99999;
+            display: none;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .cookie-consent-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .cookie-consent-text {
+            flex: 1;
+            min-width: 280px;
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .cookie-consent-text a {
+            color: var(--accent-gold);
+            text-decoration: underline;
+        }
+
+        .cookie-consent-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .cookie-btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .cookie-btn-accept {
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-rose));
+            color: white;
+        }
+
+        .cookie-btn-accept:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .cookie-btn-decline {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-light);
+        }
+
+        .cookie-btn-decline:hover {
+            background: var(--bg-secondary);
+        }
+
+        /* Age Verification Modal */
+        .age-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 999999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .age-modal {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 50px 40px;
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-light);
+            animation: modalFadeIn 0.4s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .age-modal-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .age-modal h2 {
+            color: var(--accent-primary);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+        }
+
+        .age-modal p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 30px;
+            font-size: 0.95em;
+        }
+
+        .age-modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .age-btn {
+            padding: 14px 35px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .age-btn-yes {
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-rose));
+            color: white;
+        }
+
+        .age-btn-yes:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+        }
+
+        .age-btn-no {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-light);
+        }
+
+        .age-btn-no:hover {
+            background: var(--bg-secondary);
+        }
+
+        .age-modal-warning {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-light);
+            color: var(--text-muted);
+            font-size: 0.8em;
+        }
+
+        @media (max-width: 768px) {
+            .cookie-consent-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .cookie-consent-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .age-modal {
+                padding: 40px 25px;
+            }
+
+            .age-modal-buttons {
+                flex-direction: column;
+            }
+
+            .age-btn {
+                width: 100%;
+            }
+        }
+
         /* Loading - Premium Spinner */
         .loading {
             text-align: center;
@@ -2519,6 +2718,41 @@
          crossorigin="anonymous"></script>
 </head>
 <body>
+    <!-- Age Verification Modal -->
+    <div class="age-modal-overlay" id="ageModal">
+        <div class="age-modal">
+            <div class="age-modal-icon">🍶</div>
+            <h2>연령 확인</h2>
+            <p>
+                본 사이트는 주류(사케)에 관한 정보를 제공합니다.<br>
+                만 19세 이상만 이용할 수 있습니다.<br><br>
+                <strong>만 19세 이상이십니까?</strong>
+            </p>
+            <div class="age-modal-buttons">
+                <button class="age-btn age-btn-yes" onclick="confirmAge(true)">네, 19세 이상입니다</button>
+                <button class="age-btn age-btn-no" onclick="confirmAge(false)">아니오</button>
+            </div>
+            <div class="age-modal-warning">
+                청소년보호법에 따라 만 19세 미만에게는<br>주류 판매 및 관련 정보 제공이 제한됩니다.
+            </div>
+        </div>
+    </div>
+
+    <!-- Cookie Consent Banner -->
+    <div class="cookie-consent" id="cookieConsent">
+        <div class="cookie-consent-content">
+            <div class="cookie-consent-text">
+                🍪 사케를 보다는 더 나은 서비스 제공을 위해 쿠키를 사용합니다.
+                사이트 이용 시 쿠키 사용에 동의하게 됩니다.
+                <a href="#" onclick="showPolicyPage('privacy'); return false;">개인정보처리방침</a>에서 자세한 내용을 확인하세요.
+            </div>
+            <div class="cookie-consent-buttons">
+                <button class="cookie-btn cookie-btn-accept" onclick="acceptCookies()">동의</button>
+                <button class="cookie-btn cookie-btn-decline" onclick="declineCookies()">거부</button>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <!-- Auth Container (로그인/회원가입) -->
         <div id="authContainer" class="auth-container" style="display: none;">
@@ -2881,6 +3115,51 @@
     </div>
 
     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        // Age Verification & Cookie Consent
+        (function() {
+            // 연령 확인
+            const ageVerified = localStorage.getItem('ageVerified');
+            if (!ageVerified) {
+                document.getElementById('ageModal').style.display = 'flex';
+            }
+
+            // 쿠키 동의 확인
+            const cookieConsent = localStorage.getItem('cookieConsent');
+            if (!cookieConsent && ageVerified) {
+                setTimeout(() => {
+                    document.getElementById('cookieConsent').style.display = 'block';
+                }, 1500);
+            }
+        })();
+
+        function confirmAge(isAdult) {
+            if (isAdult) {
+                localStorage.setItem('ageVerified', 'true');
+                document.getElementById('ageModal').style.display = 'none';
+
+                // 연령 확인 후 쿠키 동의 배너 표시
+                const cookieConsent = localStorage.getItem('cookieConsent');
+                if (!cookieConsent) {
+                    setTimeout(() => {
+                        document.getElementById('cookieConsent').style.display = 'block';
+                    }, 1000);
+                }
+            } else {
+                alert('만 19세 미만은 이용할 수 없습니다.');
+                window.location.href = 'https://www.google.com';
+            }
+        }
+
+        function acceptCookies() {
+            localStorage.setItem('cookieConsent', 'accepted');
+            document.getElementById('cookieConsent').style.display = 'none';
+        }
+
+        function declineCookies() {
+            localStorage.setItem('cookieConsent', 'declined');
+            document.getElementById('cookieConsent').style.display = 'none';
+        }
+
         // Supabase 초기화
         const SUPABASE_URL = 'https://atgfrwohilgucmheyuzu.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0Z2Zyd29oaWxndWNtaGV5dXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk2NjAyNTUsImV4cCI6MjA4NTIzNjI1NX0.CoyHTds_3BRl5p6wAehlqaevrdkqp1BzymnTnqhzy2Y';
