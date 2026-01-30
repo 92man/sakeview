@@ -5355,18 +5355,21 @@
             document.getElementById('appFooter').style.display = 'block';
             document.getElementById('topNav').style.display = 'flex';
 
-            // 모든 view를 숨기고 해당 탭 view만 표시
-            document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
+            // 모든 view에서 active 클래스 제거 및 인라인 스타일 초기화
+            document.querySelectorAll('.view').forEach(v => {
+                v.classList.remove('active');
+                v.style.display = '';
+            });
 
             // 모든 탭에서 active 클래스 제거
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
 
             if (currentUser) {
-                document.getElementById('listView').style.display = 'block';
+                document.getElementById('listView').classList.add('active');
                 document.querySelector('.tab:last-child').classList.add('active');
                 loadNotes();
             } else {
-                document.getElementById('newView').style.display = 'block';
+                document.getElementById('newView').classList.add('active');
                 document.querySelector('.tab:first-child').classList.add('active');
             }
 
