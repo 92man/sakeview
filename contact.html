@@ -24,8 +24,14 @@
             --accent-gold: #c9a227; --accent-rose: #be8c7c; --card-bg: #ffffff;
             --border-light: rgba(26, 26, 46, 0.06);
         }
+        body.dark-mode {
+            --bg-primary: #0a0a0f; --bg-tertiary: #1a1a24; --text-primary: #f0f0f0;
+            --text-secondary: #a0a0a0; --text-muted: #707070; --accent-primary: #d4af37;
+            --accent-gold: #d4af37; --accent-rose: #c99a8a; --card-bg: #12121a;
+            --border-light: rgba(212, 175, 55, 0.08);
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Pretendard', sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.9; }
+        body { font-family: 'Pretendard', sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.9; transition: background-color 0.3s, color 0.3s; }
         .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
         .back-link { display: inline-block; color: var(--accent-gold); text-decoration: none; margin-bottom: 30px; }
         .page-header { text-align: center; margin-bottom: 50px; }
@@ -137,5 +143,6 @@
             <a href="/privacy.html">개인정보처리방침</a>
         </nav>
     </div>
+    <script>if (localStorage.getItem('sakeAppTheme') === 'dark') document.body.classList.add('dark-mode');</script>
 </body>
 </html>

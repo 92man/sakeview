@@ -22,8 +22,12 @@
             --bg-primary: #fdfcfa; --text-primary: #1a1a1a; --text-secondary: #5a5a5a;
             --accent-primary: #2c5282; --accent-gold: #c9a227; --border-light: rgba(0,0,0,0.06);
         }
+        body.dark-mode {
+            --bg-primary: #0a0a0f; --text-primary: #f0f0f0; --text-secondary: #a0a0a0;
+            --accent-primary: #d4af37; --accent-gold: #d4af37; --border-light: rgba(212, 175, 55, 0.08);
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Pretendard', sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.8; }
+        body { font-family: 'Pretendard', sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.8; transition: background-color 0.3s, color 0.3s; }
         .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
         .back-link { display: inline-block; color: var(--accent-gold); text-decoration: none; margin-bottom: 30px; }
         h1 { margin: 30px 0 20px; color: var(--accent-primary); font-size: 2em; }
@@ -123,5 +127,6 @@
             <a href="/contact.html">문의하기</a>
         </nav>
     </div>
+    <script>if (localStorage.getItem('sakeAppTheme') === 'dark') document.body.classList.add('dark-mode');</script>
 </body>
 </html>

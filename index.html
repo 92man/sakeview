@@ -1104,6 +1104,94 @@
             box-shadow: 0 12px 36px rgba(212, 175, 55, 0.4);
         }
 
+        .auth-btn.loading {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .auth-btn .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        .auth-btn.loading .spinner {
+            display: inline-block;
+        }
+
+        .auth-btn.loading .btn-text {
+            opacity: 0.7;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 이메일 인증 팝업 */
+        .verification-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            backdrop-filter: blur(5px);
+        }
+
+        .verification-modal-content {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+            margin: 20px;
+            box-shadow: var(--shadow-elevated);
+        }
+
+        .verification-modal-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+
+        .verification-modal h2 {
+            color: var(--accent-primary);
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        .verification-modal p {
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .verification-modal button {
+            padding: 14px 40px;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-rose));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .verification-modal button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(201, 162, 39, 0.4);
+        }
+
         .auth-switch {
             text-align: center;
             color: var(--text-secondary);
@@ -2763,7 +2851,7 @@
                 <form class="auth-form" onsubmit="handleLogin(event)">
                     <input type="email" class="auth-input" id="loginEmail" placeholder="이메일 주소" required>
                     <input type="password" class="auth-input" id="loginPassword" placeholder="비밀번호" required>
-                    <button type="submit" class="auth-btn">로그인</button>
+                    <button type="submit" class="auth-btn" id="loginSubmitBtn"><span class="spinner"></span><span class="btn-text">로그인</span></button>
                     <div id="loginError" class="auth-error"></div>
                 </form>
                 <div class="auth-switch">
@@ -2783,7 +2871,7 @@
                     <input type="email" class="auth-input" id="signupEmail" placeholder="이메일 주소" required>
                     <input type="password" class="auth-input" id="signupPassword" placeholder="비밀번호 (최소 6자)" required minlength="6">
                     <input type="password" class="auth-input" id="signupPasswordConfirm" placeholder="비밀번호 확인" required minlength="6">
-                    <button type="submit" class="auth-btn">회원가입</button>
+                    <button type="submit" class="auth-btn" id="signupSubmitBtn"><span class="spinner"></span><span class="btn-text">회원가입</span></button>
                     <div id="signupError" class="auth-error"></div>
                 </form>
                 <div class="auth-switch">
@@ -2795,6 +2883,16 @@
                     <a href="/privacy.html" style="color: var(--text-muted); text-decoration: none; transition: color 0.3s;">개인정보처리방침</a>
                     <a href="/terms.html" style="color: var(--text-muted); text-decoration: none; transition: color 0.3s;">이용약관</a>
                 </div>
+            </div>
+        </div>
+
+        <!-- 이메일 인증 안내 팝업 -->
+        <div class="verification-modal" id="verificationModal" style="display: none;">
+            <div class="verification-modal-content">
+                <div class="verification-modal-icon">📧</div>
+                <h2>이메일 인증이 필요합니다</h2>
+                <p>입력하신 이메일 주소로 인증 메일을 발송했습니다.<br><strong>이메일 인증 후 로그인해주세요.</strong></p>
+                <button onclick="closeVerificationModal()">확인</button>
             </div>
         </div>
 
@@ -3318,10 +3416,15 @@
         // 로그인 처리
         async function handleLogin(event) {
             event.preventDefault();
-            
+
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
             const errorDiv = document.getElementById('loginError');
+            const submitBtn = document.getElementById('loginSubmitBtn');
+
+            // 로딩 상태 시작
+            submitBtn.classList.add('loading');
+            errorDiv.textContent = '';
 
             try {
                 const { data, error } = await supabaseClient.auth.signInWithPassword({
@@ -3335,23 +3438,38 @@
                 alert('✅ 로그인 성공!');
                 showMainApp();
             } catch (error) {
-                errorDiv.textContent = '로그인 실패: ' + error.message;
+                // 이메일 미인증 에러 체크
+                if (error.message.includes('Email not confirmed') ||
+                    error.message.includes('email_not_confirmed') ||
+                    error.message.includes('확인되지 않은')) {
+                    errorDiv.textContent = '📧 이메일 인증 후 로그인해주세요.';
+                } else {
+                    errorDiv.textContent = '로그인 실패: ' + error.message;
+                }
+            } finally {
+                // 로딩 상태 종료
+                submitBtn.classList.remove('loading');
             }
         }
 
         // 회원가입 처리
         async function handleSignup(event) {
             event.preventDefault();
-            
+
             const email = document.getElementById('signupEmail').value;
             const password = document.getElementById('signupPassword').value;
             const passwordConfirm = document.getElementById('signupPasswordConfirm').value;
             const errorDiv = document.getElementById('signupError');
+            const submitBtn = document.getElementById('signupSubmitBtn');
 
             if (password !== passwordConfirm) {
                 errorDiv.textContent = '비밀번호가 일치하지 않습니다.';
                 return;
             }
+
+            // 로딩 상태 시작
+            submitBtn.classList.add('loading');
+            errorDiv.textContent = '';
 
             try {
                 const { data, error } = await supabaseClient.auth.signUp({
@@ -3361,11 +3479,25 @@
 
                 if (error) throw error;
 
-                alert('회원가입이 완료되었습니다! 로그인해주세요.');
+                // 이메일 인증 안내 팝업 표시
+                showVerificationModal();
                 showLogin();
             } catch (error) {
                 errorDiv.textContent = '회원가입 실패: ' + error.message;
+            } finally {
+                // 로딩 상태 종료
+                submitBtn.classList.remove('loading');
             }
+        }
+
+        // 이메일 인증 팝업 표시
+        function showVerificationModal() {
+            document.getElementById('verificationModal').style.display = 'flex';
+        }
+
+        // 이메일 인증 팝업 닫기
+        function closeVerificationModal() {
+            document.getElementById('verificationModal').style.display = 'none';
         }
 
         // 로그아웃

@@ -46,6 +46,20 @@
             --card-bg: #ffffff;
         }
 
+        body.dark-mode {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a24;
+            --text-primary: #f0f0f0;
+            --text-secondary: #a0a0a0;
+            --text-muted: #707070;
+            --accent-primary: #d4af37;
+            --accent-gold: #d4af37;
+            --accent-rose: #c99a8a;
+            --border-light: rgba(212, 175, 55, 0.08);
+            --card-bg: #12121a;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
@@ -53,6 +67,7 @@
             background: var(--bg-primary);
             color: var(--text-primary);
             line-height: 1.8;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         .container {
@@ -329,5 +344,11 @@
             <a href="/terms.html">이용약관</a>
         </nav>
     </div>
+    <script>
+        // 테마 로드
+        if (localStorage.getItem('sakeAppTheme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+    </script>
 </body>
 </html>
