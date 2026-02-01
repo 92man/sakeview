@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>소개 - 사케를 보다 (Sake View)</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="사케를 보다는 사케 애호가를 위한 전문 테이스팅 노트 서비스입니다. 2024년 시작된 서비스로, 사케의 모든 특성을 섬세하게 기록할 수 있습니다.">
+    <meta name="keywords" content="사케를 보다, 사케 테이스팅, 사케 노트, 일본술, 사케 앱, sake view, sake tasting">
+    <meta name="author" content="Sake View Team">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://sakeview.pages.dev/about.html">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://sakeview.pages.dev/about.html">
+    <meta property="og:title" content="소개 - 사케를 보다 (Sake View)">
+    <meta property="og:description" content="사케를 보다는 사케 애호가를 위한 전문 테이스팅 노트 서비스입니다.">
+    <meta property="og:image" content="https://sakeview.pages.dev/og-image.png">
+    <meta property="og:locale" content="ko_KR">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="소개 - 사케를 보다 (Sake View)">
+    <meta name="twitter:description" content="사케를 보다는 사케 애호가를 위한 전문 테이스팅 노트 서비스입니다.">
+
+    <meta name="theme-color" content="#1a1a2e">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;700&family=Cormorant+Garamond:wght@400;500;600;700&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1907306190071217" crossorigin="anonymous"></script>
+
+    <style>
+        :root {
+            --bg-primary: #fdfcfa;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f8f6f2;
+            --text-primary: #1a1a1a;
+            --text-secondary: #5a5a5a;
+            --text-muted: #9a9a9a;
+            --accent-primary: #1a1a2e;
+            --accent-gold: #c9a227;
+            --accent-rose: #be8c7c;
+            --border-light: rgba(26, 26, 46, 0.06);
+            --card-bg: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent-gold);
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 30px;
+            transition: opacity 0.3s;
+        }
+        .back-link:hover { opacity: 0.7; }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .page-header h1 {
+            font-size: 2.8em;
+            margin: 20px 0;
+            color: var(--accent-primary);
+            font-family: 'Cormorant Garamond', serif;
+        }
+        .page-header .subtitle {
+            font-size: 1.1em;
+            color: var(--text-muted);
+            letter-spacing: 3px;
+        }
+        .divider {
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-rose));
+            margin: 20px auto;
+        }
+
+        .section {
+            background: var(--bg-tertiary);
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            border-left: 4px solid var(--accent-gold);
+        }
+        .section h2 {
+            color: var(--accent-gold);
+            margin-bottom: 20px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.6em;
+        }
+        .section p {
+            font-size: 1.05em;
+            margin-bottom: 15px;
+            color: var(--text-secondary);
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-light);
+            padding: 25px;
+            border-radius: 16px;
+        }
+        .feature-card .icon { font-size: 2em; margin-bottom: 15px; }
+        .feature-card h3 { color: var(--accent-primary); margin-bottom: 10px; }
+        .feature-card p { color: var(--text-secondary); font-size: 0.95em; }
+
+        .highlight-box {
+            background: var(--card-bg);
+            border-left: 4px solid var(--accent-gold);
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 0 16px 16px 0;
+        }
+        .highlight-box h3 {
+            color: var(--accent-gold);
+            margin-bottom: 12px;
+        }
+
+        .timeline {
+            border-left: 2px solid var(--accent-gold);
+            padding-left: 25px;
+            margin-left: 10px;
+        }
+        .timeline-item {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -33px;
+            width: 16px;
+            height: 16px;
+            background: var(--accent-gold);
+            border-radius: 50%;
+        }
+        .timeline-item strong { color: var(--accent-primary); }
+        .timeline-item p { color: var(--text-secondary); margin-top: 5px; }
+
+        .tech-stack {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 16px;
+            border: 1px solid var(--border-light);
+        }
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .tech-grid div strong { color: var(--accent-gold); }
+
+        .footer-note {
+            margin-top: 50px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9em;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-light);
+        }
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover { color: var(--accent-gold); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← 메인으로 돌아가기</a>
+
+        <div class="page-header">
+            <h1>사케를 보다</h1>
+            <p class="subtitle">SAKE VIEW</p>
+            <div class="divider"></div>
+        </div>
+
+        <article>
+            <section class="section">
+                <h2>서비스 소개</h2>
+                <p>
+                    <strong>사케를 보다(Sake View)</strong>는 사케를 사랑하는 모든 분들을 위한 전문 테이스팅 노트 서비스입니다.
+                    2024년 사케에 대한 열정으로 시작되어, 현재 수백 명의 사케 애호가들이 자신만의 테이스팅 기록을 남기고 있습니다.
+                </p>
+                <p>
+                    와인 테이스팅 노트처럼, 사케도 체계적인 기록이 필요합니다. 색감, 투명도, 향의 복잡성, 맛의 강도, 산미, 여운까지 —
+                    사케의 모든 특성을 섬세하게 기록하고, 시간이 지나도 그 순간의 감동을 다시 떠올릴 수 있도록 도와드립니다.
+                </p>
+            </section>
+
+            <h2 style="color: var(--accent-primary); margin: 40px 0 25px; font-family: 'Cormorant Garamond', serif; font-size: 1.5em;">운영 목적</h2>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">📝</div>
+                    <h3>체계적인 기록</h3>
+                    <p>전문 소믈리에가 사용하는 평가 항목을 기반으로, 누구나 쉽게 사케의 특성을 기록할 수 있습니다.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🎓</div>
+                    <h3>사케 문화 전파</h3>
+                    <p>사케 가이드, 용어사전, FAQ를 통해 초보자부터 전문가까지 사케에 대해 배울 수 있습니다.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🌏</div>
+                    <h3>한국 사케 커뮤니티</h3>
+                    <p>한국어로 된 전문적인 사케 정보와 테이스팅 도구를 제공하여 국내 사케 문화 발전에 기여합니다.</p>
+                </div>
+            </div>
+
+            <h2 style="color: var(--accent-primary); margin: 40px 0 25px; font-family: 'Cormorant Garamond', serif; font-size: 1.5em;">주요 기능</h2>
+
+            <div class="highlight-box">
+                <h3>🍶 전문 테이스팅 노트</h3>
+                <p>색감, 투명도, 점도, 향의 강도와 복잡성, 맛의 강도, 산미, 애프터테이스트까지 — 10가지 이상의 평가 항목으로 사케를 깊이 있게 분석하고 기록합니다.</p>
+            </div>
+
+            <div class="highlight-box" style="border-color: var(--accent-rose);">
+                <h3 style="color: var(--accent-rose);">📸 사진 기록</h3>
+                <p>사케 병, 라벨, 색상을 사진으로 남겨 시각적인 기록도 함께 보관하세요. 나중에 다시 찾을 때 큰 도움이 됩니다.</p>
+            </div>
+
+            <div class="highlight-box">
+                <h3>☁️ 클라우드 동기화</h3>
+                <p>Supabase의 안전한 클라우드 서버에 데이터가 저장되어, 어느 기기에서든 내 테이스팅 노트에 접근할 수 있습니다.</p>
+            </div>
+
+            <div class="highlight-box" style="border-color: var(--accent-rose);">
+                <h3 style="color: var(--accent-rose);">🌓 다크 모드 지원</h3>
+                <p>눈의 피로를 줄이는 다크 모드를 지원합니다. 바나 레스토랑의 어두운 조명에서도 편안하게 사용하세요.</p>
+            </div>
+
+            <h2 style="color: var(--accent-primary); margin: 50px 0 25px; font-family: 'Cormorant Garamond', serif; font-size: 1.5em;">팀 소개</h2>
+
+            <section class="section">
+                <div style="display: flex; align-items: center; gap: 25px; flex-wrap: wrap;">
+                    <div style="width: 100px; height: 100px; background: linear-gradient(135deg, var(--accent-gold), var(--accent-rose)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5em;">🍶</div>
+                    <div style="flex: 1; min-width: 250px;">
+                        <h3 style="color: var(--accent-primary); margin-bottom: 8px;">Sake View Team</h3>
+                        <p style="color: var(--text-muted); font-size: 0.9em; margin-bottom: 12px;">사케 애호가 & 개발자</p>
+                        <p style="color: var(--text-secondary);">
+                            사케를 보다는 사케를 진심으로 사랑하는 개발자가 만들었습니다.
+                            일본 여행에서 처음 만난 사케의 매력에 빠진 이후, 수백 종의 사케를 테이스팅하며 쌓은 경험을
+                            다른 사케 애호가들과 나누고 싶어 이 서비스를 개발하게 되었습니다.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <h2 style="color: var(--accent-primary); margin: 40px 0 25px; font-family: 'Cormorant Garamond', serif; font-size: 1.5em;">기술 스택</h2>
+            <div class="tech-stack">
+                <div class="tech-grid">
+                    <div><strong>Frontend:</strong> HTML5, CSS3, Vanilla JavaScript</div>
+                    <div><strong>Backend:</strong> Supabase (PostgreSQL)</div>
+                    <div><strong>Hosting:</strong> Cloudflare Pages</div>
+                    <div><strong>Authentication:</strong> Supabase Auth</div>
+                </div>
+            </div>
+
+            <h2 style="color: var(--accent-primary); margin: 40px 0 25px; font-family: 'Cormorant Garamond', serif; font-size: 1.5em;">서비스 연혁</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <strong>2024년 12월</strong>
+                    <p>사케를 보다 서비스 기획 시작</p>
+                </div>
+                <div class="timeline-item">
+                    <strong>2025년 1월</strong>
+                    <p>베타 버전 출시 및 테스트</p>
+                </div>
+                <div class="timeline-item">
+                    <strong>2025년 2월</strong>
+                    <p>정식 서비스 오픈, 사케 가이드 콘텐츠 추가</p>
+                </div>
+                <div class="timeline-item">
+                    <strong>2026년 ~</strong>
+                    <p>지속적인 기능 개선 및 커뮤니티 확장 예정</p>
+                </div>
+            </div>
+
+            <p class="footer-note">
+                © 2026 Sake View. All rights reserved.<br>
+                마지막 업데이트: 2026년 2월
+            </p>
+        </article>
+
+        <nav class="nav-links">
+            <a href="/">홈</a>
+            <a href="/guide.html">사케 가이드</a>
+            <a href="/regions.html">지역별 사케</a>
+            <a href="/glossary.html">용어사전</a>
+            <a href="/contact.html">문의하기</a>
+            <a href="/privacy.html">개인정보처리방침</a>
+            <a href="/terms.html">이용약관</a>
+        </nav>
+    </div>
+</body>
+</html>

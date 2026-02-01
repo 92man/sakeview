@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사케 가이드 - 사케를 보다 (Sake View)</title>
+
+    <meta name="description" content="사케의 기초부터 테이스팅까지. 준마이, 긴조, 다이긴조 등 사케 종류와 정미보합, 온도별 음용법, 음식 페어링까지 사케의 모든 것을 알려드립니다.">
+    <meta name="keywords" content="사케 가이드, 사케 종류, 준마이, 긴조, 다이긴조, 정미보합, 사케 테이스팅, 사케 온도, 사케 페어링">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://sakeview.pages.dev/guide.html">
+
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://sakeview.pages.dev/guide.html">
+    <meta property="og:title" content="사케 가이드 - 사케를 보다">
+    <meta property="og:description" content="사케의 기초부터 테이스팅까지, 당신의 사케 여정을 위한 완벽한 가이드">
+    <meta property="og:image" content="https://sakeview.pages.dev/og-image.png">
+
+    <meta name="theme-color" content="#1a1a2e">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;700&family=Cormorant+Garamond:wght@400;500;600;700&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1907306190071217" crossorigin="anonymous"></script>
+
+    <style>
+        :root {
+            --bg-primary: #fdfcfa;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f8f6f2;
+            --text-primary: #1a1a1a;
+            --text-secondary: #5a5a5a;
+            --text-muted: #9a9a9a;
+            --accent-primary: #1a1a2e;
+            --accent-gold: #c9a227;
+            --accent-rose: #be8c7c;
+            --border-light: rgba(26, 26, 46, 0.06);
+            --card-bg: #ffffff;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.9;
+        }
+        .container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+        .back-link {
+            display: inline-flex; align-items: center; gap: 8px;
+            color: var(--accent-gold); text-decoration: none; font-weight: 500;
+            margin-bottom: 30px; transition: opacity 0.3s;
+        }
+        .back-link:hover { opacity: 0.7; }
+        .page-header { text-align: center; margin-bottom: 50px; }
+        .page-header h1 { font-size: 2.5em; margin: 20px 0; color: var(--accent-primary); font-family: 'Cormorant Garamond', serif; }
+        .page-header p { color: var(--text-muted); }
+        .divider { width: 60px; height: 2px; background: linear-gradient(90deg, var(--accent-gold), var(--accent-rose)); margin: 20px auto; }
+
+        .toc {
+            background: var(--bg-tertiary); padding: 30px; border-radius: 20px; margin-bottom: 50px;
+        }
+        .toc h3 { color: var(--accent-gold); margin-bottom: 20px; }
+        .toc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .toc-grid a { color: var(--text-secondary); text-decoration: none; transition: color 0.3s; }
+        .toc-grid a:hover { color: var(--accent-gold); }
+
+        .section {
+            background: var(--card-bg); padding: 35px; border-radius: 20px;
+            margin-bottom: 40px; border: 1px solid var(--border-light);
+        }
+        .section h2 { color: var(--accent-primary); margin-bottom: 20px; font-family: 'Cormorant Garamond', serif; }
+        .section p { margin-bottom: 15px; }
+
+        .info-box {
+            background: var(--bg-tertiary); padding: 20px; border-radius: 12px; margin-top: 20px;
+        }
+        .info-box h4 { color: var(--accent-gold); margin-bottom: 10px; }
+        .info-box ul { margin-left: 20px; color: var(--text-secondary); }
+
+        .sake-type {
+            background: var(--card-bg); border-left: 5px solid var(--accent-gold);
+            padding: 25px; margin-bottom: 25px; border-radius: 0 16px 16px 0;
+        }
+        .sake-type.alt { border-left-color: var(--accent-rose); }
+        .sake-type h3 { color: var(--accent-gold); margin-bottom: 15px; }
+        .sake-type.alt h3 { color: var(--accent-rose); }
+        .sake-type p { margin-bottom: 10px; }
+
+        .polishing-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px; text-align: center;
+        }
+        .polishing-card {
+            background: var(--card-bg); padding: 20px; border-radius: 12px;
+        }
+        .polishing-card .percent { font-size: 1.8em; color: var(--accent-gold); margin-bottom: 10px; }
+        .polishing-card .desc { color: var(--text-secondary); font-size: 0.9em; }
+
+        .tasting-step {
+            background: var(--card-bg); padding: 30px; border-radius: 20px;
+            margin-bottom: 25px; border: 1px solid var(--border-light);
+        }
+        .tasting-step h3 { color: var(--accent-gold); margin-bottom: 15px; }
+        .tasting-step ul { margin-left: 20px; color: var(--text-secondary); }
+
+        .temp-table { width: 100%; border-collapse: collapse; background: var(--card-bg); border-radius: 16px; overflow: hidden; }
+        .temp-table th { background: var(--accent-primary); color: white; padding: 15px; text-align: left; }
+        .temp-table td { padding: 15px; border-bottom: 1px solid var(--border-light); color: var(--text-secondary); }
+
+        .pairing-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px; margin-bottom: 40px;
+        }
+        .pairing-card {
+            background: var(--card-bg); padding: 25px; border-radius: 16px;
+            border: 1px solid var(--border-light);
+        }
+        .pairing-card h3 { color: var(--accent-gold); margin-bottom: 15px; }
+
+        .storage-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;
+        }
+        .storage-grid h4 { color: var(--accent-gold); margin-bottom: 10px; }
+
+        .cta-box {
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-rose));
+            padding: 30px; border-radius: 20px; text-align: center; color: white;
+        }
+        .cta-box h3 { margin-bottom: 15px; }
+        .cta-box p { opacity: 0.9; }
+
+        .footer-note { margin-top: 50px; text-align: center; color: var(--text-muted); font-size: 0.9em; }
+        .nav-links {
+            display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;
+            margin-top: 40px; padding-top: 30px; border-top: 1px solid var(--border-light);
+        }
+        .nav-links a { color: var(--text-secondary); text-decoration: none; font-size: 0.9em; }
+        .nav-links a:hover { color: var(--accent-gold); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← 메인으로 돌아가기</a>
+
+        <header class="page-header">
+            <h1>사케 가이드</h1>
+            <p>사케의 기초부터 테이스팅까지, 당신의 사케 여정을 위한 모든 것</p>
+            <div class="divider"></div>
+        </header>
+
+        <nav class="toc">
+            <h3>📖 목차</h3>
+            <div class="toc-grid">
+                <a href="#what-is-sake">1. 사케란 무엇인가?</a>
+                <a href="#history">2. 사케의 역사</a>
+                <a href="#types">3. 사케 종류 완벽 가이드</a>
+                <a href="#polishing">4. 정미보합(精米歩合)이란?</a>
+                <a href="#tasting">5. 사케 테이스팅 방법</a>
+                <a href="#temperature">6. 온도별 음용법</a>
+                <a href="#pairing">7. 사케와 음식 페어링</a>
+                <a href="#storage">8. 보관 및 관리법</a>
+            </div>
+        </nav>
+
+        <article>
+            <section id="what-is-sake" class="section">
+                <h2>1. 사케란 무엇인가?</h2>
+                <p>
+                    <strong>사케(日本酒, にほんしゅ)</strong>는 일본의 전통 양조주로, 쌀을 주원료로 하여 누룩(koji, 麴)과 효모를 사용해 발효시켜 만듭니다.
+                    영어권에서는 "Sake" 또는 "Japanese Rice Wine"으로 불리지만, 와인과는 제조 방식이 완전히 다릅니다.
+                </p>
+                <p>
+                    와인은 포도의 당분을 직접 발효시키지만, 사케는 쌀의 전분을 누룩이 당분으로 전환하고 이를 효모가 발효시키는
+                    <strong>병행복발효(並行複発酵)</strong>라는 독특한 방식을 사용합니다. 이 과정이 사케 특유의 복잡하고 섬세한 풍미를 만들어냅니다.
+                </p>
+                <div class="info-box">
+                    <h4>🍶 사케의 주요 원료</h4>
+                    <ul>
+                        <li><strong>쌀(米):</strong> 주요 원료. 양조용 쌀(酒米)이 주로 사용됨</li>
+                        <li><strong>물(水):</strong> 사케의 80%를 차지. 지역마다 물의 특성이 다름</li>
+                        <li><strong>누룩(麴):</strong> 쌀의 전분을 당분으로 바꾸는 역할</li>
+                        <li><strong>효모(酵母):</strong> 당분을 알코올로 발효시킴</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="history" class="section">
+                <h2>2. 사케의 역사</h2>
+                <div style="border-left: 3px solid var(--accent-gold); padding-left: 25px;">
+                    <div style="margin-bottom: 25px;">
+                        <strong style="color: var(--accent-gold);">기원전 300년경</strong>
+                        <p style="color: var(--text-secondary); margin-top: 5px;">벼농사와 함께 원시적인 형태의 사케 양조 시작</p>
+                    </div>
+                    <div style="margin-bottom: 25px;">
+                        <strong style="color: var(--accent-gold);">7-8세기 (나라/헤이안 시대)</strong>
+                        <p style="color: var(--text-secondary); margin-top: 5px;">조정과 사찰에서 본격적인 사케 제조. 누룩 기술 발전</p>
+                    </div>
+                    <div style="margin-bottom: 25px;">
+                        <strong style="color: var(--accent-gold);">16세기 (전국시대)</strong>
+                        <p style="color: var(--text-secondary); margin-top: 5px;">대량 생산 기술 발전. 이 시기 나다(灘), 후시미(伏見) 등 유명 산지 형성</p>
+                    </div>
+                    <div style="margin-bottom: 25px;">
+                        <strong style="color: var(--accent-gold);">메이지 시대 (1868-1912)</strong>
+                        <p style="color: var(--text-secondary); margin-top: 5px;">서양 과학 기술 도입으로 양조 기술 현대화</p>
+                    </div>
+                    <div>
+                        <strong style="color: var(--accent-gold);">현대</strong>
+                        <p style="color: var(--text-secondary); margin-top: 5px;">긴조, 다이긴조 등 프리미엄 사케 등장. 세계적으로 인정받는 일본의 문화유산</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="types">
+                <h2 style="color: var(--accent-primary); margin: 50px 0 30px; font-family: 'Cormorant Garamond', serif; font-size: 1.8em;">3. 사케 종류 완벽 가이드</h2>
+
+                <div class="sake-type">
+                    <h3>🌾 준마이(純米) - Pure Rice Sake</h3>
+                    <p><strong>정미보합:</strong> 규정 없음 (보통 60-70%)</p>
+                    <p><strong>특징:</strong> 쌀, 물, 누룩만 사용. 양조 알코올 무첨가</p>
+                    <p><strong>맛:</strong> 진하고 풍부한 쌀의 맛과 우마미. 산미도 적당히 있음</p>
+                    <p><strong>추천 온도:</strong> 상온 ~ 데워서 (15-50°C)</p>
+                </div>
+
+                <div class="sake-type alt">
+                    <h3>✨ 혼조조(本醸造) - Honjozo</h3>
+                    <p><strong>정미보합:</strong> 70% 이하</p>
+                    <p><strong>특징:</strong> 소량의 양조 알코올 첨가로 향을 끌어올림</p>
+                    <p><strong>맛:</strong> 가볍고 깔끔한 맛. 부드러운 목넘김</p>
+                    <p><strong>추천 온도:</strong> 차게 ~ 데워서 (5-45°C)</p>
+                </div>
+
+                <div class="sake-type">
+                    <h3>💎 긴조(吟醸) - Ginjo</h3>
+                    <p><strong>정미보합:</strong> 60% 이하</p>
+                    <p><strong>특징:</strong> 저온에서 천천히 발효. 화려한 과일향(긴조카)</p>
+                    <p><strong>맛:</strong> 섬세하고 우아한 향. 가볍고 깔끔한 맛</p>
+                    <p><strong>추천 온도:</strong> 차게 (5-15°C)</p>
+                </div>
+
+                <div class="sake-type alt">
+                    <h3>👑 다이긴조(大吟醸) - Daiginjo</h3>
+                    <p><strong>정미보합:</strong> 50% 이하</p>
+                    <p><strong>특징:</strong> 가장 정교하게 도정된 쌀 사용. 프리미엄 등급</p>
+                    <p><strong>맛:</strong> 매우 섬세하고 복잡한 향. 실크처럼 부드러운 맛</p>
+                    <p><strong>추천 온도:</strong> 차게 (5-10°C)</p>
+                </div>
+
+                <div class="sake-type">
+                    <h3>🌸 토쿠베츠(特別) - Special Grade</h3>
+                    <p><strong>종류:</strong> 토쿠베츠 준마이, 토쿠베츠 혼조조</p>
+                    <p><strong>특징:</strong> 특별한 제조법이나 재료 사용 (정미보합 60% 이하 또는 특수 공정)</p>
+                    <p><strong>맛:</strong> 각 양조장의 개성이 드러나는 독특한 풍미</p>
+                </div>
+
+                <div class="sake-type alt">
+                    <h3>☁️ 니고리자케(濁り酒) - Cloudy Sake</h3>
+                    <p><strong>특징:</strong> 여과를 거치지 않아 뿌옇고 우유빛깔</p>
+                    <p><strong>맛:</strong> 크리미하고 달콤한 맛. 쌀의 풍미가 진함</p>
+                    <p><strong>추천:</strong> 디저트 사케로 인기. 차게 마시면 좋음</p>
+                </div>
+            </section>
+
+            <section id="polishing" style="background: var(--bg-tertiary); padding: 35px; border-radius: 20px; margin: 40px 0;">
+                <h2 style="color: var(--accent-primary); margin-bottom: 20px; font-family: 'Cormorant Garamond', serif;">4. 정미보합(精米歩合)이란?</h2>
+                <p style="margin-bottom: 20px;">
+                    정미보합은 <strong>쌀을 얼마나 깎았는지</strong>를 나타내는 수치입니다. 숫자가 낮을수록 더 많이 깎은 것입니다.
+                </p>
+                <div class="polishing-grid">
+                    <div class="polishing-card">
+                        <div class="percent">70%</div>
+                        <div class="desc">혼조조 기준<br>30% 제거</div>
+                    </div>
+                    <div class="polishing-card">
+                        <div class="percent">60%</div>
+                        <div class="desc">긴조 기준<br>40% 제거</div>
+                    </div>
+                    <div class="polishing-card">
+                        <div class="percent">50%</div>
+                        <div class="desc">다이긴조 기준<br>50% 제거</div>
+                    </div>
+                    <div class="polishing-card">
+                        <div class="percent">23%</div>
+                        <div class="desc">닷사이 23<br>77% 제거!</div>
+                    </div>
+                </div>
+                <p style="margin-top: 20px; color: var(--text-secondary); font-size: 0.95em;">
+                    💡 쌀의 바깥 부분에는 단백질과 지방이 많아 잡미를 유발합니다. 많이 깎을수록 깔끔하고 섬세한 맛이 납니다.
+                </p>
+            </section>
+
+            <section id="tasting">
+                <h2 style="color: var(--accent-primary); margin: 50px 0 30px; font-family: 'Cormorant Garamond', serif; font-size: 1.8em;">5. 사케 테이스팅 방법</h2>
+
+                <div class="tasting-step">
+                    <h3>🔍 1단계: 시각 (色 - 이로)</h3>
+                    <p style="margin-bottom: 10px;">흰색 배경에 잔을 비춰 색을 관찰합니다.</p>
+                    <ul>
+                        <li>투명도: 맑은지, 뿌연지</li>
+                        <li>색조: 무색, 옅은 황색, 황금색 등</li>
+                        <li>점도: 잔을 돌렸을 때 다리(legs)가 생기는지</li>
+                    </ul>
+                </div>
+
+                <div class="tasting-step">
+                    <h3>👃 2단계: 후각 (香 - 카오리)</h3>
+                    <p style="margin-bottom: 10px;">잔을 가볍게 흔든 후 향을 맡습니다.</p>
+                    <ul>
+                        <li><strong>우와다치카(上立ち香):</strong> 잔에서 올라오는 첫 향</li>
+                        <li><strong>후쿠미카(含み香):</strong> 입에 머금었을 때 느껴지는 향</li>
+                        <li>과일향, 꽃향, 쌀향, 유제품향 등을 구분</li>
+                    </ul>
+                </div>
+
+                <div class="tasting-step">
+                    <h3>👅 3단계: 미각 (味 - 아지)</h3>
+                    <p style="margin-bottom: 10px;">소량을 입에 머금고 혀 전체로 느껴봅니다.</p>
+                    <ul>
+                        <li><strong>아마미(甘味):</strong> 단맛</li>
+                        <li><strong>산미(酸味):</strong> 신맛</li>
+                        <li><strong>우마미(旨味):</strong> 감칠맛</li>
+                        <li><strong>니가미(苦味):</strong> 쓴맛</li>
+                        <li><strong>시부미(渋味):</strong> 떫은맛</li>
+                    </ul>
+                </div>
+
+                <div class="tasting-step">
+                    <h3>✨ 4단계: 여운 (余韻 - 요인)</h3>
+                    <p style="margin-bottom: 10px;">삼킨 후 입안에 남는 맛과 향을 평가합니다.</p>
+                    <ul>
+                        <li>여운의 길이: 짧은지, 긴지</li>
+                        <li>여운의 질: 깔끔한지, 복잡한지</li>
+                        <li>전체적인 균형과 조화</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="temperature">
+                <h2 style="color: var(--accent-primary); margin: 50px 0 30px; font-family: 'Cormorant Garamond', serif; font-size: 1.8em;">6. 온도별 음용법</h2>
+                <div style="overflow-x: auto;">
+                    <table class="temp-table">
+                        <thead>
+                            <tr>
+                                <th>온도</th>
+                                <th>일본어 명칭</th>
+                                <th>특징</th>
+                                <th>추천 사케</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>5°C</td><td>유키비에(雪冷え)</td><td>눈처럼 차가움</td><td>다이긴조, 스파클링</td></tr>
+                            <tr><td>10°C</td><td>하나비에(花冷え)</td><td>꽃처럼 시원함</td><td>긴조, 신선한 사케</td></tr>
+                            <tr><td>15°C</td><td>스즈비에(涼冷え)</td><td>시원함</td><td>대부분의 사케</td></tr>
+                            <tr><td>20°C</td><td>히야(冷や)</td><td>상온</td><td>준마이, 혼조조</td></tr>
+                            <tr><td>35°C</td><td>히토하다칸(人肌燗)</td><td>체온 정도</td><td>준마이</td></tr>
+                            <tr><td>45°C</td><td>조칸(上燗)</td><td>따뜻함</td><td>혼조조, 준마이</td></tr>
+                            <tr><td>55°C</td><td>아츠칸(熱燗)</td><td>뜨거움</td><td>진한 맛의 사케</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="pairing">
+                <h2 style="color: var(--accent-primary); margin: 50px 0 30px; font-family: 'Cormorant Garamond', serif; font-size: 1.8em;">7. 사케와 음식 페어링</h2>
+                <div class="pairing-grid">
+                    <div class="pairing-card">
+                        <h3>🍣 다이긴조 + 회/초밥</h3>
+                        <p style="color: var(--text-secondary);">섬세한 다이긴조는 신선한 해산물의 맛을 해치지 않으면서 깔끔하게 마무리해줍니다.</p>
+                    </div>
+                    <div class="pairing-card">
+                        <h3>🍶 준마이 + 튀김/구이</h3>
+                        <p style="color: var(--text-secondary);">풍부한 우마미의 준마이는 기름진 요리와 환상의 조화를 이룹니다.</p>
+                    </div>
+                    <div class="pairing-card">
+                        <h3>🧀 긴조 + 치즈</h3>
+                        <p style="color: var(--text-secondary);">과일향이 풍부한 긴조는 크리미한 치즈와 의외의 좋은 조합입니다.</p>
+                    </div>
+                    <div class="pairing-card">
+                        <h3>🥘 아츠칸 + 나베/전골</h3>
+                        <p style="color: var(--text-secondary);">따뜻하게 데운 사케는 겨울철 전골 요리와 몸을 따뜻하게 해줍니다.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="storage" style="background: var(--bg-tertiary); padding: 35px; border-radius: 20px; margin-bottom: 40px;">
+                <h2 style="color: var(--accent-primary); margin-bottom: 20px; font-family: 'Cormorant Garamond', serif;">8. 보관 및 관리법</h2>
+                <div class="storage-grid">
+                    <div>
+                        <h4>🌡️ 온도</h4>
+                        <p style="color: var(--text-secondary);">냉장 보관(5-10°C)이 기본. 특히 긴조, 나마자케는 필수</p>
+                    </div>
+                    <div>
+                        <h4>☀️ 빛</h4>
+                        <p style="color: var(--text-secondary);">직사광선 피하기. 자외선은 사케를 변질시킴</p>
+                    </div>
+                    <div>
+                        <h4>📦 자세</h4>
+                        <p style="color: var(--text-secondary);">세워서 보관. 마개와 접촉 면적 최소화</p>
+                    </div>
+                    <div>
+                        <h4>⏰ 기간</h4>
+                        <p style="color: var(--text-secondary);">개봉 후 1-2주 내 소비. 미개봉은 1년 이내</p>
+                    </div>
+                </div>
+            </section>
+
+            <div class="cta-box">
+                <h3>🍶 사케 여정을 기록해보세요</h3>
+                <p>사케를 보다와 함께 당신만의 테이스팅 노트를 작성하고, 특별한 순간을 기록하세요.</p>
+            </div>
+
+            <p class="footer-note">마지막 업데이트: 2026년 2월</p>
+        </article>
+
+        <nav class="nav-links">
+            <a href="/">홈</a>
+            <a href="/about.html">소개</a>
+            <a href="/regions.html">지역별 사케</a>
+            <a href="/brewing.html">양조 과정</a>
+            <a href="/glossary.html">용어사전</a>
+            <a href="/privacy.html">개인정보처리방침</a>
+        </nav>
+    </div>
+</body>
+</html>

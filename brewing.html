@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사케 양조 과정 - 사케를 보다 (Sake View)</title>
+
+    <meta name="description" content="사케 양조 과정 완벽 가이드. 정미, 세미, 증미, 제국, 슈보, 모로미, 압착까지 쌀에서 술이 되기까지의 여정을 상세히 설명합니다.">
+    <meta name="keywords" content="사케 양조, 사케 만들기, 정미보합, 코지, 누룩, 모로미, 슈보, 산단지코미">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://sakeview.pages.dev/brewing.html">
+
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://sakeview.pages.dev/brewing.html">
+    <meta property="og:title" content="사케 양조 과정 - 사케를 보다">
+    <meta property="og:description" content="쌀에서 술이 되기까지, 사케 탄생의 여정">
+
+    <meta name="theme-color" content="#1a1a2e">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Pretendard:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1907306190071217" crossorigin="anonymous"></script>
+
+    <style>
+        :root {
+            --bg-primary: #fdfcfa; --bg-tertiary: #f8f6f2; --text-primary: #1a1a1a;
+            --text-secondary: #5a5a5a; --text-muted: #9a9a9a; --accent-primary: #1a1a2e;
+            --accent-gold: #c9a227; --accent-rose: #be8c7c; --card-bg: #ffffff;
+            --border-light: rgba(26, 26, 46, 0.06);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Pretendard', sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.9; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+        .back-link { display: inline-block; color: var(--accent-gold); text-decoration: none; margin-bottom: 30px; }
+        .page-header { text-align: center; margin-bottom: 50px; }
+        .page-header h1 { font-size: 2.5em; color: var(--accent-primary); font-family: 'Cormorant Garamond', serif; }
+        .page-header p { color: var(--text-muted); margin-top: 10px; }
+        .divider { width: 60px; height: 2px; background: linear-gradient(90deg, var(--accent-gold), var(--accent-rose)); margin: 20px auto; }
+
+        .intro { background: var(--bg-tertiary); padding: 35px; border-radius: 20px; margin-bottom: 50px; }
+        .intro p { font-size: 1.05em; color: var(--text-secondary); }
+
+        .step-card {
+            background: var(--card-bg); padding: 35px; border-radius: 20px;
+            margin-bottom: 25px; border-left: 5px solid var(--accent-gold);
+        }
+        .step-card.alt { border-left-color: var(--accent-rose); }
+        .step-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .step-num {
+            min-width: 60px; height: 60px; background: var(--accent-gold);
+            color: white; border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; font-weight: bold; font-size: 1.5em;
+        }
+        .step-card.alt .step-num { background: var(--accent-rose); }
+        .step-header h2 { color: var(--accent-primary); font-family: 'Cormorant Garamond', serif; }
+        .step-header .subtitle { color: var(--accent-gold); margin-top: 5px; font-size: 0.9em; }
+        .step-card.alt .step-header .subtitle { color: var(--accent-rose); }
+        .step-card p { margin-bottom: 15px; }
+
+        .info-box { background: var(--bg-tertiary); padding: 20px; border-radius: 12px; margin-top: 15px; }
+        .info-box p { color: var(--text-secondary); margin-bottom: 10px; }
+        .info-box ul { margin-left: 20px; color: var(--text-secondary); }
+
+        .cta-box {
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-rose));
+            padding: 30px; border-radius: 20px; text-align: center; color: white; margin-top: 40px;
+        }
+        .cta-box h3 { margin-bottom: 15px; }
+        .cta-box p { opacity: 0.95; }
+
+        .footer-note { margin-top: 50px; text-align: center; color: var(--text-muted); font-size: 0.9em; }
+        .nav-links { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-top: 40px; padding-top: 30px; border-top: 1px solid var(--border-light); }
+        .nav-links a { color: var(--text-secondary); text-decoration: none; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← 메인으로 돌아가기</a>
+
+        <header class="page-header">
+            <h1>사케 양조 과정</h1>
+            <p>쌀에서 술이 되기까지, 사케 탄생의 여정</p>
+            <div class="divider"></div>
+        </header>
+
+        <article>
+            <section class="intro">
+                <p>사케 양조는 수백 년에 걸쳐 발전해온 정교한 기술입니다. 쌀을 술로 바꾸는 과정에는 과학과 장인 정신이 절묘하게 어우러져 있습니다.
+                한 병의 사케가 만들어지기까지 약 60일 이상이 소요되며, 토지(杜氏)라 불리는 양조 장인의 섬세한 손길이 필요합니다.</p>
+            </section>
+
+            <section class="step-card">
+                <div class="step-header">
+                    <div class="step-num">1</div>
+                    <div>
+                        <h2>정미 (精米, せいまい)</h2>
+                        <p class="subtitle">쌀 깎기</p>
+                    </div>
+                </div>
+                <p>현미의 바깥층에는 단백질, 지방, 비타민이 많이 포함되어 있는데, 이것들이 사케의 잡맛을 유발합니다. 정미 과정에서 이 부분을 깎아내어 중심의 전분만 남깁니다.</p>
+                <div class="info-box">
+                    <p><strong>정미보합에 따른 등급:</strong></p>
+                    <ul>
+                        <li>70% 이하 → 혼조조</li>
+                        <li>60% 이하 → 긴조</li>
+                        <li>50% 이하 → 다이긴조</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="step-card alt">
+                <div class="step-header">
+                    <div class="step-num">2</div>
+                    <div>
+                        <h2>세미 & 침지 (洗米・浸漬)</h2>
+                        <p class="subtitle">쌀 씻기와 물 흡수</p>
+                    </div>
+                </div>
+                <p>깎은 쌀을 씻어 겉에 남은 쌀겨를 제거하고, 물에 담가 수분을 흡수시킵니다. 이 과정의 시간 조절이 매우 중요합니다. 다이긴조급 쌀은 초 단위로 침지 시간을 관리합니다.</p>
+            </section>
+
+            <section class="step-card">
+                <div class="step-header">
+                    <div class="step-num">3</div>
+                    <div>
+                        <h2>증미 (蒸米, むしまい)</h2>
+                        <p class="subtitle">쌀 찌기</p>
+                    </div>
+                </div>
+                <p>코시키(甑)라는 대형 찜통에서 약 1시간 동안 쌀을 찝니다. "겉은 단단하고 속은 부드럽게(外硬内軟)" 찌는 것이 이상적입니다. 찐 쌀은 누룩 만들기, 술밑(모토), 담금에 나누어 사용됩니다.</p>
+            </section>
+
+            <section class="step-card alt">
+                <div class="step-header">
+                    <div class="step-num">4</div>
+                    <div>
+                        <h2>제국 (製麹, せいきく)</h2>
+                        <p class="subtitle">누룩 만들기</p>
+                    </div>
+                </div>
+                <p>사케 양조에서 가장 중요한 과정입니다. 찐 쌀에 코지균(Aspergillus oryzae)을 뿌려 48시간 동안 온도와 습도를 관리하며 누룩을 만듭니다.</p>
+                <div class="info-box">
+                    <p><strong>누룩의 역할:</strong> 쌀의 전분을 포도당으로 분해합니다. 이 당화 과정이 있어야 효모가 알코올을 만들 수 있습니다.</p>
+                </div>
+            </section>
+
+            <section class="step-card">
+                <div class="step-header">
+                    <div class="step-num">5</div>
+                    <div>
+                        <h2>슈보 (酒母, しゅぼ)</h2>
+                        <p class="subtitle">술밑(酛) 만들기</p>
+                    </div>
+                </div>
+                <p>누룩, 찐 쌀, 물, 효모를 섞어 효모를 대량으로 배양합니다. 약 2주간 진행되며, 건강한 효모 집단이 이후 발효의 주역이 됩니다.</p>
+                <div class="info-box">
+                    <p><strong>전통 방식:</strong></p>
+                    <ul>
+                        <li><strong>키모토(生酛):</strong> 천연 유산균을 이용한 전통 방식. 깊고 복잡한 맛.</li>
+                        <li><strong>야마하이(山廃):</strong> 키모토의 변형. 쌀 으깨는 과정 생략.</li>
+                        <li><strong>소쿠조(速醸):</strong> 유산을 직접 첨가하는 현대 방식. 깔끔한 맛.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="step-card alt">
+                <div class="step-header">
+                    <div class="step-num">6</div>
+                    <div>
+                        <h2>모로미 (醪)</h2>
+                        <p class="subtitle">본격 발효 - 산단지코미</p>
+                    </div>
+                </div>
+                <p>슈보에 누룩, 찐 쌀, 물을 3번에 걸쳐 나누어 넣는 "산단지코미(三段仕込み)" 방식으로 본격 발효가 시작됩니다.</p>
+                <div class="info-box">
+                    <p><strong>3단계 담금:</strong></p>
+                    <ul>
+                        <li><strong>하츠조에(初添):</strong> 1일차 - 첫 번째 투입</li>
+                        <li><strong>오도리(踊):</strong> 2일차 - 휴식일 (효모 증식)</li>
+                        <li><strong>나카조에(仲添):</strong> 3일차 - 두 번째 투입</li>
+                        <li><strong>토메조에(留添):</strong> 4일차 - 세 번째 투입</li>
+                    </ul>
+                </div>
+                <p style="margin-top: 15px;">이후 18-32일 동안 <strong>병행복발효(並行複発酵)</strong>가 진행됩니다. 누룩이 전분을 당으로 바꾸는 동시에 효모가 당을 알코올로 바꿉니다. 이 독특한 방식 덕분에 사케는 양조주 중 가장 높은 알코올 도수(약 20%)를 달성합니다.</p>
+            </section>
+
+            <section class="step-card">
+                <div class="step-header">
+                    <div class="step-num">7</div>
+                    <div>
+                        <h2>조소 (上槽, じょうそう)</h2>
+                        <p class="subtitle">압착 / 짜기</p>
+                    </div>
+                </div>
+                <p>발효가 완료된 모로미를 압착하여 술(사케)과 술지게미(사케카스)로 분리합니다. 이 순간부터 비로소 '사케'라 부를 수 있습니다.</p>
+                <div class="info-box">
+                    <p><strong>압착 방식:</strong></p>
+                    <ul>
+                        <li><strong>야부타(藪田):</strong> 기계 압착. 대량 생산에 사용.</li>
+                        <li><strong>후네(槽):</strong> 전통 목재 압착기. 부드러운 압착.</li>
+                        <li><strong>시즈쿠(雫/しずく):</strong> 중력만으로 자연 낙하. 최고급 방식.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="step-card alt">
+                <div class="step-header">
+                    <div class="step-num">8</div>
+                    <div>
+                        <h2>여과, 살균, 숙성</h2>
+                        <p class="subtitle">마무리 단계</p>
+                    </div>
+                </div>
+                <div class="info-box">
+                    <ul>
+                        <li><strong>오리비키(滓引き):</strong> 침전물 제거</li>
+                        <li><strong>로카(濾過):</strong> 활성탄 등으로 여과하여 맑게 함</li>
+                        <li><strong>히이레(火入れ):</strong> 60-65°C로 저온 살균 (보통 2회)</li>
+                        <li><strong>쵸조(貯蔵):</strong> 수개월~수년 숙성</li>
+                        <li><strong>가수(加水):</strong> 물을 첨가하여 알코올 도수 조정 (15-16%로)</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="cta-box">
+                <h3>🍶 장인의 마음이 담긴 한 잔</h3>
+                <p>쌀 한 알에서 시작된 긴 여정이 당신의 잔에 닿기까지,<br>수많은 사람들의 정성과 기술이 담겨 있습니다.</p>
+            </div>
+
+            <p class="footer-note">마지막 업데이트: 2026년 2월</p>
+        </article>
+
+        <nav class="nav-links">
+            <a href="/">홈</a>
+            <a href="/guide.html">사케 가이드</a>
+            <a href="/regions.html">지역별 사케</a>
+            <a href="/glossary.html">용어사전</a>
+            <a href="/etiquette.html">사케 에티켓</a>
+        </nav>
+    </div>
+</body>
+</html>
