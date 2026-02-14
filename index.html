@@ -4525,19 +4525,19 @@
             return result.data.text;
         }
 
-        // AI용 이미지 리사이즈 (컬러 유지, 크기만 축소)
-        function resizeImageForAi(base64) {
+        // AI용 이미지 준비 (JPEG 변환 + 고품질 리사이즈)
+        function prepareImageForAi(base64) {
             return new Promise(function(resolve) {
                 var img = new Image();
                 img.onload = function() {
                     var canvas = document.createElement('canvas');
-                    var maxSize = 1024;
+                    var maxSize = 2048;
                     var scale = Math.min(maxSize / img.width, maxSize / img.height, 1);
                     canvas.width = img.width * scale;
                     canvas.height = img.height * scale;
                     var ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    resolve(canvas.toDataURL('image/jpeg', 0.85));
+                    resolve(canvas.toDataURL('image/jpeg', 0.92));
                 };
                 img.src = base64;
             });
@@ -4546,11 +4546,8 @@
         // AI Vision OCR (Claude API via Supabase Edge Function)
         async function runAiVisionOcr(base64) {
             updateOcrProgress(10, '이미지 준비 중...');
-            // 4MB 초과 시에만 리사이즈 (Supabase 6MB 제한 대응)
-            var imageToSend = base64;
-            if (base64.length > 4 * 1024 * 1024) {
-                imageToSend = await resizeImageForAi(base64);
-            }
+            // 항상 canvas 통과: HEIC→JPEG 변환, EXIF 회전 보정, 크기 제한
+            var imageToSend = await prepareImageForAi(base64);
             updateOcrProgress(20, 'AI 분석 요청 중...');
             var resp = await supabaseClient.functions.invoke('sake-vision', {
                 body: { image: imageToSend }
