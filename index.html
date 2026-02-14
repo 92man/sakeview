@@ -4923,16 +4923,19 @@
 
                 if (ocrMethod === 'ai') {
                     var aiResult = await runAiVisionOcr(ocrPhotoData);
+                    console.log('AI Result:', JSON.stringify(aiResult));
                     rawText = aiResult.rawText || '';
-                    // AI 구조화 매칭 + rawText 매칭 둘 다 실행 후 합산
+                    // AI 응답의 모든 텍스트를 합쳐서 매칭에 사용
+                    var searchText = [
+                        aiResult.brand || '',
+                        aiResult.product || '',
+                        aiResult.grade || '',
+                        rawText
+                    ].join(' ');
+                    // AI 구조화 매칭 + 전체 텍스트 매칭 둘 다 실행
                     var aiMatches = matchAiResultToDatabase(aiResult);
-                    var textMatches = rawText ? matchOcrTextToDatabase(rawText) : [];
-                    // product 텍스트로도 추가 매칭
-                    var productText = aiResult.product || '';
-                    if (productText && productText !== rawText) {
-                        var prodMatches = matchOcrTextToDatabase(productText);
-                        textMatches = textMatches.concat(prodMatches);
-                    }
+                    var textMatches = searchText ? matchOcrTextToDatabase(searchText) : [];
+                    console.log('AI matches:', aiMatches.length, 'Text matches:', textMatches.length);
                     // 합산 및 중복 제거 (같은 brand+productIdx면 높은 점수 유지)
                     var allMatches = aiMatches.concat(textMatches);
                     var seen = {};
@@ -4946,6 +4949,10 @@
                     for (var k in seen) matches.push(seen[k]);
                     matches.sort(function(a, b) { return b.score - a.score; });
                     matches = matches.slice(0, 5);
+                    // 매칭 실패 시 AI 인식 결과를 rawText에 포함
+                    if (matches.length === 0) {
+                        rawText = 'AI 인식: ' + (aiResult.brand || '?') + ' / ' + (aiResult.product || '?') + ' / ' + (aiResult.grade || '?') + '\n원본: ' + (aiResult.rawText || '없음');
+                    }
                 } else {
                     rawText = await runTesseractOcr(processed);
                     matches = matchOcrTextToDatabase(rawText);
@@ -4973,6 +4980,9 @@
             if (matches.length === 0) {
                 matchList.innerHTML =
                     '<div class="ocr-no-match">매칭되는 사케를 찾지 못했습니다.<br>직접 입력 모드를 사용해 주세요.</div>';
+                // 매칭 실패 시 원본 텍스트 자동 펼치기
+                var rawContent = document.getElementById('ocrRawContent');
+                if (rawContent) rawContent.classList.add('active');
             } else {
                 var html = '';
                 matches.forEach(function(m) {
