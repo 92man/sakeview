@@ -4553,7 +4553,15 @@
                 body: { image: imageToSend }
             });
             if (resp.error) {
-                throw new Error(resp.error.message || 'AI Vision 호출 실패');
+                // 상세 에러 추출
+                var errMsg = resp.error.message || 'AI Vision 호출 실패';
+                try {
+                    if (resp.error.context && resp.error.context.json) {
+                        var errBody = await resp.error.context.json();
+                        errMsg += ': ' + (errBody.error || JSON.stringify(errBody));
+                    }
+                } catch(e) {}
+                throw new Error(errMsg);
             }
             var data = resp.data;
             // 문자열 응답인 경우 JSON 파싱
