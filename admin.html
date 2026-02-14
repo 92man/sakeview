@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>관리자 대시보드</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="sake_database.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -72,6 +73,23 @@
                     <h3>사케 종류</h3>
                     <div class="number" id="totalSakes">0</div>
                 </div>
+            </div>
+
+            <div class="table-container">
+                <h3>⚠️ 미등록 사케 (직접입력)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>사케 이름</th>
+                            <th>입력 횟수</th>
+                            <th>최근 입력일</th>
+                            <th>입력 사용자 수</th>
+                        </tr>
+                    </thead>
+                    <tbody id="unregisteredSakeTable">
+                        <tr><td colspan="4">데이터 로딩 중...</td></tr>
+                    </tbody>
+                </table>
             </div>
 
             <div class="chart-container">
@@ -207,15 +225,56 @@
             document.getElementById('loginError').textContent = '';
         }
 
+        function buildKnownSakeNames() {
+            const known = new Set();
+            for (const [brand, info] of Object.entries(SAKE_DATABASE)) {
+                for (const product of info.products) {
+                    if (product.japanese) {
+                        known.add(brand + ' ' + product.name + ' (' + product.japanese + ')');
+                    }
+                    known.add(brand + ' ' + product.name);
+                }
+            }
+            return known;
+        }
+
+        function renderUnregisteredSakes(notes, knownNames) {
+            const unregistered = {};
+            for (const n of notes) {
+                const name = n.sake_name;
+                if (!name) continue;
+                // Check both the raw name and without the parenthesized part
+                const nameWithoutJp = name.replace(/\s*\(.*\)$/, '');
+                if (knownNames.has(name) || knownNames.has(nameWithoutJp)) continue;
+
+                if (!unregistered[name]) {
+                    unregistered[name] = { count: 0, lastDate: '', users: new Set() };
+                }
+                unregistered[name].count++;
+                if (n.created_at > unregistered[name].lastDate) {
+                    unregistered[name].lastDate = n.created_at;
+                }
+                if (n.user_id) unregistered[name].users.add(n.user_id);
+            }
+
+            const sorted = Object.entries(unregistered).sort((a, b) => b[1].count - a[1].count);
+            let html = '';
+            for (const [name, info] of sorted) {
+                const d = new Date(info.lastDate).toLocaleDateString('ko-KR');
+                html += `<tr><td>${escapeHtml(name)}</td><td>${info.count}</td><td>${d}</td><td>${info.users.size}</td></tr>`;
+            }
+            document.getElementById('unregisteredSakeTable').innerHTML = html || '<tr><td colspan="4">미등록 사케 없음</td></tr>';
+        }
+
         async function loadAllData() {
             try {
                 const { data: notes, error } = await client.from('tasting_notes').select('*');
-                
+
                 if (error) {
                     console.error('조회 에러:', error);
                     return;
                 }
-                
+
                 if (!notes) {
                     console.log('notes가 null');
                     return;
@@ -230,6 +289,9 @@
                 document.getElementById('totalUsers').textContent = users;
                 document.getElementById('totalNotes').textContent = notes.length;
                 document.getElementById('totalSakes').textContent = sakes;
+
+                const knownNames = buildKnownSakeNames();
+                renderUnregisteredSakes(notes, knownNames);
 
                 drawCharts(notes);
                 drawTables(notes);
