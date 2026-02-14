@@ -3149,19 +3149,25 @@
             display: flex;
             gap: 8px;
             margin-bottom: 16px;
+            position: relative;
+            z-index: 10;
         }
         .ocr-method-btn {
             flex: 1;
-            padding: 10px 12px;
+            padding: 14px 12px;
             border: 2px solid var(--border-light);
             border-radius: 12px;
             background: var(--input-bg);
             color: var(--text-secondary);
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: border-color 0.2s, background 0.2s, color 0.2s;
             text-align: center;
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .ocr-method-btn.active {
             border-color: var(--accent-gold);
@@ -4519,6 +4525,117 @@
             return result.data.text;
         }
 
+        // AI Vision OCR (Claude API via Supabase Edge Function)
+        async function runAiVisionOcr(base64) {
+            updateOcrProgress(20, 'AI 분석 요청 중...');
+            var resp = await supabaseClient.functions.invoke('sake-vision', {
+                body: { image: base64 }
+            });
+            if (resp.error) {
+                throw new Error(resp.error.message || 'AI Vision 호출 실패');
+            }
+            var data = resp.data;
+            if (data.error) {
+                throw new Error(data.error);
+            }
+            updateOcrProgress(80, 'AI 분석 완료, 매칭 중...');
+            return data;
+        }
+
+        // AI 결과로 DB 매칭
+        function matchAiResultToDatabase(aiResult) {
+            if (typeof SAKE_DATABASE === 'undefined') return [];
+            var results = [];
+            var aiBrand = (aiResult.brand || '').trim();
+            var aiProduct = (aiResult.product || '').trim();
+            var aiGrade = (aiResult.grade || '').trim();
+
+            for (var brand in SAKE_DATABASE) {
+                var entry = SAKE_DATABASE[brand];
+                var brandJp = entry.brandJp || '';
+                var brandScore = 0;
+
+                // 브랜드 매칭: AI가 추출한 brand와 DB의 brandJp 비교
+                if (aiBrand && brandJp) {
+                    if (aiBrand === brandJp || brandJp.includes(aiBrand) || aiBrand.includes(brandJp)) {
+                        brandScore = 60;
+                    } else {
+                        var bm = fuzzyContains(aiBrand, brandJp);
+                        if (bm.found) brandScore = Math.round(bm.score * 50);
+                    }
+                }
+
+                // 한글 브랜드명으로도 시도
+                if (brandScore === 0 && aiBrand) {
+                    if (brand.toLowerCase().includes(aiBrand.toLowerCase()) ||
+                        aiBrand.toLowerCase().includes(brand.toLowerCase())) {
+                        brandScore = 30;
+                    }
+                }
+
+                if (brandScore === 0) continue;
+
+                var products = entry.products;
+                for (var pi = 0; pi < products.length; pi++) {
+                    var p = products[pi];
+                    var productScore = brandScore;
+                    var jpName = p.japanese || '';
+
+                    // 제품명 매칭
+                    if (aiProduct && jpName) {
+                        if (aiProduct === jpName || jpName.includes(aiProduct) || aiProduct.includes(jpName)) {
+                            productScore += 30;
+                        } else {
+                            // 브랜드명 제거 후 비교
+                            var productPart = jpName;
+                            if (brandJp && jpName.startsWith(brandJp)) {
+                                productPart = jpName.substring(brandJp.length).trim();
+                            }
+                            var aiProductPart = aiProduct;
+                            if (aiBrand && aiProduct.startsWith(aiBrand)) {
+                                aiProductPart = aiProduct.substring(aiBrand.length).trim();
+                            }
+                            if (productPart && aiProductPart &&
+                                (productPart.includes(aiProductPart) || aiProductPart.includes(productPart))) {
+                                productScore += 25;
+                            } else {
+                                var pm = fuzzyContains(aiProduct, productPart);
+                                if (pm.found) productScore += Math.round(pm.score * 20);
+                            }
+                        }
+                    }
+
+                    // 등급 매칭 보너스
+                    if (aiGrade && p.grade) {
+                        var gradeJpMap = {
+                            '다이긴죠': '大吟醸', '준마이다이긴죠': '純米大吟醸',
+                            '긴죠': '吟醸', '준마이긴죠': '純米吟醸',
+                            '준마이': '純米', '혼죠조': '本醸造',
+                            '도쿠베츠준마이': '特別純米', '도쿠베츠혼죠조': '特別本醸造',
+                            '토쿠베츠준마이': '特別純米', '토쿠베츠혼죠조': '特別本醸造'
+                        };
+                        var gradeJp = gradeJpMap[p.grade] || '';
+                        if (gradeJp && (aiGrade === gradeJp || aiGrade.includes(gradeJp) || gradeJp.includes(aiGrade))) {
+                            productScore += 10;
+                        }
+                    }
+
+                    if (productScore > 20) {
+                        results.push({
+                            brand: brand,
+                            brandJp: brandJp,
+                            productIdx: pi,
+                            product: p,
+                            score: Math.min(productScore, 100)
+                        });
+                    }
+                }
+            }
+
+            results.sort(function(a, b) { return b.score - a.score; });
+            return results.slice(0, 5);
+        }
+
         // 이미지 전처리 (리사이즈 + 그레이스케일 + 대비 강화)
         function prepareImageForOcr(base64) {
             return new Promise(function(resolve) {
@@ -4719,10 +4836,12 @@
         // OCR 방식 선택
         function selectOcrMethod(method) {
             ocrMethod = method;
-            document.querySelectorAll('.ocr-method-btn').forEach(function(btn) {
-                btn.classList.toggle('active', btn.dataset.method === method);
+            document.querySelectorAll('.ocr-method-btn').forEach(function(label) {
+                var input = label.previousElementSibling;
+                label.classList.toggle('active', input && input.value === method);
             });
         }
+
 
         // 진행바 업데이트
         function updateOcrProgress(percent, text) {
@@ -4775,14 +4894,24 @@
                 updateOcrProgress(5, '이미지 전처리 중...');
                 var processed = await prepareImageForOcr(ocrPhotoData);
 
-                var ocrText = '';
-                if (ocrMethod === 'tesseract') {
-                    ocrText = await runTesseractOcr(processed);
+                var matches = [];
+                var rawText = '';
+
+                if (ocrMethod === 'ai') {
+                    var aiResult = await runAiVisionOcr(ocrPhotoData);
+                    rawText = aiResult.rawText || '';
+                    matches = matchAiResultToDatabase(aiResult);
+                    if (matches.length === 0 && rawText) {
+                        // AI 구조화 매칭 실패 시 rawText로 기존 OCR 매칭 시도
+                        matches = matchOcrTextToDatabase(rawText);
+                    }
+                } else {
+                    rawText = await runTesseractOcr(processed);
+                    matches = matchOcrTextToDatabase(rawText);
                 }
 
                 updateOcrProgress(100, '매칭 중...');
-                var matches = matchOcrTextToDatabase(ocrText);
-                displayOcrResults(matches, ocrText);
+                displayOcrResults(matches, rawText);
             } catch (err) {
                 console.error('OCR error:', err);
                 updateOcrProgress(0, '오류 발생: ' + err.message);
@@ -7127,6 +7256,7 @@
                 <button class="ocr-modal-close" onclick="closeOcrModal()">&times;</button>
             </div>
 
+            <input type="file" id="ocrFileInput" accept="image/*" capture="environment" style="display:none;" onchange="handleOcrPhoto(event)">
             <div class="ocr-photo-area" id="ocrPhotoArea" onclick="document.getElementById('ocrFileInput').click()">
                 <div class="ocr-photo-placeholder" id="ocrPlaceholder">
                     <span class="ocr-photo-icon">📸</span>
@@ -7134,11 +7264,12 @@
                 </div>
                 <img id="ocrPreviewImg" style="display:none;" alt="사케 라벨">
             </div>
-            <input type="file" id="ocrFileInput" accept="image/*" capture="environment" style="display:none;" onchange="handleOcrPhoto(event)">
 
             <div class="ocr-method-toggle">
-                <button type="button" class="ocr-method-btn active" data-method="tesseract" onclick="selectOcrMethod('tesseract')">🔍 OCR 인식</button>
-                <button type="button" class="ocr-method-btn" data-method="ai" onclick="selectOcrMethod('ai')" disabled title="추후 지원 예정">🤖 AI Vision</button>
+                <input type="radio" name="ocrMethod" id="ocrMethodTesseract" value="tesseract" checked onchange="selectOcrMethod('tesseract')" style="display:none;">
+                <label for="ocrMethodTesseract" class="ocr-method-btn active">🔍 OCR 인식</label>
+                <input type="radio" name="ocrMethod" id="ocrMethodAi" value="ai" onchange="selectOcrMethod('ai')" style="display:none;">
+                <label for="ocrMethodAi" class="ocr-method-btn">🤖 AI Vision</label>
             </div>
 
             <button type="button" class="ocr-start-btn" id="ocrStartBtn" onclick="startOcrRecognition()" disabled>인식 시작</button>
