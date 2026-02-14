@@ -3026,6 +3026,331 @@
             border-color: rgba(212, 175, 55, 0.4);
         }
 
+        /* === 사케 OCR 사진 인식 === */
+        .sake-ocr-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+            padding: 12px 16px;
+            margin-top: 8px;
+            border: 2px dashed var(--border-medium);
+            border-radius: 12px;
+            background: var(--input-bg);
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .sake-ocr-btn:hover {
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .ocr-modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10001;
+            backdrop-filter: blur(5px);
+            padding: 16px;
+        }
+        .ocr-modal.active { display: flex; }
+
+        .ocr-modal-content {
+            background: var(--card-bg);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 480px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-elevated);
+            padding: 28px 24px;
+        }
+        .ocr-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .ocr-modal-header h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+        .ocr-modal-close {
+            width: 36px; height: 36px;
+            border: none;
+            border-radius: 10px;
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .ocr-modal-close:hover {
+            background: rgba(212, 175, 55, 0.15);
+            color: var(--accent-gold);
+        }
+
+        .ocr-photo-area {
+            border: 2px dashed var(--border-medium);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 16px;
+            position: relative;
+            overflow: hidden;
+            min-height: 160px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        .ocr-photo-area:hover {
+            border-color: var(--accent-gold);
+            background: rgba(212, 175, 55, 0.03);
+        }
+        .ocr-photo-area.has-photo {
+            border-style: solid;
+            border-color: var(--accent-gold);
+            padding: 0;
+        }
+        .ocr-photo-area img {
+            width: 100%;
+            height: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+        .ocr-photo-placeholder {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+        .ocr-photo-placeholder .ocr-photo-icon {
+            font-size: 40px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .ocr-method-toggle {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .ocr-method-btn {
+            flex: 1;
+            padding: 10px 12px;
+            border: 2px solid var(--border-light);
+            border-radius: 12px;
+            background: var(--input-bg);
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        .ocr-method-btn.active {
+            border-color: var(--accent-gold);
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.08), rgba(201, 162, 39, 0.04));
+            color: var(--accent-gold);
+        }
+
+        .ocr-start-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-rose));
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 16px;
+        }
+        .ocr-start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(201, 162, 39, 0.4);
+        }
+        .ocr-start-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .ocr-progress {
+            display: none;
+            margin-bottom: 16px;
+        }
+        .ocr-progress.active { display: block; }
+        .ocr-progress-bar-bg {
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+        .ocr-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-rose));
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        .ocr-progress-text {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .ocr-results {
+            display: none;
+        }
+        .ocr-results.active { display: block; }
+        .ocr-results-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .ocr-match-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border: 2px solid var(--border-light);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 8px;
+        }
+        .ocr-match-item:hover {
+            border-color: var(--accent-gold);
+            background: rgba(212, 175, 55, 0.05);
+        }
+        .ocr-match-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .ocr-match-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .ocr-match-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .ocr-match-score {
+            flex-shrink: 0;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(201, 162, 39, 0.08));
+            color: var(--accent-gold);
+        }
+
+        .ocr-no-match {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .ocr-raw-text {
+            margin-top: 12px;
+        }
+        .ocr-raw-toggle {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 0;
+            border: none;
+            background: none;
+            color: var(--text-muted);
+            font-size: 12px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .ocr-raw-toggle:hover { color: var(--text-secondary); }
+        .ocr-raw-content {
+            display: none;
+            padding: 12px;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 150px;
+            overflow-y: auto;
+            margin-top: 4px;
+        }
+        .ocr-raw-content.active { display: block; }
+
+        .ocr-manual-btn {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border-light);
+            border-radius: 12px;
+            background: none;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 8px;
+        }
+        .ocr-manual-btn:hover {
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+        }
+
+        /* OCR Dark Mode */
+        body.dark-mode .ocr-modal-content {
+            background: var(--card-bg);
+        }
+        body.dark-mode .ocr-modal-close {
+            background: var(--bg-tertiary);
+        }
+        body.dark-mode .ocr-photo-area {
+            border-color: var(--border-medium);
+        }
+        body.dark-mode .ocr-method-btn {
+            background: var(--input-bg);
+            border-color: var(--border-medium);
+        }
+        body.dark-mode .ocr-match-item {
+            border-color: var(--border-medium);
+        }
+        body.dark-mode .ocr-match-item:hover {
+            background: rgba(212, 175, 55, 0.1);
+        }
+
         @media (max-width: 600px) {
             .sake-lists-container {
                 flex-direction: column;
@@ -3033,6 +3358,10 @@
             }
             .sake-list {
                 height: 160px;
+            }
+            .ocr-modal-content {
+                padding: 20px 16px;
+                border-radius: 16px;
             }
         }
     </style>
@@ -3239,6 +3568,7 @@
                                     <button type="button" class="sake-selector-tab" onclick="toggleSakeInputMode('manual')">직접 입력</button>
                                 </div>
                                 <div id="sakeDbPanel" class="sake-selector-panel active">
+                                    <button type="button" class="sake-ocr-btn" onclick="openOcrModal()">📷 사진으로 찾기</button>
                                     <input type="text" class="sake-search-input" id="brandSearch" placeholder="브랜드명 검색..." oninput="filterBrands(this.value)">
                                     <div class="sake-lists-container">
                                         <div class="sake-list" id="brandList">
@@ -3931,6 +4261,7 @@
             document.getElementById('tastingForm').reset();
             setDefaultDate();
             currentPhotoData = null;
+            ocrPhotoData = null;
             editingNoteId = null;
             document.getElementById('uploadText').style.display = 'block';
             document.getElementById('photoPreview').innerHTML = '';
@@ -4089,6 +4420,20 @@
             if (typeof SAKE_DATABASE !== 'undefined') renderBrandList(Object.keys(SAKE_DATABASE).sort());
             var productList = document.getElementById('productList');
             productList.innerHTML = '<div class="sake-list-header">제품</div><div class="sake-product-empty">브랜드를 선택하세요</div>';
+            // OCR 모달 상태 초기화
+            ocrPhotoData = null;
+            var ocrPreview = document.getElementById('ocrPreviewImg');
+            if (ocrPreview) { ocrPreview.style.display = 'none'; ocrPreview.src = ''; }
+            var ocrPlaceholder = document.getElementById('ocrPlaceholder');
+            if (ocrPlaceholder) ocrPlaceholder.style.display = '';
+            var ocrPhotoArea = document.getElementById('ocrPhotoArea');
+            if (ocrPhotoArea) ocrPhotoArea.classList.remove('has-photo');
+            var ocrStartBtn = document.getElementById('ocrStartBtn');
+            if (ocrStartBtn) ocrStartBtn.disabled = true;
+            var ocrResults = document.getElementById('ocrResults');
+            if (ocrResults) ocrResults.classList.remove('active');
+            var ocrProgress = document.getElementById('ocrProgress');
+            if (ocrProgress) ocrProgress.classList.remove('active');
         }
 
         function setSakeNameFromNote(sakeName) {
@@ -4130,6 +4475,363 @@
                 });
             }
         });
+
+        // === 사케 OCR 사진 인식 ===
+        let ocrPhotoData = null;
+        let ocrMethod = 'tesseract';
+        let tesseractWorker = null;
+        let tesseractLoaded = false;
+
+        // Tesseract.js 동적 로딩
+        function loadTesseract() {
+            return new Promise(function(resolve, reject) {
+                if (tesseractLoaded) { resolve(); return; }
+                var script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+                script.onload = function() { tesseractLoaded = true; resolve(); };
+                script.onerror = function() { reject(new Error('Tesseract.js 로딩 실패')); };
+                document.head.appendChild(script);
+            });
+        }
+
+        // Tesseract 워커 초기화
+        async function initTesseractWorker() {
+            if (tesseractWorker) return tesseractWorker;
+            await loadTesseract();
+            tesseractWorker = await Tesseract.createWorker('jpn+eng', 1, {
+                logger: function(m) {
+                    if (m.status === 'recognizing text') {
+                        updateOcrProgress(Math.round(m.progress * 100), '텍스트 인식 중...');
+                    }
+                }
+            });
+            return tesseractWorker;
+        }
+
+        // OCR 실행
+        async function runTesseractOcr(imageData) {
+            updateOcrProgress(10, 'OCR 엔진 로딩 중...');
+            var worker = await initTesseractWorker();
+            updateOcrProgress(30, '이미지 분석 중...');
+            var result = await worker.recognize(imageData);
+            updateOcrProgress(100, '인식 완료!');
+            return result.data.text;
+        }
+
+        // 이미지 전처리 (리사이즈 + 그레이스케일 + 대비 강화)
+        function prepareImageForOcr(base64) {
+            return new Promise(function(resolve) {
+                var img = new Image();
+                img.onload = function() {
+                    var canvas = document.createElement('canvas');
+                    var maxSize = 1500;
+                    var scale = Math.min(maxSize / img.width, maxSize / img.height, 1);
+                    canvas.width = img.width * scale;
+                    canvas.height = img.height * scale;
+                    var ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                    // 그레이스케일 + 대비 강화
+                    var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    var data = imageData.data;
+                    for (var i = 0; i < data.length; i += 4) {
+                        var gray = data[i] * 0.299 + data[i+1] * 0.587 + data[i+2] * 0.114;
+                        // 대비 강화 (contrast stretching)
+                        gray = ((gray - 128) * 1.5) + 128;
+                        gray = Math.max(0, Math.min(255, gray));
+                        data[i] = data[i+1] = data[i+2] = gray;
+                    }
+                    ctx.putImageData(imageData, 0, 0);
+                    resolve(canvas.toDataURL('image/png'));
+                };
+                img.src = base64;
+            });
+        }
+
+        // 일본어 텍스트 정규화
+        function normalizeJapaneseText(text) {
+            if (!text) return '';
+            // 전각 → 반각 (숫자, 영문)
+            text = text.replace(/[０-９]/g, function(c) { return String.fromCharCode(c.charCodeAt(0) - 0xFEE0); });
+            text = text.replace(/[Ａ-Ｚａ-ｚ]/g, function(c) { return String.fromCharCode(c.charCodeAt(0) - 0xFEE0); });
+            // OCR 노이즈 제거
+            text = text.replace(/[^\u3000-\u9FFF\uF900-\uFAFF\uFF00-\uFFEFa-zA-Z0-9\s%％。、・]/g, ' ');
+            // 연속 공백 정리
+            text = text.replace(/\s+/g, ' ').trim();
+            return text;
+        }
+
+        // 레벤슈타인 거리
+        function levenshteinDistance(a, b) {
+            if (!a || !b) return Math.max((a||'').length, (b||'').length);
+            var matrix = [];
+            for (var i = 0; i <= b.length; i++) matrix[i] = [i];
+            for (var j = 0; j <= a.length; j++) matrix[0][j] = j;
+            for (var i = 1; i <= b.length; i++) {
+                for (var j = 1; j <= a.length; j++) {
+                    if (b.charAt(i-1) === a.charAt(j-1)) {
+                        matrix[i][j] = matrix[i-1][j-1];
+                    } else {
+                        matrix[i][j] = Math.min(
+                            matrix[i-1][j-1] + 1,
+                            matrix[i][j-1] + 1,
+                            matrix[i-1][j] + 1
+                        );
+                    }
+                }
+            }
+            return matrix[b.length][a.length];
+        }
+
+        // 퍼지 포함 검사 (슬라이딩 윈도우)
+        function fuzzyContains(haystack, needle) {
+            if (!haystack || !needle || needle.length === 0) return { found: false, score: 0 };
+            if (haystack.includes(needle)) return { found: true, score: 1.0 };
+            var bestScore = 0;
+            var windowSize = needle.length;
+            for (var i = 0; i <= haystack.length - windowSize; i++) {
+                var sub = haystack.substring(i, i + windowSize);
+                var dist = levenshteinDistance(sub, needle);
+                var score = 1 - (dist / windowSize);
+                if (score > bestScore) bestScore = score;
+            }
+            // 부분 매칭도 허용 (needle이 더 긴 경우)
+            if (needle.length > haystack.length) {
+                var dist2 = levenshteinDistance(haystack, needle);
+                var score2 = 1 - (dist2 / needle.length);
+                if (score2 > bestScore) bestScore = score2;
+            }
+            return { found: bestScore >= 0.6, score: bestScore };
+        }
+
+        // OCR 텍스트 → DB 매칭
+        function matchOcrTextToDatabase(ocrText) {
+            if (typeof SAKE_DATABASE === 'undefined') return [];
+            var normalized = normalizeJapaneseText(ocrText);
+            var lines = normalized.split(/\s+/);
+            var fullText = normalized;
+            var results = [];
+
+            // 등급 키워드
+            var gradeKeywords = ['純米大吟醸', '大吟醸', '純米吟醸', '吟醸', '純米', '本醸造', '特別純米', '特別本醸造'];
+            var detectedGrades = [];
+            gradeKeywords.forEach(function(g) {
+                if (fullText.includes(g)) detectedGrades.push(g);
+            });
+
+            for (var brand in SAKE_DATABASE) {
+                var entry = SAKE_DATABASE[brand];
+                var brandJp = entry.brandJp || '';
+                var brandScore = 0;
+
+                // 1. 브랜드 매칭 (한자 브랜드명)
+                if (brandJp && brandJp.length >= 2) {
+                    if (fullText.includes(brandJp)) {
+                        brandScore = 50;
+                    } else {
+                        var bm = fuzzyContains(fullText, brandJp);
+                        if (bm.found) brandScore = Math.round(bm.score * 40);
+                    }
+                }
+
+                // 2. 한글 브랜드명 매칭 (보조)
+                if (brandScore === 0) {
+                    var brandLower = brand.toLowerCase();
+                    var textLower = fullText.toLowerCase();
+                    if (textLower.includes(brandLower) && brand.length >= 2) {
+                        brandScore = 20;
+                    }
+                }
+
+                if (brandScore === 0) continue;
+
+                // 3. 제품 매칭
+                var products = entry.products;
+                for (var pi = 0; pi < products.length; pi++) {
+                    var p = products[pi];
+                    var productScore = brandScore;
+                    var jpName = p.japanese || '';
+
+                    // 일본어 제품명에서 브랜드명 제거 후 매칭
+                    var productPart = jpName;
+                    if (brandJp && jpName.startsWith(brandJp)) {
+                        productPart = jpName.substring(brandJp.length).trim();
+                    }
+
+                    if (productPart && productPart.length >= 2) {
+                        if (fullText.includes(productPart)) {
+                            productScore += 30;
+                        } else {
+                            var pm = fuzzyContains(fullText, productPart);
+                            if (pm.found) productScore += Math.round(pm.score * 20);
+                        }
+                    }
+
+                    // 등급 매칭 보조 점수
+                    if (detectedGrades.length > 0 && p.grade) {
+                        var gradeJpMap = {
+                            '다이긴죠': '大吟醸', '준마이다이긴죠': '純米大吟醸',
+                            '긴죠': '吟醸', '준마이긴죠': '純米吟醸',
+                            '준마이': '純米', '혼죠조': '本醸造',
+                            '도쿠베츠준마이': '特別純米', '도쿠베츠혼죠조': '特別本醸造'
+                        };
+                        var gradeJp = gradeJpMap[p.grade] || '';
+                        if (gradeJp && detectedGrades.indexOf(gradeJp) >= 0) {
+                            productScore += 15;
+                        }
+                    }
+
+                    if (productScore > 20) {
+                        results.push({
+                            brand: brand,
+                            brandJp: brandJp,
+                            productIdx: pi,
+                            product: p,
+                            score: Math.min(productScore, 100)
+                        });
+                    }
+                }
+            }
+
+            // 점수 순 정렬, 상위 5개
+            results.sort(function(a, b) { return b.score - a.score; });
+            return results.slice(0, 5);
+        }
+
+        // 사진 처리
+        function handleOcrPhoto(event) {
+            var file = event.target.files[0];
+            if (!file) return;
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                ocrPhotoData = e.target.result;
+                var previewImg = document.getElementById('ocrPreviewImg');
+                previewImg.src = ocrPhotoData;
+                previewImg.style.display = 'block';
+                document.getElementById('ocrPlaceholder').style.display = 'none';
+                document.getElementById('ocrPhotoArea').classList.add('has-photo');
+                document.getElementById('ocrStartBtn').disabled = false;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // OCR 방식 선택
+        function selectOcrMethod(method) {
+            ocrMethod = method;
+            document.querySelectorAll('.ocr-method-btn').forEach(function(btn) {
+                btn.classList.toggle('active', btn.dataset.method === method);
+            });
+        }
+
+        // 진행바 업데이트
+        function updateOcrProgress(percent, text) {
+            document.getElementById('ocrProgressBar').style.width = percent + '%';
+            document.getElementById('ocrProgressText').textContent = text || '';
+        }
+
+        // 모달 열기
+        function openOcrModal() {
+            document.getElementById('ocrModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            // 기존 업로드 사진이 있으면 사용
+            if (currentPhotoData && !ocrPhotoData) {
+                ocrPhotoData = currentPhotoData;
+                var previewImg = document.getElementById('ocrPreviewImg');
+                previewImg.src = ocrPhotoData;
+                previewImg.style.display = 'block';
+                document.getElementById('ocrPlaceholder').style.display = 'none';
+                document.getElementById('ocrPhotoArea').classList.add('has-photo');
+                document.getElementById('ocrStartBtn').disabled = false;
+            }
+        }
+
+        // 모달 닫기
+        function closeOcrModal() {
+            document.getElementById('ocrModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // 원본 텍스트 토글
+        function toggleOcrRawText() {
+            var content = document.getElementById('ocrRawContent');
+            var toggle = content.previousElementSibling;
+            var isActive = content.classList.toggle('active');
+            toggle.textContent = (isActive ? '▼' : '▶') + ' 인식된 원본 텍스트 보기';
+        }
+
+        // 인식 시작
+        async function startOcrRecognition() {
+            if (!ocrPhotoData) return;
+            var startBtn = document.getElementById('ocrStartBtn');
+            var progress = document.getElementById('ocrProgress');
+            var results = document.getElementById('ocrResults');
+
+            startBtn.disabled = true;
+            results.classList.remove('active');
+            progress.classList.add('active');
+
+            try {
+                updateOcrProgress(5, '이미지 전처리 중...');
+                var processed = await prepareImageForOcr(ocrPhotoData);
+
+                var ocrText = '';
+                if (ocrMethod === 'tesseract') {
+                    ocrText = await runTesseractOcr(processed);
+                }
+
+                updateOcrProgress(100, '매칭 중...');
+                var matches = matchOcrTextToDatabase(ocrText);
+                displayOcrResults(matches, ocrText);
+            } catch (err) {
+                console.error('OCR error:', err);
+                updateOcrProgress(0, '오류 발생: ' + err.message);
+                document.getElementById('ocrMatchList').innerHTML =
+                    '<div class="ocr-no-match">인식 중 오류가 발생했습니다.<br>' + escapeHtml(err.message) + '</div>';
+                document.getElementById('ocrResults').classList.add('active');
+            } finally {
+                startBtn.disabled = false;
+                setTimeout(function() { progress.classList.remove('active'); }, 1000);
+            }
+        }
+
+        // 결과 표시
+        function displayOcrResults(matches, rawText) {
+            var matchList = document.getElementById('ocrMatchList');
+            var resultsDiv = document.getElementById('ocrResults');
+
+            if (matches.length === 0) {
+                matchList.innerHTML =
+                    '<div class="ocr-no-match">매칭되는 사케를 찾지 못했습니다.<br>직접 입력 모드를 사용해 주세요.</div>';
+            } else {
+                var html = '';
+                matches.forEach(function(m) {
+                    html += '<div class="ocr-match-item" onclick="selectOcrMatch(\'' +
+                        escapeHtml(m.brand).replace(/'/g, "\\'") + '\', ' + m.productIdx + ')">';
+                    html += '<div class="ocr-match-info">';
+                    html += '<div class="ocr-match-name">' + escapeHtml(m.brand) + ' ' + escapeHtml(m.product.name) + '</div>';
+                    html += '<div class="ocr-match-sub">' + escapeHtml(m.product.japanese || '') + '</div>';
+                    html += '</div>';
+                    html += '<div class="ocr-match-score">' + m.score + '%</div>';
+                    html += '</div>';
+                });
+                matchList.innerHTML = html;
+            }
+
+            // 원본 텍스트
+            document.getElementById('ocrRawContent').textContent = rawText || '(인식된 텍스트 없음)';
+            resultsDiv.classList.add('active');
+        }
+
+        // 매칭 선택 → 기존 선택기에 반영
+        function selectOcrMatch(brand, productIdx) {
+            toggleSakeInputMode('db');
+            selectBrand(brand);
+            selectProduct(productIdx);
+            // 선택된 브랜드 스크롤
+            var brandEl = document.querySelector('#brandList .sake-list-item.selected');
+            if (brandEl) brandEl.scrollIntoView({ block: 'nearest' });
+            closeOcrModal();
+        }
 
         // 노트 목록 불러오기
         async function loadNotes() {
@@ -6415,6 +7117,50 @@
             showPolicyPage('guide');
         }
     </script>
+
+    <!-- OCR Modal -->
+    <div class="ocr-modal" id="ocrModal">
+        <div class="ocr-modal-content">
+            <div class="ocr-modal-header">
+                <h3>📷 사진으로 사케 찾기</h3>
+                <button class="ocr-modal-close" onclick="closeOcrModal()">&times;</button>
+            </div>
+
+            <div class="ocr-photo-area" id="ocrPhotoArea" onclick="document.getElementById('ocrFileInput').click()">
+                <div class="ocr-photo-placeholder" id="ocrPlaceholder">
+                    <span class="ocr-photo-icon">📸</span>
+                    사케 라벨 사진을 촬영하거나 선택하세요
+                </div>
+                <img id="ocrPreviewImg" style="display:none;" alt="사케 라벨">
+            </div>
+            <input type="file" id="ocrFileInput" accept="image/*" capture="environment" style="display:none;" onchange="handleOcrPhoto(event)">
+
+            <div class="ocr-method-toggle">
+                <button type="button" class="ocr-method-btn active" data-method="tesseract" onclick="selectOcrMethod('tesseract')">🔍 OCR 인식</button>
+                <button type="button" class="ocr-method-btn" data-method="ai" onclick="selectOcrMethod('ai')" disabled title="추후 지원 예정">🤖 AI Vision</button>
+            </div>
+
+            <button type="button" class="ocr-start-btn" id="ocrStartBtn" onclick="startOcrRecognition()" disabled>인식 시작</button>
+
+            <div class="ocr-progress" id="ocrProgress">
+                <div class="ocr-progress-bar-bg">
+                    <div class="ocr-progress-bar" id="ocrProgressBar"></div>
+                </div>
+                <div class="ocr-progress-text" id="ocrProgressText">준비 중...</div>
+            </div>
+
+            <div class="ocr-results" id="ocrResults">
+                <div class="ocr-results-title">매칭 결과</div>
+                <div id="ocrMatchList"></div>
+                <div class="ocr-raw-text">
+                    <button type="button" class="ocr-raw-toggle" onclick="toggleOcrRawText()">▶ 인식된 원본 텍스트 보기</button>
+                    <div class="ocr-raw-content" id="ocrRawContent"></div>
+                </div>
+                <button type="button" class="ocr-manual-btn" onclick="closeOcrModal(); toggleSakeInputMode('manual');">직접 입력으로 전환</button>
+            </div>
+        </div>
+    </div>
+
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"c268f029452b4c718cfc112352f6ff95","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
