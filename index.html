@@ -60,6 +60,7 @@
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="sake_database.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;700;900&family=Cormorant+Garamond:wght@400;500;600;700&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -2800,6 +2801,240 @@
         ::-webkit-scrollbar-thumb:hover {
             background: var(--accent-gold);
         }
+
+        /* Sake Name Selector */
+        .sake-selector {
+            width: 100%;
+        }
+
+        .sake-selector-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .sake-selector-tab {
+            flex: 1;
+            padding: 10px 16px;
+            border: 2px solid var(--border-light);
+            border-radius: 12px;
+            background: var(--input-bg);
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .sake-selector-tab:hover {
+            border-color: var(--border-medium);
+        }
+
+        .sake-selector-tab.active {
+            border-color: var(--accent-gold);
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.08), rgba(201, 162, 39, 0.04));
+            color: var(--accent-gold);
+        }
+
+        .sake-selector-panel {
+            display: none;
+        }
+
+        .sake-selector-panel.active {
+            display: block;
+        }
+
+        .sake-search-input {
+            width: 100%;
+            padding: 14px 20px;
+            border: 2px solid var(--border-light);
+            border-radius: 12px;
+            font-size: 14px;
+            background: var(--input-bg);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            margin-bottom: 8px;
+        }
+
+        .sake-search-input:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+        }
+
+        .sake-lists-container {
+            display: flex;
+            gap: 8px;
+            height: 220px;
+        }
+
+        .sake-list {
+            flex: 1;
+            border: 2px solid var(--border-light);
+            border-radius: 12px;
+            overflow-y: auto;
+            background: var(--input-bg);
+        }
+
+        .sake-list-header {
+            position: sticky;
+            top: 0;
+            padding: 10px 14px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-light);
+            z-index: 1;
+        }
+
+        .sake-list-item {
+            padding: 10px 14px;
+            font-size: 13px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .sake-list-item:last-child {
+            border-bottom: none;
+        }
+
+        .sake-list-item:hover {
+            background: rgba(212, 175, 55, 0.06);
+        }
+
+        .sake-list-item.selected {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.12), rgba(201, 162, 39, 0.06));
+            color: var(--accent-gold);
+            font-weight: 600;
+        }
+
+        .sake-list-item .item-sub {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .sake-list-item .item-jp {
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        .sake-selected-display {
+            margin-top: 10px;
+            padding: 14px 18px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(201, 162, 39, 0.05));
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sake-selected-display.visible {
+            display: flex;
+        }
+
+        .sake-selected-display .selected-text {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .sake-selected-display .selected-sub {
+            font-size: 12px;
+            font-weight: 400;
+            color: var(--text-secondary);
+        }
+
+        .sake-selected-display .clear-btn {
+            width: 28px;
+            height: 28px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(212, 175, 55, 0.15);
+            color: var(--accent-gold);
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .sake-selected-display .clear-btn:hover {
+            background: rgba(212, 175, 55, 0.3);
+        }
+
+        .sake-product-empty {
+            padding: 20px 14px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        body.dark-mode .sake-selector-tab {
+            background: var(--input-bg);
+            border-color: var(--border-medium);
+        }
+
+        body.dark-mode .sake-selector-tab.active {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(201, 162, 39, 0.08));
+        }
+
+        body.dark-mode .sake-search-input {
+            background: var(--input-bg);
+            border-color: var(--border-medium);
+            color: var(--text-primary);
+        }
+
+        body.dark-mode .sake-search-input:focus {
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.15);
+        }
+
+        body.dark-mode .sake-list {
+            background: var(--input-bg);
+            border-color: var(--border-medium);
+        }
+
+        body.dark-mode .sake-list-header {
+            background: var(--bg-tertiary);
+            border-color: var(--border-medium);
+        }
+
+        body.dark-mode .sake-list-item {
+            border-color: var(--border-medium);
+        }
+
+        body.dark-mode .sake-list-item:hover {
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        body.dark-mode .sake-list-item.selected {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(201, 162, 39, 0.1));
+        }
+
+        body.dark-mode .sake-selected-display {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(201, 162, 39, 0.08));
+            border-color: rgba(212, 175, 55, 0.4);
+        }
+
+        @media (max-width: 600px) {
+            .sake-lists-container {
+                flex-direction: column;
+                height: auto;
+            }
+            .sake-list {
+                height: 160px;
+            }
+        }
     </style>
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1907306190071217"
@@ -2998,7 +3233,35 @@
 
                         <div class="form-group">
                             <label>사케 이름 *</label>
-                            <input type="text" id="sakeName" placeholder="예: 獺祭 純米大吟醸" required>
+                            <div class="sake-selector">
+                                <div class="sake-selector-tabs">
+                                    <button type="button" class="sake-selector-tab active" onclick="toggleSakeInputMode('db')">DB에서 선택</button>
+                                    <button type="button" class="sake-selector-tab" onclick="toggleSakeInputMode('manual')">직접 입력</button>
+                                </div>
+                                <div id="sakeDbPanel" class="sake-selector-panel active">
+                                    <input type="text" class="sake-search-input" id="brandSearch" placeholder="브랜드명 검색..." oninput="filterBrands(this.value)">
+                                    <div class="sake-lists-container">
+                                        <div class="sake-list" id="brandList">
+                                            <div class="sake-list-header">브랜드 (155)</div>
+                                        </div>
+                                        <div class="sake-list" id="productList">
+                                            <div class="sake-list-header">제품</div>
+                                            <div class="sake-product-empty">브랜드를 선택하세요</div>
+                                        </div>
+                                    </div>
+                                    <div class="sake-selected-display" id="sakeSelectedDisplay">
+                                        <div>
+                                            <div class="selected-text" id="sakeSelectedText"></div>
+                                            <div class="selected-sub" id="sakeSelectedSub"></div>
+                                        </div>
+                                        <button type="button" class="clear-btn" onclick="clearSakeSelection()" title="선택 해제">&times;</button>
+                                    </div>
+                                </div>
+                                <div id="sakeManualPanel" class="sake-selector-panel">
+                                    <input type="text" id="sakeNameManual" placeholder="예: 獺祭 純米大吟醸">
+                                </div>
+                                <input type="hidden" id="sakeName">
+                            </div>
                         </div>
 
                         <div class="section-title">색조</div>
@@ -3598,6 +3861,12 @@
                 return;
             }
             
+            const sakeNameVal = getSakeNameValue();
+            if (!sakeNameVal || !sakeNameVal.trim()) {
+                alert('사케 이름을 선택하거나 입력해주세요.');
+                return;
+            }
+
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
             submitBtn.textContent = '저장 중...';
@@ -3606,7 +3875,7 @@
                 user_id: currentUser.id,
                 date: document.getElementById('date').value,
                 photo: currentPhotoData,
-                sake_name: document.getElementById('sakeName').value,
+                sake_name: sakeNameVal.trim(),
                 clarity_rating: getRadioValue('clarity_rating'),
                 transparency: getRadioValue('transparency'),
                 viscosity: getRadioValue('viscosity'),
@@ -3665,10 +3934,202 @@
             editingNoteId = null;
             document.getElementById('uploadText').style.display = 'block';
             document.getElementById('photoPreview').innerHTML = '';
-            
+
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.textContent = '노트 저장';
+
+            resetSakeSelector();
         }
+
+        // === 사케 이름 선택기 (Sake Selector) ===
+        let selectedBrand = null;
+        let selectedProduct = null;
+        let sakeInputMode = 'db';
+
+        function initSakeSelector() {
+            if (typeof SAKE_DATABASE === 'undefined') return;
+            renderBrandList(Object.keys(SAKE_DATABASE).sort());
+
+            // Event delegation for brand clicks
+            document.getElementById('brandList').addEventListener('click', function(e) {
+                var item = e.target.closest('.sake-list-item');
+                if (item && item.dataset.brand) selectBrand(item.dataset.brand);
+            });
+
+            // Event delegation for product clicks
+            document.getElementById('productList').addEventListener('click', function(e) {
+                var item = e.target.closest('.sake-list-item');
+                if (item && item.dataset.idx !== undefined) selectProduct(parseInt(item.dataset.idx));
+            });
+        }
+
+        function renderBrandList(brands) {
+            var brandList = document.getElementById('brandList');
+            var html = '<div class="sake-list-header">브랜드 (' + brands.length + ')</div>';
+            brands.forEach(function(brand) {
+                var isSelected = selectedBrand === brand ? ' selected' : '';
+                var entry = SAKE_DATABASE[brand];
+                var label = escapeHtml(brand);
+                if (entry.brandJp) label += ' <span class="item-jp">(' + escapeHtml(entry.brandJp) + ')</span>';
+                html += '<div class="sake-list-item' + isSelected + '" data-brand="' + escapeHtml(brand) + '">' + label + '<div class="item-sub">' + entry.products.length + '개 제품</div></div>';
+            });
+            brandList.innerHTML = html;
+        }
+
+        function filterBrands(query) {
+            if (typeof SAKE_DATABASE === 'undefined') return;
+            var brands = Object.keys(SAKE_DATABASE).sort();
+            var q = query.toLowerCase().trim();
+            var filtered = q ? brands.filter(function(b) {
+                var entry = SAKE_DATABASE[b];
+                return b.toLowerCase().includes(q) || (entry.brandJp && entry.brandJp.includes(q));
+            }) : brands;
+            renderBrandList(filtered);
+        }
+
+        function selectBrand(brand) {
+            selectedBrand = brand;
+            selectedProduct = null;
+
+            // Highlight selected brand
+            document.querySelectorAll('#brandList .sake-list-item').forEach(function(el) {
+                el.classList.toggle('selected', el.dataset.brand === brand);
+            });
+
+            // Populate product list
+            var productList = document.getElementById('productList');
+            var products = SAKE_DATABASE[brand].products;
+            var html = '<div class="sake-list-header">제품 (' + products.length + ')</div>';
+            products.forEach(function(p, idx) {
+                html += '<div class="sake-list-item" data-idx="' + idx + '">' + escapeHtml(p.name) + '<div class="item-sub">' + escapeHtml(p.japanese) + '</div></div>';
+            });
+            productList.innerHTML = html;
+
+            updateSakeDisplay();
+        }
+
+        function selectProduct(idx) {
+            if (!selectedBrand) return;
+            var products = SAKE_DATABASE[selectedBrand].products;
+            selectedProduct = products[idx];
+
+            // Highlight selected product
+            document.querySelectorAll('#productList .sake-list-item').forEach(function(el) {
+                el.classList.toggle('selected', parseInt(el.dataset.idx) === idx);
+            });
+
+            updateSakeDisplay();
+        }
+
+        function updateSakeDisplay() {
+            const display = document.getElementById('sakeSelectedDisplay');
+            const hidden = document.getElementById('sakeName');
+
+            if (selectedBrand && selectedProduct) {
+                const fullName = selectedBrand + ' ' + selectedProduct.name;
+                const japaneseName = selectedProduct.japanese;
+                const displayName = fullName + (japaneseName ? ' (' + japaneseName + ')' : '');
+
+                document.getElementById('sakeSelectedText').textContent = fullName;
+                document.getElementById('sakeSelectedSub').textContent = japaneseName || '';
+                display.classList.add('visible');
+                hidden.value = displayName;
+            } else {
+                display.classList.remove('visible');
+                hidden.value = '';
+            }
+        }
+
+        function clearSakeSelection() {
+            selectedBrand = null;
+            selectedProduct = null;
+            document.querySelectorAll('#brandList .sake-list-item').forEach(function(el) { el.classList.remove('selected'); });
+            const productList = document.getElementById('productList');
+            productList.innerHTML = '<div class="sake-list-header">제품</div><div class="sake-product-empty">브랜드를 선택하세요</div>';
+            document.getElementById('sakeSelectedDisplay').classList.remove('visible');
+            document.getElementById('sakeName').value = '';
+        }
+
+        function toggleSakeInputMode(mode) {
+            sakeInputMode = mode;
+            document.querySelectorAll('.sake-selector-tab').forEach(function(tab, i) {
+                tab.classList.toggle('active', (i === 0 && mode === 'db') || (i === 1 && mode === 'manual'));
+            });
+            document.getElementById('sakeDbPanel').classList.toggle('active', mode === 'db');
+            document.getElementById('sakeManualPanel').classList.toggle('active', mode === 'manual');
+
+            // Sync hidden field
+            if (mode === 'manual') {
+                document.getElementById('sakeName').value = document.getElementById('sakeNameManual').value;
+            } else {
+                updateSakeDisplay();
+            }
+        }
+
+        function getSakeNameValue() {
+            if (sakeInputMode === 'manual') {
+                return document.getElementById('sakeNameManual').value;
+            }
+            return document.getElementById('sakeName').value;
+        }
+
+        function resetSakeSelector() {
+            sakeInputMode = 'db';
+            selectedBrand = null;
+            selectedProduct = null;
+            document.querySelectorAll('.sake-selector-tab').forEach(function(tab, i) {
+                tab.classList.toggle('active', i === 0);
+            });
+            document.getElementById('sakeDbPanel').classList.add('active');
+            document.getElementById('sakeManualPanel').classList.remove('active');
+            document.getElementById('brandSearch').value = '';
+            document.getElementById('sakeNameManual').value = '';
+            document.getElementById('sakeName').value = '';
+            document.getElementById('sakeSelectedDisplay').classList.remove('visible');
+            if (typeof SAKE_DATABASE !== 'undefined') renderBrandList(Object.keys(SAKE_DATABASE).sort());
+            var productList = document.getElementById('productList');
+            productList.innerHTML = '<div class="sake-list-header">제품</div><div class="sake-product-empty">브랜드를 선택하세요</div>';
+        }
+
+        function setSakeNameFromNote(sakeName) {
+            if (!sakeName) return;
+            // Try to find the sake in DB
+            if (typeof SAKE_DATABASE !== 'undefined') {
+                for (var brand in SAKE_DATABASE) {
+                    var products = SAKE_DATABASE[brand].products;
+                    for (var i = 0; i < products.length; i++) {
+                        var p = products[i];
+                        var fullName = brand + ' ' + p.name;
+                        var displayName = fullName + (p.japanese ? ' (' + p.japanese + ')' : '');
+                        if (sakeName === displayName || sakeName === fullName) {
+                            toggleSakeInputMode('db');
+                            selectBrand(brand);
+                            selectProduct(i);
+                            // Scroll brand into view
+                            var brandEl = document.querySelector('#brandList .sake-list-item.selected');
+                            if (brandEl) brandEl.scrollIntoView({ block: 'nearest' });
+                            return;
+                        }
+                    }
+                }
+            }
+            // Not found in DB - switch to manual mode
+            toggleSakeInputMode('manual');
+            document.getElementById('sakeNameManual').value = sakeName;
+            document.getElementById('sakeName').value = sakeName;
+        }
+
+        // Sync manual input to hidden field
+        document.addEventListener('DOMContentLoaded', function() {
+            var manualInput = document.getElementById('sakeNameManual');
+            if (manualInput) {
+                manualInput.addEventListener('input', function() {
+                    if (sakeInputMode === 'manual') {
+                        document.getElementById('sakeName').value = this.value;
+                    }
+                });
+            }
+        });
 
         // 노트 목록 불러오기
         async function loadNotes() {
@@ -3963,7 +4424,7 @@
                 switchTab('new');
 
                 document.getElementById('date').value = note.date;
-                document.getElementById('sakeName').value = note.sake_name;
+                setSakeNameFromNote(note.sake_name);
                 
                 if (note.photo) {
                     currentPhotoData = note.photo;
@@ -4022,6 +4483,7 @@
         loadTheme();
         checkAuth();
         setDefaultDate();
+        initSakeSelector();
         checkFeaturedVisibility();
 
         // 정책 페이지 표시 함수
