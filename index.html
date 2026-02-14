@@ -4525,11 +4525,31 @@
             return result.data.text;
         }
 
+        // AI용 이미지 리사이즈 (컬러 유지, 크기만 축소)
+        function resizeImageForAi(base64) {
+            return new Promise(function(resolve) {
+                var img = new Image();
+                img.onload = function() {
+                    var canvas = document.createElement('canvas');
+                    var maxSize = 1024;
+                    var scale = Math.min(maxSize / img.width, maxSize / img.height, 1);
+                    canvas.width = img.width * scale;
+                    canvas.height = img.height * scale;
+                    var ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.85));
+                };
+                img.src = base64;
+            });
+        }
+
         // AI Vision OCR (Claude API via Supabase Edge Function)
         async function runAiVisionOcr(base64) {
+            updateOcrProgress(10, '이미지 최적화 중...');
+            var resized = await resizeImageForAi(base64);
             updateOcrProgress(20, 'AI 분석 요청 중...');
             var resp = await supabaseClient.functions.invoke('sake-vision', {
-                body: { image: base64 }
+                body: { image: resized }
             });
             if (resp.error) {
                 throw new Error(resp.error.message || 'AI Vision 호출 실패');
