@@ -4545,11 +4545,15 @@
 
         // AI Vision OCR (Claude API via Supabase Edge Function)
         async function runAiVisionOcr(base64) {
-            updateOcrProgress(10, '이미지 최적화 중...');
-            var resized = await resizeImageForAi(base64);
+            updateOcrProgress(10, '이미지 준비 중...');
+            // 4MB 초과 시에만 리사이즈 (Supabase 6MB 제한 대응)
+            var imageToSend = base64;
+            if (base64.length > 4 * 1024 * 1024) {
+                imageToSend = await resizeImageForAi(base64);
+            }
             updateOcrProgress(20, 'AI 분석 요청 중...');
             var resp = await supabaseClient.functions.invoke('sake-vision', {
-                body: { image: resized }
+                body: { image: imageToSend }
             });
             if (resp.error) {
                 throw new Error(resp.error.message || 'AI Vision 호출 실패');
