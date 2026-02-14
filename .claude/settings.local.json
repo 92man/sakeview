@@ -2,7 +2,23 @@
   "permissions": {
     "allow": [
       "Bash(grep:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\n보안 강화: 관리자 인증 DB 기반으로 변경\n\n- 하드코딩된 관리자 이메일 제거\n- DB admins 테이블 기반 권한 확인\n- XSS 방지 escapeHtml 함수 추가\n- 입력값 검증 강화\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(python3:*)",
+      "Bash(/c/Users/dentu/AppData/Local/Microsoft/WindowsApps/python -c:*)",
+      "Bash(bash:*)",
+      "Bash(pip install:*)",
+      "Bash(/c/Users/dentu/AppData/Local/Programs/Python/Python*/python.exe)",
+      "Bash(py -c:*)",
+      "Bash(where:*)",
+      "Bash(node -e:*)",
+      "Bash(npm install:*)",
+      "Bash(node convert_excel.js:*)",
+      "Bash(start:*)",
+      "Bash(node extract_brand_jp.js:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ]
   }
 }
