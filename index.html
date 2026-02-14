@@ -4555,11 +4555,15 @@
                 throw new Error(resp.error.message || 'AI Vision 호출 실패');
             }
             var data = resp.data;
-            if (data.error) {
+            // 문자열 응답인 경우 JSON 파싱
+            if (typeof data === 'string') {
+                try { data = JSON.parse(data); } catch(e) { data = { rawText: data }; }
+            }
+            if (data && data.error) {
                 throw new Error(data.error);
             }
             updateOcrProgress(80, 'AI 분석 완료, 매칭 중...');
-            return data;
+            return data || {};
         }
 
         // AI 결과로 DB 매칭
@@ -4920,11 +4924,28 @@
                 if (ocrMethod === 'ai') {
                     var aiResult = await runAiVisionOcr(ocrPhotoData);
                     rawText = aiResult.rawText || '';
-                    matches = matchAiResultToDatabase(aiResult);
-                    if (matches.length === 0 && rawText) {
-                        // AI 구조화 매칭 실패 시 rawText로 기존 OCR 매칭 시도
-                        matches = matchOcrTextToDatabase(rawText);
+                    // AI 구조화 매칭 + rawText 매칭 둘 다 실행 후 합산
+                    var aiMatches = matchAiResultToDatabase(aiResult);
+                    var textMatches = rawText ? matchOcrTextToDatabase(rawText) : [];
+                    // product 텍스트로도 추가 매칭
+                    var productText = aiResult.product || '';
+                    if (productText && productText !== rawText) {
+                        var prodMatches = matchOcrTextToDatabase(productText);
+                        textMatches = textMatches.concat(prodMatches);
                     }
+                    // 합산 및 중복 제거 (같은 brand+productIdx면 높은 점수 유지)
+                    var allMatches = aiMatches.concat(textMatches);
+                    var seen = {};
+                    matches = [];
+                    allMatches.forEach(function(m) {
+                        var key = m.brand + '_' + m.productIdx;
+                        if (!seen[key] || seen[key].score < m.score) {
+                            seen[key] = m;
+                        }
+                    });
+                    for (var k in seen) matches.push(seen[k]);
+                    matches.sort(function(a, b) { return b.score - a.score; });
+                    matches = matches.slice(0, 5);
                 } else {
                     rawText = await runTesseractOcr(processed);
                     matches = matchOcrTextToDatabase(rawText);
