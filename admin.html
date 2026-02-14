@@ -41,7 +41,7 @@
     <div class="login-page" id="loginPage">
         <h2>🍶 관리자 로그인</h2>
         <div class="form-group">
-            <input type="email" id="email" placeholder="이메일" value="denturebur@naver.com">
+            <input type="email" id="email" placeholder="이메일">
         </div>
         <div class="form-group">
             <input type="password" id="password" placeholder="비밀번호">
@@ -139,27 +139,60 @@
     <script>
         const SUPABASE_URL = 'https://atgfrwohilgucmheyuzu.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0Z2Zyd29oaWxndWNtaGV5dXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk2NjAyNTUsImV4cCI6MjA4NTIzNjI1NX0.CoyHTds_3BRl5p6wAehlqaevrdkqp1BzymnTnqhzy2Y';
-        const ADMIN_EMAIL = 'denturebur@naver.com';
         const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         let charts = {};
 
+        // XSS 방지 함수
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // 관리자 권한 확인 (DB 기반)
+        async function checkAdminRole(userId) {
+            try {
+                const { data, error } = await client
+                    .from('admins')
+                    .select('user_id')
+                    .eq('user_id', userId)
+                    .single();
+
+                if (error || !data) return false;
+                return true;
+            } catch (e) {
+                console.error('관리자 권한 확인 실패:', e);
+                return false;
+            }
+        }
+
         async function adminLogin() {
-            const email = document.getElementById('email').value;
+            const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
             const err = document.getElementById('loginError');
 
-            if (email !== ADMIN_EMAIL) {
-                err.textContent = '관리자만 접근 가능합니다.';
+            if (!email || !password) {
+                err.textContent = '이메일과 비밀번호를 입력해주세요.';
                 return;
             }
 
             try {
-                const { error } = await client.auth.signInWithPassword({ email, password });
+                const { data, error } = await client.auth.signInWithPassword({ email, password });
                 if (error) throw error;
+
+                // DB에서 관리자 권한 확인
+                const isAdmin = await checkAdminRole(data.user.id);
+                if (!isAdmin) {
+                    await client.auth.signOut();
+                    err.textContent = '관리자 권한이 없습니다.';
+                    return;
+                }
+
                 document.getElementById('loginPage').style.display = 'none';
                 document.getElementById('dashboard').classList.add('active');
                 await loadAllData();
-                
+
                 // 30초마다 자동 새로고침
                 setInterval(loadAllData, 30000);
             } catch (e) {
@@ -238,7 +271,7 @@
             charts.topSakes = new Chart(document.getElementById('topSakesChart'), {
                 type: 'doughnut',
                 data: {
-                    labels: top.map(s => s[0].substring(0, 20)),
+                    labels: top.map(s => escapeHtml(s[0].substring(0, 20))),
                     datasets: [{
                         data: top.map(s => s[1]),
                         backgroundColor: ['#2c5282', '#8b4513', '#e74c3c', '#3498db', '#f39c12', '#27ae60', '#9b59b6', '#1abc9c', '#e67e22', '#34495e']
@@ -284,7 +317,7 @@
             Object.entries(stats).sort((a, b) => b[1].count - a[1].count).forEach(([sake, s]) => {
                 const avgOverall = (s.overall_rating_sum / s.count).toFixed(1);
                 html += `<tr>
-                    <td>${sake}</td>
+                    <td>${escapeHtml(sake)}</td>
                     <td>${s.count}</td>
                     <td>${avgOverall}</td>
                     <td>${(s.clarity/s.count).toFixed(1)}</td>
@@ -305,17 +338,27 @@
             html = '';
             notes.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 30).forEach(n => {
                 const d = new Date(n.created_at).toLocaleDateString('ko-KR');
-                html += `<tr><td>${d}</td><td>${n.user_id ? n.user_id.substring(0, 8) : '-'}</td><td>${n.sake_name}</td><td>${n.clarity_rating||'-'}</td><td>${n.transparency||'-'}</td><td>${n.aroma_intensity||'-'}</td><td>${n.flavor||'-'}</td></tr>`;
+                const userId = n.user_id ? escapeHtml(n.user_id.substring(0, 8)) : '-';
+                const sakeName = escapeHtml(n.sake_name);
+                html += `<tr><td>${d}</td><td>${userId}</td><td>${sakeName}</td><td>${n.clarity_rating||'-'}</td><td>${n.transparency||'-'}</td><td>${n.aroma_intensity||'-'}</td><td>${n.flavor||'-'}</td></tr>`;
             });
             document.getElementById('notesTable').innerHTML = html || '<tr><td colspan="7">데이터 없음</td></tr>';
         }
 
         window.addEventListener('load', async () => {
             const { data } = await client.auth.getSession();
-            if (data.session && data.session.user.email === ADMIN_EMAIL) {
-                document.getElementById('loginPage').style.display = 'none';
-                document.getElementById('dashboard').classList.add('active');
-                await loadAllData();
+            if (data.session) {
+                // DB에서 관리자 권한 확인
+                const isAdmin = await checkAdminRole(data.session.user.id);
+                if (isAdmin) {
+                    document.getElementById('loginPage').style.display = 'none';
+                    document.getElementById('dashboard').classList.add('active');
+                    await loadAllData();
+                    setInterval(loadAllData, 30000);
+                } else {
+                    // 관리자가 아니면 로그아웃
+                    await client.auth.signOut();
+                }
             }
         });
     </script>
