@@ -1612,19 +1612,6 @@
             overflow: hidden;
         }
 
-        .rating-scale-10 label::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, var(--accent-gold), var(--accent-rose));
-            opacity: 0;
-            transition: opacity 0.35s ease;
-        }
-
-        .rating-scale-10 label span {
-            position: relative;
-            z-index: 1;
-        }
 
         .rating-scale-10 label:hover {
             border-color: var(--accent-gold);
@@ -1633,15 +1620,11 @@
         }
 
         .rating-scale-10 label:has(input:checked) {
-            background: transparent;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-rose));
             color: white;
             border-color: transparent;
             box-shadow: 0 6px 24px rgba(212, 175, 55, 0.35);
             transform: scale(1.1);
-        }
-
-        .rating-scale-10 label:has(input:checked)::before {
-            opacity: 1;
         }
 
         .rating-scale-10 input[type="radio"] {
