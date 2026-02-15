@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWA 아이콘 생성기</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; max-width: 900px; margin: 40px auto; padding: 20px; background: #f5f5f5; }
+        h1 { color: #1a1a2e; margin-bottom: 10px; }
+        p { color: #666; margin-bottom: 30px; }
+        .icons-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+        .icon-card { background: white; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .icon-card canvas { border: 1px dashed #ddd; border-radius: 8px; max-width: 100%; }
+        .icon-card .label { margin: 10px 0; font-weight: 600; color: #1a1a2e; }
+        .icon-card button { background: #1a1a2e; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; }
+        .icon-card button:hover { background: #2a2a4e; }
+        .download-all { display: block; margin: 30px auto; background: #d4a574; color: white; border: none; padding: 14px 32px; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 600; }
+        .download-all:hover { background: #c49564; }
+        .status { text-align: center; color: #666; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>PWA 아이콘 생성기</h1>
+    <p>icon.svg를 다양한 크기의 PNG로 변환합니다. 각 아이콘을 개별 다운로드하거나 전체 다운로드할 수 있습니다.</p>
+    <div class="icons-grid" id="iconsGrid"></div>
+    <button class="download-all" onclick="downloadAll()">전체 다운로드</button>
+    <div class="status" id="status"></div>
+
+    <script>
+        const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
+        const canvases = {};
+
+        const SVG_SOURCE = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#1a1a2e"/>
+      <stop offset="100%" stop-color="#12122a"/>
+    </linearGradient>
+    <linearGradient id="cobalt" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2b4c8c"/>
+      <stop offset="100%" stop-color="#1e3668"/>
+    </linearGradient>
+    <linearGradient id="needleN" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#d4a574"/>
+      <stop offset="100%" stop-color="#c4935a"/>
+    </linearGradient>
+    <linearGradient id="needleS" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#8a8a9a"/>
+      <stop offset="100%" stop-color="#6a6a7a"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="10" flood-color="#000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <g filter="url(#shadow)">
+    <circle cx="256" cy="256" r="190" fill="#f0ece4"/>
+    <circle cx="256" cy="256" r="190" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+    <circle cx="256" cy="256" r="162" fill="url(#cobalt)"/>
+    <circle cx="256" cy="256" r="100" fill="#f0ece4"/>
+    <circle cx="256" cy="256" r="40" fill="url(#cobalt)"/>
+    <circle cx="256" cy="256" r="162" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+    <circle cx="256" cy="256" r="100" fill="none" stroke="rgba(0,0,0,0.05)" stroke-width="1"/>
+  </g>
+  <g transform="rotate(35, 256, 256)">
+    <polygon points="256,90 244,256 268,256" fill="url(#needleN)"/>
+    <polygon points="256,422 268,256 244,256" fill="url(#needleS)"/>
+    <polygon points="256,90 244,256 256,256" fill="rgba(255,255,255,0.15)"/>
+    <polygon points="256,422 268,256 256,256" fill="rgba(255,255,255,0.1)"/>
+    <circle cx="256" cy="256" r="14" fill="#d4a574"/>
+    <circle cx="256" cy="256" r="10" fill="#1a1a2e"/>
+    <circle cx="256" cy="256" r="5" fill="#d4a574"/>
+  </g>
+</svg>`;
+
+        function init() {
+            const blob = new Blob([SVG_SOURCE], { type: 'image/svg+xml;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const img = new Image();
+
+            img.onload = () => {
+                const grid = document.getElementById('iconsGrid');
+                sizes.forEach(size => {
+                    const card = document.createElement('div');
+                    card.className = 'icon-card';
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = size;
+                    canvas.height = size;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, size, size);
+                    canvases[size] = canvas;
+
+                    const label = document.createElement('div');
+                    label.className = 'label';
+                    label.textContent = `${size} x ${size}`;
+
+                    const btn = document.createElement('button');
+                    btn.textContent = '다운로드';
+                    btn.onclick = () => downloadIcon(size);
+
+                    card.appendChild(canvas);
+                    card.appendChild(label);
+                    card.appendChild(btn);
+                    grid.appendChild(card);
+                });
+                URL.revokeObjectURL(url);
+                document.getElementById('status').textContent = '모든 아이콘이 생성되었습니다.';
+            };
+
+            img.onerror = () => {
+                document.getElementById('status').textContent = 'SVG 로드 실패. 콘솔을 확인하세요.';
+            };
+
+            img.src = url;
+        }
+
+        function downloadIcon(size) {
+            const canvas = canvases[size];
+            if (!canvas) return;
+            const link = document.createElement('a');
+            link.download = `icon-${size}x${size}.png`;
+            link.href = canvas.toDataURL('image/png');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function downloadAll() {
+            sizes.forEach((size, i) => {
+                setTimeout(() => downloadIcon(size), i * 300);
+            });
+        }
+
+        init();
+    </script>
+</body>
+</html>
