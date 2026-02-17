@@ -4,8 +4,8 @@
   "description": "사케 애호가를 위한 테이스팅 노트 서비스",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#1a1a2e",
-  "theme_color": "#1a1a2e",
+  "background_color": "#383961",
+  "theme_color": "#383961",
   "lang": "ko",
   "orientation": "portrait-primary",
   "icons": [

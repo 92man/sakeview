@@ -90,11 +90,11 @@ function offlineFallback() {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>오프라인 - 사케를 보다</title>
   <style>
-    body { font-family: -apple-system, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background: #1a1a2e; color: #d4a574; text-align: center; }
+    body { font-family: -apple-system, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background: #383961; color: #DBDFAC; text-align: center; }
     .container { padding: 40px; }
     h1 { font-size: 2em; margin-bottom: 16px; }
     p { font-size: 1.1em; opacity: 0.8; }
-    button { margin-top: 24px; background: #d4a574; color: #1a1a2e; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1em; cursor: pointer; }
+    button { margin-top: 24px; background: #DBDFAC; color: #383961; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1em; cursor: pointer; }
   </style>
 </head>
 <body>
