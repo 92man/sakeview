@@ -5045,7 +5045,7 @@
                 container.innerHTML = `<div class="empty-state">
                     <div class="empty-state-icon">❌</div>
                     <h3>노트를 불러올 수 없습니다</h3>
-                    <p>${error.message}</p>
+                    <p>${escapeHtml(error.message)}</p>
                 </div>`;
             }
         }
@@ -5285,7 +5285,7 @@
                 detailContent.innerHTML = `<div class="empty-state">
                     <div class="empty-state-icon">❌</div>
                     <h3>노트를 불러올 수 없습니다</h3>
-                    <p>${error.message}</p>
+                    <p>${escapeHtml(error.message)}</p>
                 </div>`;
             }
         }
@@ -5409,7 +5409,7 @@
                             </ul>
                             <p style="margin-left: 20px; font-size: 0.95em; color: #555;">이러한 통계는 개인을 식별할 수 없는 익명화된 형태로 생성되며, 서비스 개선 및 인사이트 제공 목적으로만 사용됩니다. 누적 데이터 300건 이상 시 공개 통계로 제공될 수 있습니다.</p>
 
-                            <p style="margin-top: 20px;"><strong>3. 정보 보보호</strong></p>
+                            <p style="margin-top: 20px;"><strong>3. 정보 보호</strong></p>
                             <p>사용자의 개인정보는 Supabase의 보안 서버에 암호화되어 저장됩니다. 우리는 업계 표준의 보안 조치를 취하고 있습니다.</p>
 
                             <p style="margin-top: 20px;"><strong>4. 정보 공유</strong></p>
