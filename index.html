@@ -3202,7 +3202,7 @@
                     </div>
                     <div class="header-right">
                         <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="테마 전환" style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;">
-                            <span class="material-symbols-outlined" id="themeIcon" style="font-size:20px;">notifications</span>
+                            <span class="material-symbols-outlined" id="themeIcon" style="font-size:20px;">light_mode</span>
                         </button>
                         <div class="user-info" id="userInfoSection">
                             <span id="userEmail" style="display: none;"></span>
@@ -3938,7 +3938,7 @@
                 document.body.classList.add('dark-mode');
                 if (themeIcon) themeIcon.textContent = 'dark_mode';
             } else {
-                if (themeIcon) themeIcon.textContent = 'notifications';
+                if (themeIcon) themeIcon.textContent = 'light_mode';
             }
         }
 
@@ -3946,7 +3946,7 @@
             document.body.classList.toggle('dark-mode');
             const isDark = document.body.classList.contains('dark-mode');
             const themeIcon = document.getElementById('themeIcon');
-            if (themeIcon) themeIcon.textContent = isDark ? 'dark_mode' : 'notifications';
+            if (themeIcon) themeIcon.textContent = isDark ? 'dark_mode' : 'light_mode';
             localStorage.setItem('sakeAppTheme', isDark ? 'dark' : 'light');
         }
 
