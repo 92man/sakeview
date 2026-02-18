@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'sakeview-v4';
+const CACHE_VERSION = 'sakeview-v5';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -46,7 +46,13 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Cache-first for same-origin static assets
+  // Network-first for HTML pages (always get latest)
+  if (request.mode === 'navigate' || request.destination === 'document' || url.pathname.endsWith('.html') || url.pathname === '/') {
+    event.respondWith(networkFirst(request));
+    return;
+  }
+
+  // Cache-first for other same-origin static assets (icons, images, JS)
   event.respondWith(cacheFirst(request));
 });
 
