@@ -721,6 +721,7 @@
             border-left: 1px solid #e2e8f0;
             border-right: 1px solid #e2e8f0;
             box-shadow: 0 0 60px rgba(0, 0, 0, 0.04);
+            overflow-x: hidden;
         }
 
         body.dark-mode #mainApp {
@@ -2395,158 +2396,58 @@
             60%, 100% { content: '...'; }
         }
 
-        /* Responsive Design - Premium */
+        /* Responsive Design - Mobile */
         @media (max-width: 768px) {
             .container {
-                padding: 0 20px;
+                padding: 0 12px;
+            }
+
+            .main-content-area {
+                padding: 16px 16px 100px !important;
             }
 
             .header {
-                min-height: 240px;
-                padding: 80px 20px 60px;
-                margin-left: -20px;
-                margin-right: -20px;
+                padding: 0 16px;
             }
 
             .header h1 {
-                font-size: 2.2em;
-                letter-spacing: 4px;
-            }
-
-            .header h1::after {
-                width: 40px;
-                margin-top: 16px;
-            }
-
-            .header p {
-                font-size: 0.9em;
-                margin-top: 20px;
-                letter-spacing: 2px;
-            }
-
-            .theme-toggle {
-                top: 20px;
-                left: 20px;
-                padding: 12px 14px;
-                font-size: 1.1em;
-            }
-
-            .user-info {
-                top: 18px;
-                right: 20px;
-                font-size: 0.85em;
+                font-size: 1.1rem;
             }
 
             #userEmail {
-                font-size: 0.75em;
+                display: none !important;
             }
 
-            .login-btn,
-            .logout-btn {
-                padding: 12px 20px;
-                font-size: 0.85em;
+            .stitch-hero {
+                margin-bottom: 20px !important;
             }
 
-            .featured-section {
-                margin-bottom: 36px;
-                border-radius: 24px;
+            .stitch-hero .featured-title {
+                font-size: 1.3rem !important;
             }
 
-            .featured-content-wrapper {
-                display: flex;
-                flex-direction: column;
-            }
-
-            .featured-image-container {
-                min-height: 240px;
-                order: 1;
-            }
-
-            .featured-image-container img {
-                object-fit: contain;
-                width: 80%;
-                height: auto;
-                margin: 0 auto;
-            }
-
-            .featured-content-text {
-                padding: 32px 28px;
-                order: 2;
-            }
-
-            .featured-label {
-                font-size: 0.65em;
-                letter-spacing: 3px;
-            }
-
-            .featured-title {
-                font-size: 1.5em;
-            }
-
-            .featured-desc {
-                font-size: 0.9em;
-                line-height: 1.8;
-            }
-
-            .featured-meta {
-                font-size: 0.8em;
-                gap: 10px;
-            }
-
-            .featured-meta span {
-                padding: 6px 14px;
-            }
-
-            .featured-actions {
-                flex-direction: column;
-                gap: 12px;
-            }
-
-            .featured-btn {
-                width: 100%;
-                padding: 16px 24px;
-            }
-
-            .tabs {
-                padding: 6px;
-                border-radius: 16px;
-                margin-bottom: 32px;
-            }
-
-            .tab {
-                padding: 16px 20px;
-                font-size: 0.9em;
-                border-radius: 12px;
+            .stitch-hero .featured-desc {
+                font-size: 0.85rem !important;
             }
 
             .content {
-                padding: 32px 24px;
-                border-radius: 24px;
+                padding: 20px 16px;
+                border-radius: 12px;
             }
 
             .notes-list {
                 grid-template-columns: 1fr;
-                gap: 24px;
-            }
-
-            .note-card {
-                border-radius: 20px;
-            }
-
-            .note-card-image {
-                height: 220px;
+                gap: 16px;
             }
 
             .note-card-content {
-                padding: 24px 26px 28px;
+                padding: 16px;
             }
 
             .rating-item {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 16px;
-                padding: 20px 22px;
-                border-radius: 16px;
+                gap: 12px;
             }
 
             .rating-scale {
@@ -2554,101 +2455,43 @@
                 justify-content: space-between;
             }
 
-            .rating-scale label {
-                padding: 12px 16px;
-                border-radius: 10px;
-            }
-
             .rating-scale-10 {
+                flex-wrap: wrap;
                 justify-content: flex-start;
-            }
-
-            .rating-scale-10 label {
-                width: 42px;
-                height: 42px;
-                border-radius: 12px;
-            }
-
-            .section-title {
-                font-size: 1.1em;
-                margin: 36px 0 20px 0;
-            }
-
-            .section-title::before {
-                width: 3px;
-                height: 16px;
-            }
-
-            .auth-container {
-                margin: 40px 16px;
-                padding: 40px 28px;
-                border-radius: 24px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .header {
-                min-height: 220px;
-                padding: 70px 16px 50px;
-            }
-
-            .header h1 {
-                font-size: 1.8em;
-                letter-spacing: 3px;
-            }
-
-            .header p {
-                font-size: 0.85em;
-                letter-spacing: 1.5px;
-            }
-
-            .theme-toggle {
-                top: 16px;
-                left: 16px;
-                padding: 10px 12px;
-            }
-
-            .user-info {
-                top: 14px;
-                right: 16px;
-            }
-
-            .featured-title {
-                font-size: 1.3em;
-            }
-
-            .featured-content-text {
-                padding: 28px 24px;
-            }
-
-            .content {
-                padding: 28px 20px;
-            }
-
-            .rating-scale label {
-                padding: 10px 14px;
-                font-size: 0.9em;
             }
 
             .rating-scale-10 label {
                 width: 38px;
                 height: 38px;
-                font-size: 0.9em;
-                border-radius: 10px;
-            }
-
-            .btn-primary {
-                padding: 18px 28px;
-                font-size: 0.9em;
-                border-radius: 14px;
+                font-size: 0.85em;
             }
 
             .auth-container {
-                padding: 36px 24px;
+                margin: 40px 16px;
+                padding: 32px 20px;
+                border-radius: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content-area {
+                padding: 12px 12px 100px !important;
             }
 
-            .auth-title {
-                font-size: 1.6em;
+            .content {
+                padding: 16px 12px;
+            }
+
+            .rating-scale label {
+                padding: 8px 12px;
+                font-size: 0.85em;
+            }
+
+            .rating-scale-10 label {
+                width: 34px;
+                height: 34px;
+                font-size: 0.8em;
+                border-radius: 8px;
             }
         }
 
@@ -3415,7 +3258,7 @@
                     <div style="position: absolute; inset: 0; background: linear-gradient(to right, #383961, rgba(56,57,97,0.8), transparent); z-index: 10;"></div>
                     <img id="featuredImage" src="" alt="추천 사케" style="position: absolute; right: 0; top: 0; height: 100%; width: 50%; object-fit: cover;">
                     <div class="placeholder" style="display:none;">🍶</div>
-                    <div style="position: relative; z-index: 20; padding: 32px 40px; max-width: 500px;">
+                    <div class="stitch-hero-text" style="position: relative; z-index: 20; padding: 24px 24px; max-width: 500px;">
                         <span class="featured-label" style="display: inline-block; padding: 4px 12px; border-radius: 9999px; background: #DBDFAC; color: #383961; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px;">이번 주의 추천</span>
                         <div class="featured-title" id="featuredTitle" style="font-size: 2rem; font-weight: 700; margin-bottom: 12px; line-height: 1.2;"></div>
                         <div class="featured-desc" id="featuredDesc" style="color: #cbd5e1; font-size: 1rem; margin-bottom: 20px; line-height: 1.6;"></div>
