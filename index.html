@@ -3273,13 +3273,6 @@
             </div>
 
             <div class="content">
-                <!-- 정책 페이지 컨테이너 -->
-                <div id="policyView" style="display: none;">
-                    <div style="margin-bottom: 20px;">
-                        <button class="back-btn" id="policyBackBtn">← 돌아가기</button>
-                    </div>
-                    <div id="policyContent"></div>
-                </div>
                 <!-- 새 노트 작성 -->
                 <div id="newView" class="view active">
                     <div class="content-card-header">
@@ -3623,6 +3616,16 @@
                     </a>
                 </div>
             </nav>
+        </div>
+    </div>
+
+    <!-- 정책 페이지 (전체화면 오버레이) -->
+    <div id="policyView" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; z-index:9999; background:var(--bg-primary, #fff); overflow-y:auto;">
+        <div style="max-width:900px; margin:0 auto; padding:20px;">
+            <div style="margin-bottom:20px;">
+                <button class="back-btn" id="policyBackBtn" style="background:none; border:1px solid var(--border-card, #e2e8f0); padding:10px 20px; border-radius:8px; cursor:pointer; font-size:1rem; color:var(--text-primary, #333);">← 돌아가기</button>
+            </div>
+            <div id="policyContent"></div>
         </div>
     </div>
 
@@ -7172,50 +7175,15 @@
             }
 
             policyContent.innerHTML = html;
-            
-            // 모든 view 숨기고 policyView만 표시
-            document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
+
+            // 전체화면 오버레이로 표시
             policyView.style.display = 'block';
-
-            document.querySelector('.tabs').style.display = 'none';
-            document.getElementById('appFooter').style.display = 'none';
-            document.getElementById('topNav').style.display = 'none';
-
-            // 돌아가기 버튼 클릭 이벤트
             policyBackBtn.onclick = hidePolicyPage;
-            
-            window.scrollTo(0, 0);
+            policyView.scrollTop = 0;
         }
 
         function hidePolicyPage() {
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            const policyView = document.getElementById('policyView');
-            const tabs = document.querySelector('.tabs');
-
-            policyView.style.display = 'none';
-            tabs.style.display = 'flex';
-            document.getElementById('appFooter').style.display = 'block';
-            document.getElementById('topNav').style.display = 'flex';
-
-            // 모든 view에서 active 클래스 제거 및 인라인 스타일 초기화
-            document.querySelectorAll('.view').forEach(v => {
-                v.classList.remove('active');
-                v.style.display = '';
-            });
-
-            // 모든 탭에서 active 클래스 제거
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-
-            if (currentUser) {
-                document.getElementById('listView').classList.add('active');
-                document.querySelector('.tab:last-child').classList.add('active');
-                loadNotes();
-            } else {
-                document.getElementById('newView').classList.add('active');
-                document.querySelector('.tab:first-child').classList.add('active');
-            }
-
-            window.scrollTo(0, 0);
+            document.getElementById('policyView').style.display = 'none';
         }
 
         // 사케 가이드 페이지 함수 (4번 작업에서 사용될 예정)
