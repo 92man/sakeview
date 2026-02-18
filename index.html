@@ -67,6 +67,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="sake_database.js"></script>
+    <script src="tasting_dictionary.js"></script>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script>
         tailwind.config = {
@@ -3083,6 +3084,573 @@
             }
         }
 
+        /* ===== 테이스팅 태그 UI ===== */
+        .tasting-category-tabs {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            margin-bottom: 16px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        .tasting-category-tabs::-webkit-scrollbar { display: none; }
+        .tasting-cat-tab {
+            flex-shrink: 0;
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1.5px solid var(--border-card);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .tasting-cat-tab:hover {
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+        }
+        .tasting-cat-tab.active {
+            background: var(--accent-primary, #383961);
+            color: white;
+            border-color: var(--accent-primary, #383961);
+        }
+        .tasting-cat-tab .cat-badge {
+            display: inline-block;
+            min-width: 18px;
+            height: 18px;
+            line-height: 18px;
+            text-align: center;
+            background: rgba(255,255,255,0.3);
+            border-radius: 9px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-left: 6px;
+            padding: 0 5px;
+        }
+        .tasting-cat-tab:not(.active) .cat-badge {
+            background: var(--accent-primary, #383961);
+            color: white;
+        }
+
+        .tasting-cat-panel {
+            display: none;
+        }
+        .tasting-cat-panel.active {
+            display: block;
+        }
+
+        .tasting-sub-section {
+            margin-bottom: 16px;
+        }
+        .tasting-sub-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+            padding-left: 2px;
+        }
+        .tasting-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .tasting-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 7px 14px;
+            border-radius: 20px;
+            border: 1.5px solid var(--border-card);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .tasting-tag:hover {
+            border-color: var(--accent-primary);
+            background: rgba(56, 57, 97, 0.05);
+        }
+        .tasting-tag.selected {
+            background: var(--accent-primary, #383961);
+            color: white;
+            border-color: var(--accent-primary, #383961);
+            box-shadow: 0 2px 8px rgba(56, 57, 97, 0.25);
+        }
+        .tasting-radio-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .tasting-radio {
+            display: inline-flex;
+            align-items: center;
+            padding: 7px 14px;
+            border-radius: 20px;
+            border: 1.5px solid var(--border-card);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .tasting-radio:hover {
+            border-color: var(--accent-primary);
+        }
+        .tasting-radio.selected {
+            background: var(--accent-primary, #383961);
+            color: white;
+            border-color: var(--accent-primary, #383961);
+            box-shadow: 0 2px 8px rgba(56, 57, 97, 0.25);
+        }
+
+        .tasting-selected-summary {
+            margin-top: 16px;
+            padding: 12px 16px;
+            background: var(--bg-muted);
+            border-radius: 10px;
+            min-height: 36px;
+        }
+        .tasting-selected-summary .summary-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+        .tasting-selected-summary .summary-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .tasting-selected-summary .summary-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            background: var(--accent-primary, #383961);
+            color: white;
+            border-radius: 12px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+        .tasting-selected-summary .summary-tag .remove-tag {
+            cursor: pointer;
+            opacity: 0.7;
+            font-size: 0.9rem;
+            line-height: 1;
+        }
+        .tasting-selected-summary .summary-tag .remove-tag:hover {
+            opacity: 1;
+        }
+        .tasting-selected-summary .summary-empty {
+            color: var(--text-muted);
+            font-size: 0.82rem;
+            font-style: italic;
+        }
+
+        /* 상세보기 태그 렌더링 */
+        .detail-tasting-section {
+            margin-bottom: 16px;
+        }
+        .detail-tasting-cat-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .detail-tasting-sub {
+            margin-bottom: 8px;
+            margin-left: 4px;
+        }
+        .detail-tasting-sub-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .detail-tasting-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        .detail-tasting-tag {
+            display: inline-block;
+            padding: 3px 10px;
+            background: rgba(56, 57, 97, 0.08);
+            color: var(--accent-primary, #383961);
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .tasting-cat-tab {
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+            .tasting-tag, .tasting-radio {
+                padding: 6px 11px;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* ===== Community View ===== */
+        .community-stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        .community-stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-card);
+            border-radius: 12px;
+            padding: 20px 24px;
+            display: flex;
+            flex-direction: column;
+        }
+        .community-stat-label {
+            font-size: 0.8rem;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .community-stat-value {
+            font-size: 2.25rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin: 4px 0;
+            line-height: 1.1;
+        }
+        .community-stat-sub {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+        .community-stat-sub.green {
+            color: #22c55e;
+        }
+        .community-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 32px;
+        }
+        .community-feed-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .community-feed-header h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+        .community-view-all-btn {
+            background: none;
+            border: none;
+            color: #64748b;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        .community-view-all-btn:hover {
+            background: var(--bg-muted);
+        }
+        .community-feed-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-card);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .community-feed-card:hover {
+            border-color: #DBDFAC;
+            box-shadow: 0 4px 12px rgba(56, 57, 97, 0.06);
+        }
+        .community-feed-card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .community-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #fff;
+            flex-shrink: 0;
+        }
+        .community-feed-card-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .community-feed-card-name {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+        .community-feed-card-meta {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+        .community-rating-dots {
+            display: flex;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+        .community-rating-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--border-card);
+        }
+        .community-rating-dot.active {
+            background: var(--accent-primary);
+        }
+        .community-feed-card-text {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-top: 4px;
+        }
+        /* Community Sidebar */
+        .community-sidebar {
+            position: sticky;
+            top: 80px;
+            align-self: start;
+        }
+        .community-sidebar-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0 0 16px 0;
+        }
+        .community-sidebar-subtitle {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0 0 12px 0;
+        }
+        .community-search-wrap {
+            position: relative;
+            margin-bottom: 24px;
+        }
+        .community-search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 20px;
+            pointer-events: none;
+        }
+        .community-search-wrap input {
+            width: 100%;
+            padding: 12px 16px 12px 40px;
+            border: 1px solid var(--border-card);
+            border-radius: 12px;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+            background: var(--card-bg);
+            color: var(--text-primary);
+        }
+        .community-search-wrap input:focus {
+            border-color: #DBDFAC;
+        }
+        #communitySearchResults {
+            margin-bottom: 16px;
+        }
+        .community-search-item {
+            padding: 10px 14px;
+            border: 1px solid var(--border-card);
+            border-radius: 10px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            background: var(--bg-subtle);
+            transition: all 0.2s;
+        }
+        .community-search-item:hover {
+            border-color: #DBDFAC;
+            background: #fff;
+        }
+        .community-categories {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+        .community-categories button {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-card);
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+        .community-categories button:hover {
+            border-color: var(--accent-gold);
+            background: var(--card-bg);
+        }
+        .community-categories button span {
+            color: #94a3b8;
+        }
+        .community-cta {
+            background: #383961;
+            color: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+        }
+        .community-cta h4 {
+            margin: 0 0 8px 0;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        .community-cta p {
+            margin: 0;
+            font-size: 0.85rem;
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+        .community-cta button {
+            background: #DBDFAC;
+            color: #383961;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            margin-top: 16px;
+            transition: opacity 0.2s;
+        }
+        .community-cta button:hover {
+            opacity: 0.9;
+        }
+        .community-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: #94a3b8;
+        }
+        .community-empty-icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+        }
+        @media (max-width: 768px) {
+            .community-stats-row {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            .community-stat-card {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                padding: 16px 20px;
+            }
+            .community-stat-value {
+                font-size: 1.5rem;
+            }
+            .community-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+            .community-sidebar {
+                position: static;
+            }
+            .community-feed-card {
+                padding: 20px;
+            }
+        }
+        body.dark-mode .community-stat-card {
+            background: #1e1e35;
+            border-color: #383961;
+        }
+        body.dark-mode .community-stat-value {
+            color: #f1f5f9;
+        }
+        body.dark-mode .community-stat-label {
+            color: #94a3b8;
+        }
+        body.dark-mode .community-feed-header h3,
+        body.dark-mode .community-sidebar-title,
+        body.dark-mode .community-sidebar-subtitle {
+            color: #f1f5f9;
+        }
+        body.dark-mode .community-feed-card {
+            background: #1e1e35;
+            border-color: #383961;
+        }
+        body.dark-mode .community-feed-card-name {
+            color: #f1f5f9;
+        }
+        body.dark-mode .community-feed-card-text {
+            color: #cbd5e1;
+        }
+        body.dark-mode .community-search-wrap input {
+            background: #1e1e35;
+            border-color: #383961;
+            color: #f1f5f9;
+        }
+        body.dark-mode .community-search-item {
+            background: #1e1e35;
+            border-color: #383961;
+            color: #cbd5e1;
+        }
+        body.dark-mode .community-categories button {
+            background: #1e1e35;
+            border-color: #383961;
+            color: #cbd5e1;
+        }
+        body.dark-mode .community-rating-dot {
+            background: #383961;
+        }
+        body.dark-mode .community-rating-dot.active {
+            background: #DBDFAC;
+        }
+        body.dark-mode .community-view-all-btn {
+            color: #94a3b8;
+        }
+        body.dark-mode .community-view-all-btn:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
     </style>
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1907306190071217"
@@ -3268,13 +3836,14 @@
             <div class="dashboard-main">
 
             <div class="tabs">
-                <button class="tab active" onclick="switchTab('new')">새 노트 작성</button>
+                <button class="tab active" onclick="switchTab('community')">커뮤니티</button>
+                <button class="tab" onclick="switchTab('new')">새 노트 작성</button>
                 <button class="tab" onclick="switchTab('list')">나의 노트</button>
             </div>
 
             <div class="content">
                 <!-- 새 노트 작성 -->
-                <div id="newView" class="view active">
+                <div id="newView" class="view">
                     <div class="content-card-header">
                         <span class="material-symbols-outlined">add_circle</span>
                         새 노트 작성
@@ -3333,165 +3902,26 @@
                             </div>
                         </div>
 
-                        <div class="section-title">색조</div>
-                        
-                        <div class="form-group">
-                            <label>색감</label>
-                            <div class="info-text">무색투명 ~ 진한 위스키색 중 어느 정도인지 나타내는 척도</div>
-                            <div class="rating-item">
-                                <div class="rating-scale">
-                                    <label><input type="radio" name="clarity_rating" value="1"> 1</label>
-                                    <label><input type="radio" name="clarity_rating" value="2"> 2</label>
-                                    <label><input type="radio" name="clarity_rating" value="3" checked> 3</label>
-                                    <label><input type="radio" name="clarity_rating" value="4"> 4</label>
-                                    <label><input type="radio" name="clarity_rating" value="5"> 5</label>
-                                </div>
+                        <!-- 테이스팅 노트 (태그 기반) -->
+                        <div class="section-title" style="display:flex; align-items:center; justify-content:space-between;">
+                            <span>테이스팅 노트</span>
+                        </div>
+
+                        <div class="tasting-category-tabs" id="tastingCategoryTabs"></div>
+
+                        <div id="tastingPanels"></div>
+
+                        <div class="tasting-selected-summary" id="tastingSelectedSummary">
+                            <div class="summary-label">선택한 표현</div>
+                            <div class="summary-tags" id="tastingSummaryTags">
+                                <span class="summary-empty">태그를 선택해주세요</span>
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label>투명도</label>
-                            <div class="rating-item">
-                                <div class="rating-scale">
-                                    <label><input type="radio" name="transparency" value="1"> 1</label>
-                                    <label><input type="radio" name="transparency" value="2"> 2</label>
-                                    <label><input type="radio" name="transparency" value="3" checked> 3</label>
-                                    <label><input type="radio" name="transparency" value="4"> 4</label>
-                                    <label><input type="radio" name="transparency" value="5"> 5</label>
-                                </div>
-                            </div>
-                        </div>
+                        <div class="section-title" style="margin-top: 24px;">개인적인 감상평</div>
 
                         <div class="form-group">
-                            <label>점도</label>
-                            <div class="rating-item">
-                                <div class="rating-scale">
-                                    <label><input type="radio" name="viscosity" value="1"> 1</label>
-                                    <label><input type="radio" name="viscosity" value="2"> 2</label>
-                                    <label><input type="radio" name="viscosity" value="3" checked> 3</label>
-                                    <label><input type="radio" name="viscosity" value="4"> 4</label>
-                                    <label><input type="radio" name="viscosity" value="5"> 5</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="section-title">향</div>
-
-                        <div class="form-group">
-                            <label>향기의 강도</label>
-                            <div class="rating-item">
-                                <div class="rating-scale">
-                                    <label><input type="radio" name="aroma_intensity" value="1"> 1</label>
-                                    <label><input type="radio" name="aroma_intensity" value="2"> 2</label>
-                                    <label><input type="radio" name="aroma_intensity" value="3" checked> 3</label>
-                                    <label><input type="radio" name="aroma_intensity" value="4"> 4</label>
-                                    <label><input type="radio" name="aroma_intensity" value="5"> 5</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>복잡성</label>
-                            <div class="rating-item">
-                                <div class="rating-scale">
-                                    <label><input type="radio" name="complexity_aroma" value="1"> 1</label>
-                                    <label><input type="radio" name="complexity_aroma" value="2"> 2</label>
-                                    <label><input type="radio" name="complexity_aroma" value="3" checked> 3</label>
-                                    <label><input type="radio" name="complexity_aroma" value="4"> 4</label>
-                                    <label><input type="radio" name="complexity_aroma" value="5"> 5</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>선명도</label>
-                            <div class="rating-item">
-                                <div class="rating-scale">
-                                    <label><input type="radio" name="sharpness" value="1"> 1</label>
-                                    <label><input type="radio" name="sharpness" value="2"> 2</label>
-                                    <label><input type="radio" name="sharpness" value="3" checked> 3</label>
-                                    <label><input type="radio" name="sharpness" value="4"> 4</label>
-                                    <label><input type="radio" name="sharpness" value="5"> 5</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="section-title">맛</div>
-
-                        <div class="form-group">
-                            <label>맛의 강도</label>
-                            <div class="rating-item">
-                                <div class="rating-scale">
-                                    <label><input type="radio" name="flavor" value="1"> 1</label>
-                                    <label><input type="radio" name="flavor" value="2"> 2</label>
-                                    <label><input type="radio" name="flavor" value="3" checked> 3</label>
-                                    <label><input type="radio" name="flavor" value="4"> 4</label>
-                                    <label><input type="radio" name="flavor" value="5"> 5</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>복잡성</label>
-                            <div class="rating-item">
-                                <div class="rating-scale">
-                                    <label><input type="radio" name="complexity_taste" value="1"> 1</label>
-                                    <label><input type="radio" name="complexity_taste" value="2"> 2</label>
-                                    <label><input type="radio" name="complexity_taste" value="3" checked> 3</label>
-                                    <label><input type="radio" name="complexity_taste" value="4"> 4</label>
-                                    <label><input type="radio" name="complexity_taste" value="5"> 5</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>산미</label>
-                            <div class="rating-item">
-                                <div class="rating-scale">
-                                    <label><input type="radio" name="acidity" value="1"> 1</label>
-                                    <label><input type="radio" name="acidity" value="2"> 2</label>
-                                    <label><input type="radio" name="acidity" value="3" checked> 3</label>
-                                    <label><input type="radio" name="acidity" value="4"> 4</label>
-                                    <label><input type="radio" name="acidity" value="5"> 5</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>애프터 테이스트</label>
-                            <div class="rating-item">
-                                <div class="rating-scale">
-                                    <label><input type="radio" name="aftertaste" value="1"> 1</label>
-                                    <label><input type="radio" name="aftertaste" value="2"> 2</label>
-                                    <label><input type="radio" name="aftertaste" value="3" checked> 3</label>
-                                    <label><input type="radio" name="aftertaste" value="4"> 4</label>
-                                    <label><input type="radio" name="aftertaste" value="5"> 5</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="section-title">주체적인 향기와 맛</div>
-
-                        <div class="form-group">
-                            <label>1. 주체가 되는 향</label>
-                            <textarea id="dominant_aroma" placeholder="예: 은은한 사과 향과 함께 꽃향기가 느껴짐"></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label>2. 주체가 되는 맛</label>
-                            <textarea id="dominant_taste" placeholder="예: 부드러운 단맛이 입안을 감싸며 산미가 조화롭게 느껴짐"></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label>3. 향미에 관한 서술</label>
-                            <textarea id="flavor_description" placeholder="전반적인 인상과 특징을 자유롭게 기록하세요"></textarea>
-                        </div>
-
-                        <div class="section-title">개인적인 감상평</div>
-
-                        <div class="form-group">
-                            <label>감상평</label>
-                            <textarea id="personal_review" placeholder="이 사케에 대한 개인적인 생각, 추천 음식 페어링, 재구매 의향 등을 자유롭게 작성하세요"></textarea>
+                            <textarea id="personal_review" placeholder="이 사케에 대한 개인적인 생각을 자유롭게 작성하세요" rows="3"></textarea>
                         </div>
 
                         <div class="section-title">종합 평점</div>
@@ -3531,6 +3961,56 @@
                         </button>
                     </div>
                     <div id="notesList"></div>
+                </div>
+
+                <!-- 커뮤니티 뷰 -->
+                <div id="communityView" class="view active">
+                    <div class="community-stats-row">
+                        <div class="community-stat-card">
+                            <span class="community-stat-label">총 노트 수</span>
+                            <span class="community-stat-value" id="communityTotalNotes">—</span>
+                            <span class="community-stat-sub green" id="communityNotesGrowth"></span>
+                        </div>
+                        <div class="community-stat-card">
+                            <span class="community-stat-label">활성 유저</span>
+                            <span class="community-stat-value" id="communityActiveUsers">—</span>
+                            <span class="community-stat-sub green" id="communityUsersGrowth"></span>
+                        </div>
+                        <div class="community-stat-card">
+                            <span class="community-stat-label">사케 DB</span>
+                            <span class="community-stat-value" id="communitySakeDb">—</span>
+                        </div>
+                    </div>
+                    <div class="community-grid">
+                        <div class="community-feed-section">
+                            <div class="community-feed-header">
+                                <h3>New Tasting Notes</h3>
+                                <button class="community-view-all-btn" onclick="loadCommunityFeed()">View All</button>
+                            </div>
+                            <div id="communityFeedList">
+                                <div class="loading">커뮤니티 노트를 불러오는 중</div>
+                            </div>
+                        </div>
+                        <div class="community-sidebar">
+                            <h3 class="community-sidebar-title">Search Database</h3>
+                            <div class="community-search-wrap">
+                                <span class="material-symbols-outlined community-search-icon">search</span>
+                                <input type="text" id="communitySearchInput" placeholder="사케 이름으로 검색..." oninput="searchCommunityNotes(this.value)">
+                            </div>
+                            <div id="communitySearchResults"></div>
+                            <h4 class="community-sidebar-subtitle">Top Rated Categories</h4>
+                            <div class="community-categories">
+                                <button onclick="filterCommunityByGrade('純米大吟醸')">Junmai Daiginjo <span>›</span></button>
+                                <button onclick="filterCommunityByGrade('山廃')">Yamahai / Kimoto <span>›</span></button>
+                                <button onclick="filterCommunityByGrade('にごり')">Nigori / Sparkling <span>›</span></button>
+                            </div>
+                            <div class="community-cta">
+                                <h4>Write a Note</h4>
+                                <p>나만의 테이스팅 경험을 커뮤니티와 공유하세요.</p>
+                                <button onclick="switchTab('new')">+ New Note</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- 상세 보기 -->
@@ -3600,6 +4080,10 @@
                     <a class="bottom-nav-item" onclick="switchTab('list'); setActiveNav(this)">
                         <span class="material-symbols-outlined">menu_book</span>
                         <span class="bottom-nav-label">LIBRARY</span>
+                    </a>
+                    <a class="bottom-nav-item" onclick="switchTab('community'); setActiveNav(this)">
+                        <span class="material-symbols-outlined">groups</span>
+                        <span class="bottom-nav-label">COMMUNITY</span>
                     </a>
                     <div class="bottom-nav-add">
                         <button class="bottom-nav-add-btn" onclick="switchTab('new'); setActiveNav(document.querySelector('.bottom-nav-item'))">
@@ -3685,6 +4169,305 @@
         let currentUser = null;
         let currentPhotoData = null;
         let editingNoteId = null;
+
+        // === 테이스팅 태그 시스템 ===
+        let tastingSelections = {}; // { "aroma": { "과일 계열": ["사과","배"], ... }, ... }
+        let tastingRadioSelections = {}; // { "body_무게감": "미디엄 바디", ... }
+        let tastingCategoryNotes = {}; // { "aroma": "추가 메모", ... }
+        let activeTastingCategory = 'aroma';
+
+        function initTastingUI() {
+            const structure = buildTastingStructure();
+            const tabsEl = document.getElementById('tastingCategoryTabs');
+            const panelsEl = document.getElementById('tastingPanels');
+            if (!tabsEl || !panelsEl) return;
+            tabsEl.innerHTML = '';
+            panelsEl.innerHTML = '';
+
+            TASTING_CATEGORIES.forEach((cat, idx) => {
+                // 탭 생성
+                const tab = document.createElement('div');
+                tab.className = 'tasting-cat-tab' + (idx === 0 ? ' active' : '');
+                tab.dataset.catId = cat.id;
+                tab.innerHTML = cat.icon + ' ' + cat.ko + '<span class="cat-badge" id="badge_' + cat.id + '">0</span>';
+                tab.onclick = function() { switchTastingCategory(cat.id); };
+                tabsEl.appendChild(tab);
+
+                // 패널 생성
+                const panel = document.createElement('div');
+                panel.className = 'tasting-cat-panel' + (idx === 0 ? ' active' : '');
+                panel.id = 'panel_' + cat.id;
+
+                const catData = structure[cat.id];
+                Object.keys(catData.subcategories).forEach(subName => {
+                    const sub = catData.subcategories[subName];
+                    const section = document.createElement('div');
+                    section.className = 'tasting-sub-section';
+
+                    const label = document.createElement('div');
+                    label.className = 'tasting-sub-label';
+                    label.textContent = subName;
+                    section.appendChild(label);
+
+                    if (sub.ui_type === '단일 선택') {
+                        const radioGroup = document.createElement('div');
+                        radioGroup.className = 'tasting-radio-group';
+                        const radioKey = cat.id + '_' + subName;
+                        sub.expressions.forEach(expr => {
+                            const chip = document.createElement('div');
+                            chip.className = 'tasting-radio';
+                            chip.textContent = expr.ko;
+                            chip.dataset.radioKey = radioKey;
+                            chip.dataset.value = expr.ko;
+                            chip.onclick = function() { toggleTastingRadio(this, radioKey, expr.ko); };
+                            radioGroup.appendChild(chip);
+                        });
+                        section.appendChild(radioGroup);
+                    } else {
+                        // 멀티 태그
+                        const tagsContainer = document.createElement('div');
+                        tagsContainer.className = 'tasting-tags';
+                        sub.expressions.forEach(expr => {
+                            const chip = document.createElement('div');
+                            chip.className = 'tasting-tag';
+                            chip.textContent = expr.ko;
+                            chip.dataset.catId = cat.id;
+                            chip.dataset.subCat = subName;
+                            chip.dataset.expr = expr.ko;
+                            chip.onclick = function() { toggleTastingTag(this); };
+                            tagsContainer.appendChild(chip);
+                        });
+                        section.appendChild(tagsContainer);
+                    }
+
+                    panel.appendChild(section);
+                });
+
+                // 카테고리별 추가 노트 입력
+                const noteSection = document.createElement('div');
+                noteSection.className = 'tasting-sub-section';
+                noteSection.style.marginTop = '12px';
+                const noteInput = document.createElement('textarea');
+                noteInput.id = 'catNote_' + cat.id;
+                noteInput.placeholder = cat.ko + '에 대한 추가 메모...';
+                noteInput.rows = 2;
+                noteInput.style.cssText = 'width:100%;border:1.5px solid var(--border-card);border-radius:10px;padding:10px 12px;font-size:0.85rem;resize:vertical;background:var(--bg-card);color:var(--text-primary);font-family:inherit;';
+                noteInput.oninput = function() { tastingCategoryNotes[cat.id] = this.value; };
+                noteSection.appendChild(noteInput);
+                panel.appendChild(noteSection);
+
+                panelsEl.appendChild(panel);
+            });
+
+            // 초기화
+            tastingSelections = {};
+            tastingRadioSelections = {};
+            tastingCategoryNotes = {};
+            TASTING_CATEGORIES.forEach(c => { tastingSelections[c.id] = {}; });
+            updateTastingSummary();
+        }
+
+        function switchTastingCategory(catId) {
+            activeTastingCategory = catId;
+            document.querySelectorAll('.tasting-cat-tab').forEach(t => {
+                t.classList.toggle('active', t.dataset.catId === catId);
+            });
+            document.querySelectorAll('.tasting-cat-panel').forEach(p => {
+                p.classList.toggle('active', p.id === 'panel_' + catId);
+            });
+        }
+
+        function toggleTastingTag(el) {
+            const catId = el.dataset.catId;
+            const subCat = el.dataset.subCat;
+            const expr = el.dataset.expr;
+
+            if (!tastingSelections[catId]) tastingSelections[catId] = {};
+            if (!tastingSelections[catId][subCat]) tastingSelections[catId][subCat] = [];
+
+            const arr = tastingSelections[catId][subCat];
+            const idx = arr.indexOf(expr);
+            if (idx >= 0) {
+                arr.splice(idx, 1);
+                el.classList.remove('selected');
+            } else {
+                arr.push(expr);
+                el.classList.add('selected');
+            }
+            if (arr.length === 0) delete tastingSelections[catId][subCat];
+
+            updateTastingBadges();
+            updateTastingSummary();
+        }
+
+        function toggleTastingRadio(el, radioKey, value) {
+            const group = el.parentElement;
+            const wasSelected = el.classList.contains('selected');
+
+            group.querySelectorAll('.tasting-radio').forEach(r => r.classList.remove('selected'));
+
+            if (wasSelected) {
+                delete tastingRadioSelections[radioKey];
+            } else {
+                el.classList.add('selected');
+                tastingRadioSelections[radioKey] = value;
+            }
+
+            updateTastingBadges();
+            updateTastingSummary();
+        }
+
+        function updateTastingBadges() {
+            TASTING_CATEGORIES.forEach(cat => {
+                let count = 0;
+                const catSel = tastingSelections[cat.id] || {};
+                Object.values(catSel).forEach(arr => { count += arr.length; });
+                Object.keys(tastingRadioSelections).forEach(k => {
+                    if (k.startsWith(cat.id + '_')) count++;
+                });
+                const badge = document.getElementById('badge_' + cat.id);
+                if (badge) {
+                    badge.textContent = count;
+                    badge.style.display = count > 0 ? '' : 'none';
+                }
+            });
+        }
+
+        function updateTastingSummary() {
+            const container = document.getElementById('tastingSummaryTags');
+            if (!container) return;
+            const allTags = [];
+
+            TASTING_CATEGORIES.forEach(cat => {
+                const catSel = tastingSelections[cat.id] || {};
+                Object.entries(catSel).forEach(([sub, arr]) => {
+                    arr.forEach(expr => {
+                        allTags.push({ catId: cat.id, sub, expr, icon: cat.icon });
+                    });
+                });
+                Object.entries(tastingRadioSelections).forEach(([key, val]) => {
+                    if (key.startsWith(cat.id + '_')) {
+                        allTags.push({ catId: cat.id, sub: key.split('_').slice(1).join('_'), expr: val, icon: cat.icon });
+                    }
+                });
+            });
+
+            if (allTags.length === 0) {
+                container.innerHTML = '<span class="summary-empty">태그를 선택해주세요</span>';
+                return;
+            }
+
+            container.innerHTML = allTags.map((t, i) =>
+                '<span class="summary-tag">' + t.icon + ' ' + escapeHtml(t.expr) +
+                ' <span class="remove-tag" data-idx="' + i + '">&times;</span></span>'
+            ).join('');
+            container.querySelectorAll('.remove-tag').forEach(el => {
+                el.onclick = function(e) {
+                    e.stopPropagation();
+                    const idx = parseInt(this.dataset.idx);
+                    const tag = allTags[idx];
+                    if (tag) removeTastingSelection(tag.catId, tag.sub, tag.expr);
+                };
+            });
+        }
+
+        function removeTastingSelection(catId, sub, expr) {
+            const radioKey = catId + '_' + sub;
+            if (tastingRadioSelections[radioKey] === expr) {
+                delete tastingRadioSelections[radioKey];
+                document.querySelectorAll('.tasting-radio[data-radio-key="' + radioKey + '"]').forEach(r => r.classList.remove('selected'));
+            } else if (tastingSelections[catId] && tastingSelections[catId][sub]) {
+                const arr = tastingSelections[catId][sub];
+                const idx = arr.indexOf(expr);
+                if (idx >= 0) arr.splice(idx, 1);
+                if (arr.length === 0) delete tastingSelections[catId][sub];
+                document.querySelectorAll('.tasting-tag[data-cat-id="' + catId + '"][data-sub-cat="' + sub + '"]').forEach(el => {
+                    if (el.dataset.expr === expr) el.classList.remove('selected');
+                });
+            }
+            updateTastingBadges();
+            updateTastingSummary();
+        }
+
+        function collectTastingData() {
+            const data = { version: 2, categories: {}, notes: {} };
+            TASTING_CATEGORIES.forEach(cat => {
+                const catData = {};
+                const catSel = tastingSelections[cat.id] || {};
+                Object.entries(catSel).forEach(([sub, arr]) => {
+                    if (arr.length > 0) catData[sub] = [...arr];
+                });
+                Object.entries(tastingRadioSelections).forEach(([key, val]) => {
+                    if (key.startsWith(cat.id + '_')) {
+                        const subName = key.substring(cat.id.length + 1);
+                        catData[subName] = val;
+                    }
+                });
+                if (Object.keys(catData).length > 0) {
+                    data.categories[cat.id] = catData;
+                }
+                // 카테고리별 추가 노트
+                const noteVal = (tastingCategoryNotes[cat.id] || '').trim();
+                if (noteVal) data.notes[cat.id] = noteVal;
+            });
+            return data;
+        }
+
+        function loadTastingDataToForm(jsonStr) {
+            if (!jsonStr) return;
+            let data;
+            try { data = JSON.parse(jsonStr); } catch(e) { return; }
+            if (!data || data.version !== 2) return;
+
+            tastingSelections = {};
+            tastingRadioSelections = {};
+            tastingCategoryNotes = {};
+            TASTING_CATEGORIES.forEach(c => { tastingSelections[c.id] = {}; });
+
+            Object.entries(data.categories || {}).forEach(([catId, catData]) => {
+                Object.entries(catData).forEach(([sub, val]) => {
+                    if (Array.isArray(val)) {
+                        tastingSelections[catId][sub] = [...val];
+                        val.forEach(expr => {
+                            document.querySelectorAll('.tasting-tag[data-cat-id="' + catId + '"][data-sub-cat="' + sub + '"]').forEach(el => {
+                                if (el.dataset.expr === expr) el.classList.add('selected');
+                            });
+                        });
+                    } else {
+                        const radioKey = catId + '_' + sub;
+                        tastingRadioSelections[radioKey] = val;
+                        document.querySelectorAll('.tasting-radio[data-radio-key="' + radioKey + '"]').forEach(el => {
+                            if (el.dataset.value === val) el.classList.add('selected');
+                        });
+                    }
+                });
+            });
+
+            // 카테고리별 노트 복원
+            Object.entries(data.notes || {}).forEach(([catId, noteVal]) => {
+                tastingCategoryNotes[catId] = noteVal;
+                const noteEl = document.getElementById('catNote_' + catId);
+                if (noteEl) noteEl.value = noteVal;
+            });
+
+            updateTastingBadges();
+            updateTastingSummary();
+        }
+
+        function resetTastingUI() {
+            tastingSelections = {};
+            tastingRadioSelections = {};
+            tastingCategoryNotes = {};
+            TASTING_CATEGORIES.forEach(c => { tastingSelections[c.id] = {}; });
+            document.querySelectorAll('.tasting-tag.selected, .tasting-radio.selected').forEach(el => el.classList.remove('selected'));
+            TASTING_CATEGORIES.forEach(c => {
+                const noteEl = document.getElementById('catNote_' + c.id);
+                if (noteEl) noteEl.value = '';
+            });
+            updateTastingBadges();
+            updateTastingSummary();
+            switchTastingCategory('aroma');
+        }
 
         // 이번 주의 추천 사케 데이터 (주간 순환)
         const featuredSakes = [
@@ -3810,7 +4593,7 @@
             document.getElementById('authContainer').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
             document.getElementById('appFooter').style.display = 'block';
-            
+
             // 로그인 상태에 따라 버튼 표시/숨김
             if (currentUser) {
                 document.getElementById('userEmail').style.display = 'inline';
@@ -3824,6 +4607,9 @@
                 document.getElementById('logoutBtn').style.display = 'none';
                 document.getElementById('loginBtn').style.display = 'inline-block';
             }
+            // 기본 탭이 커뮤니티이므로 초기 로드
+            loadCommunityStats();
+            loadCommunityFeed();
         }
 
         // 로그인/회원가입 폼 전환
@@ -3984,14 +4770,19 @@
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
 
-            if (tab === 'new') {
+            if (tab === 'community') {
                 document.querySelector('.tab:nth-child(1)').classList.add('active');
+                document.getElementById('communityView').classList.add('active');
+                loadCommunityStats();
+                loadCommunityFeed();
+            } else if (tab === 'new') {
+                document.querySelector('.tab:nth-child(2)').classList.add('active');
                 document.getElementById('newView').classList.add('active');
                 if (!editingNoteId) {
                     resetForm();
                 }
             } else if (tab === 'list') {
-                document.querySelector('.tab:nth-child(2)').classList.add('active');
+                document.querySelector('.tab:nth-child(3)').classList.add('active');
                 document.getElementById('listView').classList.add('active');
                 loadNotes();
                 if (editingNoteId) {
@@ -4086,24 +4877,13 @@
             submitBtn.disabled = true;
             submitBtn.textContent = '저장 중...';
 
+            const tastingData = collectTastingData();
             const noteData = {
                 user_id: currentUser.id,
                 date: document.getElementById('date').value,
                 photo: currentPhotoData,
                 sake_name: sakeNameVal.trim(),
-                clarity_rating: getRadioValue('clarity_rating'),
-                transparency: getRadioValue('transparency'),
-                viscosity: getRadioValue('viscosity'),
-                aroma_intensity: getRadioValue('aroma_intensity'),
-                complexity_aroma: getRadioValue('complexity_aroma'),
-                sharpness: getRadioValue('sharpness'),
-                flavor: getRadioValue('flavor'),
-                complexity_taste: getRadioValue('complexity_taste'),
-                acidity: getRadioValue('acidity'),
-                aftertaste: getRadioValue('aftertaste'),
-                dominant_aroma: document.getElementById('dominant_aroma').value,
-                dominant_taste: document.getElementById('dominant_taste').value,
-                flavor_description: document.getElementById('flavor_description').value,
+                flavor_description: JSON.stringify(tastingData),
                 personal_review: document.getElementById('personal_review').value,
                 overall_rating: getRadioValue('overall_rating')
             };
@@ -4156,6 +4936,7 @@
             submitBtn.textContent = '노트 저장';
 
             resetSakeSelector();
+            resetTastingUI();
         }
 
         // === 사케 이름 선택기 (Sake Selector) ===
@@ -4391,6 +5172,7 @@
                     }
                 });
             }
+            initTastingUI();
         });
 
         // === 사케 OCR 사진 인식 ===
@@ -4998,7 +5780,7 @@
                                 <div class="note-card-name">${escapeHtml(note.sake_name)}</div>
                                 <div class="note-card-date">📅 ${escapeHtml(note.date)}</div>
                                 <div class="note-card-summary">
-                                    ${note.dominant_aroma ? escapeHtml(note.dominant_aroma.substring(0, 60) + (note.dominant_aroma.length > 60 ? '...' : '')) : ''}
+                                    ${getTastingPreview(note)}
                                 </div>
                             </div>
                         </div>
@@ -5008,6 +5790,418 @@
         }
 
         // 상세 보기
+        function getTastingPreview(note) {
+            if (!note.flavor_description) {
+                return note.dominant_aroma ? escapeHtml(note.dominant_aroma.substring(0, 60)) : '';
+            }
+            try {
+                const td = JSON.parse(note.flavor_description);
+                if (td && td.version === 2 && td.categories) {
+                    const tags = [];
+                    Object.values(td.categories).forEach(catData => {
+                        Object.values(catData).forEach(val => {
+                            if (Array.isArray(val)) tags.push(...val);
+                            else tags.push(val);
+                        });
+                    });
+                    if (tags.length === 0) return '';
+                    const preview = tags.slice(0, 5).join(', ');
+                    return escapeHtml(preview) + (tags.length > 5 ? ' ...' : '');
+                }
+            } catch(e) {}
+            return note.dominant_aroma ? escapeHtml(note.dominant_aroma.substring(0, 60)) : '';
+        }
+
+        // ===== Community Functions =====
+        let communityLastTab = 'community';
+        let communitySearchTimeout = null;
+
+        function hashUserId(uid) {
+            let hash = 0;
+            for (let i = 0; i < uid.length; i++) {
+                hash = ((hash << 5) - hash) + uid.charCodeAt(i);
+                hash |= 0;
+            }
+            return Math.abs(hash);
+        }
+
+        function getAvatarColor(uid) {
+            const colors = ['#6366f1','#8b5cf6','#ec4899','#f43f5e','#f97316','#eab308','#22c55e','#14b8a6','#06b6d4','#3b82f6'];
+            return colors[hashUserId(uid) % colors.length];
+        }
+
+        function getAvatarInitial(uid) {
+            const initials = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            return initials[hashUserId(uid) % initials.length];
+        }
+
+        function getTimeAgo(dateStr) {
+            const now = new Date();
+            const date = new Date(dateStr);
+            const diffMs = now - date;
+            const diffMin = Math.floor(diffMs / 60000);
+            if (diffMin < 1) return '방금 전';
+            if (diffMin < 60) return diffMin + '분 전';
+            const diffHours = Math.floor(diffMin / 60);
+            if (diffHours < 24) return diffHours + '시간 전';
+            const diffDays = Math.floor(diffHours / 24);
+            if (diffDays < 30) return diffDays + '일 전';
+            return date.toLocaleDateString('ko-KR');
+        }
+
+        function renderRatingDots(rating) {
+            const filled = Math.round((rating || 5) / 2);
+            return [1,2,3,4,5].map(i =>
+                `<div class="community-rating-dot${i <= filled ? ' active' : ''}"></div>`
+            ).join('');
+        }
+
+        async function loadCommunityStats() {
+            try {
+                // 총 노트 수 (head:true로 row 데이터 없이 count만)
+                const { count: totalNotes } = await supabaseClient
+                    .from('tasting_notes')
+                    .select('id', { count: 'exact', head: true });
+
+                // 활성 유저 수 - 최근 노트 100개에서 추출 (전체 조회 대신)
+                const { data: recentUsers } = await supabaseClient
+                    .from('tasting_notes')
+                    .select('user_id')
+                    .order('created_at', { ascending: false })
+                    .limit(100);
+                const activeUsers = recentUsers ? new Set(recentUsers.map(u => u.user_id)).size : 0;
+
+                let sakeCount = 0;
+                if (typeof SAKE_DATABASE !== 'undefined') {
+                    Object.values(SAKE_DATABASE).forEach(b => { sakeCount += b.products.length; });
+                }
+
+                const el = (id) => document.getElementById(id);
+                if (el('communityTotalNotes')) el('communityTotalNotes').textContent = (totalNotes || 0).toLocaleString();
+                if (el('communityActiveUsers')) el('communityActiveUsers').textContent = activeUsers.toLocaleString();
+                if (el('communitySakeDb')) el('communitySakeDb').textContent = sakeCount.toLocaleString();
+            } catch (e) {
+                console.error('Community stats error:', e);
+            }
+        }
+
+        async function loadCommunityFeed() {
+            const container = document.getElementById('communityFeedList');
+            if (!container) return;
+            container.innerHTML = '<div class="loading">커뮤니티 노트를 불러오는 중</div>';
+
+            const feedHeader = document.querySelector('.community-feed-header h3');
+            if (feedHeader) feedHeader.textContent = 'New Tasting Notes';
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('tasting_notes')
+                    .select('id, sake_name, date, personal_review, overall_rating, created_at, user_id')
+                    .order('created_at', { ascending: false })
+                    .limit(20);
+
+                if (error) throw error;
+                displayCommunityFeed(data || [], container);
+            } catch (e) {
+                console.error('Community feed error:', e);
+                container.innerHTML = `<div class="community-empty">
+                    <div class="community-empty-icon">📡</div>
+                    <p>커뮤니티 노트를 불러올 수 없습니다.</p>
+                    <p style="font-size:0.8rem; margin-top:8px; color:#f43f5e;">${escapeHtml(e.message || JSON.stringify(e))}</p>
+                </div>`;
+            }
+        }
+
+        function displayCommunityFeed(notes, container) {
+            if (!notes || notes.length === 0) {
+                container.innerHTML = `<div class="community-empty">
+                    <div class="community-empty-icon">🍶</div>
+                    <h3>아직 커뮤니티 노트가 없습니다</h3>
+                    <p>첫 번째 테이스팅 노트를 공유해보세요!</p>
+                </div>`;
+                return;
+            }
+
+            container.innerHTML = notes.map(note => {
+                const uid = note.user_id || 'anon';
+                const avatarColor = getAvatarColor(uid);
+                const avatarInitial = getAvatarInitial(uid);
+                const userLabel = 'User' + uid.substring(0, 4);
+                const timeAgo = getTimeAgo(note.created_at);
+                const reviewText = note.personal_review || '';
+                const truncated = reviewText.length > 120 ? reviewText.substring(0, 120) + '...' : reviewText;
+
+                return `<div class="community-feed-card" onclick="showCommunityDetail('${note.id}')">
+                    <div class="community-feed-card-header">
+                        <div class="community-avatar" style="background:${avatarColor}">${avatarInitial}</div>
+                        <div class="community-feed-card-info">
+                            <div class="community-feed-card-name">${escapeHtml(note.sake_name || '이름 없음')}</div>
+                            <div class="community-feed-card-meta">Shared by ${escapeHtml(userLabel)} · ${timeAgo}</div>
+                        </div>
+                        <div class="community-rating-dots">${renderRatingDots(note.overall_rating)}</div>
+                    </div>
+                    ${truncated ? `<div class="community-feed-card-text">${escapeHtml(truncated)}</div>` : ''}
+                </div>`;
+            }).join('');
+        }
+
+        function searchCommunityNotes(query) {
+            clearTimeout(communitySearchTimeout);
+            const resultsEl = document.getElementById('communitySearchResults');
+            if (!resultsEl) return;
+
+            if (!query || query.length < 2) {
+                resultsEl.innerHTML = '';
+                return;
+            }
+
+            communitySearchTimeout = setTimeout(() => {
+                const q = query.toLowerCase();
+                const matches = [];
+
+                if (typeof SAKE_DATABASE !== 'undefined') {
+                    Object.entries(SAKE_DATABASE).forEach(([brand, data]) => {
+                        data.products.forEach(p => {
+                            const name = p.name || '';
+                            const jp = p.japanese || '';
+                            if (name.toLowerCase().includes(q) || jp.toLowerCase().includes(q) || brand.toLowerCase().includes(q)) {
+                                matches.push({ name: name, brand: brand, japanese: jp });
+                            }
+                        });
+                    });
+                }
+
+                if (matches.length === 0) {
+                    resultsEl.innerHTML = `<div style="padding:12px; color:#94a3b8; font-size:0.85rem; text-align:center;">검색 결과가 없습니다</div>`;
+                    return;
+                }
+
+                resultsEl.innerHTML = matches.slice(0, 8).map(m =>
+                    `<div class="community-search-item" onclick="loadNotesBySakeName('${escapeAttr(m.name)}')">
+                        <strong>${escapeHtml(m.name)}</strong>
+                        <span style="font-size:0.75rem; color:#94a3b8; margin-left:8px;">${escapeHtml(m.brand)}</span>
+                    </div>`
+                ).join('');
+            }, 300);
+        }
+
+        async function loadNotesBySakeName(sakeName) {
+            const container = document.getElementById('communityFeedList');
+            const resultsEl = document.getElementById('communitySearchResults');
+            if (resultsEl) resultsEl.innerHTML = '';
+            if (!container) return;
+
+            container.innerHTML = '<div class="loading">노트를 검색하는 중</div>';
+
+            const feedHeader = document.querySelector('.community-feed-header h3');
+            if (feedHeader) feedHeader.textContent = `"${sakeName}" 테이스팅 노트`;
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('tasting_notes')
+                    .select('id, sake_name, date, personal_review, overall_rating, created_at, user_id')
+                    .ilike('sake_name', `%${sakeName}%`)
+                    .order('created_at', { ascending: false })
+                    .limit(20);
+
+                if (error) throw error;
+                displayCommunityFeed(data || [], container);
+            } catch (e) {
+                container.innerHTML = `<div class="community-empty"><p>검색 결과를 불러올 수 없습니다.</p></div>`;
+            }
+        }
+
+        async function filterCommunityByGrade(grade) {
+            const container = document.getElementById('communityFeedList');
+            if (!container) return;
+            container.innerHTML = '<div class="loading">카테고리 필터링 중</div>';
+
+            const feedHeader = document.querySelector('.community-feed-header h3');
+            if (feedHeader) feedHeader.textContent = `${grade} 테이스팅 노트`;
+
+            const sakeNames = [];
+            if (typeof SAKE_DATABASE !== 'undefined') {
+                Object.values(SAKE_DATABASE).forEach(brand => {
+                    brand.products.forEach(p => {
+                        if (p.grade && p.grade.includes(grade)) {
+                            sakeNames.push(p.name);
+                        }
+                    });
+                });
+            }
+
+            if (sakeNames.length === 0) {
+                container.innerHTML = `<div class="community-empty"><p>해당 카테고리의 사케를 찾을 수 없습니다.</p></div>`;
+                return;
+            }
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('tasting_notes')
+                    .select('id, sake_name, date, personal_review, overall_rating, created_at, user_id')
+                    .in('sake_name', sakeNames.slice(0, 50))
+                    .order('created_at', { ascending: false })
+                    .limit(20);
+
+                if (error) throw error;
+                displayCommunityFeed(data || [], container);
+            } catch (e) {
+                container.innerHTML = `<div class="community-empty"><p>필터 결과를 불러올 수 없습니다.</p></div>`;
+            }
+        }
+
+        async function showCommunityDetail(id) {
+            communityLastTab = 'community';
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('detailView').classList.add('active');
+
+            const detailContent = document.getElementById('detailContent');
+            detailContent.innerHTML = '<div class="loading">노트를 불러오는 중</div>';
+
+            try {
+                const { data: note, error } = await supabaseClient
+                    .from('tasting_notes')
+                    .select('*')
+                    .eq('id', id)
+                    .single();
+
+                if (error) throw error;
+
+                const uid = note.user_id || 'anon';
+                const avatarColor = getAvatarColor(uid);
+                const avatarInitial = getAvatarInitial(uid);
+                const userLabel = 'User' + uid.substring(0, 4);
+
+                // renderNoteDetail을 재사용하여 새/구 형식 모두 지원
+                const noteDetailHtml = renderNoteDetail(note);
+
+                detailContent.innerHTML = `
+                    <button class="back-btn" onclick="switchTab('community')" style="margin-bottom:16px;">← 커뮤니티로</button>
+                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+                        <div class="community-avatar" style="background:${avatarColor};width:36px;height:36px;font-size:0.85rem;">${avatarInitial}</div>
+                        <span style="font-size:0.85rem;color:#64748b;">Shared by ${escapeHtml(userLabel)}</span>
+                    </div>
+                    ${noteDetailHtml}
+                `;
+            } catch (error) {
+                detailContent.innerHTML = `<div class="empty-state">
+                    <div class="empty-state-icon">❌</div>
+                    <h3>노트를 불러올 수 없습니다</h3>
+                    <p>${escapeHtml(error.message)}</p>
+                </div>`;
+            }
+        }
+
+        function renderNoteDetail(note) {
+            let tastingHtml = '';
+            let isNewFormat = false;
+
+            // flavor_description이 JSON인지 확인 (새 형식)
+            if (note.flavor_description) {
+                try {
+                    const td = JSON.parse(note.flavor_description);
+                    if (td && td.version === 2 && td.categories) {
+                        isNewFormat = true;
+                        const catMap = {};
+                        TASTING_CATEGORIES.forEach(c => { catMap[c.id] = c; });
+
+                        tastingHtml += '<div class="section-title">테이스팅 노트</div>';
+                        Object.entries(td.categories).forEach(([catId, catData]) => {
+                            const catInfo = catMap[catId];
+                            if (!catInfo) return;
+                            tastingHtml += '<div class="detail-tasting-section">';
+                            tastingHtml += '<div class="detail-tasting-cat-title">' + catInfo.icon + ' ' + escapeHtml(catInfo.ko) + '</div>';
+                            Object.entries(catData).forEach(([sub, val]) => {
+                                tastingHtml += '<div class="detail-tasting-sub">';
+                                tastingHtml += '<div class="detail-tasting-sub-label">' + escapeHtml(sub) + '</div>';
+                                tastingHtml += '<div class="detail-tasting-tags">';
+                                if (Array.isArray(val)) {
+                                    val.forEach(v => {
+                                        tastingHtml += '<span class="detail-tasting-tag">' + escapeHtml(v) + '</span>';
+                                    });
+                                } else {
+                                    tastingHtml += '<span class="detail-tasting-tag">' + escapeHtml(val) + '</span>';
+                                }
+                                tastingHtml += '</div></div>';
+                            });
+                            // 카테고리별 추가 노트
+                            if (td.notes && td.notes[catId]) {
+                                tastingHtml += '<div class="detail-tasting-sub" style="margin-top:6px;"><div class="detail-value" style="font-size:0.85rem;color:var(--text-secondary);font-style:italic;">📝 ' + escapeHtml(td.notes[catId]) + '</div></div>';
+                            }
+                            tastingHtml += '</div>';
+                        });
+                        // notes만 있고 categories에 없는 항목도 표시
+                        if (td.notes) {
+                            Object.entries(td.notes).forEach(([catId, noteVal]) => {
+                                if (!td.categories[catId]) {
+                                    const catInfo = catMap[catId];
+                                    if (!catInfo) return;
+                                    tastingHtml += '<div class="detail-tasting-section">';
+                                    tastingHtml += '<div class="detail-tasting-cat-title">' + catInfo.icon + ' ' + escapeHtml(catInfo.ko) + '</div>';
+                                    tastingHtml += '<div class="detail-tasting-sub"><div class="detail-value" style="font-size:0.85rem;color:var(--text-secondary);font-style:italic;">📝 ' + escapeHtml(noteVal) + '</div></div>';
+                                    tastingHtml += '</div>';
+                                }
+                            });
+                        }
+                    }
+                } catch(e) { /* not JSON, old format */ }
+            }
+
+            // 구 형식: 숫자 기반 평가
+            if (!isNewFormat) {
+                tastingHtml += `
+                    <div class="section-title">색조</div>
+                    <div class="detail-section"><div class="detail-label">색감</div><div class="detail-value">${note.clarity_rating || '-'} / 5</div></div>
+                    <div class="detail-section"><div class="detail-label">투명도</div><div class="detail-value">${note.transparency || '-'} / 5</div></div>
+                    <div class="detail-section"><div class="detail-label">점도</div><div class="detail-value">${note.viscosity || '-'} / 5</div></div>
+                    <div class="section-title">향</div>
+                    <div class="detail-section"><div class="detail-label">향기의 강도</div><div class="detail-value">${note.aroma_intensity || '-'} / 5</div></div>
+                    <div class="detail-section"><div class="detail-label">복잡성</div><div class="detail-value">${note.complexity_aroma || '-'} / 5</div></div>
+                    <div class="detail-section"><div class="detail-label">선명도</div><div class="detail-value">${note.sharpness || '-'} / 5</div></div>
+                    <div class="section-title">맛</div>
+                    <div class="detail-section"><div class="detail-label">맛의 강도</div><div class="detail-value">${note.flavor || '-'} / 5</div></div>
+                    <div class="detail-section"><div class="detail-label">복잡성</div><div class="detail-value">${note.complexity_taste || '-'} / 5</div></div>
+                    <div class="detail-section"><div class="detail-label">산미</div><div class="detail-value">${note.acidity || '-'} / 5</div></div>
+                    <div class="detail-section"><div class="detail-label">애프터 테이스트</div><div class="detail-value">${note.aftertaste || '-'} / 5</div></div>
+                `;
+                if (note.dominant_aroma) tastingHtml += `<div class="detail-section"><div class="detail-label">주체가 되는 향</div><div class="detail-value">${escapeHtml(note.dominant_aroma)}</div></div>`;
+                if (note.dominant_taste) tastingHtml += `<div class="detail-section"><div class="detail-label">주체가 되는 맛</div><div class="detail-value">${escapeHtml(note.dominant_taste)}</div></div>`;
+                if (note.flavor_description) tastingHtml += `<div class="detail-section"><div class="detail-label">향미 서술</div><div class="detail-value">${escapeHtml(note.flavor_description)}</div></div>`;
+            }
+
+            return `
+                ${note.photo && sanitizePhotoUrl(note.photo) ? `<img src="${sanitizePhotoUrl(note.photo)}" class="detail-photo" alt="사케">` : ''}
+                <h2 style="color: var(--accent-primary, #383961); margin-bottom: 10px;">${escapeHtml(note.sake_name)}</h2>
+                <p style="color: #666; margin-bottom: 30px;">📅 ${escapeHtml(note.date)}</p>
+
+                ${tastingHtml}
+
+                ${note.personal_review ? `
+                <div class="section-title">개인적인 감상평</div>
+                <div class="detail-section">
+                    <div class="detail-value">${escapeHtml(note.personal_review)}</div>
+                </div>
+                ` : ''}
+
+                <div class="section-title">종합 평점</div>
+                <div class="detail-section" style="text-align: center;">
+                    <div style="font-size: 3em; color: var(--accent-primary, #383961); font-weight: bold;">
+                        ${note.overall_rating || '-'}<span style="font-size: 0.4em; color: #888;">/10</span>
+                    </div>
+                    <div style="margin-top: 10px; color: #666;">
+                        ${note.overall_rating >= 9 ? '🌟 인생 사케!' :
+                          note.overall_rating >= 7 ? '👍 추천해요!' :
+                          note.overall_rating >= 5 ? '😊 괜찮아요' :
+                          note.overall_rating >= 3 ? '😐 그저 그래요' :
+                          note.overall_rating ? '👎 별로예요' : '평점 없음'}
+                    </div>
+                </div>
+
+                <button class="edit-btn" onclick="editNote('${note.id}')">✏️ 수정</button>
+                <button class="delete-btn" onclick="deleteNote('${note.id}')">🗑️ 삭제</button>
+            `;
+        }
+
         async function showDetail(id) {
             if (!currentUser) {
                 alert('⚠️ 노트를 보려면 로그인이 필요합니다.');
@@ -5031,182 +6225,7 @@
 
                 if (error) throw error;
 
-                detailContent.innerHTML = `
-                    ${note.photo && sanitizePhotoUrl(note.photo) ? `<img src="${sanitizePhotoUrl(note.photo)}" class="detail-photo" alt="사케">` : ''}
-
-                    <h2 style="color: #383961; margin-bottom: 10px;">${escapeHtml(note.sake_name)}</h2>
-                    <p style="color: #666; margin-bottom: 30px;">📅 ${escapeHtml(note.date)}</p>
-
-                    <div class="section-title">색조</div>
-                    <div class="detail-section">
-                        <div class="detail-label">색감</div>
-                        <div class="detail-value">
-                            <div class="rating-scale">
-                                ${[1,2,3,4,5].map(i => `
-                                    <label style="opacity: ${i == note.clarity_rating ? '1' : '0.3'}">
-                                        <input type="radio" disabled ${i == note.clarity_rating ? 'checked' : ''}> ${i}
-                                    </label>
-                                `).join('')}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="detail-section">
-                        <div class="detail-label">투명도</div>
-                        <div class="detail-value">
-                            <div class="rating-scale">
-                                ${[1,2,3,4,5].map(i => `
-                                    <label style="opacity: ${i == note.transparency ? '1' : '0.3'}">
-                                        <input type="radio" disabled ${i == note.transparency ? 'checked' : ''}> ${i}
-                                    </label>
-                                `).join('')}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="detail-section">
-                        <div class="detail-label">점도</div>
-                        <div class="detail-value">
-                            <div class="rating-scale">
-                                ${[1,2,3,4,5].map(i => `
-                                    <label style="opacity: ${i == note.viscosity ? '1' : '0.3'}">
-                                        <input type="radio" disabled ${i == note.viscosity ? 'checked' : ''}> ${i}
-                                    </label>
-                                `).join('')}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="section-title">향</div>
-                    <div class="detail-section">
-                        <div class="detail-label">향기의 강도</div>
-                        <div class="detail-value">
-                            <div class="rating-scale">
-                                ${[1,2,3,4,5].map(i => `
-                                    <label style="opacity: ${i == note.aroma_intensity ? '1' : '0.3'}">
-                                        <input type="radio" disabled ${i == note.aroma_intensity ? 'checked' : ''}> ${i}
-                                    </label>
-                                `).join('')}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="detail-section">
-                        <div class="detail-label">복잡성</div>
-                        <div class="detail-value">
-                            <div class="rating-scale">
-                                ${[1,2,3,4,5].map(i => `
-                                    <label style="opacity: ${i == note.complexity_aroma ? '1' : '0.3'}">
-                                        <input type="radio" disabled ${i == note.complexity_aroma ? 'checked' : ''}> ${i}
-                                    </label>
-                                `).join('')}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="detail-section">
-                        <div class="detail-label">선명도</div>
-                        <div class="detail-value">
-                            <div class="rating-scale">
-                                ${[1,2,3,4,5].map(i => `
-                                    <label style="opacity: ${i == note.sharpness ? '1' : '0.3'}">
-                                        <input type="radio" disabled ${i == note.sharpness ? 'checked' : ''}> ${i}
-                                    </label>
-                                `).join('')}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="section-title">맛</div>
-                    <div class="detail-section">
-                        <div class="detail-label">맛</div>
-                        <div class="detail-value">
-                            <div class="rating-scale">
-                                ${[1,2,3,4,5].map(i => `
-                                    <label style="opacity: ${i == note.flavor ? '1' : '0.3'}">
-                                        <input type="radio" disabled ${i == note.flavor ? 'checked' : ''}> ${i}
-                                    </label>
-                                `).join('')}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="detail-section">
-                        <div class="detail-label">복잡성</div>
-                        <div class="detail-value">
-                            <div class="rating-scale">
-                                ${[1,2,3,4,5].map(i => `
-                                    <label style="opacity: ${i == note.complexity_taste ? '1' : '0.3'}">
-                                        <input type="radio" disabled ${i == note.complexity_taste ? 'checked' : ''}> ${i}
-                                    </label>
-                                `).join('')}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="detail-section">
-                        <div class="detail-label">산미</div>
-                        <div class="detail-value">
-                            <div class="rating-scale">
-                                ${[1,2,3,4,5].map(i => `
-                                    <label style="opacity: ${i == note.acidity ? '1' : '0.3'}">
-                                        <input type="radio" disabled ${i == note.acidity ? 'checked' : ''}> ${i}
-                                    </label>
-                                `).join('')}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="detail-section">
-                        <div class="detail-label">애프터 테이스트</div>
-                        <div class="detail-value">
-                            <div class="rating-scale">
-                                ${[1,2,3,4,5].map(i => `
-                                    <label style="opacity: ${i == note.aftertaste ? '1' : '0.3'}">
-                                        <input type="radio" disabled ${i == note.aftertaste ? 'checked' : ''}> ${i}
-                                    </label>
-                                `).join('')}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="section-title">주체적인 향기와 맛</div>
-                    ${note.dominant_aroma ? `
-                    <div class="detail-section">
-                        <div class="detail-label">주체가 되는 향</div>
-                        <div class="detail-value">${escapeHtml(note.dominant_aroma)}</div>
-                    </div>
-                    ` : ''}
-                    ${note.dominant_taste ? `
-                    <div class="detail-section">
-                        <div class="detail-label">주체가 되는 맛</div>
-                        <div class="detail-value">${escapeHtml(note.dominant_taste)}</div>
-                    </div>
-                    ` : ''}
-                    ${note.flavor_description ? `
-                    <div class="detail-section">
-                        <div class="detail-label">향미에 관한 서술</div>
-                        <div class="detail-value">${escapeHtml(note.flavor_description)}</div>
-                    </div>
-                    ` : ''}
-
-                    ${note.personal_review ? `
-                    <div class="section-title">개인적인 감상평</div>
-                    <div class="detail-section">
-                        <div class="detail-value">${escapeHtml(note.personal_review)}</div>
-                    </div>
-                    ` : ''}
-
-                    <div class="section-title">종합 평점</div>
-                    <div class="detail-section" style="text-align: center;">
-                        <div style="font-size: 3em; color: #383961; font-weight: bold;">
-                            ${note.overall_rating || '-'}<span style="font-size: 0.4em; color: #888;">/10</span>
-                        </div>
-                        <div style="margin-top: 10px; color: #666;">
-                            ${note.overall_rating >= 9 ? '🌟 인생 사케!' : 
-                              note.overall_rating >= 7 ? '👍 추천해요!' : 
-                              note.overall_rating >= 5 ? '😊 괜찮아요' : 
-                              note.overall_rating >= 3 ? '😐 그저 그래요' : 
-                              note.overall_rating ? '👎 별로예요' : '평점 없음'}
-                        </div>
-                    </div>
-
-                    <button class="edit-btn" onclick="editNote('${note.id}')">✏️ 수정</button>
-                    <button class="delete-btn" onclick="deleteNote('${note.id}')">🗑️ 삭제</button>
-                `;
+                detailContent.innerHTML = renderNoteDetail(note);
             } catch (error) {
                 detailContent.innerHTML = `<div class="empty-state">
                     <div class="empty-state-icon">❌</div>
@@ -5241,21 +6260,14 @@
                         `<img src="${sanitizePhotoUrl(note.photo)}" alt="사케 사진">`;
                 }
 
-                setRadioValue('clarity_rating', note.clarity_rating);
-                setRadioValue('transparency', note.transparency);
-                setRadioValue('viscosity', note.viscosity);
-                setRadioValue('aroma_intensity', note.aroma_intensity);
-                setRadioValue('complexity_aroma', note.complexity_aroma);
-                setRadioValue('sharpness', note.sharpness);
-                setRadioValue('flavor', note.flavor);
-                setRadioValue('complexity_taste', note.complexity_taste);
-                setRadioValue('acidity', note.acidity);
-                setRadioValue('aftertaste', note.aftertaste);
                 setRadioValue('overall_rating', note.overall_rating || 5);
 
-                document.getElementById('dominant_aroma').value = note.dominant_aroma || '';
-                document.getElementById('dominant_taste').value = note.dominant_taste || '';
-                document.getElementById('flavor_description').value = note.flavor_description || '';
+                // 새로운 태그 기반 테이스팅 데이터 로드
+                resetTastingUI();
+                if (note.flavor_description) {
+                    loadTastingDataToForm(note.flavor_description);
+                }
+
                 document.getElementById('personal_review').value = note.personal_review || '';
 
                 const submitBtn = document.getElementById('submitBtn');
