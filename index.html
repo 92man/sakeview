@@ -105,6 +105,10 @@
             --accent-rose: #DBDFAC;
             --border-light: rgba(56, 57, 97, 0.06);
             --border-medium: rgba(56, 57, 97, 0.12);
+            --border-card: #e2e8f0;
+            --border-card-hover: #cbd5e1;
+            --bg-subtle: #f8fafc;
+            --bg-muted: #f1f5f9;
             --shadow-soft: 0 4px 24px rgba(56, 57, 97, 0.06);
             --shadow-medium: 0 12px 48px rgba(56, 57, 97, 0.1);
             --shadow-elevated: 0 24px 80px rgba(56, 57, 97, 0.14);
@@ -130,6 +134,10 @@
             --accent-rose: #E5E8C0;
             --border-light: rgba(122, 124, 176, 0.08);
             --border-medium: rgba(122, 124, 176, 0.15);
+            --border-card: #1e293b;
+            --border-card-hover: #334155;
+            --bg-subtle: #1e293b;
+            --bg-muted: #1e293b;
             --shadow-soft: 0 4px 24px rgba(0, 0, 0, 0.4);
             --shadow-medium: 0 12px 48px rgba(0, 0, 0, 0.5);
             --shadow-elevated: 0 24px 80px rgba(0, 0, 0, 0.6);
@@ -635,7 +643,7 @@
             overflow: hidden;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
             transition: all 0.2s;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--border-card);
             cursor: pointer;
             position: relative;
         }
@@ -646,22 +654,14 @@
         .note-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            border-color: #cbd5e1;
-        }
-
-        body.dark-mode .note-card {
-            border-color: #1e293b;
-        }
-
-        body.dark-mode .note-card:hover {
-            border-color: #334155;
+            border-color: var(--border-card-hover);
         }
 
         .note-card-image {
             width: 100%;
             height: 200px;
             object-fit: contain;
-            background: #f8fafc;
+            background: var(--bg-subtle);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -717,16 +717,11 @@
         #mainApp {
             max-width: 1280px;
             margin: 0 auto;
-            background: white;
+            background: var(--bg-secondary);
             min-height: 100vh;
-            border-left: 1px solid #e2e8f0;
-            border-right: 1px solid #e2e8f0;
+            border-left: 1px solid var(--border-card);
+            border-right: 1px solid var(--border-card);
             box-shadow: 0 0 60px rgba(0, 0, 0, 0.04);
-        }
-
-        body.dark-mode #mainApp {
-            background: #0f172a;
-            border-color: #1e293b;
         }
 
         @media (max-width: 1280px) {
@@ -772,14 +767,14 @@
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 1px solid var(--border-card);
             padding: 0 24px;
         }
 
         .header-inner {
             max-width: 1024px;
             margin: 0 auto;
-            height: 64px;
+            height: 72px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -788,23 +783,25 @@
         .header-left {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
         }
 
         .header-logo {
-            width: 36px;
-            height: 36px;
-            background: #383961;
+            width: 43px;
+            height: 43px;
             border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
+            overflow: hidden;
+        }
+
+        .header-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .header h1 {
             font-family: 'Inter', 'Pretendard', sans-serif;
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             font-weight: 700;
             letter-spacing: -0.025em;
             color: #383961;
@@ -823,16 +820,15 @@
 
         body.dark-mode .header {
             background: rgba(10, 10, 15, 0.8);
-            border-bottom-color: #1e293b;
         }
 
         /* Theme Toggle */
         .theme-toggle {
             background: none;
             border: none;
-            padding: 8px;
+            padding: 10px;
             cursor: pointer;
-            font-size: 1.2em;
+            font-size: 1.44em;
             line-height: 1;
             color: #64748b;
             transition: color 0.2s;
@@ -855,12 +851,12 @@
         .user-info {
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-size: 0.875rem;
+            gap: 14px;
+            font-size: 1.05rem;
         }
 
         #userEmail {
-            font-size: 0.8em;
+            font-size: 0.96em;
             color: #64748b;
             font-weight: 400;
         }
@@ -869,17 +865,17 @@
             background: #383961;
             border: none;
             color: white;
-            padding: 8px 20px;
+            padding: 10px 24px;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 0.875rem;
+            font-size: 1.05rem;
             font-weight: 600;
             transition: all 0.2s;
         }
 
         .login-btn.header-avatar {
-            width: 36px;
-            height: 36px;
+            width: 43px;
+            height: 43px;
             border-radius: 50%;
             padding: 0;
             display: flex;
@@ -896,8 +892,8 @@
 
         .logout-btn {
             background: none;
-            border: 1px solid #e2e8f0;
-            color: #64748b;
+            border: 1px solid var(--border-card);
+            color: var(--text-muted);
             padding: 6px 16px;
             border-radius: 8px;
             cursor: pointer;
@@ -907,8 +903,8 @@
         }
 
         .logout-btn:hover {
-            border-color: #383961;
-            color: #383961;
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
         }
 
         /* Auth Container - Premium Glass Design */
@@ -1190,17 +1186,48 @@
             75% { transform: translateX(5px); }
         }
 
-        /* Tabs - Hidden (integrated into content card) */
+        /* Tabs */
         .tabs {
-            display: none;
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
         }
 
-        .tab, .tab.active, .tab::before, .tab.active::after {
-            display: none;
+        .tab {
+            flex: 1;
+            padding: 12px 16px;
+            background: var(--bg-muted);
+            border: 1px solid var(--border-card);
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .tab:hover {
+            background: var(--border-card);
+        }
+        .tab.active {
+            background: #383961;
+            color: #fff;
+            border-color: #383961;
         }
 
-        body.dark-mode .tabs { display: none; }
-        body.dark-mode .tab.active { display: none; }
+        body.dark-mode .tab {
+            background: #1e1e35;
+            border-color: #383961;
+            color: #94a3b8;
+        }
+        body.dark-mode .tab:hover {
+            background: #2a2a4a;
+        }
+        body.dark-mode .tab.active {
+            background: #DBDFAC;
+            color: #383961;
+            border-color: #DBDFAC;
+        }
 
         /* Form card header */
         .content-card-header {
@@ -1238,18 +1265,13 @@
             border-radius: 12px;
             padding: 24px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--border-card);
             max-height: none;
             overflow-y: visible;
             position: relative;
         }
 
         .content::before { display: none; }
-
-        body.dark-mode .content {
-            border-color: #1e293b;
-            box-shadow: none;
-        }
 
         .view {
             display: none;
@@ -1285,22 +1307,13 @@
         textarea {
             width: 100%;
             padding: 12px 16px;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--border-card);
             border-radius: 8px;
             font-size: 0.875rem;
             transition: all 0.2s;
-            background: #f8fafc;
+            background: var(--bg-subtle);
             color: var(--text-primary);
             font-family: inherit;
-        }
-
-        body.dark-mode input[type="text"],
-        body.dark-mode input[type="date"],
-        body.dark-mode input[type="email"],
-        body.dark-mode input[type="password"],
-        body.dark-mode textarea {
-            background: #0f172a;
-            border-color: #1e293b;
         }
 
         input[type="text"]:focus,
@@ -1309,13 +1322,12 @@
         input[type="password"]:focus,
         textarea:focus {
             outline: none;
-            border-color: #383961;
+            border-color: var(--accent-primary);
             box-shadow: 0 0 0 3px rgba(56, 57, 97, 0.1);
         }
 
         body.dark-mode input:focus,
         body.dark-mode textarea:focus {
-            border-color: #7A7CB0;
             box-shadow: 0 0 0 3px rgba(122, 124, 176, 0.15);
         }
 
@@ -1798,13 +1810,9 @@
         .app-footer {
             margin-top: 60px;
             padding: 40px 24px 100px;
-            border-top: 1px solid #e2e8f0;
+            border-top: 1px solid var(--border-card);
             text-align: center;
             position: relative;
-        }
-
-        body.dark-mode .app-footer {
-            border-top-color: #1e293b;
         }
 
         .app-footer::before { display: none; }
@@ -1820,15 +1828,10 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: white;
-            border-top: 1px solid #e2e8f0;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-card);
             padding: 8px 24px 24px;
             z-index: 50;
-        }
-
-        body.dark-mode .bottom-nav {
-            background: #0f172a;
-            border-top-color: #1e293b;
         }
 
         .bottom-nav-inner {
@@ -1844,7 +1847,7 @@
             flex-direction: column;
             align-items: center;
             gap: 2px;
-            color: #94a3b8;
+            color: var(--text-muted);
             text-decoration: none;
             cursor: pointer;
             transition: color 0.2s;
@@ -1852,11 +1855,7 @@
         }
 
         .bottom-nav-item.active {
-            color: #383961;
-        }
-
-        body.dark-mode .bottom-nav-item.active {
-            color: #E5E8C0;
+            color: var(--accent-primary);
         }
 
         .bottom-nav-label {
@@ -1940,13 +1939,8 @@
         }
 
         .top-nav-section:hover .top-nav-title {
-            color: #383961;
-            background: #f1f5f9;
-        }
-
-        body.dark-mode .top-nav-section:hover .top-nav-title {
-            color: #E5E8C0;
-            background: #1e293b;
+            color: var(--accent-primary);
+            background: var(--bg-muted);
         }
 
         .top-nav-section:hover .top-nav-title::after {
@@ -1959,7 +1953,7 @@
             left: 50%;
             transform: translateX(-50%);
             background: var(--card-bg);
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--border-card);
             border-radius: 12px;
             padding: 8px 0;
             min-width: 170px;
@@ -1972,7 +1966,6 @@
         }
 
         body.dark-mode .top-nav-dropdown {
-            border-color: #1e293b;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
         }
 
@@ -1994,13 +1987,8 @@
         }
 
         .top-nav-link:hover {
-            color: #383961;
-            background: #f8fafc;
-        }
-
-        body.dark-mode .top-nav-link:hover {
-            color: #E5E8C0;
-            background: #1e293b;
+            color: var(--accent-primary);
+            background: var(--bg-subtle);
         }
 
         @media (max-width: 768px) {
@@ -2412,7 +2400,7 @@
             }
 
             .header h1 {
-                font-size: 1.1rem;
+                font-size: 1.32rem;
             }
 
             #userEmail {
@@ -3094,6 +3082,358 @@
                 border-radius: 16px;
             }
         }
+
+        /* ===== Community View ===== */
+        .community-stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        .community-stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-card);
+            border-radius: 12px;
+            padding: 20px 24px;
+            display: flex;
+            flex-direction: column;
+        }
+        .community-stat-label {
+            font-size: 0.8rem;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .community-stat-value {
+            font-size: 2.25rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin: 4px 0;
+            line-height: 1.1;
+        }
+        .community-stat-sub {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+        .community-stat-sub.green {
+            color: #22c55e;
+        }
+
+        .community-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 32px;
+        }
+
+        .community-feed-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .community-feed-header h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+        .community-view-all-btn {
+            background: none;
+            border: none;
+            color: #64748b;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        .community-view-all-btn:hover {
+            background: var(--bg-muted);
+        }
+
+        .community-feed-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-card);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .community-feed-card:hover {
+            border-color: #DBDFAC;
+            box-shadow: 0 4px 12px rgba(56, 57, 97, 0.06);
+        }
+        .community-feed-card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .community-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #fff;
+            flex-shrink: 0;
+        }
+        .community-feed-card-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .community-feed-card-name {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+        .community-feed-card-meta {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+        .community-rating-dots {
+            display: flex;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+        .community-rating-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--border-card);
+        }
+        .community-rating-dot.active {
+            background: var(--accent-primary);
+        }
+        .community-feed-card-text {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-top: 4px;
+        }
+
+        /* Community Sidebar */
+        .community-sidebar {
+            position: sticky;
+            top: 80px;
+            align-self: start;
+        }
+        .community-sidebar-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0 0 16px 0;
+        }
+        .community-sidebar-subtitle {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0 0 12px 0;
+        }
+        .community-search-wrap {
+            position: relative;
+            margin-bottom: 24px;
+        }
+        .community-search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 20px;
+            pointer-events: none;
+        }
+        .community-search-wrap input {
+            width: 100%;
+            padding: 12px 16px 12px 40px;
+            border: 1px solid var(--border-card);
+            border-radius: 12px;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+            background: var(--card-bg);
+            color: var(--text-primary);
+        }
+        .community-search-wrap input:focus {
+            border-color: #DBDFAC;
+        }
+        #communitySearchResults {
+            margin-bottom: 16px;
+        }
+        .community-search-item {
+            padding: 10px 14px;
+            border: 1px solid var(--border-card);
+            border-radius: 10px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            background: var(--bg-subtle);
+            transition: all 0.2s;
+        }
+        .community-search-item:hover {
+            border-color: #DBDFAC;
+            background: #fff;
+        }
+        .community-categories {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+        .community-categories button {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-card);
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+        .community-categories button:hover {
+            border-color: var(--accent-gold);
+            background: var(--card-bg);
+        }
+        .community-categories button span {
+            color: #94a3b8;
+        }
+        .community-cta {
+            background: #383961;
+            color: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+        }
+        .community-cta h4 {
+            margin: 0 0 8px 0;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        .community-cta p {
+            margin: 0;
+            font-size: 0.85rem;
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+        .community-cta button {
+            background: #DBDFAC;
+            color: #383961;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            margin-top: 16px;
+            transition: opacity 0.2s;
+        }
+        .community-cta button:hover {
+            opacity: 0.9;
+        }
+        .community-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: #94a3b8;
+        }
+        .community-empty-icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+        }
+
+        /* 모바일 반응형 */
+        @media (max-width: 768px) {
+            .community-stats-row {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            .community-stat-card {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                padding: 16px 20px;
+            }
+            .community-stat-value {
+                font-size: 1.5rem;
+            }
+            .community-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+            .community-sidebar {
+                position: static;
+            }
+            .community-feed-card {
+                padding: 20px;
+            }
+        }
+
+        /* 다크모드 */
+        body.dark-mode .community-stat-card {
+            background: #1e1e35;
+            border-color: #383961;
+        }
+        body.dark-mode .community-stat-value {
+            color: #f1f5f9;
+        }
+        body.dark-mode .community-stat-label {
+            color: #94a3b8;
+        }
+        body.dark-mode .community-feed-header h3,
+        body.dark-mode .community-sidebar-title,
+        body.dark-mode .community-sidebar-subtitle {
+            color: #f1f5f9;
+        }
+        body.dark-mode .community-feed-card {
+            background: #1e1e35;
+            border-color: #383961;
+        }
+        body.dark-mode .community-feed-card-name {
+            color: #f1f5f9;
+        }
+        body.dark-mode .community-feed-card-text {
+            color: #cbd5e1;
+        }
+        body.dark-mode .community-search-wrap input {
+            background: #1e1e35;
+            border-color: #383961;
+            color: #f1f5f9;
+        }
+        body.dark-mode .community-search-item {
+            background: #1e1e35;
+            border-color: #383961;
+            color: #cbd5e1;
+        }
+        body.dark-mode .community-categories button {
+            background: #1e1e35;
+            border-color: #383961;
+            color: #cbd5e1;
+        }
+        body.dark-mode .community-rating-dot {
+            background: #383961;
+        }
+        body.dark-mode .community-rating-dot.active {
+            background: #DBDFAC;
+        }
+        body.dark-mode .community-view-all-btn {
+            color: #94a3b8;
+        }
+        body.dark-mode .community-view-all-btn:hover {
+            background: rgba(255,255,255,0.05);
+        }
     </style>
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1907306190071217"
@@ -3196,7 +3536,7 @@
                 <div class="header-inner">
                     <div class="header-left">
                         <div class="header-logo">
-                            <span class="material-symbols-outlined" style="font-size: 20px;">liquor</span>
+                            <img src="icon.svg" alt="사케를 보다 로고">
                         </div>
                         <h1>사케를 보다</h1>
                     </div>
@@ -3281,6 +3621,7 @@
             <div class="tabs">
                 <button class="tab active" onclick="switchTab('new')">새 노트 작성</button>
                 <button class="tab" onclick="switchTab('list')">나의 노트</button>
+                <button class="tab" onclick="switchTab('community')">커뮤니티</button>
             </div>
 
             <div class="content">
@@ -3544,11 +3885,70 @@
                             <span class="material-symbols-outlined">menu_book</span>
                             나의 노트
                         </div>
-                        <button onclick="switchTab('new')" style="display: flex; align-items: center; gap: 6px; background: none; border: 1px solid #e2e8f0; color: #383961; padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='none'">
+                        <button onclick="switchTab('new')" style="display: flex; align-items: center; gap: 6px; background: none; border: 1px solid var(--border-card); color: var(--accent-primary); padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='var(--bg-muted)'" onmouseout="this.style.background='none'">
                             <span class="material-symbols-outlined" style="font-size: 18px;">home</span> 홈
                         </button>
                     </div>
                     <div id="notesList"></div>
+                </div>
+
+                <!-- 커뮤니티 뷰 -->
+                <div id="communityView" class="view">
+                    <!-- Quick Stats -->
+                    <div class="community-stats-row">
+                        <div class="community-stat-card">
+                            <span class="community-stat-label">총 노트 수</span>
+                            <span class="community-stat-value" id="communityTotalNotes">—</span>
+                            <span class="community-stat-sub green" id="communityNotesGrowth"></span>
+                        </div>
+                        <div class="community-stat-card">
+                            <span class="community-stat-label">활성 유저</span>
+                            <span class="community-stat-value" id="communityActiveUsers">—</span>
+                            <span class="community-stat-sub green" id="communityUsersGrowth"></span>
+                        </div>
+                        <div class="community-stat-card">
+                            <span class="community-stat-label">사케 DB</span>
+                            <span class="community-stat-value" id="communitySakeDb">—</span>
+                            <span class="community-stat-sub">매일 업데이트</span>
+                        </div>
+                    </div>
+
+                    <!-- 메인 그리드: 피드 + 사이드바 -->
+                    <div class="community-grid">
+                        <!-- 좌: 피드 -->
+                        <div class="community-feed-section">
+                            <div class="community-feed-header">
+                                <h3>New Tasting Notes</h3>
+                                <button class="community-view-all-btn" onclick="loadCommunityFeed()">View All</button>
+                            </div>
+                            <div id="communityFeedList">
+                                <div class="loading">커뮤니티 노트를 불러오는 중</div>
+                            </div>
+                        </div>
+
+                        <!-- 우: 사이드바 -->
+                        <div class="community-sidebar">
+                            <h3 class="community-sidebar-title">Search Database</h3>
+                            <div class="community-search-wrap">
+                                <span class="material-symbols-outlined community-search-icon">search</span>
+                                <input type="text" id="communitySearchInput" placeholder="사케 이름으로 검색..." oninput="searchCommunityNotes(this.value)">
+                            </div>
+                            <div id="communitySearchResults"></div>
+
+                            <h4 class="community-sidebar-subtitle">Top Rated Categories</h4>
+                            <div class="community-categories">
+                                <button onclick="filterCommunityByGrade('純米大吟醸')">Junmai Daiginjo <span>›</span></button>
+                                <button onclick="filterCommunityByGrade('山廃')">Yamahai / Kimoto <span>›</span></button>
+                                <button onclick="filterCommunityByGrade('にごり')">Nigori / Sparkling <span>›</span></button>
+                            </div>
+
+                            <div class="community-cta">
+                                <h4>Write a Note</h4>
+                                <p>나만의 테이스팅 경험을 커뮤니티와 공유하세요.</p>
+                                <button onclick="switchTab('new')">+ New Note</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- 상세 보기 -->
@@ -3562,20 +3962,20 @@
             <!-- Right Sidebar -->
             <div class="dashboard-sidebar">
                 <!-- Your Progress -->
-                <div style="background: #f8fafc; border-radius: 12px; padding: 24px; border: 1px solid #e2e8f0; border-left: 3px solid #DBDFAC;">
-                    <h4 style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #64748b; margin: 0 0 16px 0;">나의 기록</h4>
+                <div style="background: var(--bg-subtle); border-radius: 12px; padding: 24px; border: 1px solid var(--border-card); border-left: 3px solid var(--accent-gold);">
+                    <h4 style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin: 0 0 16px 0;">나의 기록</h4>
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <span style="color: #475569; font-size: 0.9rem;">총 리뷰</span>
-                        <span id="sidebarTotalCount" style="font-weight: 700; font-size: 1.25rem;">0</span>
+                        <span style="color: var(--text-secondary); font-size: 0.9rem;">총 리뷰</span>
+                        <span id="sidebarTotalCount" style="font-weight: 700; font-size: 1.25rem; color: var(--text-primary);">0</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <span style="color: #475569; font-size: 0.9rem;">이번 달</span>
-                        <span id="sidebarMonthCount" style="font-weight: 700; font-size: 1.25rem; color: #383961;">0</span>
+                        <span style="color: var(--text-secondary); font-size: 0.9rem;">이번 달</span>
+                        <span id="sidebarMonthCount" style="font-weight: 700; font-size: 1.25rem; color: var(--accent-primary);">0</span>
                     </div>
-                    <div style="width: 100%; background: #e2e8f0; height: 8px; border-radius: 9999px; overflow: hidden; margin-top: 8px;">
-                        <div id="sidebarProgressBar" style="background: #DBDFAC; height: 100%; width: 0%; transition: width 0.5s;"></div>
+                    <div style="width: 100%; background: var(--border-card); height: 8px; border-radius: 9999px; overflow: hidden; margin-top: 8px;">
+                        <div id="sidebarProgressBar" style="background: var(--accent-gold); height: 100%; width: 0%; transition: width 0.5s;"></div>
                     </div>
-                    <p style="font-size: 0.75rem; color: #64748b; margin-top: 8px;">월간 목표를 향해 화이팅!</p>
+                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 8px;">월간 목표를 향해 화이팅!</p>
                 </div>
 
                 <!-- Recent Activity -->
@@ -3781,6 +4181,20 @@
             return div.innerHTML;
         }
 
+        // HTML 속성용 이스케이프 (싱글쿼트 포함)
+        function escapeAttr(text) {
+            if (!text) return '';
+            return escapeHtml(text).replace(/'/g, '&#39;');
+        }
+
+        // photo URL 검증 (data: URI 또는 https만 허용)
+        function sanitizePhotoUrl(url) {
+            if (!url) return '';
+            if (url.startsWith('data:image/')) return url;
+            if (url.startsWith('https://')) return encodeURI(url);
+            return '';
+        }
+
         // 페이지 로드 시 인증 상태 확인
         async function checkAuth() {
             const { data: { session } } = await supabaseClient.auth.getSession();
@@ -3966,8 +4380,8 @@
                 reader.onload = function(e) {
                     currentPhotoData = e.target.result;
                     document.getElementById('uploadText').style.display = 'none';
-                    document.getElementById('photoPreview').innerHTML = 
-                        `<img src="${currentPhotoData}" alt="사케 사진">`;
+                    document.getElementById('photoPreview').innerHTML =
+                        `<img src="${sanitizePhotoUrl(currentPhotoData)}" alt="사케 사진">`;
                 };
                 reader.readAsDataURL(file);
             }
@@ -3979,19 +4393,24 @@
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
 
             if (tab === 'new') {
-                document.querySelector('.tab:first-child').classList.add('active');
+                document.querySelector('.tab:nth-child(1)').classList.add('active');
                 document.getElementById('newView').classList.add('active');
                 if (!editingNoteId) {
                     resetForm();
                 }
             } else if (tab === 'list') {
-                document.querySelector('.tab:last-child').classList.add('active');
+                document.querySelector('.tab:nth-child(2)').classList.add('active');
                 document.getElementById('listView').classList.add('active');
                 loadNotes();
                 if (editingNoteId) {
                     editingNoteId = null;
                     resetForm();
                 }
+            } else if (tab === 'community') {
+                document.querySelector('.tab:nth-child(3)').classList.add('active');
+                document.getElementById('communityView').classList.add('active');
+                loadCommunityStats();
+                loadCommunityFeed();
             }
         }
 
@@ -4005,7 +4424,7 @@
             try {
                 const { data } = await supabaseClient
                     .from('tasting_notes')
-                    .select('id, sake_name, created_at, overall_rating')
+                    .select('id, sake_name, created_at, overall_rating, photo')
                     .eq('user_id', currentUser.id)
                     .order('created_at', { ascending: false });
                 if (!data) return;
@@ -4030,19 +4449,412 @@
                     const daysAgo = Math.floor((now - date) / (1000 * 60 * 60 * 24));
                     const timeText = daysAgo === 0 ? '오늘' : daysAgo + '일 전';
                     const stars = '★'.repeat(Math.min(Math.round((n.overall_rating || 5) / 2), 5));
-                    return `<div onclick="showDetail('${n.id}')" style="display:flex;gap:12px;padding:12px;background:white;border:1px solid #e2e8f0;border-radius:12px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='#DBDFAC';this.style.boxShadow='0 2px 8px rgba(56,57,97,0.08)'" onmouseout="this.style.borderColor='#e2e8f0';this.style.boxShadow='none'">
-                        <div style="width:48px;height:48px;border-radius:8px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.5em;">🍶</div>
+                    return `<div onclick="showDetail('${n.id}')" style="display:flex;gap:12px;padding:12px;background:var(--card-bg);border:1px solid var(--border-card);border-radius:12px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--accent-gold)';this.style.boxShadow='0 2px 8px rgba(56,57,97,0.08)'" onmouseout="this.style.borderColor='var(--border-card)';this.style.boxShadow='none'">
+                        <div style="width:48px;height:48px;border-radius:8px;background:var(--bg-muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.5em;overflow:hidden;">${n.photo ? `<img src="${sanitizePhotoUrl(n.photo)}" style="width:100%;height:100%;object-fit:cover;">` : '🍶'}</div>
                         <div style="flex:1;min-width:0;">
-                            <h5 style="font-weight:700;font-size:0.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${n.sake_name || '이름 없음'}</h5>
+                            <h5 style="font-weight:700;font-size:0.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text-primary);">${escapeHtml(n.sake_name) || '이름 없음'}</h5>
                             <div style="display:flex;align-items:center;gap:8px;margin-top:2px;">
-                                <span style="font-size:0.7rem;color:#64748b;">${timeText}</span>
+                                <span style="font-size:0.7rem;color:var(--text-muted);">${timeText}</span>
                             </div>
-                            <div style="color:#DBDFAC;font-size:0.7rem;margin-top:2px;">${stars}</div>
+                            <div style="color:var(--accent-gold);font-size:0.7rem;margin-top:2px;">${stars}</div>
                         </div>
                     </div>`;
                 }).join('');
-            } catch(e) {}
+            } catch(e) {
+                console.error('사이드바 업데이트 실패:', e);
+            }
         }
+
+        // ===== 커뮤니티 기능 =====
+        let communityLastTab = 'community'; // 커뮤니티 상세에서 돌아갈 탭 추적
+
+        async function loadCommunityStats() {
+            try {
+                // 총 노트 수
+                const { count: totalNotes } = await supabaseClient
+                    .from('tasting_notes')
+                    .select('*', { count: 'exact', head: true });
+
+                // 활성 유저 수 (distinct user_id)
+                const { data: usersData } = await supabaseClient
+                    .from('tasting_notes')
+                    .select('user_id');
+                const activeUsers = usersData ? new Set(usersData.map(u => u.user_id)).size : 0;
+
+                // 사케 DB 수
+                let sakeCount = 0;
+                if (typeof SAKE_DATABASE !== 'undefined') {
+                    Object.values(SAKE_DATABASE).forEach(b => { sakeCount += b.products.length; });
+                }
+
+                const el = (id) => document.getElementById(id);
+                if (el('communityTotalNotes')) el('communityTotalNotes').textContent = (totalNotes || 0).toLocaleString();
+                if (el('communityActiveUsers')) el('communityActiveUsers').textContent = activeUsers.toLocaleString();
+                if (el('communitySakeDb')) el('communitySakeDb').textContent = sakeCount.toLocaleString();
+            } catch (e) {
+                console.error('Community stats error:', e);
+            }
+        }
+
+        async function loadCommunityFeed() {
+            const container = document.getElementById('communityFeedList');
+            if (!container) return;
+            container.innerHTML = '<div class="loading">커뮤니티 노트를 불러오는 중</div>';
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('tasting_notes')
+                    .select('id, sake_name, date, dominant_aroma, personal_review, overall_rating, created_at, user_id, photo')
+                    .order('created_at', { ascending: false })
+                    .limit(20);
+
+                if (error) throw error;
+                displayCommunityFeed(data || [], container);
+            } catch (e) {
+                container.innerHTML = `<div class="community-empty">
+                    <div class="community-empty-icon">📡</div>
+                    <p>커뮤니티 노트를 불러올 수 없습니다.</p>
+                    <p style="font-size:0.8rem; margin-top:8px;">Supabase RLS 정책 확인이 필요할 수 있습니다.</p>
+                </div>`;
+            }
+        }
+
+        function hashUserId(uid) {
+            let hash = 0;
+            for (let i = 0; i < uid.length; i++) {
+                hash = ((hash << 5) - hash) + uid.charCodeAt(i);
+                hash |= 0;
+            }
+            return Math.abs(hash);
+        }
+
+        function getAvatarColor(uid) {
+            const colors = ['#6366f1','#8b5cf6','#ec4899','#f43f5e','#f97316','#eab308','#22c55e','#14b8a6','#06b6d4','#3b82f6'];
+            return colors[hashUserId(uid) % colors.length];
+        }
+
+        function getAvatarInitial(uid) {
+            const initials = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            return initials[hashUserId(uid) % initials.length];
+        }
+
+        function getTimeAgo(dateStr) {
+            const now = new Date();
+            const date = new Date(dateStr);
+            const diffMs = now - date;
+            const diffMin = Math.floor(diffMs / 60000);
+            if (diffMin < 1) return '방금 전';
+            if (diffMin < 60) return diffMin + '분 전';
+            const diffHours = Math.floor(diffMin / 60);
+            if (diffHours < 24) return diffHours + '시간 전';
+            const diffDays = Math.floor(diffHours / 24);
+            if (diffDays < 30) return diffDays + '일 전';
+            return date.toLocaleDateString('ko-KR');
+        }
+
+        function renderRatingDots(rating) {
+            const filled = Math.round((rating || 5) / 2);
+            return [1,2,3,4,5].map(i =>
+                `<div class="community-rating-dot${i <= filled ? ' active' : ''}"></div>`
+            ).join('');
+        }
+
+        function displayCommunityFeed(notes, container) {
+            if (!notes || notes.length === 0) {
+                container.innerHTML = `<div class="community-empty">
+                    <div class="community-empty-icon">🍶</div>
+                    <h3>아직 커뮤니티 노트가 없습니다</h3>
+                    <p>첫 번째 테이스팅 노트를 공유해보세요!</p>
+                </div>`;
+                return;
+            }
+
+            container.innerHTML = notes.map(note => {
+                const uid = note.user_id || 'anon';
+                const avatarColor = getAvatarColor(uid);
+                const avatarInitial = getAvatarInitial(uid);
+                const userLabel = 'User' + uid.substring(0, 4);
+                const timeAgo = getTimeAgo(note.created_at);
+                const reviewText = note.personal_review || note.dominant_aroma || '';
+                const truncated = reviewText.length > 120 ? reviewText.substring(0, 120) + '...' : reviewText;
+
+                return `<div class="community-feed-card" onclick="showCommunityDetail('${note.id}')">
+                    <div class="community-feed-card-header">
+                        <div class="community-avatar" style="background:${avatarColor}">${avatarInitial}</div>
+                        <div class="community-feed-card-info">
+                            <div class="community-feed-card-name">${escapeHtml(note.sake_name || '이름 없음')}</div>
+                            <div class="community-feed-card-meta">Shared by ${escapeHtml(userLabel)} · ${timeAgo}</div>
+                        </div>
+                        <div class="community-rating-dots">${renderRatingDots(note.overall_rating)}</div>
+                    </div>
+                    ${truncated ? `<div class="community-feed-card-text">${escapeHtml(truncated)}</div>` : ''}
+                </div>`;
+            }).join('');
+        }
+
+        let communitySearchTimeout = null;
+        function searchCommunityNotes(query) {
+            clearTimeout(communitySearchTimeout);
+            const resultsEl = document.getElementById('communitySearchResults');
+            if (!resultsEl) return;
+
+            if (!query || query.length < 2) {
+                resultsEl.innerHTML = '';
+                return;
+            }
+
+            communitySearchTimeout = setTimeout(() => {
+                const q = query.toLowerCase();
+                const matches = [];
+
+                if (typeof SAKE_DATABASE !== 'undefined') {
+                    Object.entries(SAKE_DATABASE).forEach(([brand, data]) => {
+                        data.products.forEach(p => {
+                            const name = p.name || '';
+                            const jp = p.japanese || '';
+                            if (name.toLowerCase().includes(q) || jp.toLowerCase().includes(q) || brand.toLowerCase().includes(q)) {
+                                matches.push({ name: name, brand: brand, japanese: jp });
+                            }
+                        });
+                    });
+                }
+
+                if (matches.length === 0) {
+                    resultsEl.innerHTML = `<div style="padding:12px; color:#94a3b8; font-size:0.85rem; text-align:center;">검색 결과가 없습니다</div>`;
+                    return;
+                }
+
+                resultsEl.innerHTML = matches.slice(0, 8).map(m =>
+                    `<div class="community-search-item" onclick="loadNotesBySakeName('${escapeAttr(m.name)}')">
+                        <strong>${escapeHtml(m.name)}</strong>
+                        <span style="font-size:0.75rem; color:#94a3b8; margin-left:8px;">${escapeHtml(m.brand)}</span>
+                    </div>`
+                ).join('');
+            }, 300);
+        }
+
+        async function loadNotesBySakeName(sakeName) {
+            const container = document.getElementById('communityFeedList');
+            const resultsEl = document.getElementById('communitySearchResults');
+            if (resultsEl) resultsEl.innerHTML = '';
+            if (!container) return;
+
+            container.innerHTML = '<div class="loading">노트를 검색하는 중</div>';
+
+            // 검색 헤더 업데이트
+            const feedHeader = document.querySelector('.community-feed-header h3');
+            if (feedHeader) feedHeader.textContent = `"${sakeName}" 테이스팅 노트`;
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('tasting_notes')
+                    .select('id, sake_name, date, dominant_aroma, personal_review, overall_rating, created_at, user_id, photo')
+                    .ilike('sake_name', `%${sakeName}%`)
+                    .order('created_at', { ascending: false })
+                    .limit(20);
+
+                if (error) throw error;
+                displayCommunityFeed(data || [], container);
+            } catch (e) {
+                container.innerHTML = `<div class="community-empty"><p>검색 결과를 불러올 수 없습니다.</p></div>`;
+            }
+        }
+
+        async function filterCommunityByGrade(grade) {
+            const container = document.getElementById('communityFeedList');
+            if (!container) return;
+            container.innerHTML = '<div class="loading">카테고리 필터링 중</div>';
+
+            const feedHeader = document.querySelector('.community-feed-header h3');
+            if (feedHeader) feedHeader.textContent = `${grade} 테이스팅 노트`;
+
+            // sake_database.js에서 해당 등급의 제품명 수집
+            const sakeNames = [];
+            if (typeof SAKE_DATABASE !== 'undefined') {
+                Object.values(SAKE_DATABASE).forEach(brand => {
+                    brand.products.forEach(p => {
+                        if (p.grade && p.grade.includes(grade)) {
+                            sakeNames.push(p.name);
+                        }
+                    });
+                });
+            }
+
+            if (sakeNames.length === 0) {
+                container.innerHTML = `<div class="community-empty"><p>해당 카테고리의 사케를 찾을 수 없습니다.</p></div>`;
+                return;
+            }
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('tasting_notes')
+                    .select('id, sake_name, date, dominant_aroma, personal_review, overall_rating, created_at, user_id, photo')
+                    .in('sake_name', sakeNames.slice(0, 50))
+                    .order('created_at', { ascending: false })
+                    .limit(20);
+
+                if (error) throw error;
+                displayCommunityFeed(data || [], container);
+            } catch (e) {
+                container.innerHTML = `<div class="community-empty"><p>필터 결과를 불러올 수 없습니다.</p></div>`;
+            }
+        }
+
+        async function showCommunityDetail(id) {
+            communityLastTab = 'community';
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('detailView').classList.add('active');
+
+            const detailContent = document.getElementById('detailContent');
+            detailContent.innerHTML = '<div class="loading">노트를 불러오는 중</div>';
+
+            try {
+                const { data: note, error } = await supabaseClient
+                    .from('tasting_notes')
+                    .select('*')
+                    .eq('id', id)
+                    .single();
+
+                if (error) throw error;
+
+                const uid = note.user_id || 'anon';
+                const avatarColor = getAvatarColor(uid);
+                const avatarInitial = getAvatarInitial(uid);
+                const userLabel = 'User' + uid.substring(0, 4);
+
+                detailContent.innerHTML = `
+                    <button class="back-btn" onclick="switchTab('community')" style="margin-bottom:16px;">← 커뮤니티로</button>
+
+                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+                        <div class="community-avatar" style="background:${avatarColor};width:36px;height:36px;font-size:0.85rem;">${avatarInitial}</div>
+                        <span style="font-size:0.85rem;color:#64748b;">Shared by ${escapeHtml(userLabel)}</span>
+                    </div>
+
+                    ${note.photo && sanitizePhotoUrl(note.photo) ? `<img src="${sanitizePhotoUrl(note.photo)}" class="detail-photo" alt="사케">` : ''}
+
+                    <h2 style="color: #383961; margin-bottom: 10px;">${escapeHtml(note.sake_name)}</h2>
+                    <p style="color: #666; margin-bottom: 30px;">📅 ${escapeHtml(note.date)}</p>
+
+                    <div class="section-title">색조</div>
+                    <div class="detail-section">
+                        <div class="detail-label">색감</div>
+                        <div class="detail-value">
+                            <div class="rating-scale">
+                                ${[1,2,3,4,5].map(i => `<label style="opacity: ${i == note.clarity_rating ? '1' : '0.3'}"><input type="radio" disabled ${i == note.clarity_rating ? 'checked' : ''}> ${i}</label>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">투명도</div>
+                        <div class="detail-value">
+                            <div class="rating-scale">
+                                ${[1,2,3,4,5].map(i => `<label style="opacity: ${i == note.transparency ? '1' : '0.3'}"><input type="radio" disabled ${i == note.transparency ? 'checked' : ''}> ${i}</label>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">점도</div>
+                        <div class="detail-value">
+                            <div class="rating-scale">
+                                ${[1,2,3,4,5].map(i => `<label style="opacity: ${i == note.viscosity ? '1' : '0.3'}"><input type="radio" disabled ${i == note.viscosity ? 'checked' : ''}> ${i}</label>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-title">향</div>
+                    <div class="detail-section">
+                        <div class="detail-label">향기의 강도</div>
+                        <div class="detail-value">
+                            <div class="rating-scale">
+                                ${[1,2,3,4,5].map(i => `<label style="opacity: ${i == note.aroma_intensity ? '1' : '0.3'}"><input type="radio" disabled ${i == note.aroma_intensity ? 'checked' : ''}> ${i}</label>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">복잡성</div>
+                        <div class="detail-value">
+                            <div class="rating-scale">
+                                ${[1,2,3,4,5].map(i => `<label style="opacity: ${i == note.complexity_aroma ? '1' : '0.3'}"><input type="radio" disabled ${i == note.complexity_aroma ? 'checked' : ''}> ${i}</label>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">선명도</div>
+                        <div class="detail-value">
+                            <div class="rating-scale">
+                                ${[1,2,3,4,5].map(i => `<label style="opacity: ${i == note.sharpness ? '1' : '0.3'}"><input type="radio" disabled ${i == note.sharpness ? 'checked' : ''}> ${i}</label>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-title">맛</div>
+                    <div class="detail-section">
+                        <div class="detail-label">맛</div>
+                        <div class="detail-value">
+                            <div class="rating-scale">
+                                ${[1,2,3,4,5].map(i => `<label style="opacity: ${i == note.flavor ? '1' : '0.3'}"><input type="radio" disabled ${i == note.flavor ? 'checked' : ''}> ${i}</label>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">복잡성</div>
+                        <div class="detail-value">
+                            <div class="rating-scale">
+                                ${[1,2,3,4,5].map(i => `<label style="opacity: ${i == note.complexity_taste ? '1' : '0.3'}"><input type="radio" disabled ${i == note.complexity_taste ? 'checked' : ''}> ${i}</label>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">산미</div>
+                        <div class="detail-value">
+                            <div class="rating-scale">
+                                ${[1,2,3,4,5].map(i => `<label style="opacity: ${i == note.acidity ? '1' : '0.3'}"><input type="radio" disabled ${i == note.acidity ? 'checked' : ''}> ${i}</label>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">애프터 테이스트</div>
+                        <div class="detail-value">
+                            <div class="rating-scale">
+                                ${[1,2,3,4,5].map(i => `<label style="opacity: ${i == note.aftertaste ? '1' : '0.3'}"><input type="radio" disabled ${i == note.aftertaste ? 'checked' : ''}> ${i}</label>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-title">주체적인 향기와 맛</div>
+                    ${note.dominant_aroma ? `<div class="detail-section"><div class="detail-label">주체가 되는 향</div><div class="detail-value">${escapeHtml(note.dominant_aroma)}</div></div>` : ''}
+                    ${note.dominant_taste ? `<div class="detail-section"><div class="detail-label">주체가 되는 맛</div><div class="detail-value">${escapeHtml(note.dominant_taste)}</div></div>` : ''}
+                    ${note.flavor_description ? `<div class="detail-section"><div class="detail-label">향미에 관한 서술</div><div class="detail-value">${escapeHtml(note.flavor_description)}</div></div>` : ''}
+
+                    ${note.personal_review ? `
+                    <div class="section-title">개인적인 감상평</div>
+                    <div class="detail-section"><div class="detail-value">${escapeHtml(note.personal_review)}</div></div>
+                    ` : ''}
+
+                    <div class="section-title">종합 평점</div>
+                    <div class="detail-section" style="text-align: center;">
+                        <div style="font-size: 3em; color: #383961; font-weight: bold;">
+                            ${note.overall_rating || '-'}<span style="font-size: 0.4em; color: #888;">/10</span>
+                        </div>
+                        <div style="margin-top: 10px; color: #666;">
+                            ${note.overall_rating >= 9 ? '🌟 인생 사케!' :
+                              note.overall_rating >= 7 ? '👍 추천해요!' :
+                              note.overall_rating >= 5 ? '😊 괜찮아요' :
+                              note.overall_rating >= 3 ? '😐 그저 그래요' :
+                              note.overall_rating ? '👎 별로예요' : '평점 없음'}
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                detailContent.innerHTML = `<div class="empty-state">
+                    <div class="empty-state-icon">❌</div>
+                    <h3>노트를 불러올 수 없습니다</h3>
+                    <p>${escapeHtml(error.message)}</p>
+                </div>`;
+            }
+        }
+
+        // ===== /커뮤니티 기능 =====
 
         // 라디오 버튼 값 가져오기
         function getRadioValue(name) {
@@ -4153,6 +4965,37 @@
         let selectedBrand = null;
         let selectedProduct = null;
         let sakeInputMode = 'db';
+
+        async function loadAndMergeCustomSakes() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('custom_sakes')
+                    .select('*');
+                if (error || !data || data.length === 0) return;
+                for (const cs of data) {
+                    const product = {
+                        name: cs.product_name,
+                        japanese: cs.japanese || '',
+                        grade: cs.grade || '',
+                        polishRate: cs.polish_rate || '-'
+                    };
+                    if (SAKE_DATABASE[cs.brand]) {
+                        const exists = SAKE_DATABASE[cs.brand].products.some(p => p.name === product.name);
+                        if (!exists) SAKE_DATABASE[cs.brand].products.push(product);
+                        if (!SAKE_DATABASE[cs.brand].brandJp && cs.brand_jp) {
+                            SAKE_DATABASE[cs.brand].brandJp = cs.brand_jp;
+                        }
+                    } else {
+                        SAKE_DATABASE[cs.brand] = {
+                            brandJp: cs.brand_jp || '',
+                            products: [product]
+                        };
+                    }
+                }
+            } catch (e) {
+                console.error('Custom sakes merge error:', e);
+            }
+        }
 
         function initSakeSelector() {
             if (typeof SAKE_DATABASE === 'undefined') return;
@@ -4949,14 +5792,14 @@
                 <div class="notes-list">
                     ${notes.map(note => `
                         <div class="note-card" onclick="showDetail('${note.id}')">
-                            ${note.photo ? `
-                                <img src="${note.photo}" class="note-card-image" alt="사케">
+                            ${note.photo && sanitizePhotoUrl(note.photo) ? `
+                                <img src="${sanitizePhotoUrl(note.photo)}" class="note-card-image" alt="사케">
                             ` : `
                                 <div class="note-card-image">🍶</div>
                             `}
                             <div class="note-card-content">
                                 <div class="note-card-name">${escapeHtml(note.sake_name)}</div>
-                                <div class="note-card-date">📅 ${note.date}</div>
+                                <div class="note-card-date">📅 ${escapeHtml(note.date)}</div>
                                 <div class="note-card-summary">
                                     ${note.dominant_aroma ? escapeHtml(note.dominant_aroma.substring(0, 60) + (note.dominant_aroma.length > 60 ? '...' : '')) : ''}
                                 </div>
@@ -4969,9 +5812,15 @@
 
         // 상세 보기
         async function showDetail(id) {
+            if (!currentUser) {
+                alert('⚠️ 노트를 보려면 로그인이 필요합니다.');
+                showAuthContainer();
+                return;
+            }
+
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById('detailView').classList.add('active');
-            
+
             const detailContent = document.getElementById('detailContent');
             detailContent.innerHTML = '<div class="loading">노트를 불러오는 중</div>';
 
@@ -4986,10 +5835,10 @@
                 if (error) throw error;
 
                 detailContent.innerHTML = `
-                    ${note.photo ? `<img src="${note.photo}" class="detail-photo" alt="사케">` : ''}
-                    
+                    ${note.photo && sanitizePhotoUrl(note.photo) ? `<img src="${sanitizePhotoUrl(note.photo)}" class="detail-photo" alt="사케">` : ''}
+
                     <h2 style="color: #383961; margin-bottom: 10px;">${escapeHtml(note.sake_name)}</h2>
-                    <p style="color: #666; margin-bottom: 30px;">📅 ${note.date}</p>
+                    <p style="color: #666; margin-bottom: 30px;">📅 ${escapeHtml(note.date)}</p>
 
                     <div class="section-title">색조</div>
                     <div class="detail-section">
@@ -5188,11 +6037,11 @@
                 document.getElementById('date').value = note.date;
                 setSakeNameFromNote(note.sake_name);
                 
-                if (note.photo) {
+                if (note.photo && sanitizePhotoUrl(note.photo)) {
                     currentPhotoData = note.photo;
                     document.getElementById('uploadText').style.display = 'none';
-                    document.getElementById('photoPreview').innerHTML = 
-                        `<img src="${note.photo}" alt="사케 사진">`;
+                    document.getElementById('photoPreview').innerHTML =
+                        `<img src="${sanitizePhotoUrl(note.photo)}" alt="사케 사진">`;
                 }
 
                 setRadioValue('clarity_rating', note.clarity_rating);
@@ -5245,7 +6094,7 @@
         loadTheme();
         checkAuth();
         setDefaultDate();
-        initSakeSelector();
+        loadAndMergeCustomSakes().then(() => initSakeSelector());
         checkFeaturedVisibility();
 
         // 정책 페이지 표시 함수

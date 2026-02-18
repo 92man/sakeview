@@ -41,6 +41,39 @@
         th { padding: 12px; text-align: left; font-weight: 600; color: #383961; border-bottom: 2px solid #ddd; }
         td { padding: 12px; border-bottom: 1px solid #eee; }
         tr:hover { background: #f9f9f9; }
+        .clickable-row { cursor: pointer; }
+        .clickable-row:hover { background: #eef2ff !important; }
+        .register-modal {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center;
+            z-index: 10000; padding: 16px;
+        }
+        .register-modal.active { display: flex; }
+        .register-modal-content {
+            background: white; border-radius: 12px; width: 100%; max-width: 520px;
+            max-height: 90vh; overflow-y: auto; box-shadow: 0 8px 32px rgba(0,0,0,0.2); padding: 28px 24px;
+        }
+        .register-modal-header {
+            display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;
+        }
+        .register-modal-header h3 { font-size: 1.3em; font-weight: 700; color: #383961; margin: 0; }
+        .register-modal-close {
+            width: 36px; height: 36px; border: none; border-radius: 8px;
+            background: #f0f0f0; color: #666; font-size: 20px; cursor: pointer;
+        }
+        .register-modal-close:hover { background: #e0e0e0; }
+        .register-field { margin-bottom: 14px; }
+        .register-field label { display: block; font-size: 0.85em; font-weight: 600; color: #555; margin-bottom: 4px; }
+        .register-field input, .register-field select {
+            width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.95em;
+        }
+        .register-original { margin-bottom: 16px; }
+        .register-original label { display: block; font-size: 0.85em; font-weight: 600; color: #999; margin-bottom: 4px; }
+        .register-actions { display: flex; gap: 10px; margin-top: 20px; }
+        .register-actions button {
+            flex: 1; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 1em; font-weight: 600;
+        }
+        .register-actions button:hover { opacity: 0.9; }
     </style>
 </head>
 <body>
@@ -159,11 +192,68 @@
         </div>
     </div>
 
+    <!-- 사케 등록 모달 -->
+    <div class="register-modal" id="registerModal">
+        <div class="register-modal-content">
+            <div class="register-modal-header">
+                <h3>사케 등록</h3>
+                <button class="register-modal-close" onclick="closeRegisterModal()">&times;</button>
+            </div>
+            <div class="register-original">
+                <label>원본 이름</label>
+                <div id="registerOriginalName" style="padding:8px; background:#f5f5f5; border-radius:6px; font-size:0.95em;"></div>
+            </div>
+            <div class="register-field">
+                <label>브랜드명 (한글) *</label>
+                <input type="text" id="registerBrand" placeholder="예: 닷사이">
+            </div>
+            <div class="register-field">
+                <label>브랜드 일본어</label>
+                <input type="text" id="registerBrandJp" placeholder="예: 獺祭">
+            </div>
+            <div class="register-field">
+                <label>제품명 (한글) *</label>
+                <input type="text" id="registerProductName" placeholder="예: 준마이 다이긴죠 23">
+            </div>
+            <div class="register-field">
+                <label>제품 일본어</label>
+                <input type="text" id="registerJapanese" placeholder="예: 純米大吟醸 磨き二割三分">
+            </div>
+            <div class="register-field">
+                <label>등급</label>
+                <select id="registerGrade">
+                    <option value="">선택...</option>
+                    <option value="다이긴죠">다이긴죠</option>
+                    <option value="긴죠">긴죠</option>
+                    <option value="준마이 다이긴죠">준마이 다이긴죠</option>
+                    <option value="준마이 긴죠">준마이 긴죠</option>
+                    <option value="준마이">준마이</option>
+                    <option value="혼죠조">혼죠조</option>
+                    <option value="도쿠베츠 준마이">도쿠베츠 준마이</option>
+                    <option value="도쿠베츠 혼죠조">도쿠베츠 혼죠조</option>
+                    <option value="나마자케">나마자케</option>
+                    <option value="니고리">니고리</option>
+                    <option value="후츠슈">후츠슈</option>
+                </select>
+            </div>
+            <div class="register-field">
+                <label>정미보합</label>
+                <input type="text" id="registerPolishRate" placeholder="예: 45%">
+            </div>
+            <div class="register-actions">
+                <button type="button" onclick="closeRegisterModal()" style="background:#ccc; color:#333;">취소</button>
+                <button type="button" onclick="saveCustomSake()" style="background:#383961; color:white;">등록</button>
+            </div>
+            <div id="registerError" style="color:#e74c3c; text-align:center; margin-top:10px;"></div>
+        </div>
+    </div>
+
     <script>
         const SUPABASE_URL = 'https://atgfrwohilgucmheyuzu.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0Z2Zyd29oaWxndWNtaGV5dXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk2NjAyNTUsImV4cCI6MjA4NTIzNjI1NX0.CoyHTds_3BRl5p6wAehlqaevrdkqp1BzymnTnqhzy2Y';
         const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         let charts = {};
+        let refreshInterval = null;
 
         // XSS 방지 함수
         function escapeHtml(text) {
@@ -171,6 +261,11 @@
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
+        }
+
+        function escapeAttr(text) {
+            if (!text) return '';
+            return escapeHtml(text).replace(/'/g, '&#39;');
         }
 
         // 관리자 권한 확인 (DB 기반)
@@ -216,18 +311,27 @@
                 document.getElementById('dashboard').classList.add('active');
                 await loadAllData();
 
-                // 30초마다 자동 새로고침
-                setInterval(loadAllData, 30000);
+                // 30초마다 자동 새로고침 (중복 방지)
+                if (refreshInterval) clearInterval(refreshInterval);
+                refreshInterval = setInterval(loadAllData, 30000);
             } catch (e) {
                 err.textContent = '로그인 실패: ' + e.message;
             }
         }
 
         async function adminLogout() {
+            if (refreshInterval) { clearInterval(refreshInterval); refreshInterval = null; }
             await client.auth.signOut();
             document.getElementById('loginPage').style.display = 'block';
             document.getElementById('dashboard').classList.remove('active');
             document.getElementById('loginError').textContent = '';
+        }
+
+        let customSakesData = [];
+
+        async function loadCustomSakes() {
+            const { data, error } = await client.from('custom_sakes').select('*');
+            if (!error && data) customSakesData = data;
         }
 
         function buildKnownSakeNames() {
@@ -240,6 +344,14 @@
                     known.add(brand + ' ' + product.name);
                 }
             }
+            // custom_sakes에서 등록된 것도 포함
+            for (const cs of customSakesData) {
+                known.add(cs.original_name);
+                if (cs.japanese) {
+                    known.add(cs.brand + ' ' + cs.product_name + ' (' + cs.japanese + ')');
+                }
+                known.add(cs.brand + ' ' + cs.product_name);
+            }
             return known;
         }
 
@@ -248,7 +360,6 @@
             for (const n of notes) {
                 const name = n.sake_name;
                 if (!name) continue;
-                // Check both the raw name and without the parenthesized part
                 const nameWithoutJp = name.replace(/\s*\(.*\)$/, '');
                 if (knownNames.has(name) || knownNames.has(nameWithoutJp)) continue;
 
@@ -266,13 +377,122 @@
             let html = '';
             for (const [name, info] of sorted) {
                 const d = new Date(info.lastDate).toLocaleDateString('ko-KR');
-                html += `<tr><td>${escapeHtml(name)}</td><td>${info.count}</td><td>${d}</td><td>${info.users.size}</td></tr>`;
+                html += `<tr class="clickable-row" onclick="openRegisterModal('${escapeAttr(name)}')"><td>${escapeHtml(name)}</td><td>${info.count}</td><td>${d}</td><td>${info.users.size}</td></tr>`;
             }
             document.getElementById('unregisteredSakeTable').innerHTML = html || '<tr><td colspan="4">미등록 사케 없음</td></tr>';
         }
 
+        // === 사케 등록 기능 ===
+        function detectGrade(name) {
+            const gradeMap = [
+                { keywords: ['준마이 다이긴죠', '純米大吟醸', '준마이다이긴죠'], grade: '준마이 다이긴죠' },
+                { keywords: ['준마이 긴죠', '純米吟醸', '준마이긴죠'], grade: '준마이 긴죠' },
+                { keywords: ['도쿠베츠 준마이', '特別純米', '토쿠베츠 준마이'], grade: '도쿠베츠 준마이' },
+                { keywords: ['도쿠베츠 혼죠조', '特別本醸造', '토쿠베츠 혼죠조'], grade: '도쿠베츠 혼죠조' },
+                { keywords: ['다이긴죠', '大吟醸'], grade: '다이긴죠' },
+                { keywords: ['긴죠', '吟醸'], grade: '긴죠' },
+                { keywords: ['준마이', '純米'], grade: '준마이' },
+                { keywords: ['혼죠조', '本醸造'], grade: '혼죠조' },
+                { keywords: ['니고리', 'にごり'], grade: '니고리' },
+                { keywords: ['나마', '生酒', '나마자케'], grade: '나마자케' },
+            ];
+            const lower = name.toLowerCase();
+            for (const entry of gradeMap) {
+                for (const kw of entry.keywords) {
+                    if (lower.includes(kw.toLowerCase())) return entry.grade;
+                }
+            }
+            return '';
+        }
+
+        function parseSakeName(name) {
+            let result = { brand: '', brandJp: '', productName: '', japanese: '', grade: '' };
+            if (!name) return result;
+
+            // 괄호 안 일본어 추출
+            const jpMatch = name.match(/\(([^)]+)\)\s*$/);
+            let coreName = name;
+            if (jpMatch) {
+                result.japanese = jpMatch[1];
+                coreName = name.replace(/\s*\([^)]*\)\s*$/, '').trim();
+            }
+
+            // 첫 번째 토큰 = 브랜드, 나머지 = 제품명
+            const parts = coreName.split(/\s+/);
+            if (parts.length >= 2) {
+                result.brand = parts[0];
+                result.productName = parts.slice(1).join(' ');
+            } else {
+                result.brand = coreName;
+            }
+
+            result.grade = detectGrade(coreName);
+            return result;
+        }
+
+        function openRegisterModal(originalName) {
+            const parsed = parseSakeName(originalName);
+            document.getElementById('registerOriginalName').textContent = originalName;
+            document.getElementById('registerOriginalName').dataset.original = originalName;
+            document.getElementById('registerBrand').value = parsed.brand;
+            document.getElementById('registerBrandJp').value = parsed.brandJp;
+            document.getElementById('registerProductName').value = parsed.productName;
+            document.getElementById('registerJapanese').value = parsed.japanese;
+            document.getElementById('registerGrade').value = parsed.grade;
+            document.getElementById('registerPolishRate').value = '';
+            document.getElementById('registerError').textContent = '';
+            document.getElementById('registerModal').classList.add('active');
+        }
+
+        function closeRegisterModal() {
+            document.getElementById('registerModal').classList.remove('active');
+        }
+
+        async function saveCustomSake() {
+            const brand = document.getElementById('registerBrand').value.trim();
+            const brandJp = document.getElementById('registerBrandJp').value.trim();
+            const productName = document.getElementById('registerProductName').value.trim();
+            const japanese = document.getElementById('registerJapanese').value.trim();
+            const grade = document.getElementById('registerGrade').value;
+            const polishRate = document.getElementById('registerPolishRate').value.trim();
+            const originalName = document.getElementById('registerOriginalName').dataset.original;
+            const errorEl = document.getElementById('registerError');
+
+            if (!brand || !productName) {
+                errorEl.textContent = '브랜드명과 제품명은 필수입니다.';
+                return;
+            }
+
+            try {
+                const { data: session } = await client.auth.getSession();
+                const userId = session?.session?.user?.id;
+
+                const { error } = await client.from('custom_sakes').insert({
+                    brand, brand_jp: brandJp, product_name: productName,
+                    japanese, grade, polish_rate: polishRate,
+                    original_name: originalName, registered_by: userId
+                });
+
+                if (error) {
+                    if (error.code === '23505') {
+                        errorEl.textContent = '이미 등록된 사케입니다.';
+                    } else {
+                        throw error;
+                    }
+                    return;
+                }
+
+                alert('사케가 등록되었습니다!');
+                closeRegisterModal();
+                await loadAllData();
+            } catch (e) {
+                errorEl.textContent = '등록 실패: ' + e.message;
+            }
+        }
+
         async function loadAllData() {
             try {
+                await loadCustomSakes();
                 const { data: notes, error } = await client.from('tasting_notes').select('*');
 
                 if (error) {
@@ -421,7 +641,8 @@
                     document.getElementById('loginPage').style.display = 'none';
                     document.getElementById('dashboard').classList.add('active');
                     await loadAllData();
-                    setInterval(loadAllData, 30000);
+                    if (refreshInterval) clearInterval(refreshInterval);
+                    refreshInterval = setInterval(loadAllData, 30000);
                 } else {
                     // 관리자가 아니면 로그아웃
                     await client.auth.signOut();
