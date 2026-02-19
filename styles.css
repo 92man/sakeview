@@ -1927,7 +1927,6 @@ body.dark-mode .top-nav-dropdown {
     .top-nav {
         gap: 4px;
         padding: 8px 12px;
-        overflow: hidden;
     }
 
     .top-nav-title {
@@ -1936,7 +1935,7 @@ body.dark-mode .top-nav-dropdown {
     }
 
     .top-nav-dropdown {
-        min-width: 0;
+        min-width: 140px;
     }
 }
 
@@ -2076,7 +2075,7 @@ body.dark-mode .top-nav-dropdown {
     }
 
     .footer-dropdown {
-        min-width: 0;
+        min-width: 140px;
     }
 
     .footer-link {
@@ -2085,7 +2084,6 @@ body.dark-mode .top-nav-dropdown {
     }
 
     .footer-nav-section {
-        overflow: hidden;
     }
 }
 
