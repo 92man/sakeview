@@ -2240,3 +2240,27 @@ function hidePolicyPage() {
 function showSakeGuide() {
     showPolicyPage('guide');
 }
+
+// DEBUG: 가로 넘침 원인 찾기 (임시)
+setTimeout(function() {
+    var vw = document.documentElement.clientWidth;
+    var results = [];
+    document.querySelectorAll('*').forEach(function(el) {
+        var rect = el.getBoundingClientRect();
+        if (rect.right > vw + 1 || rect.left < -1) {
+            el.style.outline = '3px solid red';
+            var info = el.tagName;
+            if (el.id) info += '#' + el.id;
+            if (el.className && typeof el.className === 'string') info += '.' + el.className.split(' ').join('.');
+            info += ' [w:' + Math.round(rect.width) + ' r:' + Math.round(rect.right) + ' vw:' + vw + ']';
+            results.push(info);
+        }
+    });
+    if (results.length > 0) {
+        var div = document.createElement('div');
+        div.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:red;color:white;padding:8px;font-size:11px;z-index:999999;max-height:40vh;overflow:auto;';
+        div.innerHTML = '<b>OVERFLOW:</b><br>' + results.slice(0, 15).join('<br>');
+        document.body.appendChild(div);
+    }
+}, 3000);
+
