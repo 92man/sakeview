@@ -2241,4 +2241,25 @@ function showSakeGuide() {
     showPolicyPage('guide');
 }
 
+// 모바일 터치 드롭다운 (hover 대신 tap으로 토글)
+(function() {
+    if (!('ontouchstart' in window)) return;
+    document.querySelectorAll('.top-nav-section, .footer-nav-section').forEach(function(section) {
+        section.addEventListener('click', function(e) {
+            var dropdown = section.querySelector('.top-nav-dropdown, .footer-dropdown');
+            if (!dropdown) return;
+            var isOpen = section.classList.contains('nav-open');
+            // 다른 열린 메뉴 닫기
+            document.querySelectorAll('.nav-open').forEach(function(s) { s.classList.remove('nav-open'); });
+            if (!isOpen) {
+                section.classList.add('nav-open');
+                e.stopPropagation();
+            }
+        });
+    });
+    document.addEventListener('click', function() {
+        document.querySelectorAll('.nav-open').forEach(function(s) { s.classList.remove('nav-open'); });
+    });
+})();
+
 
