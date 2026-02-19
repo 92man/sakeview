@@ -3749,6 +3749,8 @@ body.dark-mode .community-view-all-btn:hover {
 .main-content-area {
     padding: 32px 32px 48px;
     overflow-x: hidden;
+    position: relative;
+    z-index: 1;
 }
 .stitch-hero {
     margin-bottom: 32px;
