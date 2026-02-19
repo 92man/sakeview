@@ -2241,44 +2241,4 @@ function showSakeGuide() {
     showPolicyPage('guide');
 }
 
-// DEBUG: 가로 넘침 원인 찾기 (임시) - 빨간 버튼 누르면 실행
-(function() {
-    var btn = document.createElement('button');
-    btn.textContent = 'DEBUG';
-    btn.style.cssText = 'position:fixed;top:80px;right:8px;z-index:999999;background:red;color:white;border:none;padding:8px 12px;border-radius:8px;font-weight:bold;font-size:14px;';
-    document.body.appendChild(btn);
-    btn.onclick = function() {
-        var vw = document.documentElement.clientWidth;
-        var sw = document.documentElement.scrollWidth;
-        var bw = document.body.scrollWidth;
-        var results = [];
-        results.push('vw:' + vw + ' html.sw:' + sw + ' body.sw:' + bw);
-        document.querySelectorAll('*').forEach(function(el) {
-            if (el.scrollWidth > vw + 1) {
-                el.style.outline = '3px solid red';
-                var info = el.tagName;
-                if (el.id) info += '#' + el.id;
-                if (el.className && typeof el.className === 'string') info += '.' + el.className.split(' ').slice(0,3).join('.');
-                info += ' [sW:' + el.scrollWidth + ']';
-                results.push(info);
-            }
-            var rect = el.getBoundingClientRect();
-            if (rect.right > vw + 2) {
-                el.style.outline = '3px solid orange';
-                var info2 = el.tagName;
-                if (el.id) info2 += '#' + el.id;
-                if (el.className && typeof el.className === 'string') info2 += '.' + el.className.split(' ').slice(0,3).join('.');
-                info2 += ' [r:' + Math.round(rect.right) + ' w:' + Math.round(rect.width) + ']';
-                if (results.indexOf(info2) === -1) results.push(info2);
-            }
-        });
-        var old = document.getElementById('debugPanel');
-        if (old) old.remove();
-        var div = document.createElement('div');
-        div.id = 'debugPanel';
-        div.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#222;color:#0f0;padding:10px;font-size:11px;z-index:999999;max-height:50vh;overflow:auto;font-family:monospace;';
-        div.innerHTML = results.join('<br>');
-        document.body.appendChild(div);
-    };
-})();
 
