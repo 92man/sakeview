@@ -1194,7 +1194,7 @@ const SAKE_DATABASE = {
       },
       {
         "name": "아마네코",
-        "japanese": "新政 天蛙",
+        "japanese": "新政 亜麻猫",
         "grade": "스파클링",
         "polishRate": "-"
       },
