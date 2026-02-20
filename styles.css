@@ -3681,10 +3681,12 @@ body.dark-mode .community-view-all-btn:hover {
 .featured-hero-image {
     position: absolute;
     right: 0;
-    top: 0;
-    height: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 90%;
     width: 50%;
-    object-fit: cover;
+    object-fit: contain;
+    object-position: center;
 }
 .stitch-hero-text {
     position: relative;
