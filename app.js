@@ -365,21 +365,21 @@ const featuredSakes = [
     {
         name: "쿠보타 만주",
         kanji: "久保田 萬壽",
-        image: "https://www.asahi-shuzo.co.jp/kubota/lineup/images/manju_img01.png",
+        image: "https://atgfrwohilgucmheyuzu.supabase.co/storage/v1/object/public/sake-images/kubota_manju.jpg",
         description: "니가타현을 대표하는 프리미엄 사케. 우아한 향과 깔끔한 맛이 조화를 이루며, 부드러운 목넘김이 특징입니다. 축하 자리나 특별한 날에 어울리는 명품 사케입니다.",
         meta: ["🏭 아사히슈조", "📍 니가타현", "🌾 고시히카리"]
     },
     {
         name: "핫카이산 준마이 다이긴죠",
         kanji: "八海山 純米大吟醸",
-        image: "https://www.hakkaisan.co.jp/wp-content/uploads/2019/04/junmai_daiginjo.png",
+        image: "https://atgfrwohilgucmheyuzu.supabase.co/storage/v1/object/public/sake-images/hakkaisan_junmai_daiginjo.jpg",
         description: "니가타의 명수로 빚은 깨끗하고 청량한 사케. 은은한 과일향과 부드러운 감칠맛이 특징이며, 어떤 음식과도 잘 어울리는 만능 사케입니다.",
         meta: ["🏭 핫카이조", "📍 니가타현", "🌾 야마다니시키"]
     },
     {
         name: "쥬욘다이 혼조조",
         kanji: "十四代 本醸造",
-        image: "https://sake-select.jp/wp-content/uploads/2020/01/jyuyondai.png",
+        image: "https://atgfrwohilgucmheyuzu.supabase.co/storage/v1/object/public/sake-images/juyondai_honjozo.jpg",
         description: "환상의 사케로 불리는 쥬욘다이. 화려한 과일향과 달콤한 맛, 깔끔한 여운이 완벽한 조화를 이룹니다. 구하기 어려운 프리미엄 사케의 대표주자입니다.",
         meta: ["🏭 타카기슈조", "📍 야마가타현", "🌾 야마다니시키"]
     }
