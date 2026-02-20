@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://sakeview.pages.dev/sitemap.xml
+Sitemap: https://sakeview.com/sitemap.xml
