@@ -55,7 +55,7 @@
                     <p>본 개인정보처리방침은 사전 고지 없이 변경될 수 있습니다. 변경 사항은 이 페이지에 게시됩니다.</p>
 
                     <p style="margin-top: 20px;"><strong>8. 연락처</strong></p>
-                    <p>개인정보에 관한 문의는 denturebur@naver.com으로 연락주세요.</p>
+                    <p>개인정보에 관한 문의는 sakeview@sakeview.com으로 연락주세요.</p>
 
                     <p style="margin-top: 30px; color: var(--text-muted); font-size: 0.9em;">마지막 업데이트: ${new Date().toLocaleDateString('ko-KR')}</p>
                 </div>
@@ -107,7 +107,7 @@
                     <p>본 약관은 대한민국 법률에 따라 해석되고 관할됩니다.</p>
 
                     <p style="margin-top: 20px;"><strong>11. 문의</strong></p>
-                    <p>약관에 관한 문의는 denturebur@naver.com으로 연락주세요.</p>
+                    <p>약관에 관한 문의는 sakeview@sakeview.com으로 연락주세요.</p>
 
                     <p style="margin-top: 30px; color: var(--text-muted); font-size: 0.9em;">마지막 업데이트: ${new Date().toLocaleDateString('ko-KR')}</p>
                 </div>
@@ -257,13 +257,13 @@
                             <div style="font-size: 2.5em; margin-bottom: 20px;">📧</div>
                             <h3 style="color: var(--accent-primary); margin-bottom: 12px;">이메일 문의</h3>
                             <p style="color: var(--text-secondary); margin-bottom: 15px;">일반 문의, 제안, 피드백</p>
-                            <a href="mailto:denturebur@naver.com" style="color: var(--accent-gold); font-weight: 600; text-decoration: none;">denturebur@naver.com</a>
+                            <a href="mailto:sakeview@sakeview.com" style="color: var(--accent-gold); font-weight: 600; text-decoration: none;">sakeview@sakeview.com</a>
                         </div>
                         <div style="background: var(--bg-tertiary); padding: 35px; border-radius: 20px; text-align: center;">
                             <div style="font-size: 2.5em; margin-bottom: 20px;">🐛</div>
                             <h3 style="color: var(--accent-primary); margin-bottom: 12px;">버그 신고</h3>
                             <p style="color: var(--text-secondary); margin-bottom: 15px;">오류 발견 시 알려주세요</p>
-                            <a href="mailto:denturebur@naver.com?subject=[버그신고]" style="color: var(--accent-gold); font-weight: 600; text-decoration: none;">버그 신고하기</a>
+                            <a href="mailto:sakeview@sakeview.com?subject=[버그신고]" style="color: var(--accent-gold); font-weight: 600; text-decoration: none;">버그 신고하기</a>
                         </div>
                     </div>
 
@@ -1756,7 +1756,7 @@
 
                     <div style="background: var(--card-bg); padding: 25px; border-radius: 16px; margin-bottom: 40px; border: 1px solid var(--border-light);">
                         <h3 style="color: var(--accent-primary); margin-bottom: 12px;">Q. 계정을 삭제하고 싶어요.</h3>
-                        <p style="color: var(--text-secondary);">계정 삭제를 원하시면 denturebur@naver.com으로 가입 시 사용한 이메일 주소와 함께 삭제 요청을 보내주세요. 영업일 기준 3일 이내 처리됩니다.</p>
+                        <p style="color: var(--text-secondary);">계정 삭제를 원하시면 sakeview@sakeview.com으로 가입 시 사용한 이메일 주소와 함께 삭제 요청을 보내주세요. 영업일 기준 3일 이내 처리됩니다.</p>
                     </div>
 
                     <!-- 사케 관련 FAQ -->
@@ -1859,7 +1859,7 @@
                     <div style="background: var(--bg-tertiary); padding: 30px; border-radius: 20px; text-align: center;">
                         <h3 style="color: var(--accent-primary); margin-bottom: 15px;">💬 더 궁금한 점이 있으신가요?</h3>
                         <p style="color: var(--text-secondary); margin-bottom: 20px;">FAQ에서 답을 찾지 못하셨다면 언제든 문의해주세요.</p>
-                        <a href="mailto:denturebur@naver.com" style="display: inline-block; background: var(--accent-gold); color: white; padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 600;">문의하기</a>
+                        <a href="mailto:sakeview@sakeview.com" style="display: inline-block; background: var(--accent-gold); color: white; padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 600;">문의하기</a>
                     </div>
 
                     <p style="margin-top: 50px; color: var(--text-muted); font-size: 0.9em; text-align: center;">
