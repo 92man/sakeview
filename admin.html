@@ -111,6 +111,10 @@
                     <h3>사케 종류</h3>
                     <div class="number" id="totalSakes">0</div>
                 </div>
+                <div class="stat-card">
+                    <h3>인증 대기</h3>
+                    <div class="number" id="pendingCerts" style="color:#f59e0b;">0</div>
+                </div>
             </div>
 
             <div class="table-container">
@@ -125,6 +129,23 @@
                         </tr>
                     </thead>
                     <tbody id="unregisteredSakeTable">
+                        <tr><td colspan="4">데이터 로딩 중...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-container">
+                <h3>🏅 자격증 인증 요청</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>사용자</th>
+                            <th>자격증 종류</th>
+                            <th>신청일</th>
+                            <th>상태</th>
+                        </tr>
+                    </thead>
+                    <tbody id="certRequestTable">
                         <tr><td colspan="4">데이터 로딩 중...</td></tr>
                     </tbody>
                 </table>
@@ -245,6 +266,40 @@
                 <button type="button" onclick="saveCustomSake()" style="background:#383961; color:white;">등록</button>
             </div>
             <div id="registerError" style="color:#e74c3c; text-align:center; margin-top:10px;"></div>
+        </div>
+    </div>
+
+    <!-- 자격증 심사 모달 -->
+    <div class="register-modal" id="certReviewModal">
+        <div class="register-modal-content">
+            <div class="register-modal-header">
+                <h3>자격증 심사</h3>
+                <button class="register-modal-close" onclick="closeCertReviewModal()">&times;</button>
+            </div>
+            <div class="register-field">
+                <label>사용자</label>
+                <div id="certReviewUser" style="padding:8px; background:#f5f5f5; border-radius:6px;"></div>
+            </div>
+            <div class="register-field">
+                <label>자격증 종류</label>
+                <div id="certReviewType" style="padding:8px; background:#f5f5f5; border-radius:6px;"></div>
+            </div>
+            <div class="register-field">
+                <label>자격증 사진</label>
+                <div id="certReviewPhoto" style="text-align:center; padding:10px;">
+                    <img id="certReviewImg" style="max-width:100%; max-height:400px; border-radius:8px; cursor:pointer;"
+                         onclick="window.open(this.src, '_blank')">
+                </div>
+            </div>
+            <div class="register-field" id="certRejectReasonField" style="display:none;">
+                <label>반려 사유</label>
+                <input type="text" id="certRejectReason" placeholder="반려 사유를 입력하세요">
+            </div>
+            <div class="register-actions" id="certReviewActions">
+                <button type="button" onclick="rejectCert()" style="background:#e74c3c; color:white;">반려</button>
+                <button type="button" onclick="approveCert()" style="background:#27ae60; color:white;">승인</button>
+            </div>
+            <div id="certReviewError" style="color:#e74c3c; text-align:center; margin-top:10px;"></div>
         </div>
     </div>
 
@@ -520,6 +575,7 @@
 
                 drawCharts(notes);
                 drawTables(notes);
+                await loadCertRequests();
             } catch (error) {
                 console.error('loadAllData 에러:', error);
             }
@@ -630,6 +686,147 @@
                 html += `<tr><td>${d}</td><td>${userId}</td><td>${sakeName}</td><td>${n.clarity_rating||'-'}</td><td>${n.transparency||'-'}</td><td>${n.aroma_intensity||'-'}</td><td>${n.flavor||'-'}</td></tr>`;
             });
             document.getElementById('notesTable').innerHTML = html || '<tr><td colspan="7">데이터 없음</td></tr>';
+        }
+
+        // === 자격증 인증 심사 ===
+        let currentCertReviewId = null;
+
+        async function loadCertRequests() {
+            try {
+                const { data, error } = await client
+                    .from('certifications')
+                    .select('id, user_id, cert_type, status, created_at, reject_reason')
+                    .order('created_at', { ascending: false });
+                if (error) throw error;
+                renderCertRequests(data || []);
+                const pendingCount = (data || []).filter(c => c.status === 'pending').length;
+                const pendingEl = document.getElementById('pendingCerts');
+                if (pendingEl) pendingEl.textContent = pendingCount;
+            } catch (e) {
+                console.error('Cert requests load error:', e);
+            }
+        }
+
+        function renderCertRequests(certs) {
+            const typeLabels = { kikizakeshi: '키키자케시', sommelier: '사케 소믈리에' };
+            const statusLabels = { pending: '대기', approved: '승인', rejected: '반려' };
+            const statusColors = { pending: '#f59e0b', approved: '#10b981', rejected: '#ef4444' };
+
+            let html = '';
+            certs.forEach(cert => {
+                const d = new Date(cert.created_at).toLocaleDateString('ko-KR');
+                const userId = cert.user_id ? escapeHtml(cert.user_id.substring(0, 8)) + '...' : '-';
+                const typeLabel = typeLabels[cert.cert_type] || cert.cert_type;
+                const statusLabel = statusLabels[cert.status] || cert.status;
+                const statusColor = statusColors[cert.status] || '#666';
+                html += `<tr class="clickable-row" onclick="openCertReview('${cert.id}')">
+                    <td>${userId}</td>
+                    <td>${escapeHtml(typeLabel)}</td>
+                    <td>${d}</td>
+                    <td><span style="color:${statusColor}; font-weight:600;">${escapeHtml(statusLabel)}</span></td>
+                </tr>`;
+            });
+            document.getElementById('certRequestTable').innerHTML = html || '<tr><td colspan="4">인증 요청 없음</td></tr>';
+        }
+
+        async function openCertReview(certId) {
+            currentCertReviewId = certId;
+            try {
+                const { data: cert, error } = await client
+                    .from('certifications')
+                    .select('*')
+                    .eq('id', certId)
+                    .single();
+                if (error || !cert) {
+                    alert('인증 요청을 불러올 수 없습니다.');
+                    return;
+                }
+
+                document.getElementById('certReviewUser').textContent = cert.user_id.substring(0, 12) + '...';
+                document.getElementById('certReviewType').textContent =
+                    cert.cert_type === 'kikizakeshi' ? '키키자케시 (利酒師)' : '사케 소믈리에';
+
+                const img = document.getElementById('certReviewImg');
+                if (cert.cert_photo) {
+                    img.src = cert.cert_photo;
+                    img.style.display = 'block';
+                } else {
+                    img.style.display = 'none';
+                }
+
+                const rejectField = document.getElementById('certRejectReasonField');
+                const actions = document.getElementById('certReviewActions');
+                if (cert.status === 'pending') {
+                    rejectField.style.display = 'none';
+                    actions.style.display = 'flex';
+                } else {
+                    rejectField.style.display = 'none';
+                    actions.style.display = 'none';
+                }
+
+                document.getElementById('certReviewError').textContent = '';
+                document.getElementById('certRejectReason').value = '';
+                document.getElementById('certReviewModal').classList.add('active');
+            } catch (e) {
+                alert('오류: ' + e.message);
+            }
+        }
+
+        function closeCertReviewModal() {
+            document.getElementById('certReviewModal').classList.remove('active');
+            currentCertReviewId = null;
+        }
+
+        async function approveCert() {
+            if (!currentCertReviewId) return;
+            try {
+                const { data: session } = await client.auth.getSession();
+                const reviewerId = session?.session?.user?.id;
+                const { error } = await client
+                    .from('certifications')
+                    .update({
+                        status: 'approved',
+                        reviewed_at: new Date().toISOString(),
+                        reviewed_by: reviewerId
+                    })
+                    .eq('id', currentCertReviewId);
+                if (error) throw error;
+                alert('승인되었습니다.');
+                closeCertReviewModal();
+                await loadCertRequests();
+            } catch (e) {
+                document.getElementById('certReviewError').textContent = '승인 실패: ' + e.message;
+            }
+        }
+
+        async function rejectCert() {
+            if (!currentCertReviewId) return;
+            const rejectField = document.getElementById('certRejectReasonField');
+            if (rejectField.style.display === 'none') {
+                rejectField.style.display = 'block';
+                document.getElementById('certRejectReason').focus();
+                return;
+            }
+            const reason = document.getElementById('certRejectReason').value.trim();
+            try {
+                const { data: session } = await client.auth.getSession();
+                const reviewerId = session?.session?.user?.id;
+                const { error } = await client
+                    .from('certifications')
+                    .update({
+                        status: 'rejected',
+                        reject_reason: reason || null,
+                        reviewed_at: new Date().toISOString(),
+                        reviewed_by: reviewerId
+                    })
+                    .eq('id', currentCertReviewId);
+                if (error) throw error;
+                alert('반려되었습니다.');
+                closeCertReviewModal();
+                await loadCertRequests();
+            } catch (e) {
+                document.getElementById('certReviewError').textContent = '반려 실패: ' + e.message;
+            }
         }
 
         window.addEventListener('load', async () => {

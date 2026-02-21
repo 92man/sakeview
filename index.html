@@ -158,6 +158,25 @@
                     <input type="email" class="auth-input" id="signupEmail" placeholder="이메일 주소" required>
                     <input type="password" class="auth-input" id="signupPassword" placeholder="비밀번호 (최소 6자)" required minlength="6">
                     <input type="password" class="auth-input" id="signupPasswordConfirm" placeholder="비밀번호 확인" required minlength="6">
+                    <!-- 자격증 인증 옵션 -->
+                    <div class="cert-signup-section">
+                        <label class="cert-toggle-label">
+                            <input type="checkbox" id="signupCertToggle" onchange="toggleSignupCert()">
+                            <span>사케 자격증이 있으신가요?</span>
+                        </label>
+                        <div id="signupCertFields" style="display: none;">
+                            <select class="auth-input" id="signupCertType">
+                                <option value="">자격증 종류 선택</option>
+                                <option value="kikizakeshi">키키자케시 (利酒師)</option>
+                                <option value="sommelier">사케 소믈리에</option>
+                            </select>
+                            <div class="cert-photo-upload" onclick="document.getElementById('signupCertPhoto').click()">
+                                <input type="file" id="signupCertPhoto" accept="image/*" onchange="handleCertPhotoUpload(event, 'signupCertPreview')" style="display:none;">
+                                <div id="signupCertUploadText"><span class="material-symbols-outlined" style="font-size:24px;">upload_file</span><br>자격증 사진 업로드</div>
+                                <div id="signupCertPreview" class="cert-photo-preview"></div>
+                            </div>
+                        </div>
+                    </div>
                     <button type="submit" class="auth-btn" id="signupSubmitBtn"><span class="spinner"></span><span class="btn-text">회원가입</span></button>
                     <div id="signupError" class="auth-error"></div>
                 </form>
@@ -183,6 +202,19 @@
             </div>
         </div>
 
+        <!-- 자격증 인증 모달 -->
+        <div class="cert-modal" id="certModal" style="display: none;">
+            <div class="cert-modal-content">
+                <div class="cert-modal-header">
+                    <h3>자격증 인증</h3>
+                    <button class="cert-modal-close" onclick="closeCertModal()">&times;</button>
+                </div>
+                <div id="certModalBody">
+                    <div class="loading">인증 상태 확인 중...</div>
+                </div>
+            </div>
+        </div>
+
         <!-- Main App -->
         <div id="mainApp">
             <div class="header">
@@ -199,6 +231,9 @@
                         </button>
                         <div class="user-info" id="userInfoSection">
                             <span id="userEmail" style="display: none;"></span>
+                            <button class="profile-btn" id="profileBtn" onclick="openCertModal()" style="display: none;" title="자격증 인증">
+                                <span class="material-symbols-outlined" style="font-size:18px;">verified</span>
+                            </button>
                             <button class="logout-btn" id="logoutBtn" onclick="handleLogout()" style="display: none;">로그아웃</button>
                             <button class="login-btn header-avatar" id="loginBtn" onclick="showAuthContainer()">
                                 <span class="material-symbols-outlined" style="font-size:18px;">person</span>

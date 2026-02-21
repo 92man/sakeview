@@ -3950,3 +3950,212 @@ body.dark-mode .sidebar-view-all-btn:hover {
     padding-bottom: 0;
     margin-bottom: 0;
 }
+
+/* === 자격증 인증 시스템 === */
+
+.cert-signup-section {
+    margin: 4px 0 8px;
+}
+
+.cert-toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    padding: 6px 0;
+    user-select: none;
+}
+
+.cert-toggle-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--accent-primary);
+    cursor: pointer;
+}
+
+#signupCertFields {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.cert-photo-upload {
+    border: 2px dashed var(--border-card);
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--bg-secondary);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    line-height: 1.6;
+}
+
+.cert-photo-upload:hover {
+    border-color: #DBDFAC;
+    background: var(--bg-tertiary);
+}
+
+.cert-photo-preview img {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 12px;
+    margin-top: 8px;
+}
+
+/* 자격증 모달 */
+.cert-modal {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    padding: 16px;
+}
+
+.cert-modal-content {
+    background: var(--card-bg);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 28px 24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.cert-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.cert-modal-header h3 {
+    font-size: 1.3em;
+    font-weight: 700;
+    color: var(--accent-primary);
+}
+
+.cert-modal-close {
+    width: 36px; height: 36px;
+    border: none; border-radius: 8px;
+    background: var(--bg-secondary);
+    color: var(--text-muted);
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.cert-modal-close:hover {
+    background: var(--border-card);
+}
+
+.cert-type-section {
+    padding: 8px 0;
+}
+
+.cert-type-section h4 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+}
+
+.cert-status-badge {
+    display: inline-block;
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.cert-status-badge.pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.cert-status-badge.approved {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.cert-status-badge.rejected {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.cert-status-text {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.cert-submitted-date {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.cert-reject-reason {
+    font-size: 0.85rem;
+    color: #dc2626;
+    margin-bottom: 12px;
+    font-style: italic;
+}
+
+/* 커뮤니티 피드 뱃지 */
+.cert-badge {
+    font-size: 0.85rem;
+    margin-left: 4px;
+    vertical-align: middle;
+    cursor: default;
+}
+
+/* 헤더 프로필 버튼 */
+.profile-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border-card);
+    background: var(--bg-secondary);
+    color: var(--accent-primary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    padding: 0;
+}
+
+.profile-btn:hover {
+    border-color: var(--accent-primary);
+    background: var(--bg-tertiary);
+}
+
+/* 다크모드 자격증 */
+body.dark-mode .cert-photo-upload {
+    border-color: var(--border-medium, #444);
+    background: var(--bg-tertiary);
+}
+
+body.dark-mode .cert-status-badge.pending {
+    background: #78350f;
+    color: #fde68a;
+}
+
+body.dark-mode .cert-status-badge.approved {
+    background: #064e3b;
+    color: #6ee7b7;
+}
+
+body.dark-mode .cert-status-badge.rejected {
+    background: #7f1d1d;
+    color: #fca5a5;
+}
