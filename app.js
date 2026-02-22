@@ -2092,8 +2092,11 @@ function renderNoteDetail(note) {
                         }
                     });
 
-                    // 일반 태그 (메인 태그는 ★ 강조)
+                    // 일반 태그 (메인 태그는 맨 앞 + ★ 강조)
                     if (normalTags.length > 0) {
+                        if (catMain && normalTags.includes(catMain)) {
+                            normalTags.sort((a, b) => (a === catMain ? -1 : b === catMain ? 1 : 0));
+                        }
                         tastingHtml += '<div class="detail-tasting-sub"><div class="detail-tasting-tags">';
                         normalTags.forEach(v => {
                             const isMain = (v === catMain);
