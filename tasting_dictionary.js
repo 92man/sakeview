@@ -115,7 +115,6 @@ const TASTING_DICTIONARY = [
   { category_id: "overall", category_ko: "전체 인상", category_en: "Overall", sub_category_ko: "추천 상황", sub_category_en: "Occasion", expression_ko: "혼술용", ui_type: "멀티 태그" },
 
   // ===== 7. 페어링/맥락 (Context) =====
-  { category_id: "kr_context", category_ko: "페어링등", category_en: "Context", sub_category_ko: "한식", sub_category_en: "Korean", expression_ko: "회/초밥", ui_type: "멀티 태그" },
   { category_id: "kr_context", category_ko: "페어링등", category_en: "Context", sub_category_ko: "한식", sub_category_en: "Korean", expression_ko: "불고기", ui_type: "멀티 태그" },
   { category_id: "kr_context", category_ko: "페어링등", category_en: "Context", sub_category_ko: "한식", sub_category_en: "Korean", expression_ko: "삼겹살", ui_type: "멀티 태그" },
   { category_id: "kr_context", category_ko: "페어링등", category_en: "Context", sub_category_ko: "한식", sub_category_en: "Korean", expression_ko: "전/부침개", ui_type: "멀티 태그" },

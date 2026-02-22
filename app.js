@@ -2044,17 +2044,36 @@ function renderNoteDetail(note) {
                     if (!catInfo) return;
                     tastingHtml += '<div class="detail-tasting-section">';
                     tastingHtml += '<div class="detail-tasting-cat-title">' + catInfo.icon + ' ' + escapeHtml(catInfo.ko) + '</div>';
+
+                    // "상황"은 단독 줄, 나머지는 서브카테고리명 없이 태그만 합쳐서 표시
+                    const normalTags = [];
+                    const separateSubs = {}; // 단독 줄로 표시할 서브카테고리
                     Object.entries(catData).forEach(([sub, val]) => {
+                        const tags = Array.isArray(val) ? val : [val];
+                        if (sub === '상황') {
+                            separateSubs[sub] = tags;
+                        } else {
+                            normalTags.push(...tags);
+                        }
+                    });
+
+                    // 일반 태그 (서브카테고리명 없이 한 줄에 표시)
+                    if (normalTags.length > 0) {
+                        tastingHtml += '<div class="detail-tasting-sub"><div class="detail-tasting-tags">';
+                        normalTags.forEach(v => {
+                            tastingHtml += '<span class="detail-tasting-tag">' + escapeHtml(v) + '</span>';
+                        });
+                        tastingHtml += '</div></div>';
+                    }
+
+                    // 단독 줄 서브카테고리 (상황 등)
+                    Object.entries(separateSubs).forEach(([sub, tags]) => {
                         tastingHtml += '<div class="detail-tasting-sub">';
                         tastingHtml += '<div class="detail-tasting-sub-label">' + escapeHtml(sub) + '</div>';
                         tastingHtml += '<div class="detail-tasting-tags">';
-                        if (Array.isArray(val)) {
-                            val.forEach(v => {
-                                tastingHtml += '<span class="detail-tasting-tag">' + escapeHtml(v) + '</span>';
-                            });
-                        } else {
-                            tastingHtml += '<span class="detail-tasting-tag">' + escapeHtml(val) + '</span>';
-                        }
+                        tags.forEach(v => {
+                            tastingHtml += '<span class="detail-tasting-tag">' + escapeHtml(v) + '</span>';
+                        });
                         tastingHtml += '</div></div>';
                     });
                     // 카테고리별 추가 노트

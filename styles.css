@@ -3267,6 +3267,7 @@ body.dark-mode .ocr-match-item:hover {
     display: flex;
     flex-wrap: wrap;
     gap: 5px;
+    flex: 1;
 }
 .detail-tasting-tag {
     display: inline-block;
@@ -3276,6 +3277,7 @@ body.dark-mode .ocr-match-item:hover {
     border-radius: 12px;
     font-size: 0.8rem;
     font-weight: 600;
+    white-space: nowrap;
 }
 
 @media (max-width: 768px) {
