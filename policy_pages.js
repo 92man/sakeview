@@ -837,49 +837,34 @@
                     <div style="background: var(--card-bg); border-left: 4px solid var(--accent-gold); padding: 25px; margin-bottom: 20px; border-radius: 0 16px 16px 0;">
                         <h3 style="color: var(--accent-gold); margin-bottom: 12px;">📋 기본 정보 입력</h3>
                         <ul style="margin-left: 20px; color: var(--text-secondary);">
-                            <li><strong>사케 이름:</strong> 정확한 이름을 입력하세요 (예: 닷사이 23, 쿠보타 만주)</li>
-                            <li><strong>양조장:</strong> 제조사 이름 (예: 아사히 슈조, 아사히야마 슈조)</li>
-                            <li><strong>종류:</strong> 준마이, 긴조, 다이긴조 등 사케 등급 선택</li>
-                            <li><strong>정미보합:</strong> 쌀 도정률 (라벨에서 확인 가능)</li>
-                            <li><strong>알코올 도수:</strong> 보통 14-17% 사이</li>
+                            <li><strong>사케 이름:</strong> DB에서 검색하거나 직접 입력 (예: 닷사이 23, 쿠보타 만주)</li>
+                            <li><strong>날짜:</strong> 테이스팅 날짜 선택</li>
+                            <li><strong>사진:</strong> 라벨, 병, 잔에 담긴 모습 촬영 (선택사항)</li>
                         </ul>
                     </div>
 
                     <div style="background: var(--card-bg); border-left: 4px solid var(--accent-rose); padding: 25px; margin-bottom: 20px; border-radius: 0 16px 16px 0;">
-                        <h3 style="color: var(--accent-rose); margin-bottom: 12px;">🎨 외관 평가</h3>
+                        <h3 style="color: var(--accent-rose); margin-bottom: 12px;">🏷️ 테이스팅 태그 선택</h3>
+                        <p style="color: var(--text-secondary); margin-bottom: 10px;">카테고리별 탭을 전환하며 느낀 특징을 태그로 탭하세요.</p>
                         <ul style="margin-left: 20px; color: var(--text-secondary);">
-                            <li><strong>색감:</strong> 무색 투명부터 황금색까지 5단계 평가</li>
-                            <li><strong>투명도:</strong> 맑은 정도 (니고리자케는 낮음)</li>
-                            <li><strong>점도:</strong> 잔에 묻는 정도 (다리 형성)</li>
+                            <li><strong>향:</strong> 과일, 꽃, 곡물, 유제품 등 느껴지는 향 선택</li>
+                            <li><strong>맛:</strong> 단맛, 산미, 감칠맛, 쓴맛 등 맛의 특징</li>
+                            <li><strong>바디감:</strong> 라이트부터 풀바디까지, 질감과 무게감</li>
+                            <li><strong>여운:</strong> 피니시의 길이와 인상</li>
+                            <li><strong>페어링:</strong> 함께 먹은 음식과 상황</li>
                         </ul>
                     </div>
 
                     <div style="background: var(--card-bg); border-left: 4px solid var(--accent-gold); padding: 25px; margin-bottom: 20px; border-radius: 0 16px 16px 0;">
-                        <h3 style="color: var(--accent-gold); margin-bottom: 12px;">👃 향 평가</h3>
-                        <ul style="margin-left: 20px; color: var(--text-secondary);">
-                            <li><strong>향의 강도:</strong> 코에 닿는 첫 인상의 강도</li>
-                            <li><strong>향의 복잡성:</strong> 다양한 향이 겹치는 정도</li>
-                            <li><strong>향 노트:</strong> 느껴지는 향 선택 (과일, 꽃, 쌀, 견과류 등)</li>
-                        </ul>
+                        <h3 style="color: var(--accent-gold); margin-bottom: 12px;">★ 메인 태그 지정</h3>
+                        <p style="color: var(--text-secondary);">이미 선택한 태그를 한 번 더 탭하면 해당 카테고리의 <strong>메인 태그</strong>로 지정됩니다. 메인 태그는 금색으로 강조되어 가장 인상적인 특징을 한눈에 보여줍니다.</p>
                     </div>
 
-                    <div style="background: var(--card-bg); border-left: 4px solid var(--accent-rose); padding: 25px; margin-bottom: 20px; border-radius: 0 16px 16px 0;">
-                        <h3 style="color: var(--accent-rose); margin-bottom: 12px;">👅 맛 평가</h3>
+                    <div style="background: var(--card-bg); border-left: 4px solid var(--accent-rose); padding: 25px; margin-bottom: 40px; border-radius: 0 16px 16px 0;">
+                        <h3 style="color: var(--accent-rose); margin-bottom: 12px;">💯 종합 평점 & 감상평</h3>
                         <ul style="margin-left: 20px; color: var(--text-secondary);">
-                            <li><strong>맛의 강도:</strong> 전체적인 풍미의 세기</li>
-                            <li><strong>단맛/드라이:</strong> 달콤한지 드라이한지</li>
-                            <li><strong>산미:</strong> 신맛의 정도</li>
-                            <li><strong>우마미:</strong> 감칠맛의 깊이</li>
-                            <li><strong>애프터테이스트:</strong> 여운의 길이와 질</li>
-                        </ul>
-                    </div>
-
-                    <div style="background: var(--card-bg); border-left: 4px solid var(--accent-gold); padding: 25px; margin-bottom: 40px; border-radius: 0 16px 16px 0;">
-                        <h3 style="color: var(--accent-gold); margin-bottom: 12px;">📸 사진 및 메모</h3>
-                        <ul style="margin-left: 20px; color: var(--text-secondary);">
-                            <li><strong>사진:</strong> 라벨, 병, 잔에 담긴 모습 촬영 (선택사항)</li>
-                            <li><strong>총점:</strong> 1-5점 평가</li>
-                            <li><strong>메모:</strong> 함께 먹은 음식, 분위기, 특별한 기억 등</li>
+                            <li><strong>종합 평점:</strong> 슬라이더로 0~100점 사이 점수 부여</li>
+                            <li><strong>감상평:</strong> 이 사케에 대한 자유로운 한줄평</li>
                         </ul>
                     </div>
 
@@ -1832,7 +1817,7 @@
 
                     <div style="background: var(--card-bg); padding: 25px; border-radius: 16px; margin-bottom: 20px; border: 1px solid var(--border-light);">
                         <h3 style="color: var(--accent-primary); margin-bottom: 12px;">Q. 테이스팅 노트는 어떻게 작성하나요?</h3>
-                        <p style="color: var(--text-secondary);">외관(색, 투명도) → 향(강도, 종류) → 맛(단맛, 산미, 우마미) → 여운 순서로 평가합니다. 처음엔 어렵지만 계속 기록하다 보면 자신만의 기준이 생깁니다. 사케를 보다의 평가 항목을 따라가면 쉽게 시작할 수 있습니다.</p>
+                        <p style="color: var(--text-secondary);">'새 노트' 탭에서 사케를 선택한 후, 향 · 맛 · 바디감 · 여운 · 페어링 카테고리별로 느낀 특징을 태그로 탭하세요. 한 번 더 탭하면 메인 태그로 지정됩니다. 마지막으로 0~100점 종합 평점과 감상평을 남기면 완성!</p>
                     </div>
 
                     <div style="background: var(--card-bg); padding: 25px; border-radius: 16px; margin-bottom: 20px; border: 1px solid var(--border-light);">
