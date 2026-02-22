@@ -3250,14 +3250,18 @@ body.dark-mode .ocr-match-item:hover {
     gap: 6px;
 }
 .detail-tasting-sub {
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     margin-left: 4px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
 }
 .detail-tasting-sub-label {
     font-size: 0.75rem;
     color: var(--text-muted);
     font-weight: 600;
-    margin-bottom: 4px;
+    white-space: nowrap;
 }
 .detail-tasting-tags {
     display: flex;
