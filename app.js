@@ -2097,7 +2097,7 @@ function renderNoteDetail(note) {
                         tastingHtml += '<div class="detail-tasting-sub"><div class="detail-tasting-tags">';
                         normalTags.forEach(v => {
                             const isMain = (v === catMain);
-                            tastingHtml += '<span class="detail-tasting-tag' + (isMain ? ' detail-main-tag' : '') + '">' + (isMain ? '★ ' : '') + escapeHtml(v) + '</span>';
+                            tastingHtml += '<span class="detail-tasting-tag' + (isMain ? ' detail-main-tag' : '') + '">' + escapeHtml(v) + '</span>';
                         });
                         tastingHtml += '</div></div>';
                     }
