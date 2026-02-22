@@ -2263,6 +2263,10 @@ async function editNote(id) {
             .single();
 
         if (error) throw error;
+        if (!note) {
+            alert('본인이 작성한 노트만 수정할 수 있습니다.');
+            return;
+        }
 
         editingNoteId = id;
         switchTab('new');
