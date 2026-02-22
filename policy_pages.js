@@ -127,12 +127,12 @@
                     <div style="background: var(--bg-tertiary); padding: 40px; border-radius: 20px; margin-bottom: 40px; border-left: 4px solid var(--accent-gold);">
                         <h2 style="color: var(--accent-gold); margin-bottom: 20px; font-family: 'Cormorant Garamond', serif; font-size: 1.6em;">서비스 소개</h2>
                         <p style="font-size: 1.05em; margin-bottom: 15px;">
-                            <strong>사케를 보다(Sake View)</strong>는 사케를 사랑하는 모든 분들을 위한 전문 테이스팅 노트 서비스입니다.
-                            2024년 사케에 대한 열정으로 시작되어, 현재 수백 명의 사케 애호가들이 자신만의 테이스팅 기록을 남기고 있습니다.
+                            <strong>사케를 보다(Sake View)</strong>는 사케를 사랑하는 모든 분들을 위한 테이스팅 노트 서비스입니다.
+                            어렵고 복잡한 테이스팅 용어 대신, 버튼 하나로 간편하게 사케의 특징을 기록할 수 있도록 만들었습니다.
                         </p>
                         <p style="font-size: 1.05em;">
-                            와인 테이스팅 노트처럼, 사케도 체계적인 기록이 필요합니다. 색감, 투명도, 향의 복잡성, 맛의 강도, 산미, 여운까지 —
-                            사케의 모든 특성을 섬세하게 기록하고, 시간이 지나도 그 순간의 감동을 다시 떠올릴 수 있도록 도와드립니다.
+                            향, 맛, 바디감, 여운, 페어링까지 — 카테고리별로 준비된 태그를 탭하기만 하면 나만의 테이스팅 노트가 완성됩니다.
+                            시간이 지나도 그 순간의 감동을 다시 떠올릴 수 있도록 도와드립니다.
                         </p>
                     </div>
 
@@ -142,18 +142,18 @@
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 40px;">
                         <div style="background: var(--card-bg); border: 1px solid var(--border-light); padding: 25px; border-radius: 16px;">
                             <div style="font-size: 2em; margin-bottom: 15px;">📝</div>
-                            <h3 style="color: var(--accent-primary); margin-bottom: 10px;">체계적인 기록</h3>
-                            <p style="color: var(--text-secondary); font-size: 0.95em;">전문 소믈리에가 사용하는 평가 항목을 기반으로, 누구나 쉽게 사케의 특성을 기록할 수 있습니다.</p>
+                            <h3 style="color: var(--accent-primary); margin-bottom: 10px;">간편한 기록</h3>
+                            <p style="color: var(--text-secondary); font-size: 0.95em;">복잡한 용어 없이 버튼 탭만으로 향, 맛, 바디감, 여운을 기록할 수 있습니다.</p>
                         </div>
                         <div style="background: var(--card-bg); border: 1px solid var(--border-light); padding: 25px; border-radius: 16px;">
                             <div style="font-size: 2em; margin-bottom: 15px;">🎓</div>
                             <h3 style="color: var(--accent-primary); margin-bottom: 10px;">사케 문화 전파</h3>
-                            <p style="color: var(--text-secondary); font-size: 0.95em;">사케 가이드, 용어사전, FAQ를 통해 초보자부터 전문가까지 사케에 대해 배울 수 있습니다.</p>
+                            <p style="color: var(--text-secondary); font-size: 0.95em;">사케 가이드, 용어사전, FAQ를 통해 초보자도 쉽게 사케에 대해 배울 수 있습니다.</p>
                         </div>
                         <div style="background: var(--card-bg); border: 1px solid var(--border-light); padding: 25px; border-radius: 16px;">
                             <div style="font-size: 2em; margin-bottom: 15px;">🌏</div>
                             <h3 style="color: var(--accent-primary); margin-bottom: 10px;">한국 사케 커뮤니티</h3>
-                            <p style="color: var(--text-secondary); font-size: 0.95em;">한국어로 된 전문적인 사케 정보와 테이스팅 도구를 제공하여 국내 사케 문화 발전에 기여합니다.</p>
+                            <p style="color: var(--text-secondary); font-size: 0.95em;">한국어로 된 사케 정보와 테이스팅 도구를 제공하여 국내 사케 문화 발전에 기여합니다.</p>
                         </div>
                     </div>
 
@@ -161,8 +161,8 @@
                     <h2 style="color: var(--accent-primary); margin-top: 40px; margin-bottom: 25px; font-family: 'Cormorant Garamond', serif; font-size: 1.5em;">주요 기능</h2>
 
                     <div style="background: var(--card-bg); border-left: 4px solid var(--accent-gold); padding: 25px; margin-bottom: 20px; border-radius: 0 16px 16px 0;">
-                        <h3 style="color: var(--accent-gold); margin-bottom: 12px;">🍶 전문 테이스팅 노트</h3>
-                        <p>색감, 투명도, 점도, 향의 강도와 복잡성, 맛의 강도, 산미, 애프터테이스트까지 — 10가지 이상의 평가 항목으로 사케를 깊이 있게 분석하고 기록합니다.</p>
+                        <h3 style="color: var(--accent-gold); margin-bottom: 12px;">🍶 버튼식 테이스팅 노트</h3>
+                        <p>향, 맛, 바디감, 여운, 페어링 등 카테고리별로 준비된 태그를 탭하면 테이스팅 노트가 완성됩니다. 메인 태그를 지정해 가장 인상적인 특징을 강조할 수도 있습니다.</p>
                     </div>
 
                     <div style="background: var(--card-bg); border-left: 4px solid var(--accent-rose); padding: 25px; margin-bottom: 20px; border-radius: 0 16px 16px 0;">
@@ -172,12 +172,12 @@
 
                     <div style="background: var(--card-bg); border-left: 4px solid var(--accent-gold); padding: 25px; margin-bottom: 20px; border-radius: 0 16px 16px 0;">
                         <h3 style="color: var(--accent-gold); margin-bottom: 12px;">☁️ 클라우드 동기화</h3>
-                        <p>Supabase의 안전한 클라우드 서버에 데이터가 저장되어, 어느 기기에서든 내 테이스팅 노트에 접근할 수 있습니다.</p>
+                        <p>클라우드 서버에 데이터가 저장되어, 어느 기기에서든 내 테이스팅 노트에 접근할 수 있습니다.</p>
                     </div>
 
                     <div style="background: var(--card-bg); border-left: 4px solid var(--accent-rose); padding: 25px; margin-bottom: 20px; border-radius: 0 16px 16px 0;">
-                        <h3 style="color: var(--accent-rose); margin-bottom: 12px;">🌓 다크 모드 지원</h3>
-                        <p>눈의 피로를 줄이는 다크 모드를 지원합니다. 바나 레스토랑의 어두운 조명에서도 편안하게 사용하세요.</p>
+                        <h3 style="color: var(--accent-rose); margin-bottom: 12px;">👥 커뮤니티</h3>
+                        <p>다른 사케 애호가들의 테이스팅 노트를 구경하고, 나의 기록도 공유할 수 있습니다.</p>
                     </div>
 
                     <!-- 팀 소개 -->
@@ -191,8 +191,8 @@
                                 <p style="color: var(--text-muted); font-size: 0.9em; margin-bottom: 12px;">사케 애호가 & 개발자</p>
                                 <p style="color: var(--text-secondary);">
                                     사케를 보다는 사케를 진심으로 사랑하는 개발자가 만들었습니다.
-                                    일본 여행에서 처음 만난 사케의 매력에 빠진 이후, 수백 종의 사케를 테이스팅하며 쌓은 경험을
-                                    다른 사케 애호가들과 나누고 싶어 이 서비스를 개발하게 되었습니다.
+                                    마신 사케를 쉽고 간편하게 기록하고, 그 경험을 다른 사케 애호가들과 나누고 싶어
+                                    이 서비스를 개발하게 되었습니다.
                                 </p>
                             </div>
                         </div>
@@ -214,23 +214,13 @@
                     <div style="border-left: 2px solid var(--accent-gold); padding-left: 25px; margin-left: 10px;">
                         <div style="margin-bottom: 20px; position: relative;">
                             <div style="position: absolute; left: -33px; width: 16px; height: 16px; background: var(--accent-gold); border-radius: 50%;"></div>
-                            <strong style="color: var(--accent-primary);">2024년 12월</strong>
+                            <strong style="color: var(--accent-primary);">2025년 10월</strong>
                             <p style="color: var(--text-secondary); margin-top: 5px;">사케를 보다 서비스 기획 시작</p>
                         </div>
-                        <div style="margin-bottom: 20px; position: relative;">
-                            <div style="position: absolute; left: -33px; width: 16px; height: 16px; background: var(--accent-gold); border-radius: 50%;"></div>
-                            <strong style="color: var(--accent-primary);">2025년 1월</strong>
-                            <p style="color: var(--text-secondary); margin-top: 5px;">베타 버전 출시 및 테스트</p>
-                        </div>
-                        <div style="margin-bottom: 20px; position: relative;">
-                            <div style="position: absolute; left: -33px; width: 16px; height: 16px; background: var(--accent-gold); border-radius: 50%;"></div>
-                            <strong style="color: var(--accent-primary);">2025년 2월</strong>
-                            <p style="color: var(--text-secondary); margin-top: 5px;">정식 서비스 오픈, 사케 가이드 콘텐츠 추가</p>
-                        </div>
                         <div style="position: relative;">
-                            <div style="position: absolute; left: -33px; width: 16px; height: 16px; background: var(--accent-rose); border-radius: 50%;"></div>
-                            <strong style="color: var(--accent-primary);">2026년 ~</strong>
-                            <p style="color: var(--text-secondary); margin-top: 5px;">지속적인 기능 개선 및 커뮤니티 확장 예정</p>
+                            <div style="position: absolute; left: -33px; width: 16px; height: 16px; background: var(--accent-gold); border-radius: 50%;"></div>
+                            <strong style="color: var(--accent-primary);">2026년 1월</strong>
+                            <p style="color: var(--text-secondary); margin-top: 5px;">베타 버전 출시 및 테스트 중</p>
                         </div>
                     </div>
 
