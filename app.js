@@ -1877,7 +1877,7 @@ function displayCommunityFeed(notes, container, avgMap) {
         return;
     }
 
-    container.innerHTML = notes.map(note => {
+    const cards = notes.map((note, idx) => {
         const uid = note.user_id || 'anon';
         const avatarColor = getAvatarColor(uid);
         const avatarInitial = getAvatarInitial(uid);
@@ -1910,7 +1910,8 @@ function displayCommunityFeed(notes, container, avgMap) {
             } catch(e) {}
         }
 
-        return `<div class="community-feed-card" onclick="showCommunityDetail('${note.id}')">
+        const hiddenClass = idx >= 3 ? ' community-feed-card-hidden' : '';
+        return `<div class="community-feed-card${hiddenClass}" onclick="showCommunityDetail('${note.id}')">
             <div class="community-feed-card-header">
                 <div class="community-avatar" style="background:${avatarColor}">${avatarInitial}</div>
                 <div class="community-feed-card-info">
@@ -1922,7 +1923,18 @@ function displayCommunityFeed(notes, container, avgMap) {
             ${mainTagsHtml}
             ${truncated ? `<div class="community-feed-card-text">${escapeHtml(truncated)}</div>` : ''}
         </div>`;
-    }).join('');
+    });
+
+    let html = cards.join('');
+    if (notes.length > 3) {
+        html += `<button class="community-feed-more-btn" onclick="expandCommunityFeed(this)">더보기 (${notes.length - 3}개)</button>`;
+    }
+    container.innerHTML = html;
+}
+
+function expandCommunityFeed(btn) {
+    document.querySelectorAll('.community-feed-card-hidden').forEach(el => el.classList.remove('community-feed-card-hidden'));
+    btn.remove();
 }
 
 function searchCommunityNotes(query) {
