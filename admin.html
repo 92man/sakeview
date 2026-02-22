@@ -590,12 +590,9 @@
                 const noteUserIds = new Set(notes.map(n => n.user_id));
                 const sakes = new Set(notes.map(n => n.sake_name)).size;
 
-                // 전체 회원 수: 노트 작성자 + 자격증 신청자 합산 (고유 user_id)
-                const { data: certUsers } = await client.from('certifications').select('user_id');
-                const allUserIds = new Set([...noteUserIds]);
-                if (certUsers) certUsers.forEach(c => allUserIds.add(c.user_id));
-
-                document.getElementById('totalMembers').textContent = allUserIds.size;
+                // 전체 회원 수: auth.users 테이블에서 정확한 수 조회
+                const { data: totalCount } = await client.rpc('get_total_users_count');
+                document.getElementById('totalMembers').textContent = totalCount || 0;
                 document.getElementById('totalUsers').textContent = noteUserIds.size;
                 document.getElementById('totalNotes').textContent = notes.length;
                 document.getElementById('totalSakes').textContent = sakes;
