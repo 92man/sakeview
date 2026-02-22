@@ -763,7 +763,7 @@ async function updateSidebar() {
             const date = new Date(n.created_at);
             const daysAgo = Math.floor((now - date) / (1000 * 60 * 60 * 24));
             const timeText = daysAgo === 0 ? '오늘' : daysAgo + '일 전';
-            const stars = '★'.repeat(Math.min(Math.round((n.overall_rating || 5) / 2), 5));
+            const stars = '★'.repeat(Math.min(Math.round((n.overall_rating || 50) / 20), 5));
             return `<div onclick="showDetail('${n.id}')" style="display:flex;gap:12px;padding:12px;background:var(--card-bg);border:1px solid var(--border-card);border-radius:12px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--accent-gold)';this.style.boxShadow='0 2px 8px rgba(56,57,97,0.08)'" onmouseout="this.style.borderColor='var(--border-card)';this.style.boxShadow='none'">
                 <div style="width:48px;height:48px;border-radius:8px;background:var(--bg-muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.5em;overflow:hidden;">${n.photo ? `<img src="${sanitizePhotoUrl(n.photo)}" style="width:100%;height:100%;object-fit:cover;">` : '🍶'}</div>
                 <div style="flex:1;min-width:0;">
@@ -822,7 +822,7 @@ async function saveTastingNote(event) {
         sake_name: sakeNameVal.trim(),
         flavor_description: JSON.stringify(tastingData),
         personal_review: document.getElementById('personal_review').value,
-        overall_rating: getRadioValue('overall_rating')
+        overall_rating: parseInt(document.getElementById('overall_rating_slider').value)
     };
 
     try {
@@ -1891,9 +1891,9 @@ function displayCommunityFeed(notes, container, avgMap) {
         let ratingDisplay = '';
         if (sakeAvg && sakeAvg.count > 1) {
             const avgStr = sakeAvg.avg % 1 === 0 ? sakeAvg.avg.toFixed(0) : sakeAvg.avg.toFixed(1);
-            ratingDisplay = `<span class="community-feed-card-rating">${avgStr}<span class="community-feed-card-rating-max">/10</span></span>`;
+            ratingDisplay = `<span class="community-feed-card-rating">${avgStr}<span class="community-feed-card-rating-max">/100</span></span>`;
         } else if (note.overall_rating) {
-            ratingDisplay = `<span class="community-feed-card-rating">${note.overall_rating}<span class="community-feed-card-rating-max">/10</span></span>`;
+            ratingDisplay = `<span class="community-feed-card-rating">${note.overall_rating}<span class="community-feed-card-rating-max">/100</span></span>`;
         }
 
         // 메인 태그 추출
@@ -2203,13 +2203,13 @@ function renderNoteDetail(note) {
         <div class="section-title">종합 평점</div>
         <div class="detail-section" style="text-align: center;">
             <div style="font-size: 3em; color: var(--accent-primary, #383961); font-weight: bold;">
-                ${note.overall_rating || '-'}<span style="font-size: 0.4em; color: #888;">/10</span>
+                ${note.overall_rating || '-'}<span style="font-size: 0.4em; color: #888;">/100</span>
             </div>
             <div style="margin-top: 10px; color: #666;">
-                ${note.overall_rating >= 9 ? '🌟 인생 사케!' :
-                  note.overall_rating >= 7 ? '👍 추천해요!' :
-                  note.overall_rating >= 5 ? '😊 괜찮아요' :
-                  note.overall_rating >= 3 ? '😐 그저 그래요' :
+                ${note.overall_rating >= 90 ? '🌟 인생 사케!' :
+                  note.overall_rating >= 70 ? '👍 추천해요!' :
+                  note.overall_rating >= 50 ? '😊 괜찮아요' :
+                  note.overall_rating >= 30 ? '😐 그저 그래요' :
                   note.overall_rating ? '👎 별로예요' : '평점 없음'}
             </div>
         </div>
@@ -2277,7 +2277,10 @@ async function editNote(id) {
                 `<img src="${sanitizePhotoUrl(note.photo)}" alt="사케 사진">`;
         }
 
-        setRadioValue('overall_rating', note.overall_rating || 5);
+        const slider = document.getElementById('overall_rating_slider');
+        const ratingVal = note.overall_rating || 50;
+        slider.value = ratingVal;
+        document.getElementById('ratingValue').textContent = ratingVal;
 
         // 새로운 태그 기반 테이스팅 데이터 로드
         resetTastingUI();

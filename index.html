@@ -401,19 +401,15 @@
                         <div class="form-group">
                             <label>이 사케에 몇 점을 주시겠어요?</label>
                             <div class="rating-item rating-item-centered">
-                                <div class="rating-scale-10">
-                                    <label><input type="radio" name="overall_rating" value="1"> 1</label>
-                                    <label><input type="radio" name="overall_rating" value="2"> 2</label>
-                                    <label><input type="radio" name="overall_rating" value="3"> 3</label>
-                                    <label><input type="radio" name="overall_rating" value="4"> 4</label>
-                                    <label><input type="radio" name="overall_rating" value="5" checked> 5</label>
-                                    <label><input type="radio" name="overall_rating" value="6"> 6</label>
-                                    <label><input type="radio" name="overall_rating" value="7"> 7</label>
-                                    <label><input type="radio" name="overall_rating" value="8"> 8</label>
-                                    <label><input type="radio" name="overall_rating" value="9"> 9</label>
-                                    <label><input type="radio" name="overall_rating" value="10"> 10</label>
+                                <div class="rating-slider-wrap">
+                                    <input type="range" id="overall_rating_slider" min="0" max="100" value="50" step="1" oninput="document.getElementById('ratingValue').textContent=this.value">
+                                    <div class="rating-slider-labels">
+                                        <span>0</span>
+                                        <span class="rating-slider-value" id="ratingValue">50</span>
+                                        <span>100</span>
+                                    </div>
                                 </div>
-                                <div class="info-text">1: 다시는 안 마심 → 10: 인생 사케!</div>
+                                <div class="info-text">0: 다시는 안 마심 → 100: 인생 사케!</div>
                             </div>
                         </div>
 
