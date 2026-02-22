@@ -2069,7 +2069,6 @@ function renderNoteDetail(note) {
                     // 단독 줄 서브카테고리 (상황 등)
                     Object.entries(separateSubs).forEach(([sub, tags]) => {
                         tastingHtml += '<div class="detail-tasting-sub">';
-                        tastingHtml += '<div class="detail-tasting-sub-label">' + escapeHtml(sub) + '</div>';
                         tastingHtml += '<div class="detail-tasting-tags">';
                         tags.forEach(v => {
                             tastingHtml += '<span class="detail-tasting-tag">' + escapeHtml(v) + '</span>';
