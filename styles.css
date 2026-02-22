@@ -3491,21 +3491,11 @@ body.dark-mode .ocr-match-item:hover {
 .community-main-tag {
     display: inline-block;
     padding: 2px 9px;
-    background: linear-gradient(135deg, #d4a017, #f0c040);
-    color: #1a1a2e;
+    background: rgba(56, 57, 97, 0.08);
+    color: var(--accent-primary, #383961);
     border-radius: 10px;
     font-size: 0.72rem;
-    font-weight: 700;
-    position: relative;
-}
-.community-main-tag::before {
-    content: '★';
-    position: absolute;
-    top: -5px;
-    left: -3px;
-    font-size: 0.55rem;
-    color: #e53935;
-    text-shadow: 0 0 2px rgba(229, 57, 53, 0.5);
+    font-weight: 600;
 }
 /* Community Sidebar */
 .community-sidebar {
