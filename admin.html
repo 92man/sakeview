@@ -100,7 +100,11 @@
 
             <div class="stats-grid">
                 <div class="stat-card">
-                    <h3>총 사용자</h3>
+                    <h3>전체 회원</h3>
+                    <div class="number" id="totalMembers">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>노트 작성자</h3>
                     <div class="number" id="totalUsers">0</div>
                 </div>
                 <div class="stat-card">
@@ -110,6 +114,10 @@
                 <div class="stat-card">
                     <h3>사케 종류</h3>
                     <div class="number" id="totalSakes">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>자격증 소지자</h3>
+                    <div class="number" id="certifiedUsers" style="color:#10b981;">0</div>
                 </div>
                 <div class="stat-card">
                     <h3>인증 대기</h3>
@@ -147,6 +155,22 @@
                     </thead>
                     <tbody id="certRequestTable">
                         <tr><td colspan="4">데이터 로딩 중...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-container">
+                <h3>✅ 자격증 소지자 목록</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>이메일</th>
+                            <th>자격증 종류</th>
+                            <th>승인일</th>
+                        </tr>
+                    </thead>
+                    <tbody id="certifiedUserTable">
+                        <tr><td colspan="3">데이터 로딩 중...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -563,10 +587,16 @@
                 console.log('조회된 노트 수:', notes.length);
                 console.log('첫 번째 노트:', notes[0]);
 
-                const users = new Set(notes.map(n => n.user_id)).size;
+                const noteUserIds = new Set(notes.map(n => n.user_id));
                 const sakes = new Set(notes.map(n => n.sake_name)).size;
 
-                document.getElementById('totalUsers').textContent = users;
+                // 전체 회원 수: 노트 작성자 + 자격증 신청자 합산 (고유 user_id)
+                const { data: certUsers } = await client.from('certifications').select('user_id');
+                const allUserIds = new Set([...noteUserIds]);
+                if (certUsers) certUsers.forEach(c => allUserIds.add(c.user_id));
+
+                document.getElementById('totalMembers').textContent = allUserIds.size;
+                document.getElementById('totalUsers').textContent = noteUserIds.size;
                 document.getElementById('totalNotes').textContent = notes.length;
                 document.getElementById('totalSakes').textContent = sakes;
 
@@ -695,16 +725,39 @@
             try {
                 const { data, error } = await client
                     .from('certifications')
-                    .select('id, user_id, user_email, cert_type, status, created_at, reject_reason')
+                    .select('id, user_id, user_email, cert_type, status, created_at, reviewed_at, reject_reason')
                     .order('created_at', { ascending: false });
                 if (error) throw error;
                 renderCertRequests(data || []);
                 const pendingCount = (data || []).filter(c => c.status === 'pending').length;
                 const pendingEl = document.getElementById('pendingCerts');
                 if (pendingEl) pendingEl.textContent = pendingCount;
+
+                // 자격증 소지자 (승인된 인증)
+                const approved = (data || []).filter(c => c.status === 'approved');
+                const certifiedCount = new Set(approved.map(c => c.user_id)).size;
+                const certifiedEl = document.getElementById('certifiedUsers');
+                if (certifiedEl) certifiedEl.textContent = certifiedCount;
+                renderCertifiedUsers(approved);
             } catch (e) {
                 console.error('Cert requests load error:', e);
             }
+        }
+
+        function renderCertifiedUsers(approved) {
+            const typeLabels = { kikizakeshi: '키키자케시', sommelier: '사케 소믈리에' };
+            let html = '';
+            approved.forEach(cert => {
+                const email = cert.user_email ? escapeHtml(cert.user_email) : (cert.user_id ? escapeHtml(cert.user_id.substring(0, 8)) + '...' : '-');
+                const typeLabel = typeLabels[cert.cert_type] || cert.cert_type;
+                const d = cert.reviewed_at ? new Date(cert.reviewed_at).toLocaleDateString('ko-KR') : '-';
+                html += `<tr>
+                    <td>${email}</td>
+                    <td>${escapeHtml(typeLabel)}</td>
+                    <td>${d}</td>
+                </tr>`;
+            });
+            document.getElementById('certifiedUserTable').innerHTML = html || '<tr><td colspan="3">자격증 소지자 없음</td></tr>';
         }
 
         function renderCertRequests(certs) {
