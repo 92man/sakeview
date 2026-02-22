@@ -3171,7 +3171,7 @@ body.dark-mode .ocr-match-item:hover {
     position: relative;
 }
 .tasting-tag.main-tag::before {
-    content: '☆';
+    content: '★';
     position: absolute;
     top: -7px;
     left: -5px;
@@ -3183,6 +3183,7 @@ body.dark-mode .ocr-match-item:hover {
     font-size: 0.7rem;
     color: #d4a017;
     font-weight: 500;
+    margin-right: auto;
     margin-left: 8px;
 }
 .tasting-radio-group {
@@ -3310,7 +3311,7 @@ body.dark-mode .ocr-match-item:hover {
     position: relative;
 }
 .detail-main-tag::before {
-    content: '☆';
+    content: '★';
     position: absolute;
     top: -6px;
     left: -4px;
