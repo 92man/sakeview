@@ -61,6 +61,7 @@ let approvedCertsLastLoaded = 0;
 let tastingSelections = {}; // { "aroma": { "과일 계열": ["사과","배"], ... }, ... }
 let tastingRadioSelections = {}; // { "body_무게감": "미디엄 바디", ... }
 let tastingCategoryNotes = {}; // { "aroma": "추가 메모", ... }
+let tastingMainTags = {}; // { "aroma": "바나나", "taste": "깔끔함", ... } 카테고리당 메인 태그 1개
 let activeTastingCategory = 'aroma';
 
 function initTastingUI() {
@@ -174,10 +175,25 @@ function toggleTastingTag(el) {
 
     const arr = tastingSelections[catId][subCat];
     const idx = arr.indexOf(expr);
-    if (idx >= 0) {
+    const isMain = tastingMainTags[catId] === expr;
+
+    if (isMain) {
+        // 메인 태그 클릭 → 선택 해제
         arr.splice(idx, 1);
-        el.classList.remove('selected');
+        el.classList.remove('selected', 'main-tag');
+        delete tastingMainTags[catId];
+    } else if (idx >= 0) {
+        // 이미 선택된 태그 클릭 → 메인으로 설정
+        // 기존 메인 태그 해제
+        if (tastingMainTags[catId]) {
+            document.querySelectorAll('.tasting-tag[data-cat-id="' + catId + '"].main-tag').forEach(t => {
+                t.classList.remove('main-tag');
+            });
+        }
+        tastingMainTags[catId] = expr;
+        el.classList.add('main-tag');
     } else {
+        // 미선택 태그 클릭 → 선택
         arr.push(expr);
         el.classList.add('selected');
     }
@@ -297,6 +313,10 @@ function collectTastingData() {
         const noteVal = (tastingCategoryNotes[cat.id] || '').trim();
         if (noteVal) data.notes[cat.id] = noteVal;
     });
+    // 메인 태그 저장
+    if (Object.keys(tastingMainTags).length > 0) {
+        data.mainTags = { ...tastingMainTags };
+    }
     return data;
 }
 
@@ -330,6 +350,17 @@ function loadTastingDataToForm(jsonStr) {
         });
     });
 
+    // 메인 태그 복원
+    tastingMainTags = {};
+    if (data.mainTags) {
+        Object.entries(data.mainTags).forEach(([catId, mainExpr]) => {
+            tastingMainTags[catId] = mainExpr;
+            document.querySelectorAll('.tasting-tag[data-cat-id="' + catId + '"]').forEach(el => {
+                if (el.dataset.expr === mainExpr) el.classList.add('main-tag');
+            });
+        });
+    }
+
     // 카테고리별 노트 복원
     Object.entries(data.notes || {}).forEach(([catId, noteVal]) => {
         tastingCategoryNotes[catId] = noteVal;
@@ -345,8 +376,9 @@ function resetTastingUI() {
     tastingSelections = {};
     tastingRadioSelections = {};
     tastingCategoryNotes = {};
+    tastingMainTags = {};
     TASTING_CATEGORIES.forEach(c => { tastingSelections[c.id] = {}; });
-    document.querySelectorAll('.tasting-tag.selected, .tasting-radio.selected').forEach(el => el.classList.remove('selected'));
+    document.querySelectorAll('.tasting-tag.selected, .tasting-tag.main-tag, .tasting-radio.selected').forEach(el => el.classList.remove('selected', 'main-tag'));
     TASTING_CATEGORIES.forEach(c => {
         const noteEl = document.getElementById('catNote_' + c.id);
         if (noteEl) noteEl.value = '';
@@ -2038,6 +2070,7 @@ function renderNoteDetail(note) {
                 const catMap = {};
                 TASTING_CATEGORIES.forEach(c => { catMap[c.id] = c; });
 
+                const mainTags = td.mainTags || {};
                 tastingHtml += '<div class="section-title">테이스팅 노트</div>';
                 Object.entries(td.categories).forEach(([catId, catData]) => {
                     const catInfo = catMap[catId];
@@ -2045,9 +2078,11 @@ function renderNoteDetail(note) {
                     tastingHtml += '<div class="detail-tasting-section">';
                     tastingHtml += '<div class="detail-tasting-cat-title">' + catInfo.icon + ' ' + escapeHtml(catInfo.ko) + '</div>';
 
+                    const catMain = mainTags[catId] || null;
+
                     // "상황"은 단독 줄, 나머지는 서브카테고리명 없이 태그만 합쳐서 표시
                     const normalTags = [];
-                    const separateSubs = {}; // 단독 줄로 표시할 서브카테고리
+                    const separateSubs = {};
                     Object.entries(catData).forEach(([sub, val]) => {
                         const tags = Array.isArray(val) ? val : [val];
                         if (sub === '상황') {
@@ -2057,11 +2092,12 @@ function renderNoteDetail(note) {
                         }
                     });
 
-                    // 일반 태그 (서브카테고리명 없이 한 줄에 표시)
+                    // 일반 태그 (메인 태그는 ★ 강조)
                     if (normalTags.length > 0) {
                         tastingHtml += '<div class="detail-tasting-sub"><div class="detail-tasting-tags">';
                         normalTags.forEach(v => {
-                            tastingHtml += '<span class="detail-tasting-tag">' + escapeHtml(v) + '</span>';
+                            const isMain = (v === catMain);
+                            tastingHtml += '<span class="detail-tasting-tag' + (isMain ? ' detail-main-tag' : '') + '">' + (isMain ? '★ ' : '') + escapeHtml(v) + '</span>';
                         });
                         tastingHtml += '</div></div>';
                     }
