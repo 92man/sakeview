@@ -2310,6 +2310,7 @@ async function submitPendingCert() {
             .from('certifications')
             .insert([{
                 user_id: currentUser.id,
+                user_email: currentUser.email,
                 cert_type: certData.cert_type,
                 cert_photo: certData.cert_photo,
                 status: 'pending'
@@ -2429,6 +2430,7 @@ async function submitCertApplication(certType) {
             .from('certifications')
             .insert([{
                 user_id: currentUser.id,
+                user_email: currentUser.email,
                 cert_type: certType,
                 cert_photo: currentCertPhotoData,
                 status: 'pending'

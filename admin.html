@@ -695,7 +695,7 @@
             try {
                 const { data, error } = await client
                     .from('certifications')
-                    .select('id, user_id, cert_type, status, created_at, reject_reason')
+                    .select('id, user_id, user_email, cert_type, status, created_at, reject_reason')
                     .order('created_at', { ascending: false });
                 if (error) throw error;
                 renderCertRequests(data || []);
@@ -715,12 +715,12 @@
             let html = '';
             certs.forEach(cert => {
                 const d = new Date(cert.created_at).toLocaleDateString('ko-KR');
-                const userId = cert.user_id ? escapeHtml(cert.user_id.substring(0, 8)) + '...' : '-';
+                const userDisplay = cert.user_email ? escapeHtml(cert.user_email) : (cert.user_id ? escapeHtml(cert.user_id.substring(0, 8)) + '...' : '-');
                 const typeLabel = typeLabels[cert.cert_type] || cert.cert_type;
                 const statusLabel = statusLabels[cert.status] || cert.status;
                 const statusColor = statusColors[cert.status] || '#666';
                 html += `<tr class="clickable-row" onclick="openCertReview('${cert.id}')">
-                    <td>${userId}</td>
+                    <td>${userDisplay}</td>
                     <td>${escapeHtml(typeLabel)}</td>
                     <td>${d}</td>
                     <td><span style="color:${statusColor}; font-weight:600;">${escapeHtml(statusLabel)}</span></td>
@@ -742,7 +742,7 @@
                     return;
                 }
 
-                document.getElementById('certReviewUser').textContent = cert.user_id.substring(0, 12) + '...';
+                document.getElementById('certReviewUser').textContent = cert.user_email || cert.user_id.substring(0, 12) + '...';
                 document.getElementById('certReviewType').textContent =
                     cert.cert_type === 'kikizakeshi' ? '키키자케시 (利酒師)' : '사케 소믈리에';
 
