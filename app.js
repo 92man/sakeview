@@ -2065,7 +2065,8 @@ async function showCommunityDetail(id) {
         const userLabel = 'User' + uid.substring(0, 4);
 
         // renderNoteDetail을 재사용하여 새/구 형식 모두 지원
-        const noteDetailHtml = renderNoteDetail(note);
+        const isOwner = currentUser && currentUser.id === uid;
+        const noteDetailHtml = renderNoteDetail(note, isOwner);
 
         detailContent.innerHTML = `
             <button class="back-btn" onclick="switchTab('community')" style="margin-bottom:16px;">← 커뮤니티로</button>
@@ -2084,7 +2085,7 @@ async function showCommunityDetail(id) {
     }
 }
 
-function renderNoteDetail(note) {
+function renderNoteDetail(note, showActions = true) {
     let tastingHtml = '';
     let isNewFormat = false;
 
@@ -2214,8 +2215,8 @@ function renderNoteDetail(note) {
             </div>
         </div>
 
-        <button class="edit-btn" onclick="editNote('${note.id}')">✏️ 수정</button>
-        <button class="delete-btn" onclick="deleteNote('${note.id}')">🗑️ 삭제</button>
+        ${showActions ? `<button class="edit-btn" onclick="editNote('${note.id}')">✏️ 수정</button>
+        <button class="delete-btn" onclick="deleteNote('${note.id}')">🗑️ 삭제</button>` : ''}
     `;
 }
 
