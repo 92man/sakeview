@@ -1721,7 +1721,7 @@
 
                     <div style="background: var(--card-bg); padding: 25px; border-radius: 16px; margin-bottom: 20px; border: 1px solid var(--border-light);">
                         <h3 style="color: var(--accent-primary); margin-bottom: 12px;">Q. 내 데이터는 안전한가요?</h3>
-                        <p style="color: var(--text-secondary);">네, 모든 데이터는 Supabase의 보안 서버에 암호화되어 저장됩니다. 귀하의 테이스팅 노트는 본인만 접근할 수 있으며, 제3자와 공유되지 않습니다.</p>
+                        <p style="color: var(--text-secondary);">네, 모든 데이터는 보안 서버에 안전하게 저장됩니다. 작성한 노트는 커뮤니티 탭에 익명으로 공유되며, 이메일 등 개인정보는 표시되지 않습니다.</p>
                     </div>
 
                     <div style="background: var(--card-bg); padding: 25px; border-radius: 16px; margin-bottom: 20px; border: 1px solid var(--border-light);">
