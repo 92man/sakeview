@@ -1833,7 +1833,7 @@ async function loadCommunityFeed() {
     try {
         const { data, error } = await supabaseClient
             .from('tasting_notes')
-            .select('id, sake_name, date, personal_review, overall_rating, created_at, user_id')
+            .select('id, sake_name, date, personal_review, overall_rating, created_at, user_id, flavor_description')
             .order('created_at', { ascending: false })
             .limit(20);
 
@@ -1896,6 +1896,20 @@ function displayCommunityFeed(notes, container, avgMap) {
             ratingDisplay = `<span class="community-feed-card-rating">${note.overall_rating}<span class="community-feed-card-rating-max">/10</span></span>`;
         }
 
+        // 메인 태그 추출
+        let mainTagsHtml = '';
+        if (note.flavor_description) {
+            try {
+                const td = JSON.parse(note.flavor_description);
+                if (td.mainTags) {
+                    const tags = Object.values(td.mainTags);
+                    if (tags.length > 0) {
+                        mainTagsHtml = '<div class="community-feed-card-main-tags">' + tags.map(t => '<span class="community-main-tag">' + escapeHtml(t) + '</span>').join('') + '</div>';
+                    }
+                }
+            } catch(e) {}
+        }
+
         return `<div class="community-feed-card" onclick="showCommunityDetail('${note.id}')">
             <div class="community-feed-card-header">
                 <div class="community-avatar" style="background:${avatarColor}">${avatarInitial}</div>
@@ -1905,6 +1919,7 @@ function displayCommunityFeed(notes, container, avgMap) {
                 </div>
                 ${ratingDisplay}
             </div>
+            ${mainTagsHtml}
             ${truncated ? `<div class="community-feed-card-text">${escapeHtml(truncated)}</div>` : ''}
         </div>`;
     }).join('');
