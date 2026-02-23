@@ -3806,60 +3806,52 @@ body.dark-mode .community-view-all-btn:hover {
 /* Featured hero card */
 .featured-hero-card {
     position: relative;
-    overflow: hidden;
     border-radius: 12px;
     background: #383961;
     color: white;
     box-shadow: 0 10px 30px rgba(56,57,97,0.2);
+    overflow: hidden;
 }
 .featured-hero-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to right, #383961 40%, rgba(56,57,97,0.85) 65%, rgba(56,57,97,0.3));
-    z-index: 10;
+    display: none;
 }
 .featured-hero-image {
     position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    height: 90%;
-    width: 50%;
+    left: 24px;
+    top: 24px;
+    bottom: 24px;
+    width: 180px;
     object-fit: contain;
-    object-position: center;
+    object-position: bottom center;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 10px;
 }
 .stitch-hero-text {
-    position: relative;
-    z-index: 20;
+    margin-left: 224px;
     padding: 24px;
-    max-width: 500px;
+    min-height: 380px;
 }
 @media (max-width: 768px) {
-    .featured-hero-overlay {
-        background: linear-gradient(to bottom, #383961 30%, rgba(56,57,97,0.9) 60%, rgba(56,57,97,0.6));
-    }
     .featured-hero-image {
-        width: 100%;
-        height: 100%;
-        top: 0;
-        transform: none;
-        object-fit: cover;
-        opacity: 0.4;
+        position: static;
+        width: 140px;
+        height: 180px;
+        display: block;
+        margin: 20px auto 0;
     }
     .stitch-hero-text {
-        max-width: 100%;
-        padding: 20px;
+        margin-left: 0;
+        padding: 16px 20px 20px;
     }
     .stitch-hero .featured-title {
         font-size: 1.5rem !important;
-        text-shadow: 0 1px 4px rgba(0,0,0,0.3);
     }
     .stitch-hero .featured-kanji {
         color: #cbd5e1;
     }
     .stitch-hero .featured-desc {
         font-size: 0.85rem !important;
-        text-shadow: 0 1px 3px rgba(0,0,0,0.2);
     }
     .stitch-hero .featured-meta {
         gap: 8px;
@@ -3889,6 +3881,7 @@ body.dark-mode .community-view-all-btn:hover {
     font-weight: 700;
     margin-bottom: 12px;
     line-height: 1.2;
+    color: #ffffff;
 }
 .stitch-hero .featured-kanji {
     color: #cbd5e1;
