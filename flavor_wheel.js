@@ -570,11 +570,8 @@ function generateStaticWheelSvg(flavorJson, mode) {
                 innerTags.forEach((tag, j) => {
                     const tagStart = offset + j * innerAngle;
                     const tagEnd = tagStart + innerAngle;
-                    const isSelected = selectedSet.has(tag.ko);
                     const isMain = (mainTags[tag.catId] === tag.ko);
-                    const fill = isSelected
-                        ? (isDark ? c.selD : c.sel)
-                        : lightFill;
+                    const fill = lightFill;
 
                     svg += staticArcPath(cx, cy, R2_IN, R2_OUT, tagStart, tagEnd, fill);
 
@@ -595,11 +592,8 @@ function generateStaticWheelSvg(flavorJson, mode) {
                 outerTags.forEach((tag, j) => {
                     const tagStart = offset + j * outerAngle;
                     const tagEnd = tagStart + outerAngle;
-                    const isSelected = selectedSet.has(tag.ko);
                     const isMain = (mainTags[tag.catId] === tag.ko);
-                    const fill = isSelected
-                        ? (isDark ? c.selD : c.sel)
-                        : outerFill;
+                    const fill = outerFill;
 
                     svg += staticArcPath(cx, cy, R3_IN, R3_OUT, tagStart, tagEnd, fill);
 
