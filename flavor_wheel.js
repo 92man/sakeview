@@ -570,6 +570,7 @@ function generateStaticWheelSvg(flavorJson, mode) {
                 innerTags.forEach((tag, j) => {
                     const tagStart = offset + j * innerAngle;
                     const tagEnd = tagStart + innerAngle;
+                    const isSelected = selectedSet.has(tag.ko);
                     const isMain = (mainTags[tag.catId] === tag.ko);
                     const fill = lightFill;
 
@@ -582,9 +583,8 @@ function generateStaticWheelSvg(flavorJson, mode) {
                     if (fs > 0) {
                         const maxLen = getWheelMaxLen(fs);
                         const labelText = tag.ko.length > maxLen ? tag.ko.substring(0, maxLen - 1) + '..' : tag.ko;
-                        const fontWeight = isMain ? 'font-weight="bold"' : '';
-                        const textDecor = isMain ? `text-decoration="underline"` : '';
-                        svg += `<text x="${tagLabelPos.x}" y="${tagLabelPos.y}" text-anchor="middle" dominant-baseline="central" class="wheel-tag-label" font-size="${fs}" ${fontWeight} ${textDecor} pointer-events="none" transform="rotate(${getTextRotation(tagMidAngle)},${tagLabelPos.x},${tagLabelPos.y})">${labelText}</text>`;
+                        const cls = `wheel-tag-label${isSelected ? ' wheel-tag-selected' : ''}`;
+                        svg += `<text x="${tagLabelPos.x}" y="${tagLabelPos.y}" text-anchor="middle" dominant-baseline="central" class="${cls}" font-size="${fs}" pointer-events="none" transform="rotate(${getTextRotation(tagMidAngle)},${tagLabelPos.x},${tagLabelPos.y})">${labelText}</text>`;
                     }
                 });
 
@@ -592,6 +592,7 @@ function generateStaticWheelSvg(flavorJson, mode) {
                 outerTags.forEach((tag, j) => {
                     const tagStart = offset + j * outerAngle;
                     const tagEnd = tagStart + outerAngle;
+                    const isSelected = selectedSet.has(tag.ko);
                     const isMain = (mainTags[tag.catId] === tag.ko);
                     const fill = outerFill;
 
@@ -604,9 +605,8 @@ function generateStaticWheelSvg(flavorJson, mode) {
                     if (fs > 0) {
                         const maxLen = getWheelMaxLen(fs);
                         const labelText = tag.ko.length > maxLen ? tag.ko.substring(0, maxLen - 1) + '..' : tag.ko;
-                        const fontWeight = isMain ? 'font-weight="bold"' : '';
-                        const textDecor = isMain ? `text-decoration="underline"` : '';
-                        svg += `<text x="${tagLabelPos.x}" y="${tagLabelPos.y}" text-anchor="middle" dominant-baseline="central" class="wheel-tag-label" font-size="${fs}" ${fontWeight} ${textDecor} pointer-events="none" transform="rotate(${getTextRotation(tagMidAngle)},${tagLabelPos.x},${tagLabelPos.y})">${labelText}</text>`;
+                        const cls = `wheel-tag-label${isSelected ? ' wheel-tag-selected' : ''}`;
+                        svg += `<text x="${tagLabelPos.x}" y="${tagLabelPos.y}" text-anchor="middle" dominant-baseline="central" class="${cls}" font-size="${fs}" pointer-events="none" transform="rotate(${getTextRotation(tagMidAngle)},${tagLabelPos.x},${tagLabelPos.y})">${labelText}</text>`;
                     }
                 });
             }

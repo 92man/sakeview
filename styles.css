@@ -4429,6 +4429,10 @@ body.dark-mode .cert-status-badge.rejected {
     font-family: inherit;
     pointer-events: none;
 }
+.wheel-tag-label.wheel-tag-selected {
+    fill: #1a1a1a;
+    font-weight: 900;
+}
 
 .wheel-tooltip {
     position: fixed;
@@ -4484,6 +4488,10 @@ body.dark-mode .wheel-cat-label {
 
 body.dark-mode .wheel-tag-label {
     fill: #a09888;
+}
+body.dark-mode .wheel-tag-label.wheel-tag-selected {
+    fill: #ffffff;
+    font-weight: 900;
 }
 
 /* 반응형: 모바일 */
