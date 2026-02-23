@@ -4296,3 +4296,170 @@ body.dark-mode .cert-status-badge.rejected {
     background: #7f1d1d;
     color: #fca5a5;
 }
+
+/* === 플레이버 휠 === */
+.flavor-wheel-section {
+    margin-bottom: 16px;
+}
+
+.flavor-wheel-toggle {
+    width: 100%;
+    padding: 10px 16px;
+    background: var(--bg-subtle);
+    border: 1.5px solid var(--border-card);
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: background 0.2s, border-color 0.2s;
+    font-family: inherit;
+}
+
+.flavor-wheel-toggle:hover {
+    background: var(--bg-muted);
+    border-color: var(--border-card-hover);
+}
+
+.flavor-wheel-container {
+    margin-top: 12px;
+    overflow: hidden;
+}
+
+.flavor-wheel-wrapper {
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+.flavor-wheel-svg {
+    width: 100%;
+    height: auto;
+    --wheel-line-color: rgba(255,255,255,0.6);
+}
+
+.wheel-center-circle {
+    fill: #FAF8F6;
+    stroke: #D8CCD0;
+    stroke-width: 1.5;
+}
+
+.wheel-center-text {
+    fill: #5A4050;
+    font-weight: 700;
+    font-family: inherit;
+}
+
+.wheel-cat-segment {
+    opacity: 1;
+    stroke: rgba(255,255,255,0.5);
+    stroke-width: 0.5;
+}
+
+
+.wheel-segment {
+    opacity: 1;
+    stroke: rgba(255,255,255,0.6);
+    stroke-width: 0.3;
+    transition: opacity 0.15s, fill 0.15s;
+}
+
+.wheel-segment:hover {
+    opacity: 1;
+}
+
+.wheel-segment.selected {
+    opacity: 1;
+}
+
+.wheel-segment.main-tag {
+    opacity: 1;
+}
+
+.wheel-cat-label {
+    fill: #fff;
+    font-weight: 700;
+    font-family: inherit;
+    pointer-events: none;
+}
+
+.wheel-tag-label {
+    fill: #4A3040;
+    font-weight: 400;
+    font-family: inherit;
+    pointer-events: none;
+}
+
+.wheel-tooltip {
+    position: fixed;
+    padding: 5px 10px;
+    background: rgba(0,0,0,0.8);
+    color: #fff;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.wheel-tooltip.visible {
+    opacity: 1;
+}
+
+/* 다크모드 */
+body.dark-mode .flavor-wheel-svg {
+    --wheel-line-color: rgba(0,0,0,0.4);
+}
+
+body.dark-mode .wheel-center-circle {
+    fill: #1a1a20;
+    stroke: #333;
+}
+
+body.dark-mode .wheel-center-text {
+    fill: #c0b8a8;
+}
+
+body.dark-mode .wheel-cat-segment {
+    stroke: rgba(0,0,0,0.3);
+}
+
+body.dark-mode .wheel-segment {
+    stroke: rgba(0,0,0,0.4);
+}
+
+body.dark-mode .wheel-segment:hover {
+    opacity: 1;
+}
+
+body.dark-mode .wheel-segment.selected {
+    opacity: 1;
+}
+
+body.dark-mode .wheel-cat-label {
+    fill: #d0c8b8;
+}
+
+body.dark-mode .wheel-tag-label {
+    fill: #a09888;
+}
+
+/* 반응형: 모바일 */
+@media (max-width: 480px) {
+    .flavor-wheel-wrapper {
+        max-width: 360px;
+    }
+
+    .wheel-tag-label {
+        display: none;
+    }
+
+    .wheel-cat-label {
+        font-size: 10px;
+    }
+}

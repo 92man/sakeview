@@ -153,6 +153,7 @@ function initTastingUI() {
     tastingCategoryNotes = {};
     TASTING_CATEGORIES.forEach(c => { tastingSelections[c.id] = {}; });
     updateTastingSummary();
+    if (typeof generateFlavorWheel === 'function') generateFlavorWheel();
 }
 
 function switchTastingCategory(catId) {
@@ -201,6 +202,7 @@ function toggleTastingTag(el) {
 
     updateTastingBadges();
     updateTastingSummary();
+    if (typeof updateWheelVisuals === 'function') updateWheelVisuals();
 }
 
 function toggleTastingRadio(el, radioKey, value) {
@@ -218,6 +220,7 @@ function toggleTastingRadio(el, radioKey, value) {
 
     updateTastingBadges();
     updateTastingSummary();
+    if (typeof updateWheelVisuals === 'function') updateWheelVisuals();
 }
 
 function updateTastingBadges() {
@@ -290,6 +293,7 @@ function removeTastingSelection(catId, sub, expr) {
     }
     updateTastingBadges();
     updateTastingSummary();
+    if (typeof updateWheelVisuals === 'function') updateWheelVisuals();
 }
 
 function collectTastingData() {
@@ -370,6 +374,7 @@ function loadTastingDataToForm(jsonStr) {
 
     updateTastingBadges();
     updateTastingSummary();
+    if (typeof updateWheelVisuals === 'function') updateWheelVisuals();
 }
 
 function resetTastingUI() {
@@ -385,6 +390,7 @@ function resetTastingUI() {
     });
     updateTastingBadges();
     updateTastingSummary();
+    if (typeof updateWheelVisuals === 'function') updateWheelVisuals();
     switchTastingCategory('aroma');
 }
 

@@ -379,6 +379,15 @@
                             <span class="main-tag-hint">★ 두 번 탭 = 메인</span>
                         </div>
 
+                        <div class="flavor-wheel-section" id="flavorWheelSection">
+                            <button type="button" class="flavor-wheel-toggle" onclick="toggleFlavorWheel()">
+                                🎯 플레이버 휠 <span id="wheelToggleArrow">▼</span>
+                            </button>
+                            <div class="flavor-wheel-container" id="flavorWheelContainer" style="display:none;">
+                                <div class="flavor-wheel-wrapper" id="flavorWheelWrapper"></div>
+                            </div>
+                        </div>
+
                         <div class="tasting-category-tabs" id="tastingCategoryTabs"></div>
 
                         <div id="tastingPanels"></div>
@@ -552,6 +561,7 @@
     </div>
 
     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+    <script src="flavor_wheel.js?v=1"></script>
     <script src="policy_pages.js?v=11"></script>
     <script src="app.js?v=11"></script>
 
