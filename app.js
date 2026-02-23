@@ -1570,7 +1570,7 @@ async function startOcrRecognition() {
 
         if (ocrMethod === 'ai') {
             var aiResult = await runAiVisionOcr(ocrPhotoData);
-            console.log('AI Result:', JSON.stringify(aiResult));
+            // AI Result 로깅 제거
             rawText = aiResult.rawText || '';
             // AI 응답의 모든 텍스트를 합쳐서 매칭에 사용
             var searchText = [
@@ -1582,7 +1582,7 @@ async function startOcrRecognition() {
             // AI 구조화 매칭 + 전체 텍스트 매칭 둘 다 실행
             var aiMatches = matchAiResultToDatabase(aiResult);
             var textMatches = searchText ? matchOcrTextToDatabase(searchText) : [];
-            console.log('AI matches:', aiMatches.length, 'Text matches:', textMatches.length);
+            // AI matches 로깅 제거
             // 합산 및 중복 제거 (같은 brand+productIdx면 높은 점수 유지)
             var allMatches = aiMatches.concat(textMatches);
             var seen = {};

@@ -179,8 +179,10 @@ const TASTING_CATEGORIES = [
   { id: "kr_context", ko: "페어링등", en: "Context", icon: "🍽️" }
 ];
 
-// 카테고리별 데이터 구조화 헬퍼
+// 카테고리별 데이터 구조화 헬퍼 (캐싱)
+let _cachedStructure = null;
 function buildTastingStructure() {
+  if (_cachedStructure) return _cachedStructure;
   const structure = {};
   TASTING_CATEGORIES.forEach(cat => {
     structure[cat.id] = { ...cat, subcategories: {} };
@@ -201,5 +203,6 @@ function buildTastingStructure() {
     });
   });
 
+  _cachedStructure = structure;
   return structure;
 }

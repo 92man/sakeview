@@ -67,7 +67,6 @@ body.dark-mode {
 }
 
 html {
-    overflow-x: hidden;
     overflow-x: clip;
     width: 100%;
     scroll-behavior: smooth;
@@ -81,7 +80,6 @@ body {
     padding: 0;
     transition: background-color 0.3s, color 0.3s;
     color: var(--text-primary);
-    overflow-x: hidden;
     overflow-x: clip;
     width: 100%;
     position: relative;
@@ -569,9 +567,6 @@ body.dark-mode .featured-btn-secondary:hover {
     overflow: hidden;
 }
 
-.note-card::before { display: none; }
-.note-card::after { display: none; }
-
 .note-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -729,8 +724,6 @@ body.dark-mode .note-card:hover .note-card-name {
     color: #383961;
     margin: 0;
 }
-
-.header h1::after { display: none; }
 
 .header p { display: none; }
 
@@ -1213,8 +1206,6 @@ body.dark-mode .tab.active {
     max-width: 100%;
 }
 
-.content::before { display: none; }
-
 .view {
     display: none;
 }
@@ -1298,12 +1289,6 @@ textarea {
     border-color: #DBDFAC;
     background: #f8fafc;
 }
-
-.photo-upload::before { display: none; }
-.photo-upload::after { display: none; }
-
-.photo-upload:hover::before { display: none; }
-.photo-upload:hover::after { display: none; }
 
 .photo-upload input {
     display: none;
@@ -1720,9 +1705,6 @@ body.dark-mode .edit-btn:hover {
     letter-spacing: 0.1em;
 }
 
-.section-title::before { display: none; }
-.section-title::after { display: none; }
-
 body.dark-mode .section-title {
     color: #94a3b8;
 }
@@ -1812,8 +1794,6 @@ body.dark-mode .detail-label {
     text-align: center;
     position: relative;
 }
-
-.app-footer::before { display: none; }
 
 .footer-content {
     max-width: 900px;
