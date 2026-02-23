@@ -208,7 +208,7 @@ function generateFlavorWheel() {
                 if (fontSize > 0) {
                     const maxLen = getWheelMaxLen(fontSize);
                     const labelText = tag.ko.length > maxLen ? tag.ko.substring(0, maxLen - 1) + '..' : tag.ko;
-                    tagsHtml += `<text x="${tagLabelPos.x}" y="${tagLabelPos.y}" text-anchor="middle" dominant-baseline="central" class="wheel-tag-label" font-size="${fontSize}" pointer-events="none" transform="rotate(${getTextRotation(tagMidAngle)},${tagLabelPos.x},${tagLabelPos.y})">${labelText}</text>`;
+                    tagsHtml += `<text x="${tagLabelPos.x}" y="${tagLabelPos.y}" text-anchor="middle" dominant-baseline="central" class="wheel-tag-label" font-size="${fontSize}" data-wheel-expr="${escapeAttr(tag.ko)}" pointer-events="none" transform="rotate(${getTextRotation(tagMidAngle)},${tagLabelPos.x},${tagLabelPos.y})">${labelText}</text>`;
                 }
             });
 
@@ -231,7 +231,7 @@ function generateFlavorWheel() {
                 if (fontSize > 0) {
                     const maxLen = getWheelMaxLen(fontSize);
                     const labelText = tag.ko.length > maxLen ? tag.ko.substring(0, maxLen - 1) + '..' : tag.ko;
-                    tagsHtml += `<text x="${tagLabelPos.x}" y="${tagLabelPos.y}" text-anchor="middle" dominant-baseline="central" class="wheel-tag-label" font-size="${fontSize}" pointer-events="none" transform="rotate(${getTextRotation(tagMidAngle)},${tagLabelPos.x},${tagLabelPos.y})">${labelText}</text>`;
+                    tagsHtml += `<text x="${tagLabelPos.x}" y="${tagLabelPos.y}" text-anchor="middle" dominant-baseline="central" class="wheel-tag-label" font-size="${fontSize}" data-wheel-expr="${escapeAttr(tag.ko)}" pointer-events="none" transform="rotate(${getTextRotation(tagMidAngle)},${tagLabelPos.x},${tagLabelPos.y})">${labelText}</text>`;
                 }
             });
         }
@@ -306,6 +306,37 @@ function updateWheelVisuals() {
     if (!svg) return;
 
     updateRadarOverlay(svg);
+    updateWheelTagBold(svg);
+}
+
+function updateWheelTagBold(svg) {
+    const labels = svg.querySelectorAll('text[data-wheel-expr]');
+    labels.forEach(label => {
+        const expr = label.dataset.wheelExpr;
+        let isSelected = false;
+
+        // 멀티 태그 확인
+        for (const catId in tastingSelections) {
+            const catSel = tastingSelections[catId];
+            for (const sub in catSel) {
+                if (catSel[sub].includes(expr)) { isSelected = true; break; }
+            }
+            if (isSelected) break;
+        }
+
+        // 단일 선택 확인
+        if (!isSelected) {
+            for (const key in tastingRadioSelections) {
+                if (tastingRadioSelections[key] === expr) { isSelected = true; break; }
+            }
+        }
+
+        if (isSelected) {
+            label.classList.add('wheel-tag-selected');
+        } else {
+            label.classList.remove('wheel-tag-selected');
+        }
+    });
 }
 
 // ── 레이더 웨지 ──
