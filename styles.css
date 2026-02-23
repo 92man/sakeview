@@ -3815,7 +3815,7 @@ body.dark-mode .community-view-all-btn:hover {
 .featured-hero-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to right, #383961, rgba(56,57,97,0.8), transparent);
+    background: linear-gradient(to right, #383961 40%, rgba(56,57,97,0.85) 65%, rgba(56,57,97,0.3));
     z-index: 10;
 }
 .featured-hero-image {
@@ -3834,6 +3834,44 @@ body.dark-mode .community-view-all-btn:hover {
     padding: 24px;
     max-width: 500px;
 }
+@media (max-width: 768px) {
+    .featured-hero-overlay {
+        background: linear-gradient(to bottom, #383961 30%, rgba(56,57,97,0.9) 60%, rgba(56,57,97,0.6));
+    }
+    .featured-hero-image {
+        width: 100%;
+        height: 100%;
+        top: 0;
+        transform: none;
+        object-fit: cover;
+        opacity: 0.4;
+    }
+    .stitch-hero-text {
+        max-width: 100%;
+        padding: 20px;
+    }
+    .stitch-hero .featured-title {
+        font-size: 1.5rem !important;
+        text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    }
+    .stitch-hero .featured-kanji {
+        color: #cbd5e1;
+    }
+    .stitch-hero .featured-desc {
+        font-size: 0.85rem !important;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .stitch-hero .featured-meta {
+        gap: 8px;
+        font-size: 0.78rem;
+    }
+    .stitch-hero .featured-meta span {
+        padding: 5px 10px;
+        background: rgba(255,255,255,0.15);
+        border-color: rgba(255,255,255,0.2);
+        color: #e2e8f0;
+    }
+}
 .stitch-hero .featured-label {
     display: inline-block;
     padding: 4px 12px;
@@ -3851,6 +3889,10 @@ body.dark-mode .community-view-all-btn:hover {
     font-weight: 700;
     margin-bottom: 12px;
     line-height: 1.2;
+}
+.stitch-hero .featured-kanji {
+    color: #cbd5e1;
+    opacity: 0.9;
 }
 .stitch-hero .featured-desc {
     color: #cbd5e1;
