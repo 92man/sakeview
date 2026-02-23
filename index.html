@@ -381,9 +381,9 @@
 
                         <div class="flavor-wheel-section" id="flavorWheelSection">
                             <button type="button" class="flavor-wheel-toggle" onclick="toggleFlavorWheel()">
-                                🎯 플레이버 휠 <span id="wheelToggleArrow">▼</span>
+                                🎯 플레이버 휠 <span id="wheelToggleArrow">▲</span>
                             </button>
-                            <div class="flavor-wheel-container" id="flavorWheelContainer" style="display:none;">
+                            <div class="flavor-wheel-container" id="flavorWheelContainer">
                                 <div class="flavor-wheel-wrapper" id="flavorWheelWrapper"></div>
                             </div>
                         </div>
@@ -458,34 +458,13 @@
                             <span class="community-stat-value" id="communitySakeDb">—</span>
                         </div>
                     </div>
-                    <div class="community-grid">
-                        <div class="community-feed-section">
-                            <div class="community-feed-header">
-                                <h3>New Tasting Notes</h3>
-                                <button class="community-view-all-btn" onclick="loadCommunityFeed()">View All</button>
-                            </div>
-                            <div id="communityFeedList">
-                                <div class="loading">커뮤니티 노트를 불러오는 중</div>
-                            </div>
+                    <div class="community-feed-section">
+                        <div class="community-feed-header">
+                            <h3>New Tasting Notes</h3>
+                            <button class="community-view-all-btn" onclick="loadCommunityFeed()">View All</button>
                         </div>
-                        <div class="community-sidebar">
-                            <h3 class="community-sidebar-title">Search Database</h3>
-                            <div class="community-search-wrap">
-                                <span class="material-symbols-outlined community-search-icon">search</span>
-                                <input type="text" id="communitySearchInput" placeholder="사케 이름으로 검색..." oninput="searchCommunityNotes(this.value)">
-                            </div>
-                            <div id="communitySearchResults"></div>
-                            <h4 class="community-sidebar-subtitle">Top Rated Categories</h4>
-                            <div class="community-categories">
-                                <button onclick="filterCommunityByGrade('純米大吟醸')">Junmai Daiginjo <span>›</span></button>
-                                <button onclick="filterCommunityByGrade('山廃')">Yamahai / Kimoto <span>›</span></button>
-                                <button onclick="filterCommunityByGrade('にごり')">Nigori / Sparkling <span>›</span></button>
-                            </div>
-                            <div class="community-cta">
-                                <h4>Write a Note</h4>
-                                <p>나만의 테이스팅 경험을 커뮤니티와 공유하세요.</p>
-                                <button onclick="switchTab('new')">+ New Note</button>
-                            </div>
+                        <div id="communityFeedList">
+                            <div class="loading">커뮤니티 노트를 불러오는 중</div>
                         </div>
                     </div>
                 </div>
@@ -500,7 +479,13 @@
 
             <!-- Right Sidebar -->
             <div class="dashboard-sidebar">
-                <!-- Your Progress -->
+                <h3 class="community-sidebar-title">Search Database</h3>
+                <div class="community-search-wrap">
+                    <span class="material-symbols-outlined community-search-icon">search</span>
+                    <input type="text" id="communitySearchInput" placeholder="사케 이름으로 검색..." oninput="searchCommunityNotes(this.value)">
+                </div>
+                <div id="communitySearchResults"></div>
+                <!-- 나의 기록 -->
                 <div class="sidebar-card">
                     <h4 class="sidebar-card-title">나의 기록</h4>
                     <div class="sidebar-stat-row">
@@ -517,7 +502,7 @@
                     <p class="sidebar-hint">월간 목표를 향해 화이팅!</p>
                 </div>
 
-                <!-- Recent Activity -->
+                <!-- 최근 활동 -->
                 <div class="sidebar-section">
                     <h4 class="sidebar-section-title">최근 활동</h4>
                     <div id="sidebarRecentNotes" class="sidebar-recent-list">

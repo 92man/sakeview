@@ -125,16 +125,16 @@ function buildWheelTags() {
 // ── 폰트 크기 헬퍼 ──
 
 function getWheelFontSize(angle) {
-    if (angle >= 20) return 12;
-    if (angle >= 12) return 11;
-    if (angle >= 8) return 10;
-    if (angle >= 5) return 9;
-    if (angle >= 3.5) return 8;
-    return 7;
+    if (angle >= 20) return 14;
+    if (angle >= 12) return 13;
+    if (angle >= 8) return 12;
+    if (angle >= 5) return 11;
+    if (angle >= 3.5) return 10;
+    return 9;
 }
 
 function getWheelMaxLen(fontSize) {
-    return Math.floor(76 / fontSize);
+    return Math.floor(88 / fontSize);
 }
 
 // ── 렌더링 ──
@@ -170,11 +170,11 @@ function generateFlavorWheel() {
             `data-section="${section.id}"`
         );
 
-        // 섹션 라벨
+        // 섹션 라벨 — 가운데 원 중앙
         const midAngle = offset + SECTION_ANGLE / 2;
-        const labelR = (R1_IN + R1_OUT) / 2;
+        const labelR = R1_OUT * 0.5;
         const labelPos = polarToXY(CX, CY, labelR, midAngle);
-        labelsHtml += `<text x="${labelPos.x}" y="${labelPos.y}" text-anchor="middle" dominant-baseline="central" class="wheel-cat-label" font-size="11" transform="rotate(${getTextRotation(midAngle)},${labelPos.x},${labelPos.y})">${section.name}</text>`;
+        labelsHtml += `<text x="${labelPos.x}" y="${labelPos.y}" text-anchor="middle" dominant-baseline="central" class="wheel-cat-label" font-size="15">${section.name}</text>`;
 
         // 태그를 중간원(Ring2)과 바깥원(Ring3)에 나누어 배치
         const tagCount = section.tags.length;
@@ -261,13 +261,13 @@ function generateFlavorWheel() {
 
     updateWheelVisuals();
 
-    // localStorage 토글 복원
+    // localStorage 토글 복원 (기본: 열림)
     const savedState = localStorage.getItem('flavorWheelOpen');
-    if (savedState === 'true') {
+    if (savedState === 'false') {
         const container = document.getElementById('flavorWheelContainer');
         const arrow = document.getElementById('wheelToggleArrow');
-        if (container) container.style.display = '';
-        if (arrow) arrow.textContent = '\u25B2';
+        if (container) container.style.display = 'none';
+        if (arrow) arrow.textContent = '\u25BC';
     }
 }
 
@@ -453,4 +453,256 @@ function getTextRotation(angle) {
 
 function escapeAttr(str) {
     return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// ── 정적 휠 (저장된 노트용) ──
+
+function parseFlavorStats(flavorJson) {
+    const stats = WHEEL_SECTIONS.map(() => ({ count: 0, hasMain: false }));
+    if (!flavorJson) return stats;
+
+    let td;
+    try { td = JSON.parse(flavorJson); } catch(e) { return stats; }
+    if (!td || td.version !== 2 || !td.categories) return stats;
+
+    const mainTags = td.mainTags || {};
+
+    // sources 역매핑: catId+sub → 섹션 인덱스
+    WHEEL_SECTIONS.forEach((section, idx) => {
+        section.sources.forEach(src => {
+            const catData = td.categories[src.catId];
+            if (!catData) return;
+            const subData = catData[src.sub];
+            if (!subData) return;
+            const tags = Array.isArray(subData) ? subData : [subData];
+            stats[idx].count += tags.length;
+            // mainTags 확인
+            const catMain = mainTags[src.catId];
+            if (catMain && tags.includes(catMain)) {
+                stats[idx].hasMain = true;
+            }
+        });
+    });
+
+    return stats;
+}
+
+function generateStaticWheelSvg(flavorJson, mode) {
+    const stats = parseFlavorStats(flavorJson);
+    const hasAny = stats.some(s => s.count > 0);
+    if (!hasAny) return '';
+
+    const isDark = document.body.classList.contains('dark-mode');
+    const isMini = (mode === 'mini');
+
+    // 미니: 파이 웨지만 (배경 없음)
+    // 풀: 3링 구조 + 웨지 (generateFlavorWheel과 동일 구조)
+    const vb = isMini ? 300 : W;
+    const cx = vb / 2, cy = vb / 2;
+
+    // 미니 치수 — 최대 반지름을 viewBox 절반 이내로 제한
+    const MINI_MAX_R = vb / 2 - 5; // 145
+
+    // 풀 모드는 기존 치수 재사용
+    const r1Out = R1_OUT;
+
+    let svg = `<svg viewBox="0 0 ${vb} ${vb}" xmlns="http://www.w3.org/2000/svg" class="flavor-wheel-svg" style="pointer-events:none;">`;
+
+    let offset = -90;
+
+    // 1. 섹션 배경 + 라벨 (풀 모드만)
+    if (!isMini) {
+        WHEEL_SECTIONS.forEach((section, i) => {
+            const c = section.color;
+            const midFill = isDark ? c.midD : c.mid;
+
+            svg += staticArcPath(cx, cy, 0, r1Out, offset, offset + SECTION_ANGLE, midFill);
+
+            const midAngle = offset + SECTION_ANGLE / 2;
+            const labelR = r1Out * 0.5;
+            const pos = polarToXY(cx, cy, labelR, midAngle);
+            svg += `<text x="${pos.x}" y="${pos.y}" text-anchor="middle" dominant-baseline="central" class="wheel-cat-label" font-size="15" pointer-events="none">${section.name}</text>`;
+
+            offset += SECTION_ANGLE;
+        });
+    }
+
+    // 2. 풀 모드: 태그 링 (Ring2 + Ring3) — 저장된 태그를 표시
+    if (!isMini) {
+        let td;
+        try { td = JSON.parse(flavorJson); } catch(e) { td = null; }
+        const mainTags = (td && td.mainTags) || {};
+
+        offset = -90;
+        const sections = buildWheelTags();
+        sections.forEach(section => {
+            const c = section.color;
+            const lightFill = isDark ? c.lightD : c.light;
+            const outerFill = blendColor(
+                isDark ? c.lightD : c.light,
+                isDark ? c.midD : c.mid,
+                0.35
+            );
+
+            const tagCount = section.tags.length;
+            if (tagCount > 0) {
+                const innerCount = Math.ceil(tagCount / 2);
+                const outerCount = tagCount - innerCount;
+                const innerTags = section.tags.slice(0, innerCount);
+                const outerTags = section.tags.slice(innerCount);
+                const innerAngle = SECTION_ANGLE / innerCount;
+                const outerAngle = outerCount > 0 ? SECTION_ANGLE / outerCount : 0;
+
+                // 선택된 태그 집합
+                const selectedSet = new Set();
+                if (td && td.categories) {
+                    section.sources.forEach(src => {
+                        const catData = td.categories[src.catId];
+                        if (!catData) return;
+                        const subData = catData[src.sub];
+                        if (!subData) return;
+                        const tags = Array.isArray(subData) ? subData : [subData];
+                        tags.forEach(t => selectedSet.add(t));
+                    });
+                }
+
+                // 중간원
+                innerTags.forEach((tag, j) => {
+                    const tagStart = offset + j * innerAngle;
+                    const tagEnd = tagStart + innerAngle;
+                    const isSelected = selectedSet.has(tag.ko);
+                    const isMain = (mainTags[tag.catId] === tag.ko);
+                    const fill = isSelected
+                        ? (isDark ? c.selD : c.sel)
+                        : lightFill;
+
+                    svg += staticArcPath(cx, cy, R2_IN, R2_OUT, tagStart, tagEnd, fill);
+
+                    const tagMidAngle = tagStart + innerAngle / 2;
+                    const tagLabelR = (R2_IN + R2_OUT) / 2;
+                    const tagLabelPos = polarToXY(cx, cy, tagLabelR, tagMidAngle);
+                    const fs = getWheelFontSize(innerAngle);
+                    if (fs > 0) {
+                        const maxLen = getWheelMaxLen(fs);
+                        const labelText = tag.ko.length > maxLen ? tag.ko.substring(0, maxLen - 1) + '..' : tag.ko;
+                        const fontWeight = isMain ? 'font-weight="bold"' : '';
+                        const textDecor = isMain ? `text-decoration="underline"` : '';
+                        svg += `<text x="${tagLabelPos.x}" y="${tagLabelPos.y}" text-anchor="middle" dominant-baseline="central" class="wheel-tag-label" font-size="${fs}" ${fontWeight} ${textDecor} pointer-events="none" transform="rotate(${getTextRotation(tagMidAngle)},${tagLabelPos.x},${tagLabelPos.y})">${labelText}</text>`;
+                    }
+                });
+
+                // 바깥원
+                outerTags.forEach((tag, j) => {
+                    const tagStart = offset + j * outerAngle;
+                    const tagEnd = tagStart + outerAngle;
+                    const isSelected = selectedSet.has(tag.ko);
+                    const isMain = (mainTags[tag.catId] === tag.ko);
+                    const fill = isSelected
+                        ? (isDark ? c.selD : c.sel)
+                        : outerFill;
+
+                    svg += staticArcPath(cx, cy, R3_IN, R3_OUT, tagStart, tagEnd, fill);
+
+                    const tagMidAngle = tagStart + outerAngle / 2;
+                    const tagLabelR = (R3_IN + R3_OUT) / 2;
+                    const tagLabelPos = polarToXY(cx, cy, tagLabelR, tagMidAngle);
+                    const fs = getWheelFontSize(outerAngle);
+                    if (fs > 0) {
+                        const maxLen = getWheelMaxLen(fs);
+                        const labelText = tag.ko.length > maxLen ? tag.ko.substring(0, maxLen - 1) + '..' : tag.ko;
+                        const fontWeight = isMain ? 'font-weight="bold"' : '';
+                        const textDecor = isMain ? `text-decoration="underline"` : '';
+                        svg += `<text x="${tagLabelPos.x}" y="${tagLabelPos.y}" text-anchor="middle" dominant-baseline="central" class="wheel-tag-label" font-size="${fs}" ${fontWeight} ${textDecor} pointer-events="none" transform="rotate(${getTextRotation(tagMidAngle)},${tagLabelPos.x},${tagLabelPos.y})">${labelText}</text>`;
+                    }
+                });
+            }
+
+            offset += SECTION_ANGLE;
+        });
+
+        // 링 구분선
+        svg += `<circle cx="${cx}" cy="${cy}" r="${R1_OUT}" fill="none" stroke="var(--wheel-line-color, rgba(255,255,255,0.6))" stroke-width="1.5" pointer-events="none"/>`;
+        svg += `<circle cx="${cx}" cy="${cy}" r="${R2_OUT}" fill="none" stroke="var(--wheel-line-color, rgba(255,255,255,0.4))" stroke-width="0.8" pointer-events="none"/>`;
+    }
+
+    // 3. 레이더 웨지
+    const MAIN_BONUS = 1.5;
+    const radarMaxR = isMini ? MINI_MAX_R : R3_OUT;
+
+    const groups = [[0, 1, 2], [3, 4, 5]];
+    const ratios = new Array(6).fill(0);
+
+    groups.forEach(groupIdx => {
+        let weighted = groupIdx.map(idx => {
+            let w = stats[idx].count;
+            if (stats[idx].hasMain && w > 0) w += MAIN_BONUS;
+            return w;
+        });
+        const groupTotal = weighted.reduce((a, b) => a + b, 0);
+        if (groupTotal === 0) return;
+
+        groupIdx.forEach((idx, gi) => {
+            if (stats[idx].hasMain && stats[idx].count > 0) {
+                const sorted = [...weighted].sort((a, b) => b - a);
+                if (weighted[gi] < sorted[0]) {
+                    weighted[gi] = Math.max(weighted[gi], sorted[1] + 0.3);
+                }
+            }
+        });
+
+        const adjustedTotal = weighted.reduce((a, b) => a + b, 0);
+        groupIdx.forEach((idx, gi) => {
+            ratios[idx] = weighted[gi] / adjustedTotal;
+        });
+    });
+
+    offset = -90;
+    WHEEL_SECTIONS.forEach((section, i) => {
+        if (ratios[i] === 0) { offset += SECTION_ANGLE; return; }
+
+        const r = Math.max(ratios[i] * radarMaxR, isMini ? 12 : 18);
+        const startAngle = offset;
+        const endAngle = offset + SECTION_ANGLE;
+        const gap = 1;
+        const sa = startAngle + gap / 2;
+        const ea = endAngle - gap / 2;
+        const p1 = polarToXY(cx, cy, r, sa);
+        const p2 = polarToXY(cx, cy, r, ea);
+
+        const rc = RADAR_COLORS[section.id] || { light: '#888', dark: '#aaa' };
+        const fillColor = isDark ? rc.dark : rc.light;
+
+        svg += `<path d="M ${cx} ${cy} L ${p1.x} ${p1.y} A ${r} ${r} 0 0 1 ${p2.x} ${p2.y} Z" fill="${fillColor}" opacity="0.55" stroke="${isDark ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.7)'}" stroke-width="1.2" pointer-events="none"/>`;
+
+        offset += SECTION_ANGLE;
+    });
+
+    svg += `</svg>`;
+
+    const wrapperClass = isMini ? 'static-wheel-mini' : 'static-wheel-full';
+    return `<div class="${wrapperClass}">${svg}</div>`;
+}
+
+function staticArcPath(cx, cy, rIn, rOut, startAngle, endAngle, fill) {
+    const gap = 0.4;
+    const sa = startAngle + gap / 2;
+    const ea = endAngle - gap / 2;
+    if (ea <= sa) return '';
+
+    const p1 = polarToXY(cx, cy, rIn, sa);
+    const p2 = polarToXY(cx, cy, rOut, sa);
+    const p3 = polarToXY(cx, cy, rOut, ea);
+    const p4 = polarToXY(cx, cy, rIn, ea);
+    const largeArc = (ea - sa) > 180 ? 1 : 0;
+
+    const d = [
+        `M ${p1.x} ${p1.y}`,
+        `L ${p2.x} ${p2.y}`,
+        `A ${rOut} ${rOut} 0 ${largeArc} 1 ${p3.x} ${p3.y}`,
+        `L ${p4.x} ${p4.y}`,
+        `A ${rIn} ${rIn} 0 ${largeArc} 0 ${p1.x} ${p1.y}`,
+        'Z'
+    ].join(' ');
+
+    return `<path d="${d}" fill="${fill}" pointer-events="none"/>`;
 }

@@ -757,14 +757,17 @@ async function updateSidebar() {
             return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
         }).length;
 
-        document.getElementById('sidebarTotalCount').textContent = total;
-        document.getElementById('sidebarMonthCount').textContent = monthCount;
+        const elTotal = document.getElementById('sidebarTotalCount');
+        const elMonth = document.getElementById('sidebarMonthCount');
+        const elBar = document.getElementById('sidebarProgressBar');
+        if (elTotal) elTotal.textContent = total;
+        if (elMonth) elMonth.textContent = monthCount;
         const goal = 10;
-        document.getElementById('sidebarProgressBar').style.width = Math.min(monthCount / goal * 100, 100) + '%';
+        if (elBar) elBar.style.width = Math.min(monthCount / goal * 100, 100) + '%';
 
         const recent = data.slice(0, 3);
         const container = document.getElementById('sidebarRecentNotes');
-        if (recent.length === 0) return;
+        if (!container || recent.length === 0) return;
         container.innerHTML = recent.map(n => {
             const date = new Date(n.created_at);
             const daysAgo = Math.floor((now - date) / (1000 * 60 * 60 * 24));
@@ -1725,6 +1728,7 @@ function displayNotesList(notes) {
                         <div class="note-card-summary">
                             ${getTastingPreview(note)}
                         </div>
+                        ${typeof generateStaticWheelSvg === 'function' ? generateStaticWheelSvg(note.flavor_description, 'mini') : ''}
                     </div>
                 </div>
             `).join('')}
@@ -1924,6 +1928,7 @@ function displayCommunityFeed(notes, container, avgMap) {
                     <div class="community-feed-card-name">${escapeHtml(note.sake_name || '이름 없음')}${getCertBadgeHtml(uid)}</div>
                     <div class="community-feed-card-meta">Shared by ${escapeHtml(userLabel)} · ${timeAgo}</div>
                 </div>
+                ${typeof generateStaticWheelSvg === 'function' ? generateStaticWheelSvg(note.flavor_description, 'mini') : ''}
                 ${ratingDisplay}
             </div>
             ${mainTagsHtml}
@@ -2106,6 +2111,9 @@ function renderNoteDetail(note, showActions = true) {
 
                 const mainTags = td.mainTags || {};
                 tastingHtml += '<div class="section-title">테이스팅 노트</div>';
+                if (typeof generateStaticWheelSvg === 'function') {
+                    tastingHtml += generateStaticWheelSvg(note.flavor_description, 'full');
+                }
                 Object.entries(td.categories).forEach(([catId, catData]) => {
                     const catInfo = catMap[catId];
                     if (!catInfo) return;
