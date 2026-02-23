@@ -558,12 +558,15 @@ body.dark-mode .featured-btn-secondary:hover {
 .note-card {
     background: var(--card-bg);
     border-radius: 12px;
-    overflow: hidden;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     transition: all 0.2s;
     border: 1px solid var(--border-card);
     cursor: pointer;
     position: relative;
+}
+.note-card-image {
+    border-radius: 12px 12px 0 0;
+    overflow: hidden;
 }
 
 .note-card::before { display: none; }
@@ -2408,22 +2411,22 @@ body.dark-mode .top-nav-dropdown {
 
     .content {
         word-break: break-word;
-        overflow: hidden;
+        overflow-x: hidden;
     }
 
     .view {
-        overflow: hidden;
+        overflow-x: hidden;
         max-width: 100%;
     }
 
     form {
-        overflow: hidden;
+        overflow-x: hidden;
         max-width: 100%;
     }
 
     .form-group {
         max-width: 100%;
-        overflow: hidden;
+        overflow-x: hidden;
     }
 
     .sake-selector,
@@ -4326,7 +4329,7 @@ body.dark-mode .cert-status-badge.rejected {
 
 .flavor-wheel-container {
     margin-top: 12px;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .flavor-wheel-wrapper {
@@ -4451,15 +4454,11 @@ body.dark-mode .wheel-tag-label {
 /* 반응형: 모바일 */
 @media (max-width: 480px) {
     .flavor-wheel-wrapper {
-        max-width: 360px;
-    }
-
-    .wheel-tag-label {
-        display: none;
+        max-width: 100%;
     }
 
     .wheel-cat-label {
-        font-size: 12px;
+        font-size: 13px;
     }
 }
 
@@ -4483,8 +4482,15 @@ body.dark-mode .wheel-tag-label {
     .static-wheel-mini {
         width: 56px;
         height: 56px;
+        margin-top: 4px;
     }
     .static-wheel-full {
         max-width: 100%;
+    }
+}
+@media (max-width: 768px) {
+    .static-wheel-mini,
+    .static-wheel-full {
+        overflow: visible;
     }
 }
