@@ -1226,51 +1226,66 @@ async function runAiVisionOcr(base64) {
     return data || {};
 }
 
-// AI 결과로 DB 매칭
-function matchAiResultToDatabase(aiResult) {
+// DB 검색 공통 — 브랜드/제품 반복·결과 수집·정렬을 한 곳에서 처리
+function searchSakeDatabase(brandScoreFn, productScoreFn) {
     if (typeof SAKE_DATABASE === 'undefined') return [];
     var results = [];
-    var aiBrand = (aiResult.brand || '').trim();
-    var aiProduct = (aiResult.product || '').trim();
-    var aiGrade = (aiResult.grade || '').trim();
-
     for (var brand in SAKE_DATABASE) {
         var entry = SAKE_DATABASE[brand];
         var brandJp = entry.brandJp || '';
-        var brandScore = 0;
-
-        // 브랜드 매칭: AI가 추출한 brand와 DB의 brandJp 비교
-        if (aiBrand && brandJp) {
-            if (aiBrand === brandJp || brandJp.includes(aiBrand) || aiBrand.includes(brandJp)) {
-                brandScore = 60;
-            } else {
-                var bm = fuzzyContains(aiBrand, brandJp);
-                if (bm.found) brandScore = Math.round(bm.score * 50);
-            }
-        }
-
-        // 한글 브랜드명으로도 시도
-        if (brandScore === 0 && aiBrand) {
-            if (brand.toLowerCase().includes(aiBrand.toLowerCase()) ||
-                aiBrand.toLowerCase().includes(brand.toLowerCase())) {
-                brandScore = 30;
-            }
-        }
-
+        var brandScore = brandScoreFn(brand, brandJp, entry);
         if (brandScore === 0) continue;
 
         var products = entry.products;
         for (var pi = 0; pi < products.length; pi++) {
-            var p = products[pi];
+            var productScore = productScoreFn(brandScore, products[pi], brandJp);
+            if (productScore > 20) {
+                results.push({
+                    brand: brand,
+                    brandJp: brandJp,
+                    productIdx: pi,
+                    product: products[pi],
+                    score: Math.min(productScore, 100)
+                });
+            }
+        }
+    }
+    results.sort(function(a, b) { return b.score - a.score; });
+    return results.slice(0, 5);
+}
+
+// AI 결과로 DB 매칭
+function matchAiResultToDatabase(aiResult) {
+    var aiBrand = (aiResult.brand || '').trim();
+    var aiProduct = (aiResult.product || '').trim();
+    var aiGrade = (aiResult.grade || '').trim();
+
+    return searchSakeDatabase(
+        function(brand, brandJp) {
+            var score = 0;
+            if (aiBrand && brandJp) {
+                if (aiBrand === brandJp || brandJp.includes(aiBrand) || aiBrand.includes(brandJp)) {
+                    score = 60;
+                } else {
+                    var bm = fuzzyContains(aiBrand, brandJp);
+                    if (bm.found) score = Math.round(bm.score * 50);
+                }
+            }
+            if (score === 0 && aiBrand) {
+                if (brand.toLowerCase().includes(aiBrand.toLowerCase()) ||
+                    aiBrand.toLowerCase().includes(brand.toLowerCase())) {
+                    score = 30;
+                }
+            }
+            return score;
+        },
+        function(brandScore, p, brandJp) {
             var productScore = brandScore;
             var jpName = p.japanese || '';
-
-            // 제품명 매칭
             if (aiProduct && jpName) {
                 if (aiProduct === jpName || jpName.includes(aiProduct) || aiProduct.includes(jpName)) {
                     productScore += 30;
                 } else {
-                    // 브랜드명 제거 후 비교
                     var productPart = jpName;
                     if (brandJp && jpName.startsWith(brandJp)) {
                         productPart = jpName.substring(brandJp.length).trim();
@@ -1288,29 +1303,15 @@ function matchAiResultToDatabase(aiResult) {
                     }
                 }
             }
-
-            // 등급 매칭 보너스
             if (aiGrade && p.grade) {
                 var gradeJp = GRADE_JP_MAP[p.grade] || '';
                 if (gradeJp && (aiGrade === gradeJp || aiGrade.includes(gradeJp) || gradeJp.includes(aiGrade))) {
                     productScore += 10;
                 }
             }
-
-            if (productScore > 20) {
-                results.push({
-                    brand: brand,
-                    brandJp: brandJp,
-                    productIdx: pi,
-                    product: p,
-                    score: Math.min(productScore, 100)
-                });
-            }
+            return productScore;
         }
-    }
-
-    results.sort(function(a, b) { return b.score - a.score; });
-    return results.slice(0, 5);
+    );
 }
 
 // 이미지 전처리 (리사이즈 + 그레이스케일 + 대비 강화)
@@ -1402,58 +1403,42 @@ function fuzzyContains(haystack, needle) {
 
 // OCR 텍스트 → DB 매칭
 function matchOcrTextToDatabase(ocrText) {
-    if (typeof SAKE_DATABASE === 'undefined') return [];
     var normalized = normalizeJapaneseText(ocrText);
-    var lines = normalized.split(/\s+/);
     var fullText = normalized;
-    var results = [];
 
-    // 등급 키워드
     var gradeKeywords = ['純米大吟醸', '大吟醸', '純米吟醸', '吟醸', '純米', '本醸造', '特別純米', '特別本醸造'];
     var detectedGrades = [];
     gradeKeywords.forEach(function(g) {
         if (fullText.includes(g)) detectedGrades.push(g);
     });
 
-    for (var brand in SAKE_DATABASE) {
-        var entry = SAKE_DATABASE[brand];
-        var brandJp = entry.brandJp || '';
-        var brandScore = 0;
-
-        // 1. 브랜드 매칭 (한자 브랜드명)
-        if (brandJp && brandJp.length >= 2) {
-            if (fullText.includes(brandJp)) {
-                brandScore = 50;
-            } else {
-                var bm = fuzzyContains(fullText, brandJp);
-                if (bm.found) brandScore = Math.round(bm.score * 40);
+    return searchSakeDatabase(
+        function(brand, brandJp) {
+            var score = 0;
+            if (brandJp && brandJp.length >= 2) {
+                if (fullText.includes(brandJp)) {
+                    score = 50;
+                } else {
+                    var bm = fuzzyContains(fullText, brandJp);
+                    if (bm.found) score = Math.round(bm.score * 40);
+                }
             }
-        }
-
-        // 2. 한글 브랜드명 매칭 (보조)
-        if (brandScore === 0) {
-            var brandLower = brand.toLowerCase();
-            var textLower = fullText.toLowerCase();
-            if (textLower.includes(brandLower) && brand.length >= 2) {
-                brandScore = 20;
+            if (score === 0) {
+                var brandLower = brand.toLowerCase();
+                var textLower = fullText.toLowerCase();
+                if (textLower.includes(brandLower) && brand.length >= 2) {
+                    score = 20;
+                }
             }
-        }
-
-        if (brandScore === 0) continue;
-
-        // 3. 제품 매칭
-        var products = entry.products;
-        for (var pi = 0; pi < products.length; pi++) {
-            var p = products[pi];
+            return score;
+        },
+        function(brandScore, p, brandJp) {
             var productScore = brandScore;
             var jpName = p.japanese || '';
-
-            // 일본어 제품명에서 브랜드명 제거 후 매칭
             var productPart = jpName;
             if (brandJp && jpName.startsWith(brandJp)) {
                 productPart = jpName.substring(brandJp.length).trim();
             }
-
             if (productPart && productPart.length >= 2) {
                 if (fullText.includes(productPart)) {
                     productScore += 30;
@@ -1462,30 +1447,15 @@ function matchOcrTextToDatabase(ocrText) {
                     if (pm.found) productScore += Math.round(pm.score * 20);
                 }
             }
-
-            // 등급 매칭 보조 점수
             if (detectedGrades.length > 0 && p.grade) {
                 var gradeJp = GRADE_JP_MAP[p.grade] || '';
                 if (gradeJp && detectedGrades.indexOf(gradeJp) >= 0) {
                     productScore += 15;
                 }
             }
-
-            if (productScore > 20) {
-                results.push({
-                    brand: brand,
-                    brandJp: brandJp,
-                    productIdx: pi,
-                    product: p,
-                    score: Math.min(productScore, 100)
-                });
-            }
+            return productScore;
         }
-    }
-
-    // 점수 순 정렬, 상위 5개
-    results.sort(function(a, b) { return b.score - a.score; });
-    return results.slice(0, 5);
+    );
 }
 
 // 사진 처리

@@ -447,7 +447,8 @@ function createArcPath(cx, cy, rIn, rOut, startAngle, endAngle, className, fill,
         'Z'
     ].join(' ');
 
-    return `<path d="${d}" class="${className}" fill="${fill}" ${attrs || ''}/>`;
+    const classAttr = className ? ` class="${className}"` : '';
+    return `<path d="${d}"${classAttr} fill="${fill}" ${attrs || ''}/>`;
 }
 
 function polarToXY(cx, cy, r, angleDeg) {
@@ -530,7 +531,7 @@ function generateStaticWheelSvg(flavorJson, mode) {
             const c = section.color;
             const midFill = isDark ? c.midD : c.mid;
 
-            svg += staticArcPath(cx, cy, 0, r1Out, offset, offset + SECTION_ANGLE, midFill);
+            svg += createArcPath(cx, cy, 0, r1Out, offset, offset + SECTION_ANGLE, '', midFill, 'pointer-events="none"');
 
             const midAngle = offset + SECTION_ANGLE / 2;
             const labelR = r1Out * 0.5;
@@ -588,7 +589,7 @@ function generateStaticWheelSvg(flavorJson, mode) {
                     const isMain = (mainTags[tag.catId] === tag.ko);
                     const fill = lightFill;
 
-                    svg += staticArcPath(cx, cy, R2_IN, R2_OUT, tagStart, tagEnd, fill);
+                    svg += createArcPath(cx, cy, R2_IN, R2_OUT, tagStart, tagEnd, '', fill, 'pointer-events="none"');
 
                     const tagMidAngle = tagStart + innerAngle / 2;
                     const tagLabelR = (R2_IN + R2_OUT) / 2;
@@ -610,7 +611,7 @@ function generateStaticWheelSvg(flavorJson, mode) {
                     const isMain = (mainTags[tag.catId] === tag.ko);
                     const fill = outerFill;
 
-                    svg += staticArcPath(cx, cy, R3_IN, R3_OUT, tagStart, tagEnd, fill);
+                    svg += createArcPath(cx, cy, R3_IN, R3_OUT, tagStart, tagEnd, '', fill, 'pointer-events="none"');
 
                     const tagMidAngle = tagStart + outerAngle / 2;
                     const tagLabelR = (R3_IN + R3_OUT) / 2;
@@ -691,26 +692,3 @@ function generateStaticWheelSvg(flavorJson, mode) {
     return `<div class="${wrapperClass}">${svg}</div>`;
 }
 
-function staticArcPath(cx, cy, rIn, rOut, startAngle, endAngle, fill) {
-    const gap = 0.4;
-    const sa = startAngle + gap / 2;
-    const ea = endAngle - gap / 2;
-    if (ea <= sa) return '';
-
-    const p1 = polarToXY(cx, cy, rIn, sa);
-    const p2 = polarToXY(cx, cy, rOut, sa);
-    const p3 = polarToXY(cx, cy, rOut, ea);
-    const p4 = polarToXY(cx, cy, rIn, ea);
-    const largeArc = (ea - sa) > 180 ? 1 : 0;
-
-    const d = [
-        `M ${p1.x} ${p1.y}`,
-        `L ${p2.x} ${p2.y}`,
-        `A ${rOut} ${rOut} 0 ${largeArc} 1 ${p3.x} ${p3.y}`,
-        `L ${p4.x} ${p4.y}`,
-        `A ${rIn} ${rIn} 0 ${largeArc} 0 ${p1.x} ${p1.y}`,
-        'Z'
-    ].join(' ');
-
-    return `<path d="${d}" fill="${fill}" pointer-events="none"/>`;
-}
