@@ -69,8 +69,6 @@ const WHEEL_SECTIONS = [
     }
 ];
 
-const MAIN_TAG_COLOR = '#D4A017';
-
 // 레이더 웨지 전용 색상 (높은 채도, 구별 최적화)
 const RADAR_COLORS = {
     fruit_flower: { light: '#D6286B', dark: '#E84888' },
@@ -83,7 +81,6 @@ const RADAR_COLORS = {
 
 // SVG 치수
 const W = 640, CX = 320, CY = 320;
-const R_CENTER = 0;
 const R1_IN = 0,   R1_OUT = 135;   // 섹션 링 (중심부터)
 const R2_IN = 138, R2_OUT = 220;   // 태그 중간 링
 const R3_IN = 223, R3_OUT = 305;   // 태그 바깥 링
@@ -272,20 +269,6 @@ function generateFlavorWheel() {
 }
 
 // ── 색상 헬퍼 ──
-
-function getSectionColors(sectionId) {
-    const isDark = document.body.classList.contains('dark-mode');
-    const section = WHEEL_SECTIONS.find(s => s.id === sectionId);
-    if (!section) return { light: '#E8E0D8', outer: '#D0C8C0', selected: '#887868' };
-    const c = section.color;
-    const light = isDark ? c.lightD : c.light;
-    const mid = isDark ? c.midD : c.mid;
-    return {
-        light,
-        outer: blendColor(light, mid, 0.35),
-        selected: isDark ? c.selD : c.sel
-    };
-}
 
 function blendColor(c1, c2, ratio) {
     const h = s => parseInt(s, 16);
@@ -483,7 +466,7 @@ function getTextRotation(angle) {
 }
 
 function escapeAttr(str) {
-    return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 // ── 정적 휠 (저장된 노트용) ──

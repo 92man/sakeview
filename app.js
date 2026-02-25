@@ -57,6 +57,15 @@ let currentCertPhotoData = null;
 let approvedCertsMap = {};
 let approvedCertsLastLoaded = 0;
 
+// 등급 한글→일본어 매핑 (OCR/AI 매칭 공용)
+const GRADE_JP_MAP = {
+    '다이긴죠': '大吟醸', '준마이다이긴죠': '純米大吟醸',
+    '긴죠': '吟醸', '준마이긴죠': '純米吟醸',
+    '준마이': '純米', '혼죠조': '本醸造',
+    '도쿠베츠준마이': '特別純米', '도쿠베츠혼죠조': '特別本醸造',
+    '토쿠베츠준마이': '特別純米', '토쿠베츠혼죠조': '特別本醸造'
+};
+
 // === 테이스팅 태그 시스템 ===
 let tastingSelections = {}; // { "aroma": { "과일 계열": ["사과","배"], ... }, ... }
 let tastingRadioSelections = {}; // { "body_무게감": "미디엄 바디", ... }
@@ -476,9 +485,7 @@ function checkFeaturedVisibility() {
 // HTML 이스케이프 함수
 function escapeHtml(text) {
     if (!text) return '';
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+    return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
 // HTML 속성용 이스케이프 (싱글쿼트 포함)
@@ -697,6 +704,11 @@ function setDefaultDate() {
 function handlePhotoUpload(event) {
     const file = event.target.files[0];
     if (file) {
+        if (file.size > 5 * 1024 * 1024) {
+            alert('사진 크기는 5MB 이하만 가능합니다.');
+            event.target.value = '';
+            return;
+        }
         const reader = new FileReader();
         reader.onload = function(e) {
             currentPhotoData = e.target.result;
@@ -1165,7 +1177,7 @@ async function runTesseractOcr(imageData) {
 
 // AI용 이미지 준비 (JPEG 변환 + 고품질 리사이즈)
 function prepareImageForAi(base64) {
-    return new Promise(function(resolve) {
+    return new Promise(function(resolve, reject) {
         var img = new Image();
         img.onload = function() {
             var canvas = document.createElement('canvas');
@@ -1177,6 +1189,7 @@ function prepareImageForAi(base64) {
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
             resolve(canvas.toDataURL('image/jpeg', 0.92));
         };
+        img.onerror = function() { reject(new Error('이미지를 로드할 수 없습니다.')); };
         img.src = base64;
     });
 }
@@ -1278,14 +1291,7 @@ function matchAiResultToDatabase(aiResult) {
 
             // 등급 매칭 보너스
             if (aiGrade && p.grade) {
-                var gradeJpMap = {
-                    '다이긴죠': '大吟醸', '준마이다이긴죠': '純米大吟醸',
-                    '긴죠': '吟醸', '준마이긴죠': '純米吟醸',
-                    '준마이': '純米', '혼죠조': '本醸造',
-                    '도쿠베츠준마이': '特別純米', '도쿠베츠혼죠조': '特別本醸造',
-                    '토쿠베츠준마이': '特別純米', '토쿠베츠혼죠조': '特別本醸造'
-                };
-                var gradeJp = gradeJpMap[p.grade] || '';
+                var gradeJp = GRADE_JP_MAP[p.grade] || '';
                 if (gradeJp && (aiGrade === gradeJp || aiGrade.includes(gradeJp) || gradeJp.includes(aiGrade))) {
                     productScore += 10;
                 }
@@ -1309,7 +1315,7 @@ function matchAiResultToDatabase(aiResult) {
 
 // 이미지 전처리 (리사이즈 + 그레이스케일 + 대비 강화)
 function prepareImageForOcr(base64) {
-    return new Promise(function(resolve) {
+    return new Promise(function(resolve, reject) {
         var img = new Image();
         img.onload = function() {
             var canvas = document.createElement('canvas');
@@ -1333,6 +1339,7 @@ function prepareImageForOcr(base64) {
             ctx.putImageData(imageData, 0, 0);
             resolve(canvas.toDataURL('image/png'));
         };
+        img.onerror = function() { reject(new Error('이미지를 로드할 수 없습니다.')); };
         img.src = base64;
     });
 }
@@ -1458,13 +1465,7 @@ function matchOcrTextToDatabase(ocrText) {
 
             // 등급 매칭 보조 점수
             if (detectedGrades.length > 0 && p.grade) {
-                var gradeJpMap = {
-                    '다이긴죠': '大吟醸', '준마이다이긴죠': '純米大吟醸',
-                    '긴죠': '吟醸', '준마이긴죠': '純米吟醸',
-                    '준마이': '純米', '혼죠조': '本醸造',
-                    '도쿠베츠준마이': '特別純米', '도쿠베츠혼죠조': '特別本醸造'
-                };
-                var gradeJp = gradeJpMap[p.grade] || '';
+                var gradeJp = GRADE_JP_MAP[p.grade] || '';
                 if (gradeJp && detectedGrades.indexOf(gradeJp) >= 0) {
                     productScore += 15;
                 }
@@ -1562,9 +1563,6 @@ async function startOcrRecognition() {
     progress.classList.add('active');
 
     try {
-        updateOcrProgress(5, '이미지 전처리 중...');
-        var processed = await prepareImageForOcr(ocrPhotoData);
-
         var matches = [];
         var rawText = '';
 
@@ -1601,6 +1599,8 @@ async function startOcrRecognition() {
                 rawText = 'AI 인식: ' + (aiResult.brand || '?') + ' / ' + (aiResult.product || '?') + ' / ' + (aiResult.grade || '?') + '\n원본: ' + (aiResult.rawText || '없음');
             }
         } else {
+            updateOcrProgress(5, '이미지 전처리 중...');
+            var processed = await prepareImageForOcr(ocrPhotoData);
             rawText = await runTesseractOcr(processed);
             matches = matchOcrTextToDatabase(rawText);
         }
@@ -1682,7 +1682,7 @@ async function loadNotes() {
     try {
         const { data, error } = await supabaseClient
             .from('tasting_notes')
-            .select('*')
+            .select('id, sake_name, date, overall_rating, flavor_description, dominant_aroma, created_at')
             .eq('user_id', currentUser.id)
             .order('created_at', { ascending: false });
 
@@ -1760,7 +1760,6 @@ function getTastingPreview(note) {
 }
 
 // ===== Community Functions =====
-let communityLastTab = 'community';
 let communitySearchTimeout = null;
 
 function hashUserId(uid) {
@@ -1796,26 +1795,15 @@ function getTimeAgo(dateStr) {
     return date.toLocaleDateString('ko-KR');
 }
 
-function renderRatingDots(rating) {
-    const filled = Math.round((rating || 5) / 2);
-    return [1,2,3,4,5].map(i =>
-        `<div class="community-rating-dot${i <= filled ? ' active' : ''}"></div>`
-    ).join('');
-}
-
 async function loadCommunityStats() {
     try {
-        // 총 노트 수 (head:true로 row 데이터 없이 count만)
-        const { count: totalNotes } = await supabaseClient
-            .from('tasting_notes')
-            .select('id', { count: 'exact', head: true });
-
-        // 활성 유저 수 - 최근 노트 100개에서 추출 (전체 조회 대신)
-        const { data: recentUsers } = await supabaseClient
-            .from('tasting_notes')
-            .select('user_id')
-            .order('created_at', { ascending: false })
-            .limit(100);
+        // 총 노트 수 + 활성 유저 수를 병렬 조회
+        const [notesResult, usersResult] = await Promise.all([
+            supabaseClient.from('tasting_notes').select('id', { count: 'exact', head: true }),
+            supabaseClient.from('tasting_notes').select('user_id').order('created_at', { ascending: false }).limit(100)
+        ]);
+        const totalNotes = notesResult.count;
+        const recentUsers = usersResult.data;
         const activeUsers = recentUsers ? new Set(recentUsers.map(u => u.user_id)).size : 0;
 
         let sakeCount = 0;
@@ -2269,6 +2257,10 @@ async function showDetail(id) {
 
 // 노트 수정
 async function editNote(id) {
+    if (!currentUser) {
+        alert('로그인이 필요합니다.');
+        return;
+    }
     try {
         const { data: note, error } = await supabaseClient
             .from('tasting_notes')

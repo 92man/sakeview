@@ -88,7 +88,16 @@ async function networkFirst(request) {
     return response;
   } catch (error) {
     const cached = await caches.match(request);
-    return cached || offlineFallback();
+    if (cached) return cached;
+    // API 요청은 JSON 에러 응답 반환
+    const url = new URL(request.url);
+    if (url.hostname.includes('supabase.co')) {
+      return new Response(
+        JSON.stringify({ error: 'offline', message: '오프라인 상태입니다.' }),
+        { status: 503, headers: { 'Content-Type': 'application/json; charset=utf-8' } }
+      );
+    }
+    return offlineFallback();
   }
 }
 
