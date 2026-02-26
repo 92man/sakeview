@@ -209,6 +209,12 @@ function initTastingUI() {
     TASTING_CATEGORIES.forEach(c => { tastingSelections[c.id] = {}; });
     updateTastingSummary();
     if (typeof generateFlavorWheel === 'function') generateFlavorWheel();
+    // 모든 슬라이더 thumb 초기 위치/값 세팅
+    Object.keys(PROFILE_SLIDER_MAP).forEach(function(k) {
+        var s = PROFILE_SLIDER_MAP[k];
+        var inp = document.getElementById('slider_' + s.id);
+        if (inp) updateThumbVal(inp, s.id);
+    });
 }
 
 function switchTastingCategory(catId) {
