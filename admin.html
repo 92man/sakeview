@@ -75,6 +75,13 @@
             flex: 1; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 1em; font-weight: 600;
         }
         .register-actions button:hover { opacity: 0.9; }
+        .spec-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
+        .spec-search-wrapper { position: relative; width: 300px; }
+        .spec-search-wrapper input { width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9em; }
+        .spec-autocomplete { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ddd; border-radius: 0 0 6px 6px; max-height: 300px; overflow-y: auto; display: none; z-index: 100; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .spec-ac-item { padding: 8px 12px; cursor: pointer; font-size: 0.9em; border-bottom: 1px solid #f0f0f0; }
+        .spec-ac-item:hover { background: #eef2ff; }
+        .spec-ac-item:last-child { border-bottom: none; }
     </style>
 </head>
 <body>
@@ -188,6 +195,33 @@
                 <div class="chart-wrapper">
                     <canvas id="topSakesChart"></canvas>
                 </div>
+            </div>
+
+            <div class="table-container">
+                <div class="spec-header">
+                    <h3>🍶 사케 스펙 관리</h3>
+                    <div class="spec-search-wrapper">
+                        <input type="text" id="specSearchInput" placeholder="사케 이름 검색..." oninput="searchSakeForSpec(this.value)">
+                        <div class="spec-autocomplete" id="specAutocomplete"></div>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>사케명</th>
+                            <th>쌀</th>
+                            <th>정미보합</th>
+                            <th>효모</th>
+                            <th>일본주도</th>
+                            <th>산도</th>
+                            <th>도수</th>
+                            <th>살균</th>
+                        </tr>
+                    </thead>
+                    <tbody id="specTable">
+                        <tr><td colspan="8">데이터 로딩 중...</td></tr>
+                    </tbody>
+                </table>
             </div>
 
             <div class="table-container">
@@ -325,6 +359,81 @@
                 <button type="button" onclick="approveCert()" style="background:#27ae60; color:white;">승인</button>
             </div>
             <div id="certReviewError" style="color:#e74c3c; text-align:center; margin-top:10px;"></div>
+        </div>
+    </div>
+
+    <!-- 사케 스펙 입력 모달 -->
+    <div class="register-modal" id="specModal">
+        <div class="register-modal-content">
+            <div class="register-modal-header">
+                <h3>사케 스펙 입력</h3>
+                <button class="register-modal-close" onclick="closeSpecModal()">&times;</button>
+            </div>
+            <div class="register-original">
+                <label>사케명</label>
+                <div id="specSakeName" style="padding:8px; background:#f5f5f5; border-radius:6px; font-size:0.95em; font-weight:600;"></div>
+            </div>
+            <div class="register-field">
+                <label>주조호적미 (Rice)</label>
+                <select id="specRice" onchange="document.getElementById('specRiceCustom').style.display=this.value==='기타'?'block':'none'">
+                    <option value="">선택...</option>
+                    <option value="야마다니시키">야마다니시키 (山田錦)</option>
+                    <option value="오마치">오마치 (雄町)</option>
+                    <option value="고햐쿠만고쿠">고햐쿠만고쿠 (五百万石)</option>
+                    <option value="아이야마">아이야마 (愛山)</option>
+                    <option value="미야마니시키">미야마니시키 (美山錦)</option>
+                    <option value="하나후부키">하나후부키 (華吹雪)</option>
+                    <option value="데와산산">데와산산 (出羽燦々)</option>
+                    <option value="기타">기타 (직접입력)</option>
+                </select>
+                <input type="text" id="specRiceCustom" placeholder="직접 입력" style="display:none; margin-top:6px;">
+            </div>
+            <div class="register-field">
+                <label>정미보합 (Polishing Rate %)</label>
+                <input type="number" id="specPolishRate" placeholder="50" min="1" max="100" step="1">
+            </div>
+            <div class="register-field">
+                <label style="color:#383961; font-weight:700;">효모 (Yeast) ⭐</label>
+                <select id="specYeast" onchange="document.getElementById('specYeastCustom').style.display=this.value==='기타'?'block':'none'">
+                    <option value="">선택...</option>
+                    <option value="7호">7호 (협회7호)</option>
+                    <option value="9호">9호 (협회9호)</option>
+                    <option value="14호">14호 (협회14호)</option>
+                    <option value="1401">1401호</option>
+                    <option value="1801">1801호</option>
+                    <option value="자사효모">자사효모</option>
+                    <option value="기타">기타 (직접입력)</option>
+                </select>
+                <input type="text" id="specYeastCustom" placeholder="직접 입력" style="display:none; margin-top:6px;">
+            </div>
+            <div class="register-field">
+                <label>일본주도 (SMV)</label>
+                <input type="number" id="specSmv" placeholder="+3" step="0.1">
+            </div>
+            <div class="register-field">
+                <label>산도 (Acidity)</label>
+                <input type="number" id="specAcidity" placeholder="1.3" min="0" step="0.1">
+            </div>
+            <div class="register-field">
+                <label>알코올 도수 (%)</label>
+                <input type="number" id="specAlcohol" placeholder="16" min="0" max="30" step="0.5">
+            </div>
+            <div class="register-field">
+                <label>살균 방식</label>
+                <select id="specPasteurization">
+                    <option value="">선택...</option>
+                    <option value="나마자케">나마자케 (생주/生酒)</option>
+                    <option value="히이레 1회">히이레 1회 (一回火入れ)</option>
+                    <option value="히이레 2회">히이레 2회 (二回火入れ)</option>
+                    <option value="나마초조">나마초조 (生貯蔵)</option>
+                    <option value="나마즈메">나마즈메 (生詰め)</option>
+                </select>
+            </div>
+            <div class="register-actions">
+                <button type="button" onclick="closeSpecModal()" style="background:#ccc; color:#333;">취소</button>
+                <button type="button" onclick="saveSpec()" style="background:#383961; color:white;">저장</button>
+            </div>
+            <div id="specError" style="color:#e74c3c; text-align:center; margin-top:10px;"></div>
         </div>
     </div>
 
@@ -603,6 +712,8 @@
 
                 drawCharts(notes);
                 drawTables(notes);
+                buildAllSakeNames(notes);
+                await loadSakeSpecs();
                 await loadCertRequests();
             } catch (error) {
                 console.error('loadAllData 에러:', error);
@@ -879,6 +990,195 @@
                 document.getElementById('certReviewError').textContent = '반려 실패: ' + e.message;
             }
         }
+
+        // === 사케 스펙 관리 ===
+        let allSakeNames = [];
+        let sakeSpecsData = [];
+        let currentSpecSakeName = null;
+
+        function buildAllSakeNames(notes) {
+            const names = new Set();
+            for (const [brand, info] of Object.entries(SAKE_DATABASE)) {
+                for (const product of info.products) {
+                    const fullName = product.japanese
+                        ? brand + ' ' + product.name + ' (' + product.japanese + ')'
+                        : brand + ' ' + product.name;
+                    names.add(fullName);
+                }
+            }
+            for (const cs of customSakesData) {
+                const fullName = cs.japanese
+                    ? cs.brand + ' ' + cs.product_name + ' (' + cs.japanese + ')'
+                    : cs.brand + ' ' + cs.product_name;
+                names.add(fullName);
+                if (cs.original_name) names.add(cs.original_name);
+            }
+            if (notes) {
+                for (const n of notes) {
+                    if (n.sake_name) names.add(n.sake_name);
+                }
+            }
+            allSakeNames = [...names].sort();
+        }
+
+        function searchSakeForSpec(query) {
+            const ac = document.getElementById('specAutocomplete');
+            if (!query || query.length < 1) {
+                ac.style.display = 'none';
+                return;
+            }
+            const q = query.toLowerCase();
+            const matches = allSakeNames.filter(n => n.toLowerCase().includes(q)).slice(0, 10);
+            if (matches.length === 0) {
+                ac.style.display = 'none';
+                return;
+            }
+            ac.innerHTML = matches.map(n =>
+                `<div class="spec-ac-item" onclick="openSpecModal('${escapeAttr(n)}')">${escapeHtml(n)}</div>`
+            ).join('');
+            ac.style.display = 'block';
+        }
+
+        async function loadSakeSpecs() {
+            try {
+                const { data, error } = await client.from('sake_specs').select('*').order('updated_at', { ascending: false });
+                if (error) throw error;
+                sakeSpecsData = data || [];
+                renderSpecTable();
+            } catch (e) {
+                console.error('Spec load error:', e);
+            }
+        }
+
+        function renderSpecTable() {
+            let html = '';
+            sakeSpecsData.forEach(s => {
+                html += `<tr class="clickable-row" onclick="openSpecModal('${escapeAttr(s.sake_name)}')">
+                    <td>${escapeHtml(s.sake_name)}</td>
+                    <td>${escapeHtml(s.rice || '-')}</td>
+                    <td>${s.polish_rate ? s.polish_rate + '%' : '-'}</td>
+                    <td>${escapeHtml(s.yeast || '-')}</td>
+                    <td>${s.smv != null ? (s.smv > 0 ? '+' : '') + s.smv : '-'}</td>
+                    <td>${s.acidity != null ? s.acidity : '-'}</td>
+                    <td>${s.alcohol != null ? s.alcohol + '%' : '-'}</td>
+                    <td>${escapeHtml(s.pasteurization || '-')}</td>
+                </tr>`;
+            });
+            document.getElementById('specTable').innerHTML = html || '<tr><td colspan="8">등록된 스펙 없음</td></tr>';
+        }
+
+        function openSpecModal(sakeName) {
+            currentSpecSakeName = sakeName;
+            document.getElementById('specSakeName').textContent = sakeName;
+            document.getElementById('specSearchInput').value = '';
+            document.getElementById('specAutocomplete').style.display = 'none';
+
+            const existing = sakeSpecsData.find(s => s.sake_name === sakeName);
+
+            // Rice
+            const riceSelect = document.getElementById('specRice');
+            const riceCustom = document.getElementById('specRiceCustom');
+            if (existing && existing.rice) {
+                const opt = [...riceSelect.options].find(o => o.value === existing.rice);
+                if (opt) {
+                    riceSelect.value = existing.rice;
+                    riceCustom.style.display = 'none';
+                } else {
+                    riceSelect.value = '기타';
+                    riceCustom.value = existing.rice;
+                    riceCustom.style.display = 'block';
+                }
+            } else {
+                riceSelect.value = '';
+                riceCustom.value = '';
+                riceCustom.style.display = 'none';
+            }
+
+            // Yeast
+            const yeastSelect = document.getElementById('specYeast');
+            const yeastCustom = document.getElementById('specYeastCustom');
+            if (existing && existing.yeast) {
+                const opt = [...yeastSelect.options].find(o => o.value === existing.yeast);
+                if (opt) {
+                    yeastSelect.value = existing.yeast;
+                    yeastCustom.style.display = 'none';
+                } else {
+                    yeastSelect.value = '기타';
+                    yeastCustom.value = existing.yeast;
+                    yeastCustom.style.display = 'block';
+                }
+            } else {
+                yeastSelect.value = '';
+                yeastCustom.value = '';
+                yeastCustom.style.display = 'none';
+            }
+
+            document.getElementById('specPolishRate').value = existing?.polish_rate || '';
+            document.getElementById('specSmv').value = existing?.smv ?? '';
+            document.getElementById('specAcidity').value = existing?.acidity ?? '';
+            document.getElementById('specAlcohol').value = existing?.alcohol ?? '';
+            document.getElementById('specPasteurization').value = existing?.pasteurization || '';
+
+            document.getElementById('specError').textContent = '';
+            document.getElementById('specModal').classList.add('active');
+        }
+
+        function closeSpecModal() {
+            document.getElementById('specModal').classList.remove('active');
+            currentSpecSakeName = null;
+        }
+
+        async function saveSpec() {
+            if (!currentSpecSakeName) return;
+            const errorEl = document.getElementById('specError');
+
+            let rice = document.getElementById('specRice').value;
+            if (rice === '기타') rice = document.getElementById('specRiceCustom').value.trim();
+
+            let yeast = document.getElementById('specYeast').value;
+            if (yeast === '기타') yeast = document.getElementById('specYeastCustom').value.trim();
+
+            const polishRate = document.getElementById('specPolishRate').value ? Number(document.getElementById('specPolishRate').value) : null;
+            const smv = document.getElementById('specSmv').value !== '' ? Number(document.getElementById('specSmv').value) : null;
+            const acidityVal = document.getElementById('specAcidity').value !== '' ? Number(document.getElementById('specAcidity').value) : null;
+            const alcohol = document.getElementById('specAlcohol').value !== '' ? Number(document.getElementById('specAlcohol').value) : null;
+            const pasteurization = document.getElementById('specPasteurization').value || null;
+
+            const specData = {
+                sake_name: currentSpecSakeName,
+                rice: rice || null,
+                polish_rate: polishRate,
+                yeast: yeast || null,
+                smv: smv,
+                acidity: acidityVal,
+                alcohol: alcohol,
+                pasteurization: pasteurization,
+                updated_at: new Date().toISOString()
+            };
+
+            try {
+                const existing = sakeSpecsData.find(s => s.sake_name === currentSpecSakeName);
+                if (existing) {
+                    const { error } = await client.from('sake_specs').update(specData).eq('id', existing.id);
+                    if (error) throw error;
+                } else {
+                    const { error } = await client.from('sake_specs').insert(specData);
+                    if (error) throw error;
+                }
+                alert('스펙이 저장되었습니다!');
+                closeSpecModal();
+                await loadSakeSpecs();
+            } catch (e) {
+                errorEl.textContent = '저장 실패: ' + e.message;
+            }
+        }
+
+        // 검색 자동완성 외부 클릭 시 닫기
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.spec-search-wrapper')) {
+                document.getElementById('specAutocomplete').style.display = 'none';
+            }
+        });
 
         window.addEventListener('load', async () => {
             const { data } = await client.auth.getSession();
