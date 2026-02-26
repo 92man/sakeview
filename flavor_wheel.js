@@ -286,7 +286,8 @@ function generateFlavorWheel() {
 
     // 링 구분선
     svg += `<circle cx="${CX}" cy="${CY}" r="${R1_OUT}" fill="none" stroke="var(--wheel-line-color, rgba(255,255,255,0.6))" stroke-width="1.5" pointer-events="none"/>`;
-    svg += `<circle cx="${CX}" cy="${CY}" r="${R2_OUT}" fill="none" stroke="var(--wheel-line-color, rgba(255,255,255,0.4))" stroke-width="0.8" pointer-events="none"/>`;
+    // R2_OUT 구분선: aroma 섹션(-90°~90°)에만 표시 (taste 섹션은 통합 링이라 제외)
+    svg += `<path d="M ${CX} ${CY - R2_OUT} A ${R2_OUT} ${R2_OUT} 0 0 1 ${CX} ${CY + R2_OUT}" fill="none" stroke="var(--wheel-line-color, rgba(255,255,255,0.4))" stroke-width="0.8" pointer-events="none"/>`;
 
     // 레이어 4: 레이더 웨지 (최상단, 태그 위)
     svg += `<g class="wheel-radar" pointer-events="none">`;
@@ -685,7 +686,8 @@ function generateStaticWheelSvg(flavorJson, mode) {
 
         // 링 구분선
         svg += `<circle cx="${cx}" cy="${cy}" r="${R1_OUT}" fill="none" stroke="var(--wheel-line-color, rgba(255,255,255,0.6))" stroke-width="1.5" pointer-events="none"/>`;
-        svg += `<circle cx="${cx}" cy="${cy}" r="${R2_OUT}" fill="none" stroke="var(--wheel-line-color, rgba(255,255,255,0.4))" stroke-width="0.8" pointer-events="none"/>`;
+        // R2_OUT 구분선: aroma 섹션(-90°~90°)에만 표시
+        svg += `<path d="M ${cx} ${cy - R2_OUT} A ${R2_OUT} ${R2_OUT} 0 0 1 ${cx} ${cy + R2_OUT}" fill="none" stroke="var(--wheel-line-color, rgba(255,255,255,0.4))" stroke-width="0.8" pointer-events="none"/>`;
     }
 
     // 3. 레이더 웨지 — 슬라이더 기반 (레거시: 태그 카운트 기반)
