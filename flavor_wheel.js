@@ -145,6 +145,20 @@ function generateFlavorWheel() {
 
     let svg = `<svg viewBox="0 0 ${W} ${W}" xmlns="http://www.w3.org/2000/svg" class="flavor-wheel-svg">`;
 
+    // 그라데이션 정의 (중심 진한색 → 바깥 연한색)
+    svg += '<defs>';
+    WHEEL_SECTIONS.forEach(section => {
+        const c = section.color;
+        const midColor = isDark ? c.midD : c.mid;
+        const lightColor = isDark ? c.lightD : c.light;
+        svg += `<radialGradient id="grad-${section.id}" gradientUnits="userSpaceOnUse" cx="${CX}" cy="${CY}" r="${R3_OUT}">`;
+        svg += `<stop offset="0%" stop-color="${midColor}"/>`;
+        svg += `<stop offset="44%" stop-color="${midColor}"/>`;
+        svg += `<stop offset="100%" stop-color="${lightColor}"/>`;
+        svg += `</radialGradient>`;
+    });
+    svg += '</defs>';
+
     let offset = -90;
     let labelsHtml = '';
     let tagsHtml = '';
@@ -158,12 +172,13 @@ function generateFlavorWheel() {
             isDark ? c.midD : c.mid,
             0.35
         );
+        const gradFill = `url(#grad-${section.id})`;
 
-        // Ring 1: 섹션 배경
+        // Ring 1: 섹션 배경 (그라데이션)
         svg += createArcPath(
             CX, CY, R1_IN, R1_OUT,
             offset, offset + SECTION_ANGLE,
-            'wheel-cat-segment', midFill,
+            'wheel-cat-segment', gradFill,
             `data-section="${section.id}"`
         );
 
@@ -191,8 +206,8 @@ function generateFlavorWheel() {
                     tagsHtml += createArcPath(
                         CX, CY, R2_IN, R3_OUT,
                         tagStart, tagEnd,
-                        'wheel-segment', outerFill,
-                        `${dataAttrs(tag)} data-ring="merged" data-orig-fill="${outerFill}"`
+                        'wheel-segment', gradFill,
+                        `${dataAttrs(tag)} data-ring="merged" data-orig-fill="${gradFill}"`
                     );
 
                     const tagMidAngle = tagStart + mergedAngle / 2;
@@ -221,8 +236,8 @@ function generateFlavorWheel() {
                     tagsHtml += createArcPath(
                         CX, CY, R2_IN, R2_OUT,
                         tagStart, tagEnd,
-                        'wheel-segment', outerFill,
-                        `${dataAttrs(tag)} data-ring="inner" data-orig-fill="${outerFill}"`
+                        'wheel-segment', gradFill,
+                        `${dataAttrs(tag)} data-ring="inner" data-orig-fill="${gradFill}"`
                     );
 
                     const tagMidAngle = tagStart + innerAngle / 2;
@@ -243,8 +258,8 @@ function generateFlavorWheel() {
                     tagsHtml += createArcPath(
                         CX, CY, R3_IN, R3_OUT,
                         tagStart, tagEnd,
-                        'wheel-segment wheel-segment-outer', outerFill,
-                        `${dataAttrs(tag)} data-ring="outer" data-orig-fill="${outerFill}"`
+                        'wheel-segment wheel-segment-outer', gradFill,
+                        `${dataAttrs(tag)} data-ring="outer" data-orig-fill="${gradFill}"`
                     );
 
                     const tagMidAngle = tagStart + outerAngle / 2;
@@ -489,6 +504,8 @@ function escapeAttr(str) {
     return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+let _wheelStaticGradId = 0;
+
 // ── 정적 휠 (저장된 노트용) ──
 
 function parseFlavorStats(flavorJson) {
@@ -550,15 +567,32 @@ function generateStaticWheelSvg(flavorJson, mode) {
 
     let svg = `<svg viewBox="0 0 ${vb} ${vb}" xmlns="http://www.w3.org/2000/svg" class="flavor-wheel-svg" style="pointer-events:none;">`;
 
+    // 그라데이션 정의 (풀 모드, 고유 ID)
+    const sgid = ++_wheelStaticGradId;
+    if (!isMini) {
+        svg += '<defs>';
+        WHEEL_SECTIONS.forEach(section => {
+            const c = section.color;
+            const midColor = isDark ? c.midD : c.mid;
+            const lightColor = isDark ? c.lightD : c.light;
+            svg += `<radialGradient id="sg${sgid}-${section.id}" gradientUnits="userSpaceOnUse" cx="${cx}" cy="${cy}" r="${R3_OUT}">`;
+            svg += `<stop offset="0%" stop-color="${midColor}"/>`;
+            svg += `<stop offset="44%" stop-color="${midColor}"/>`;
+            svg += `<stop offset="100%" stop-color="${lightColor}"/>`;
+            svg += `</radialGradient>`;
+        });
+        svg += '</defs>';
+    }
+
     let offset = -90;
 
     // 1. 섹션 배경 + 라벨 (풀 모드만)
     if (!isMini) {
         WHEEL_SECTIONS.forEach((section, i) => {
             const c = section.color;
-            const midFill = isDark ? c.midD : c.mid;
+            const gradFill = `url(#sg${sgid}-${section.id})`;
 
-            svg += createArcPath(cx, cy, 0, r1Out, offset, offset + SECTION_ANGLE, '', midFill, 'pointer-events="none"');
+            svg += createArcPath(cx, cy, 0, r1Out, offset, offset + SECTION_ANGLE, '', gradFill, 'pointer-events="none"');
 
             const midAngle = offset + SECTION_ANGLE / 2;
             const labelR = r1Out * 0.5;
@@ -579,12 +613,7 @@ function generateStaticWheelSvg(flavorJson, mode) {
         const sections = buildWheelTags();
         sections.forEach(section => {
             const c = section.color;
-            const lightFill = isDark ? c.lightD : c.light;
-            const outerFill = blendColor(
-                isDark ? c.lightD : c.light,
-                isDark ? c.midD : c.mid,
-                0.35
-            );
+            const sGradFill = `url(#sg${sgid}-${section.id})`;
 
             const tagCount = section.tags.length;
             if (tagCount > 0) {
@@ -614,9 +643,8 @@ function generateStaticWheelSvg(flavorJson, mode) {
                     const tagEnd = tagStart + innerAngle;
                     const isSelected = selectedSet.has(tag.ko);
                     const isMain = (mainTags[tag.catId] === tag.ko);
-                    const fill = lightFill;
 
-                    svg += createArcPath(cx, cy, R2_IN, R2_OUT, tagStart, tagEnd, '', fill, 'pointer-events="none"');
+                    svg += createArcPath(cx, cy, R2_IN, R2_OUT, tagStart, tagEnd, '', sGradFill, 'pointer-events="none"');
 
                     const tagMidAngle = tagStart + innerAngle / 2;
                     const tagLabelR = (R2_IN + R2_OUT) / 2;
@@ -636,9 +664,8 @@ function generateStaticWheelSvg(flavorJson, mode) {
                     const tagEnd = tagStart + outerAngle;
                     const isSelected = selectedSet.has(tag.ko);
                     const isMain = (mainTags[tag.catId] === tag.ko);
-                    const fill = outerFill;
 
-                    svg += createArcPath(cx, cy, R3_IN, R3_OUT, tagStart, tagEnd, '', fill, 'pointer-events="none"');
+                    svg += createArcPath(cx, cy, R3_IN, R3_OUT, tagStart, tagEnd, '', sGradFill, 'pointer-events="none"');
 
                     const tagMidAngle = tagStart + outerAngle / 2;
                     const tagLabelR = (R3_IN + R3_OUT) / 2;
