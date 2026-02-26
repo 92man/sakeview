@@ -4220,7 +4220,7 @@ body.dark-mode .cert-status-badge.rejected {
 }
 
 .wheel-cat-label {
-    fill: #fff;
+    fill: #333;
     font-weight: 700;
     font-family: inherit;
     pointer-events: none;
