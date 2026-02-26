@@ -1462,6 +1462,11 @@ body.dark-mode .rating-slider-wrap input[type="range"]::-moz-range-thumb {
     background: var(--card-bg); border-radius: 12px; padding: 14px 18px;
     border: 1px solid var(--border-light);
 }
+.profile-slider-inline {
+    margin-top: 10px; padding: 10px 14px;
+    background: var(--bg-card); border: 1px solid var(--border-card);
+}
+.profile-slider-inline .profile-slider-header { font-size: 0.82rem; margin-bottom: 4px; }
 .profile-slider-header {
     font-size: 0.88rem; font-weight: 600; color: var(--text-primary); margin-bottom: 8px;
     display: flex; align-items: center; gap: 8px;

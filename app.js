@@ -73,6 +73,30 @@ let tastingCategoryNotes = {}; // { "aroma": "추가 메모", ... }
 let tastingMainTags = {}; // { "aroma": "바나나", "taste": "깔끔함", ... } 카테고리당 메인 태그 1개
 let activeTastingCategory = 'aroma';
 
+// 슬라이더 ↔ 서브카테고리 매핑
+var PROFILE_SLIDER_MAP = {
+    'aroma_과일/꽃 계열': { id: 'aroma_fruit', valId: 'sliderAromaFruitVal', label: '과일/꽃 향', left: '약함', right: '강함' },
+    'aroma_유제품 계열':  { id: 'aroma_dairy', valId: 'sliderAromaDairyVal', label: '유제품 향', left: '약함', right: '강함' },
+    'aroma_곡물/누룩 계열': { id: 'aroma_grain', valId: 'sliderAromaGrainVal', label: '곡물/누룩 향', left: '약함', right: '강함' },
+    'taste_단맛':         { id: 'sweetness', valId: 'sliderSweetnessVal', label: '단맛', left: '드라이', right: '스위트' },
+    'taste_신맛 (산미)':  { id: 'acidity', valId: 'sliderAcidityVal', label: '산미', left: '부드러움', right: '쨍함' },
+    'taste_감칠맛 (우마미)': { id: 'umami', valId: 'sliderUmamiVal', label: '감칠맛', left: '옅음', right: '깊음' },
+    'body_무게감':        { id: 'body', valId: 'sliderBodyVal', label: '바디감', left: '가벼움', right: '무거움' }
+};
+
+function createProfileSlider(cfg) {
+    var wrap = document.createElement('div');
+    wrap.className = 'profile-slider-item profile-slider-inline';
+    wrap.innerHTML =
+        '<div class="profile-slider-header">' + cfg.label + ' <span class="profile-slider-val" id="' + cfg.valId + '">3</span></div>' +
+        '<div class="profile-slider-row">' +
+            '<span class="profile-label-left">' + cfg.left + '</span>' +
+            '<input type="range" id="slider_' + cfg.id + '" class="profile-range" min="1" max="5" value="3" step="1" oninput="document.getElementById(\'' + cfg.valId + '\').textContent=this.value">' +
+            '<span class="profile-label-right">' + cfg.right + '</span>' +
+        '</div>';
+    return wrap;
+}
+
 function initTastingUI() {
     const structure = buildTastingStructure();
     const tabsEl = document.getElementById('tastingCategoryTabs');
@@ -135,6 +159,12 @@ function initTastingUI() {
                     tagsContainer.appendChild(chip);
                 });
                 section.appendChild(tagsContainer);
+            }
+
+            // 매핑된 슬라이더가 있으면 서브섹션 바로 뒤에 삽입
+            var sliderKey = cat.id + '_' + subName;
+            if (PROFILE_SLIDER_MAP[sliderKey]) {
+                section.appendChild(createProfileSlider(PROFILE_SLIDER_MAP[sliderKey]));
             }
 
             panel.appendChild(section);
