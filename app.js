@@ -332,7 +332,9 @@ function collectTastingData() {
     }
     // 맛 프로파일 슬라이더
     data.sliders = {
-        aroma: parseInt(document.getElementById('slider_aroma').value),
+        aroma_fruit: parseInt(document.getElementById('slider_aroma_fruit').value),
+        aroma_dairy: parseInt(document.getElementById('slider_aroma_dairy').value),
+        aroma_grain: parseInt(document.getElementById('slider_aroma_grain').value),
         sweetness: parseInt(document.getElementById('slider_sweetness').value),
         acidity: parseInt(document.getElementById('slider_acidity').value),
         body: parseInt(document.getElementById('slider_body').value),
@@ -391,11 +393,27 @@ function loadTastingDataToForm(jsonStr) {
 
     // 맛 프로파일 슬라이더 복원
     var sliders = data.sliders || {};
-    ['aroma', 'sweetness', 'acidity', 'body', 'umami'].forEach(function(key) {
+    // 향 3종 + 기본 4종 슬라이더
+    var sliderMap = {
+        aroma_fruit: 'sliderAromaFruitVal',
+        aroma_dairy: 'sliderAromaDairyVal',
+        aroma_grain: 'sliderAromaGrainVal',
+        sweetness: 'sliderSweetnessVal',
+        acidity: 'sliderAcidityVal',
+        body: 'sliderBodyVal',
+        umami: 'sliderUmamiVal'
+    };
+    // 이전 단일 aroma 값 → 3종으로 마이그레이션
+    if (sliders.aroma && !sliders.aroma_fruit) {
+        sliders.aroma_fruit = sliders.aroma;
+        sliders.aroma_dairy = 3;
+        sliders.aroma_grain = 3;
+    }
+    Object.keys(sliderMap).forEach(function(key) {
         var val = sliders[key] || 3;
         var el = document.getElementById('slider_' + key);
         if (el) el.value = val;
-        var valEl = document.getElementById('slider' + key.charAt(0).toUpperCase() + key.slice(1) + 'Val');
+        var valEl = document.getElementById(sliderMap[key]);
         if (valEl) valEl.textContent = val;
     });
 
@@ -416,10 +434,19 @@ function resetTastingUI() {
         if (noteEl) noteEl.value = '';
     });
     // 맛 프로파일 슬라이더 초기화
-    ['aroma', 'sweetness', 'acidity', 'body', 'umami'].forEach(function(key) {
+    var resetMap = {
+        aroma_fruit: 'sliderAromaFruitVal',
+        aroma_dairy: 'sliderAromaDairyVal',
+        aroma_grain: 'sliderAromaGrainVal',
+        sweetness: 'sliderSweetnessVal',
+        acidity: 'sliderAcidityVal',
+        body: 'sliderBodyVal',
+        umami: 'sliderUmamiVal'
+    };
+    Object.keys(resetMap).forEach(function(key) {
         var el = document.getElementById('slider_' + key);
         if (el) el.value = 3;
-        var valEl = document.getElementById('slider' + key.charAt(0).toUpperCase() + key.slice(1) + 'Val');
+        var valEl = document.getElementById(resetMap[key]);
         if (valEl) valEl.textContent = '3';
     });
     updateTastingBadges();
