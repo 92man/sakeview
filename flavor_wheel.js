@@ -194,8 +194,8 @@ function generateFlavorWheel() {
                 tagsHtml += createArcPath(
                     CX, CY, R2_IN, R2_OUT,
                     tagStart, tagEnd,
-                    'wheel-segment', lightFill,
-                    `${dataAttrs(tag)} data-ring="inner" data-orig-fill="${lightFill}"`
+                    'wheel-segment', outerFill,
+                    `${dataAttrs(tag)} data-ring="inner" data-orig-fill="${outerFill}"`
                 );
 
                 const tagMidAngle = tagStart + innerAngle / 2;
