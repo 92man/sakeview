@@ -173,64 +173,91 @@ function generateFlavorWheel() {
         const labelPos = polarToXY(CX, CY, labelR, midAngle);
         labelsHtml += `<text x="${labelPos.x}" y="${labelPos.y}" text-anchor="middle" dominant-baseline="central" class="wheel-cat-label" font-size="15">${section.name}</text>`;
 
-        // 태그를 중간원(Ring2)과 바깥원(Ring3)에 나누어 배치
+        // 태그 배치: taste(단맛/산미/감칠맛)는 통합 1링, aroma는 2링
         const tagCount = section.tags.length;
         if (tagCount > 0) {
-            const innerCount = Math.ceil(tagCount / 2);
-            const outerCount = tagCount - innerCount;
-            const innerTags = section.tags.slice(0, innerCount);
-            const outerTags = section.tags.slice(innerCount);
-            const innerAngle = SECTION_ANGLE / innerCount;
-            const outerAngle = outerCount > 0 ? SECTION_ANGLE / outerCount : 0;
-
             const dataAttrs = (tag) =>
                 `data-section="${section.id}" data-cat-id="${tag.catId}" data-sub-cat="${escapeAttr(tag.sub)}" data-expr="${escapeAttr(tag.ko)}" data-ui-type="${tag.uiType}"`;
 
-            // 중간원 태그
-            innerTags.forEach((tag, i) => {
-                const tagStart = offset + i * innerAngle;
-                const tagEnd = tagStart + innerAngle;
+            const isTaste = section.sources[0] && section.sources[0].catId === 'taste';
 
-                tagsHtml += createArcPath(
-                    CX, CY, R2_IN, R2_OUT,
-                    tagStart, tagEnd,
-                    'wheel-segment', outerFill,
-                    `${dataAttrs(tag)} data-ring="inner" data-orig-fill="${outerFill}"`
-                );
+            if (isTaste) {
+                // taste: 중간원+바깥원 통합 (R2_IN ~ R3_OUT)
+                const mergedAngle = SECTION_ANGLE / tagCount;
+                section.tags.forEach((tag, i) => {
+                    const tagStart = offset + i * mergedAngle;
+                    const tagEnd = tagStart + mergedAngle;
 
-                const tagMidAngle = tagStart + innerAngle / 2;
-                const tagLabelR = (R2_IN + R2_OUT) / 2;
-                const tagLabelPos = polarToXY(CX, CY, tagLabelR, tagMidAngle);
-                const fontSize = getWheelFontSize(innerAngle);
-                if (fontSize > 0) {
-                    const maxLen = getWheelMaxLen(fontSize);
-                    const labelText = tag.ko.length > maxLen ? tag.ko.substring(0, maxLen - 1) + '..' : tag.ko;
-                    tagsHtml += `<text x="${tagLabelPos.x}" y="${tagLabelPos.y}" text-anchor="middle" dominant-baseline="central" class="wheel-tag-label" font-size="${fontSize}" data-wheel-expr="${escapeAttr(tag.ko)}" pointer-events="none" transform="rotate(${getTextRotation(tagMidAngle)},${tagLabelPos.x},${tagLabelPos.y})">${labelText}</text>`;
-                }
-            });
+                    tagsHtml += createArcPath(
+                        CX, CY, R2_IN, R3_OUT,
+                        tagStart, tagEnd,
+                        'wheel-segment', outerFill,
+                        `${dataAttrs(tag)} data-ring="merged" data-orig-fill="${outerFill}"`
+                    );
 
-            // 바깥원 태그
-            outerTags.forEach((tag, i) => {
-                const tagStart = offset + i * outerAngle;
-                const tagEnd = tagStart + outerAngle;
+                    const tagMidAngle = tagStart + mergedAngle / 2;
+                    const tagLabelR = (R2_IN + R3_OUT) / 2;
+                    const tagLabelPos = polarToXY(CX, CY, tagLabelR, tagMidAngle);
+                    const fontSize = getWheelFontSize(mergedAngle);
+                    if (fontSize > 0) {
+                        const maxLen = getWheelMaxLen(fontSize);
+                        const labelText = tag.ko.length > maxLen ? tag.ko.substring(0, maxLen - 1) + '..' : tag.ko;
+                        tagsHtml += `<text x="${tagLabelPos.x}" y="${tagLabelPos.y}" text-anchor="middle" dominant-baseline="central" class="wheel-tag-label" font-size="${fontSize}" data-wheel-expr="${escapeAttr(tag.ko)}" pointer-events="none" transform="rotate(${getTextRotation(tagMidAngle)},${tagLabelPos.x},${tagLabelPos.y})">${labelText}</text>`;
+                    }
+                });
+            } else {
+                // aroma: 기존 2링 (중간원 + 바깥원)
+                const innerCount = Math.ceil(tagCount / 2);
+                const outerCount = tagCount - innerCount;
+                const innerTags = section.tags.slice(0, innerCount);
+                const outerTags = section.tags.slice(innerCount);
+                const innerAngle = SECTION_ANGLE / innerCount;
+                const outerAngle = outerCount > 0 ? SECTION_ANGLE / outerCount : 0;
 
-                tagsHtml += createArcPath(
-                    CX, CY, R3_IN, R3_OUT,
-                    tagStart, tagEnd,
-                    'wheel-segment wheel-segment-outer', outerFill,
-                    `${dataAttrs(tag)} data-ring="outer" data-orig-fill="${outerFill}"`
-                );
+                innerTags.forEach((tag, i) => {
+                    const tagStart = offset + i * innerAngle;
+                    const tagEnd = tagStart + innerAngle;
 
-                const tagMidAngle = tagStart + outerAngle / 2;
-                const tagLabelR = (R3_IN + R3_OUT) / 2;
-                const tagLabelPos = polarToXY(CX, CY, tagLabelR, tagMidAngle);
-                const fontSize = getWheelFontSize(outerAngle);
-                if (fontSize > 0) {
-                    const maxLen = getWheelMaxLen(fontSize);
-                    const labelText = tag.ko.length > maxLen ? tag.ko.substring(0, maxLen - 1) + '..' : tag.ko;
-                    tagsHtml += `<text x="${tagLabelPos.x}" y="${tagLabelPos.y}" text-anchor="middle" dominant-baseline="central" class="wheel-tag-label" font-size="${fontSize}" data-wheel-expr="${escapeAttr(tag.ko)}" pointer-events="none" transform="rotate(${getTextRotation(tagMidAngle)},${tagLabelPos.x},${tagLabelPos.y})">${labelText}</text>`;
-                }
-            });
+                    tagsHtml += createArcPath(
+                        CX, CY, R2_IN, R2_OUT,
+                        tagStart, tagEnd,
+                        'wheel-segment', outerFill,
+                        `${dataAttrs(tag)} data-ring="inner" data-orig-fill="${outerFill}"`
+                    );
+
+                    const tagMidAngle = tagStart + innerAngle / 2;
+                    const tagLabelR = (R2_IN + R2_OUT) / 2;
+                    const tagLabelPos = polarToXY(CX, CY, tagLabelR, tagMidAngle);
+                    const fontSize = getWheelFontSize(innerAngle);
+                    if (fontSize > 0) {
+                        const maxLen = getWheelMaxLen(fontSize);
+                        const labelText = tag.ko.length > maxLen ? tag.ko.substring(0, maxLen - 1) + '..' : tag.ko;
+                        tagsHtml += `<text x="${tagLabelPos.x}" y="${tagLabelPos.y}" text-anchor="middle" dominant-baseline="central" class="wheel-tag-label" font-size="${fontSize}" data-wheel-expr="${escapeAttr(tag.ko)}" pointer-events="none" transform="rotate(${getTextRotation(tagMidAngle)},${tagLabelPos.x},${tagLabelPos.y})">${labelText}</text>`;
+                    }
+                });
+
+                outerTags.forEach((tag, i) => {
+                    const tagStart = offset + i * outerAngle;
+                    const tagEnd = tagStart + outerAngle;
+
+                    tagsHtml += createArcPath(
+                        CX, CY, R3_IN, R3_OUT,
+                        tagStart, tagEnd,
+                        'wheel-segment wheel-segment-outer', outerFill,
+                        `${dataAttrs(tag)} data-ring="outer" data-orig-fill="${outerFill}"`
+                    );
+
+                    const tagMidAngle = tagStart + outerAngle / 2;
+                    const tagLabelR = (R3_IN + R3_OUT) / 2;
+                    const tagLabelPos = polarToXY(CX, CY, tagLabelR, tagMidAngle);
+                    const fontSize = getWheelFontSize(outerAngle);
+                    if (fontSize > 0) {
+                        const maxLen = getWheelMaxLen(fontSize);
+                        const labelText = tag.ko.length > maxLen ? tag.ko.substring(0, maxLen - 1) + '..' : tag.ko;
+                        tagsHtml += `<text x="${tagLabelPos.x}" y="${tagLabelPos.y}" text-anchor="middle" dominant-baseline="central" class="wheel-tag-label" font-size="${fontSize}" data-wheel-expr="${escapeAttr(tag.ko)}" pointer-events="none" transform="rotate(${getTextRotation(tagMidAngle)},${tagLabelPos.x},${tagLabelPos.y})">${labelText}</text>`;
+                    }
+                });
+            }
         }
 
         offset += SECTION_ANGLE;
