@@ -1475,13 +1475,15 @@ body.dark-mode .rating-slider-wrap input[type="range"]::-moz-range-thumb {
     position: relative; flex: 1; min-width: 0; height: 24px;
 }
 .profile-slider-track-wrap .profile-range {
-    width: 100%; position: relative; z-index: 3;
+    width: 100%; position: relative; z-index: 2;
 }
 /* 동그라미 안 점수 표시 */
 .profile-thumb-val {
-    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    position: absolute; top: 50%; transform: translateY(-50%);
+    margin-left: -4px;
     font-size: 0.55rem; font-weight: 700; color: #fff;
-    pointer-events: none; z-index: 4;
+    pointer-events: none; z-index: 10;
+    text-shadow: 0 0 2px rgba(0,0,0,0.3);
 }
 .profile-slider-ticks {
     display: flex; justify-content: space-between;
