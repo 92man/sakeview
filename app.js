@@ -90,8 +90,8 @@ var PROFILE_SLIDER_MAP = {
     'aroma_유제품 계열':  { id: 'aroma_dairy', valId: 'sliderAromaDairyVal', label: '유제품 향', left: '약함', right: '강함' },
     'aroma_곡물/누룩 계열': { id: 'aroma_grain', valId: 'sliderAromaGrainVal', label: '곡물/누룩 향', left: '약함', right: '강함' },
     'taste_단맛':         { id: 'sweetness', valId: 'sliderSweetnessVal', label: '단맛', left: '드라이', right: '스위트' },
-    'taste_신맛 (산미)':  { id: 'acidity', valId: 'sliderAcidityVal', label: '산미', left: '부드러움', right: '쨍함' },
-    'taste_감칠맛 (우마미)': { id: 'umami', valId: 'sliderUmamiVal', label: '감칠맛', left: '옅음', right: '깊음' },
+    'taste_산미':         { id: 'acidity', valId: 'sliderAcidityVal', label: '산미', left: '부드러움', right: '쨍함' },
+    'taste_감칠맛':       { id: 'umami', valId: 'sliderUmamiVal', label: '감칠맛', left: '옅음', right: '깊음' },
     'body_무게감':        { id: 'body', valId: 'sliderBodyVal', label: '바디감', left: '가벼움', right: '무거움' }
 };
 

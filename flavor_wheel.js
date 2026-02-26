@@ -42,7 +42,7 @@ const WHEEL_SECTIONS = [
         color: { mid: '#C8A888', light: '#F0E4D8', sel: '#A88060',
                  midD: '#3D3020', lightD: '#352D25', selD: '#A88060' },
         sources: [
-            { catId: 'taste', sub: '감칠맛 (우마미)' }
+            { catId: 'taste', sub: '감칠맛' }
         ],
         order: ['카라멜', '은은한 감칠맛', '다시마맛', '해산물맛', '된장맛', '간장맛', '깊은 감칠맛']
     },
@@ -51,7 +51,7 @@ const WHEEL_SECTIONS = [
         color: { mid: '#90C0A0', light: '#D8F0E0', sel: '#60A878',
                  midD: '#203828', lightD: '#253028', selD: '#60A878' },
         sources: [
-            { catId: 'taste', sub: '신맛 (산미)' }
+            { catId: 'taste', sub: '산미' }
         ],
         order: ['미네랄', '부드러운 산미', '사과 산미', '감귤 산미', '상쾌한 산미', '날카로운 산미']
     },
