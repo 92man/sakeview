@@ -76,6 +76,9 @@ const RADAR_COLORS = {
     sweet:        { light: '#D84040', dark: '#E06060' }
 };
 
+// 휠 섹션 인덱스 ↔ 슬라이더 ID 매핑
+const SLIDER_TO_SECTION = ['aroma_fruit', 'aroma_dairy', 'aroma_grain', 'umami', 'acidity', 'sweetness'];
+
 // SVG 치수
 const W = 640, CX = 320, CY = 320;
 const R1_IN = 0,   R1_OUT = 135;   // 섹션 링 (중심부터)
@@ -322,72 +325,26 @@ function updateWheelTagBold(svg) {
 // ── 레이더 웨지 ──
 
 function updateRadarOverlay(svg) {
-    const sections = buildWheelTags();
     const isDark = document.body.classList.contains('dark-mode');
     const RADAR_MAX_R = R3_OUT;
-    const MAIN_BONUS = 1.5;
+    const SLIDER_MAX = 5;
 
-    // 1. 섹션별 선택 수 + 메인 여부
-    const stats = sections.map(section => {
-        let count = 0;
-        let hasMain = false;
-        section.tags.forEach(tag => {
-            let isSelected = false;
-            if (tag.uiType === '단일 선택') {
-                const radioKey = tag.catId + '_' + tag.sub;
-                isSelected = tastingRadioSelections[radioKey] === tag.ko;
-            } else {
-                const catSel = tastingSelections[tag.catId];
-                isSelected = catSel && catSel[tag.sub] && catSel[tag.sub].includes(tag.ko);
-            }
-            if (isSelected) count++;
-            if (tag.uiType !== '단일 선택' && tastingMainTags[tag.catId] === tag.ko) hasMain = true;
-        });
-        return { count, hasMain };
-    });
-
-    // 2. 그룹별 비율 계산 — 향(0,1,2), 맛(3,4,5)
-    const groups = [[0, 1, 2], [3, 4, 5]];
-    const ratios = new Array(6).fill(0);
-
-    groups.forEach(groupIdx => {
-        let weighted = groupIdx.map(idx => {
-            let w = stats[idx].count;
-            if (stats[idx].hasMain && w > 0) w += MAIN_BONUS;
-            return w;
-        });
-
-        const groupTotal = weighted.reduce((a, b) => a + b, 0);
-        if (groupTotal === 0) return;
-
-        // 메인 카테고리가 1등이 아니면 2등보다 살짝 위로
-        groupIdx.forEach((idx, gi) => {
-            if (stats[idx].hasMain && stats[idx].count > 0) {
-                const sorted = [...weighted].sort((a, b) => b - a);
-                if (weighted[gi] < sorted[0]) {
-                    weighted[gi] = Math.max(weighted[gi], sorted[1] + 0.3);
-                }
-            }
-        });
-
-        const adjustedTotal = weighted.reduce((a, b) => a + b, 0);
-        groupIdx.forEach((idx, gi) => {
-            ratios[idx] = weighted[gi] / adjustedTotal;
-        });
-    });
-
-    // 3. 웨지 그리기
-    sections.forEach((section, i) => {
+    WHEEL_SECTIONS.forEach((section, i) => {
         const wedge = svg.querySelector(`.wheel-radar-wedge[data-section="${section.id}"]`);
         if (!wedge) return;
 
-        if (ratios[i] === 0) {
+        // 슬라이더 값(0~5)으로 웨지 크기 결정
+        const sliderId = SLIDER_TO_SECTION[i];
+        const sliderEl = document.getElementById('slider_' + sliderId);
+        const sliderVal = sliderEl ? parseInt(sliderEl.value) : 0;
+
+        if (sliderVal === 0) {
             wedge.setAttribute('d', '');
             wedge.setAttribute('fill', 'transparent');
             return;
         }
 
-        const r = Math.max(ratios[i] * RADAR_MAX_R, 18);
+        const r = (sliderVal / SLIDER_MAX) * RADAR_MAX_R;
 
         const startAngle = -90 + i * SECTION_ANGLE;
         const endAngle = startAngle + SECTION_ANGLE;
@@ -500,9 +457,17 @@ function parseFlavorStats(flavorJson) {
 }
 
 function generateStaticWheelSvg(flavorJson, mode) {
+    // 슬라이더 데이터 확인
+    let parsedData;
+    try { parsedData = JSON.parse(flavorJson); } catch(e) { parsedData = null; }
+    const sliderData = (parsedData && parsedData.sliders) || {};
+    const hasSliderData = SLIDER_TO_SECTION.some(k => (sliderData[k] || 0) > 0);
+
+    // 레거시 호환: 슬라이더 없으면 태그 카운트
     const stats = parseFlavorStats(flavorJson);
-    const hasAny = stats.some(s => s.count > 0);
-    if (!hasAny) return '';
+    const hasTagData = stats.some(s => s.count > 0);
+
+    if (!hasSliderData && !hasTagData) return '';
 
     const isDark = document.body.classList.contains('dark-mode');
     const isMini = (mode === 'mini');
@@ -631,57 +596,78 @@ function generateStaticWheelSvg(flavorJson, mode) {
         svg += `<circle cx="${cx}" cy="${cy}" r="${R2_OUT}" fill="none" stroke="var(--wheel-line-color, rgba(255,255,255,0.4))" stroke-width="0.8" pointer-events="none"/>`;
     }
 
-    // 3. 레이더 웨지
-    const MAIN_BONUS = 1.5;
+    // 3. 레이더 웨지 — 슬라이더 기반 (레거시: 태그 카운트 기반)
     const radarMaxR = isMini ? MINI_MAX_R : R3_OUT;
-
-    const groups = [[0, 1, 2], [3, 4, 5]];
-    const ratios = new Array(6).fill(0);
-
-    groups.forEach(groupIdx => {
-        let weighted = groupIdx.map(idx => {
-            let w = stats[idx].count;
-            if (stats[idx].hasMain && w > 0) w += MAIN_BONUS;
-            return w;
-        });
-        const groupTotal = weighted.reduce((a, b) => a + b, 0);
-        if (groupTotal === 0) return;
-
-        groupIdx.forEach((idx, gi) => {
-            if (stats[idx].hasMain && stats[idx].count > 0) {
-                const sorted = [...weighted].sort((a, b) => b - a);
-                if (weighted[gi] < sorted[0]) {
-                    weighted[gi] = Math.max(weighted[gi], sorted[1] + 0.3);
-                }
-            }
-        });
-
-        const adjustedTotal = weighted.reduce((a, b) => a + b, 0);
-        groupIdx.forEach((idx, gi) => {
-            ratios[idx] = weighted[gi] / adjustedTotal;
-        });
-    });
+    const SLIDER_MAX = 5;
 
     offset = -90;
-    WHEEL_SECTIONS.forEach((section, i) => {
-        if (ratios[i] === 0) { offset += SECTION_ANGLE; return; }
+    if (hasSliderData) {
+        // 슬라이더 기반 웨지
+        WHEEL_SECTIONS.forEach((section, i) => {
+            const sliderKey = SLIDER_TO_SECTION[i];
+            const sliderVal = sliderData[sliderKey] || 0;
 
-        const r = Math.max(ratios[i] * radarMaxR, isMini ? 12 : 18);
-        const startAngle = offset;
-        const endAngle = offset + SECTION_ANGLE;
-        const gap = 1;
-        const sa = startAngle + gap / 2;
-        const ea = endAngle - gap / 2;
-        const p1 = polarToXY(cx, cy, r, sa);
-        const p2 = polarToXY(cx, cy, r, ea);
+            if (sliderVal === 0) { offset += SECTION_ANGLE; return; }
 
-        const rc = RADAR_COLORS[section.id] || { light: '#888', dark: '#aaa' };
-        const fillColor = isDark ? rc.dark : rc.light;
+            const r = (sliderVal / SLIDER_MAX) * radarMaxR;
+            const startAngle = offset;
+            const endAngle = offset + SECTION_ANGLE;
+            const gap = 1;
+            const sa = startAngle + gap / 2;
+            const ea = endAngle - gap / 2;
+            const p1 = polarToXY(cx, cy, r, sa);
+            const p2 = polarToXY(cx, cy, r, ea);
 
-        svg += `<path d="M ${cx} ${cy} L ${p1.x} ${p1.y} A ${r} ${r} 0 0 1 ${p2.x} ${p2.y} Z" fill="${fillColor}" opacity="0.55" stroke="${isDark ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.7)'}" stroke-width="1.2" pointer-events="none"/>`;
+            const rc = RADAR_COLORS[section.id] || { light: '#888', dark: '#aaa' };
+            const fillColor = isDark ? rc.dark : rc.light;
 
-        offset += SECTION_ANGLE;
-    });
+            svg += `<path d="M ${cx} ${cy} L ${p1.x} ${p1.y} A ${r} ${r} 0 0 1 ${p2.x} ${p2.y} Z" fill="${fillColor}" opacity="0.55" stroke="${isDark ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.7)'}" stroke-width="1.2" pointer-events="none"/>`;
+            offset += SECTION_ANGLE;
+        });
+    } else {
+        // 레거시 태그 카운트 기반 웨지
+        const MAIN_BONUS = 1.5;
+        const groups = [[0, 1, 2], [3, 4, 5]];
+        const ratios = new Array(6).fill(0);
+
+        groups.forEach(groupIdx => {
+            let weighted = groupIdx.map(idx => {
+                let w = stats[idx].count;
+                if (stats[idx].hasMain && w > 0) w += MAIN_BONUS;
+                return w;
+            });
+            const groupTotal = weighted.reduce((a, b) => a + b, 0);
+            if (groupTotal === 0) return;
+
+            groupIdx.forEach((idx, gi) => {
+                if (stats[idx].hasMain && stats[idx].count > 0) {
+                    const sorted = [...weighted].sort((a, b) => b - a);
+                    if (weighted[gi] < sorted[0]) {
+                        weighted[gi] = Math.max(weighted[gi], sorted[1] + 0.3);
+                    }
+                }
+            });
+            const adjustedTotal = weighted.reduce((a, b) => a + b, 0);
+            groupIdx.forEach((idx, gi) => { ratios[idx] = weighted[gi] / adjustedTotal; });
+        });
+
+        WHEEL_SECTIONS.forEach((section, i) => {
+            if (ratios[i] === 0) { offset += SECTION_ANGLE; return; }
+            const r = Math.max(ratios[i] * radarMaxR, isMini ? 12 : 18);
+            const startAngle = offset;
+            const endAngle = offset + SECTION_ANGLE;
+            const gap = 1;
+            const sa = startAngle + gap / 2;
+            const ea = endAngle - gap / 2;
+            const p1 = polarToXY(cx, cy, r, sa);
+            const p2 = polarToXY(cx, cy, r, ea);
+
+            const rc = RADAR_COLORS[section.id] || { light: '#888', dark: '#aaa' };
+            const fillColor = isDark ? rc.dark : rc.light;
+            svg += `<path d="M ${cx} ${cy} L ${p1.x} ${p1.y} A ${r} ${r} 0 0 1 ${p2.x} ${p2.y} Z" fill="${fillColor}" opacity="0.55" stroke="${isDark ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.7)'}" stroke-width="1.2" pointer-events="none"/>`;
+            offset += SECTION_ANGLE;
+        });
+    }
 
     svg += `</svg>`;
 

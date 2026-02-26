@@ -82,6 +82,8 @@ function updateThumbVal(input, sid) {
     // 0~5 → 0%~100% (thumb 22px 보정: 가장자리에서 11px 안쪽)
     var pct = val / 5 * 100;
     thumb.style.left = 'calc(' + pct + '% + ' + (11 - pct * 0.22) + 'px)';
+    // 슬라이더 변경 시 플레이버 휠 업데이트
+    if (typeof updateWheelVisuals === 'function') updateWheelVisuals();
 }
 
 // 슬라이더 ↔ 서브카테고리 매핑
