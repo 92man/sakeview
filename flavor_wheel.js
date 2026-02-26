@@ -145,22 +145,31 @@ function generateFlavorWheel() {
 
     let svg = `<svg viewBox="0 0 ${W} ${W}" xmlns="http://www.w3.org/2000/svg" class="flavor-wheel-svg">`;
 
-    // 그라데이션 정의: 중심원용 + 바깥링용 분리
+    // 그라데이션 정의: 안개(기본 배경) + 리빌(레이더 웨지)
     svg += '<defs>';
     WHEEL_SECTIONS.forEach(section => {
         const c = section.color;
         const midColor = isDark ? c.midD : c.mid;
         const lightColor = isDark ? c.lightD : c.light;
-        // 중심원: mid→light 가 R1_OUT 안에서 완결
+        const fogBg = isDark ? '#181818' : '#FFFFFF';
+        const fogCenter = blendColor(fogBg, midColor, 0.18);
+        const fogEdge = blendColor(fogBg, midColor, 0.06);
+        // 중심원: 안개 — 희미한 색조가 R1_OUT 안에서 완결
         svg += `<radialGradient id="gi-${section.id}" gradientUnits="userSpaceOnUse" cx="${CX}" cy="${CY}" r="${R1_OUT}">`;
-        svg += `<stop offset="0%" stop-color="${midColor}"/>`;
-        svg += `<stop offset="100%" stop-color="${lightColor}"/>`;
+        svg += `<stop offset="0%" stop-color="${fogCenter}"/>`;
+        svg += `<stop offset="100%" stop-color="${fogEdge}"/>`;
         svg += `</radialGradient>`;
-        // 바깥링: R2_IN부터 mid→light
+        // 바깥링: 안개
         svg += `<radialGradient id="go-${section.id}" gradientUnits="userSpaceOnUse" cx="${CX}" cy="${CY}" r="${R3_OUT}">`;
+        svg += `<stop offset="0%" stop-color="${fogCenter}"/>`;
+        svg += `<stop offset="45%" stop-color="${fogCenter}"/>`;
+        svg += `<stop offset="100%" stop-color="${fogEdge}"/>`;
+        svg += `</radialGradient>`;
+        // 레이더 리빌: 선명한 색상 (슬라이더 채울 때)
+        svg += `<radialGradient id="gr-${section.id}" gradientUnits="userSpaceOnUse" cx="${CX}" cy="${CY}" r="${R3_OUT}">`;
         svg += `<stop offset="0%" stop-color="${midColor}"/>`;
-        svg += `<stop offset="45%" stop-color="${midColor}"/>`;
-        svg += `<stop offset="100%" stop-color="${lightColor}"/>`;
+        svg += `<stop offset="50%" stop-color="${midColor}"/>`;
+        svg += `<stop offset="100%" stop-color="${blendColor(midColor, lightColor, 0.35)}"/>`;
         svg += `</radialGradient>`;
     });
     svg += '</defs>';
@@ -444,11 +453,10 @@ function updateRadarOverlay(svg) {
 
         wedge.setAttribute('d', `M ${CX} ${CY} L ${p1.x} ${p1.y} A ${r} ${r} 0 0 1 ${p2.x} ${p2.y} Z`);
 
-        const rc = RADAR_COLORS[section.id] || { light: '#888', dark: '#aaa' };
-        wedge.setAttribute('fill', isDark ? rc.dark : rc.light);
-        wedge.setAttribute('opacity', '0.55');
-        wedge.setAttribute('stroke', isDark ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.7)');
-        wedge.setAttribute('stroke-width', '1.2');
+        wedge.setAttribute('fill', `url(#gr-${section.id})`);
+        wedge.setAttribute('opacity', '0.92');
+        wedge.setAttribute('stroke', isDark ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.4)');
+        wedge.setAttribute('stroke-width', '0.8');
     });
 }
 
@@ -583,14 +591,22 @@ function generateStaticWheelSvg(flavorJson, mode) {
             const c = section.color;
             const midColor = isDark ? c.midD : c.mid;
             const lightColor = isDark ? c.lightD : c.light;
+            const fogBg = isDark ? '#181818' : '#FFFFFF';
+            const fogCenter = blendColor(fogBg, midColor, 0.18);
+            const fogEdge = blendColor(fogBg, midColor, 0.06);
             svg += `<radialGradient id="si${sgid}-${section.id}" gradientUnits="userSpaceOnUse" cx="${cx}" cy="${cy}" r="${R1_OUT}">`;
-            svg += `<stop offset="0%" stop-color="${midColor}"/>`;
-            svg += `<stop offset="100%" stop-color="${lightColor}"/>`;
+            svg += `<stop offset="0%" stop-color="${fogCenter}"/>`;
+            svg += `<stop offset="100%" stop-color="${fogEdge}"/>`;
             svg += `</radialGradient>`;
             svg += `<radialGradient id="so${sgid}-${section.id}" gradientUnits="userSpaceOnUse" cx="${cx}" cy="${cy}" r="${R3_OUT}">`;
+            svg += `<stop offset="0%" stop-color="${fogCenter}"/>`;
+            svg += `<stop offset="45%" stop-color="${fogCenter}"/>`;
+            svg += `<stop offset="100%" stop-color="${fogEdge}"/>`;
+            svg += `</radialGradient>`;
+            svg += `<radialGradient id="sr${sgid}-${section.id}" gradientUnits="userSpaceOnUse" cx="${cx}" cy="${cy}" r="${R3_OUT}">`;
             svg += `<stop offset="0%" stop-color="${midColor}"/>`;
-            svg += `<stop offset="45%" stop-color="${midColor}"/>`;
-            svg += `<stop offset="100%" stop-color="${lightColor}"/>`;
+            svg += `<stop offset="50%" stop-color="${midColor}"/>`;
+            svg += `<stop offset="100%" stop-color="${blendColor(midColor, lightColor, 0.35)}"/>`;
             svg += `</radialGradient>`;
         });
         svg += '</defs>';
@@ -723,10 +739,8 @@ function generateStaticWheelSvg(flavorJson, mode) {
             const p1 = polarToXY(cx, cy, r, sa);
             const p2 = polarToXY(cx, cy, r, ea);
 
-            const rc = RADAR_COLORS[section.id] || { light: '#888', dark: '#aaa' };
-            const fillColor = isDark ? rc.dark : rc.light;
-
-            svg += `<path d="M ${cx} ${cy} L ${p1.x} ${p1.y} A ${r} ${r} 0 0 1 ${p2.x} ${p2.y} Z" fill="${fillColor}" opacity="0.55" stroke="${isDark ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.7)'}" stroke-width="1.2" pointer-events="none"/>`;
+            const rFill = isMini ? (isDark ? (RADAR_COLORS[section.id]||{dark:'#aaa'}).dark : (RADAR_COLORS[section.id]||{light:'#888'}).light) : `url(#sr${sgid}-${section.id})`;
+            svg += `<path d="M ${cx} ${cy} L ${p1.x} ${p1.y} A ${r} ${r} 0 0 1 ${p2.x} ${p2.y} Z" fill="${rFill}" opacity="${isMini ? '0.55' : '0.92'}" stroke="${isDark ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.4)'}" stroke-width="0.8" pointer-events="none"/>`;
             offset += SECTION_ANGLE;
         });
     } else {
@@ -767,9 +781,8 @@ function generateStaticWheelSvg(flavorJson, mode) {
             const p1 = polarToXY(cx, cy, r, sa);
             const p2 = polarToXY(cx, cy, r, ea);
 
-            const rc = RADAR_COLORS[section.id] || { light: '#888', dark: '#aaa' };
-            const fillColor = isDark ? rc.dark : rc.light;
-            svg += `<path d="M ${cx} ${cy} L ${p1.x} ${p1.y} A ${r} ${r} 0 0 1 ${p2.x} ${p2.y} Z" fill="${fillColor}" opacity="0.55" stroke="${isDark ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.7)'}" stroke-width="1.2" pointer-events="none"/>`;
+            const rFill2 = isMini ? (isDark ? (RADAR_COLORS[section.id]||{dark:'#aaa'}).dark : (RADAR_COLORS[section.id]||{light:'#888'}).light) : `url(#sr${sgid}-${section.id})`;
+            svg += `<path d="M ${cx} ${cy} L ${p1.x} ${p1.y} A ${r} ${r} 0 0 1 ${p2.x} ${p2.y} Z" fill="${rFill2}" opacity="${isMini ? '0.55' : '0.92'}" stroke="${isDark ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.4)'}" stroke-width="0.8" pointer-events="none"/>`;
             offset += SECTION_ANGLE;
         });
     }
