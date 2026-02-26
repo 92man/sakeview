@@ -118,15 +118,19 @@ function initTastingUI() {
             var sliderCfg = PROFILE_SLIDER_MAP[sliderKey];
 
             if (sliderCfg) {
-                // 라벨 + 숫자 + 슬라이더를 한 줄로
+                // 라벨 + 슬라이더(1~5 눈금)를 한 줄로
                 const labelRow = document.createElement('div');
                 labelRow.className = 'tasting-sub-label tasting-sub-label-with-slider';
                 labelRow.innerHTML =
                     '<span class="sub-label-text">' + subName + '</span>' +
-                    '<span class="profile-slider-val" id="' + sliderCfg.valId + '">3</span>' +
-                    '<span class="profile-label-left">' + sliderCfg.left + '</span>' +
-                    '<input type="range" id="slider_' + sliderCfg.id + '" class="profile-range" min="1" max="5" value="3" step="1" oninput="document.getElementById(\'' + sliderCfg.valId + '\').textContent=this.value">' +
-                    '<span class="profile-label-right">' + sliderCfg.right + '</span>';
+                    '<div class="profile-slider-compact">' +
+                        '<span class="profile-label-left">' + sliderCfg.left + '</span>' +
+                        '<div class="profile-slider-track-wrap">' +
+                            '<input type="range" id="slider_' + sliderCfg.id + '" class="profile-range" min="1" max="5" value="3" step="1">' +
+                            '<div class="profile-slider-ticks"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>' +
+                        '</div>' +
+                        '<span class="profile-label-right">' + sliderCfg.right + '</span>' +
+                    '</div>';
                 section.appendChild(labelRow);
             } else {
                 const label = document.createElement('div');
@@ -422,28 +426,17 @@ function loadTastingDataToForm(jsonStr) {
 
     // 맛 프로파일 슬라이더 복원
     var sliders = data.sliders || {};
-    // 향 3종 + 기본 4종 슬라이더
-    var sliderMap = {
-        aroma_fruit: 'sliderAromaFruitVal',
-        aroma_dairy: 'sliderAromaDairyVal',
-        aroma_grain: 'sliderAromaGrainVal',
-        sweetness: 'sliderSweetnessVal',
-        acidity: 'sliderAcidityVal',
-        body: 'sliderBodyVal',
-        umami: 'sliderUmamiVal'
-    };
+    var sliderKeys = ['aroma_fruit', 'aroma_dairy', 'aroma_grain', 'sweetness', 'acidity', 'body', 'umami'];
     // 이전 단일 aroma 값 → 3종으로 마이그레이션
     if (sliders.aroma && !sliders.aroma_fruit) {
         sliders.aroma_fruit = sliders.aroma;
         sliders.aroma_dairy = 3;
         sliders.aroma_grain = 3;
     }
-    Object.keys(sliderMap).forEach(function(key) {
+    sliderKeys.forEach(function(key) {
         var val = sliders[key] || 3;
         var el = document.getElementById('slider_' + key);
         if (el) el.value = val;
-        var valEl = document.getElementById(sliderMap[key]);
-        if (valEl) valEl.textContent = val;
     });
 
     updateTastingBadges();
@@ -463,20 +456,9 @@ function resetTastingUI() {
         if (noteEl) noteEl.value = '';
     });
     // 맛 프로파일 슬라이더 초기화
-    var resetMap = {
-        aroma_fruit: 'sliderAromaFruitVal',
-        aroma_dairy: 'sliderAromaDairyVal',
-        aroma_grain: 'sliderAromaGrainVal',
-        sweetness: 'sliderSweetnessVal',
-        acidity: 'sliderAcidityVal',
-        body: 'sliderBodyVal',
-        umami: 'sliderUmamiVal'
-    };
-    Object.keys(resetMap).forEach(function(key) {
+    ['aroma_fruit', 'aroma_dairy', 'aroma_grain', 'sweetness', 'acidity', 'body', 'umami'].forEach(function(key) {
         var el = document.getElementById('slider_' + key);
         if (el) el.value = 3;
-        var valEl = document.getElementById(resetMap[key]);
-        if (valEl) valEl.textContent = '3';
     });
     updateTastingBadges();
     updateTastingSummary();
