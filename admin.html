@@ -82,6 +82,9 @@
         .spec-ac-item { padding: 8px 12px; cursor: pointer; font-size: 0.9em; border-bottom: 1px solid #f0f0f0; }
         .spec-ac-item:hover { background: #eef2ff; }
         .spec-ac-item:last-child { border-bottom: none; }
+        .spec-done { color: #e74c3c; font-size: 0.65em; font-weight: 700; vertical-align: super; margin-left: 2px; }
+        .sake-name-link { cursor: pointer; color: #383961; text-decoration: underline; text-decoration-color: rgba(56,57,97,0.3); }
+        .sake-name-link:hover { text-decoration-color: #383961; }
     </style>
 </head>
 <body>
@@ -804,9 +807,9 @@
                 renderUnregisteredSakes(notes, knownNames);
 
                 drawCharts(notes);
-                drawTables(notes);
                 buildAllSakeNames(notes);
                 await loadSakeSpecs();
+                drawTables(notes);
                 await loadCertRequests();
             } catch (error) {
                 console.error('loadAllData 에러:', error);
@@ -888,11 +891,13 @@
                 stats[n.sake_name].aftertaste += n.aftertaste || 0;
             });
 
+            const specNames = new Set(sakeSpecsData.map(s => s.sake_name));
             let html = '';
             Object.entries(stats).sort((a, b) => b[1].count - a[1].count).forEach(([sake, s]) => {
                 const avgOverall = (s.overall_rating_sum / s.count).toFixed(1);
+                const badge = specNames.has(sake) ? '<span class="spec-done">완</span>' : '';
                 html += `<tr>
-                    <td>${escapeHtml(sake)}</td>
+                    <td><span class="sake-name-link" onclick="openSpecModal('${escapeAttr(sake)}')">${escapeHtml(sake)}</span>${badge}</td>
                     <td>${s.count}</td>
                     <td>${avgOverall}</td>
                     <td>${(s.clarity/s.count).toFixed(1)}</td>
@@ -915,7 +920,8 @@
                 const d = new Date(n.created_at).toLocaleDateString('ko-KR');
                 const userId = n.user_id ? escapeHtml(n.user_id.substring(0, 8)) : '-';
                 const sakeName = escapeHtml(n.sake_name);
-                html += `<tr><td>${d}</td><td>${userId}</td><td>${sakeName}</td><td>${n.clarity_rating||'-'}</td><td>${n.transparency||'-'}</td><td>${n.aroma_intensity||'-'}</td><td>${n.flavor||'-'}</td></tr>`;
+                const badge = specNames.has(n.sake_name) ? '<span class="spec-done">완</span>' : '';
+                html += `<tr><td>${d}</td><td>${userId}</td><td><span class="sake-name-link" onclick="openSpecModal('${escapeAttr(n.sake_name)}')">${sakeName}</span>${badge}</td><td>${n.clarity_rating||'-'}</td><td>${n.transparency||'-'}</td><td>${n.aroma_intensity||'-'}</td><td>${n.flavor||'-'}</td></tr>`;
             });
             document.getElementById('notesTable').innerHTML = html || '<tr><td colspan="7">데이터 없음</td></tr>';
         }
