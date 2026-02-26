@@ -4,8 +4,8 @@
 const WHEEL_SECTIONS = [
     {
         id: 'fruit_flower', name: '과일/꽃',
-        color: { mid: '#E0899E', light: '#F8DDE4', sel: '#C8506A',
-                 midD: '#502030', lightD: '#3D2830', selD: '#C8506A' },
+        color: { mid: '#B88098', light: '#E6D2D6', sel: '#985878',
+                 midD: '#3A2230', lightD: '#30202A', selD: '#B06888' },
         sources: [
             { catId: 'aroma', sub: '과일/꽃 계열' }
         ],
@@ -18,8 +18,8 @@ const WHEEL_SECTIONS = [
     },
     {
         id: 'dairy', name: '유제품',
-        color: { mid: '#C8DDE8', light: '#EDF4F8', sel: '#8BB8D0',
-                 midD: '#2A3D48', lightD: '#253540', selD: '#6AA0C0' },
+        color: { mid: '#8EA8B5', light: '#D6E0E5', sel: '#6E90A5',
+                 midD: '#253238', lightD: '#202A30', selD: '#80A0B5' },
         sources: [
             { catId: 'aroma', sub: '유제품 계열' }
         ],
@@ -27,8 +27,8 @@ const WHEEL_SECTIONS = [
     },
     {
         id: 'grain', name: '곡물/누룩',
-        color: { mid: '#D8A060', light: '#F5E4C8', sel: '#C08030',
-                 midD: '#483818', lightD: '#3D3420', selD: '#C08030' },
+        color: { mid: '#B89565', light: '#E5D5BE', sel: '#9E7840',
+                 midD: '#382C18', lightD: '#302820', selD: '#B08848' },
         sources: [
             { catId: 'aroma', sub: '곡물/누룩 계열' }
         ],
@@ -39,8 +39,8 @@ const WHEEL_SECTIONS = [
     },
     {
         id: 'umami', name: '감칠맛',
-        color: { mid: '#C8A888', light: '#F0E4D8', sel: '#A88060',
-                 midD: '#3D3020', lightD: '#352D25', selD: '#A88060' },
+        color: { mid: '#A89278', light: '#DCD2C5', sel: '#907858',
+                 midD: '#302818', lightD: '#2A2420', selD: '#A08860' },
         sources: [
             { catId: 'taste', sub: '감칠맛' }
         ],
@@ -48,8 +48,8 @@ const WHEEL_SECTIONS = [
     },
     {
         id: 'sour', name: '산미',
-        color: { mid: '#90C0A0', light: '#D8F0E0', sel: '#60A878',
-                 midD: '#203828', lightD: '#253028', selD: '#60A878' },
+        color: { mid: '#85A88E', light: '#CEDAC8', sel: '#608870',
+                 midD: '#1E3025', lightD: '#1E2822', selD: '#70A080' },
         sources: [
             { catId: 'taste', sub: '산미' }
         ],
@@ -57,8 +57,8 @@ const WHEEL_SECTIONS = [
     },
     {
         id: 'sweet', name: '단맛',
-        color: { mid: '#E8A0A0', light: '#FBE0E0', sel: '#D07070',
-                 midD: '#402828', lightD: '#3D2828', selD: '#D07070' },
+        color: { mid: '#C0908A', light: '#E5D6D0', sel: '#A87868',
+                 midD: '#382422', lightD: '#302422', selD: '#B88878' },
         sources: [
             { catId: 'taste', sub: '단맛' }
         ],
