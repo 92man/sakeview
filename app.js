@@ -91,8 +91,7 @@ var PROFILE_SLIDER_MAP = {
     'aroma_곡물/누룩 계열': { id: 'aroma_grain', valId: 'sliderAromaGrainVal', label: '곡물/누룩 향', left: '약함', right: '강함' },
     'taste_단맛':         { id: 'sweetness', valId: 'sliderSweetnessVal', label: '단맛', left: '드라이', right: '스위트' },
     'taste_산미':         { id: 'acidity', valId: 'sliderAcidityVal', label: '산미', left: '부드러움', right: '쨍함' },
-    'taste_감칠맛':       { id: 'umami', valId: 'sliderUmamiVal', label: '감칠맛', left: '옅음', right: '깊음' },
-    'body_무게감':        { id: 'body', valId: 'sliderBodyVal', label: '바디감', left: '가벼움', right: '무거움' }
+    'taste_감칠맛':       { id: 'umami', valId: 'sliderUmamiVal', label: '감칠맛', left: '옅음', right: '깊음' }
 };
 
 
@@ -389,7 +388,6 @@ function collectTastingData() {
         aroma_grain: parseInt(document.getElementById('slider_aroma_grain').value),
         sweetness: parseInt(document.getElementById('slider_sweetness').value),
         acidity: parseInt(document.getElementById('slider_acidity').value),
-        body: parseInt(document.getElementById('slider_body').value),
         umami: parseInt(document.getElementById('slider_umami').value)
     };
     return data;
@@ -445,7 +443,7 @@ function loadTastingDataToForm(jsonStr) {
 
     // 맛 프로파일 슬라이더 복원
     var sliders = data.sliders || {};
-    var sliderKeys = ['aroma_fruit', 'aroma_dairy', 'aroma_grain', 'sweetness', 'acidity', 'body', 'umami'];
+    var sliderKeys = ['aroma_fruit', 'aroma_dairy', 'aroma_grain', 'sweetness', 'acidity', 'umami'];
     // 이전 단일 aroma 값 → 3종으로 마이그레이션
     if (sliders.aroma && !sliders.aroma_fruit) {
         sliders.aroma_fruit = sliders.aroma;
@@ -475,7 +473,7 @@ function resetTastingUI() {
         if (noteEl) noteEl.value = '';
     });
     // 맛 프로파일 슬라이더 초기화
-    ['aroma_fruit', 'aroma_dairy', 'aroma_grain', 'sweetness', 'acidity', 'body', 'umami'].forEach(function(key) {
+    ['aroma_fruit', 'aroma_dairy', 'aroma_grain', 'sweetness', 'acidity', 'umami'].forEach(function(key) {
         var el = document.getElementById('slider_' + key);
         if (el) el.value = 0;
         var thumb = document.getElementById('thumb_' + key);
