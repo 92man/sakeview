@@ -141,7 +141,7 @@ function generateFlavorWheel() {
     if (!wrapper) return;
 
     const sections = buildWheelTags();
-    const isDark = document.body.classList.contains('dark-mode');
+    const isDark = false; // 휠은 항상 라이트모드 색상 사용
 
     let svg = `<svg viewBox="0 0 ${W} ${W}" xmlns="http://www.w3.org/2000/svg" class="flavor-wheel-svg">`;
 
@@ -338,7 +338,7 @@ function updateWheelVisuals() {
 }
 
 function updateWheelTagBold(svg) {
-    const isDark = document.body.classList.contains('dark-mode');
+    const isDark = false; // 휠은 항상 라이트모드 색상 사용
     // 섹션 색상 맵 생성
     const sectionColors = {};
     WHEEL_SECTIONS.forEach(s => {
@@ -408,7 +408,7 @@ function updateWheelTagBold(svg) {
 // ── 레이더 웨지 ──
 
 function updateRadarOverlay(svg) {
-    const isDark = document.body.classList.contains('dark-mode');
+    const isDark = false; // 휠은 항상 라이트모드 색상 사용
     const RADAR_MAX_R = R3_OUT;
     const SLIDER_MAX = 5;
 
@@ -559,7 +559,7 @@ function generateStaticWheelSvg(flavorJson, mode) {
 
     if (!hasSliderData && !hasTagData) return '';
 
-    const isDark = document.body.classList.contains('dark-mode');
+    const isDark = false; // 휠은 항상 라이트모드 색상 사용
     const isMini = (mode === 'mini');
 
     // 미니: 파이 웨지만 (배경 없음)
