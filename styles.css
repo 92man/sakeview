@@ -1456,19 +1456,19 @@ body.dark-mode .rating-slider-wrap input[type="range"]::-moz-range-thumb {
     border-color: #1a1a24;
 }
 
-/* 맛 프로파일 슬라이더 */
-.profile-slider-val {
-    font-size: 0.95rem; font-weight: 700; color: var(--accent-primary); margin-left: 6px;
+/* 맛 프로파일 슬라이더 (서브라벨 한 줄 통합) */
+.tasting-sub-label-with-slider {
+    display: flex; align-items: center; gap: 6px;
 }
-.profile-slider-inline-row { margin: 6px 0 8px; }
-.profile-slider-row {
-    display: flex; align-items: center; gap: 10px;
+.tasting-sub-label-with-slider .sub-label-text { white-space: nowrap; }
+.tasting-sub-label-with-slider .profile-slider-val {
+    font-size: 0.95rem; font-weight: 700; color: var(--accent-primary); margin-right: 4px;
 }
-.profile-label-left, .profile-label-right {
-    font-size: 0.75rem; color: var(--text-muted); white-space: nowrap; min-width: 42px;
+.tasting-sub-label-with-slider .profile-label-left,
+.tasting-sub-label-with-slider .profile-label-right {
+    font-size: 0.7rem; color: var(--text-muted); white-space: nowrap;
 }
-.profile-label-left { text-align: right; }
-.profile-label-right { text-align: left; }
+.tasting-sub-label-with-slider .profile-range { flex: 1; min-width: 0; }
 .profile-range {
     -webkit-appearance: none; appearance: none; flex: 1; height: 6px; border-radius: 3px;
     background: linear-gradient(90deg, var(--border-light) 0%, var(--accent-gold) 100%);

@@ -84,15 +84,6 @@ var PROFILE_SLIDER_MAP = {
     'body_무게감':        { id: 'body', valId: 'sliderBodyVal', label: '바디감', left: '가벼움', right: '무거움' }
 };
 
-function createInlineSliderRow(cfg) {
-    var wrap = document.createElement('div');
-    wrap.className = 'profile-slider-row profile-slider-inline-row';
-    wrap.innerHTML =
-        '<span class="profile-label-left">' + cfg.left + '</span>' +
-        '<input type="range" id="slider_' + cfg.id + '" class="profile-range" min="1" max="5" value="3" step="1" oninput="document.getElementById(\'' + cfg.valId + '\').textContent=this.value">' +
-        '<span class="profile-label-right">' + cfg.right + '</span>';
-    return wrap;
-}
 
 function initTastingUI() {
     const structure = buildTastingStructure();
@@ -126,18 +117,22 @@ function initTastingUI() {
             var sliderKey = cat.id + '_' + subName;
             var sliderCfg = PROFILE_SLIDER_MAP[sliderKey];
 
-            const label = document.createElement('div');
-            label.className = 'tasting-sub-label';
             if (sliderCfg) {
-                label.innerHTML = subName + ' <span class="profile-slider-val" id="' + sliderCfg.valId + '">3</span>';
+                // 라벨 + 숫자 + 슬라이더를 한 줄로
+                const labelRow = document.createElement('div');
+                labelRow.className = 'tasting-sub-label tasting-sub-label-with-slider';
+                labelRow.innerHTML =
+                    '<span class="sub-label-text">' + subName + '</span>' +
+                    '<span class="profile-slider-val" id="' + sliderCfg.valId + '">3</span>' +
+                    '<span class="profile-label-left">' + sliderCfg.left + '</span>' +
+                    '<input type="range" id="slider_' + sliderCfg.id + '" class="profile-range" min="1" max="5" value="3" step="1" oninput="document.getElementById(\'' + sliderCfg.valId + '\').textContent=this.value">' +
+                    '<span class="profile-label-right">' + sliderCfg.right + '</span>';
+                section.appendChild(labelRow);
             } else {
+                const label = document.createElement('div');
+                label.className = 'tasting-sub-label';
                 label.textContent = subName;
-            }
-            section.appendChild(label);
-
-            // 슬라이더 바를 라벨 바로 아래에 삽입
-            if (sliderCfg) {
-                section.appendChild(createInlineSliderRow(sliderCfg));
+                section.appendChild(label);
             }
 
             if (sub.ui_type === '단일 선택') {
