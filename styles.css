@@ -1477,13 +1477,15 @@ body.dark-mode .rating-slider-wrap input[type="range"]::-moz-range-thumb {
 .profile-slider-track-wrap .profile-range {
     width: 100%; position: relative; z-index: 2;
 }
-/* 동그라미 안 점수 표시 */
+/* 커스텀 thumb (span이 시각적 thumb 역할) */
 .profile-thumb-val {
-    position: absolute; top: 50%; transform: translateY(-50%);
-    margin-left: -4px;
+    position: absolute; top: 50%; transform: translate(-50%, -50%);
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--accent-primary); border: 2px solid #fff;
+    box-shadow: 0 1px 4px rgba(56, 57, 97, 0.3);
+    display: flex; align-items: center; justify-content: center;
     font-size: 0.55rem; font-weight: 700; color: #fff;
-    pointer-events: none; z-index: 10;
-    text-shadow: 0 0 2px rgba(0,0,0,0.3);
+    pointer-events: none; z-index: 5;
 }
 .profile-slider-ticks {
     display: flex; justify-content: space-between;
@@ -1501,25 +1503,25 @@ body.dark-mode .rating-slider-wrap input[type="range"]::-moz-range-thumb {
 }
 .profile-range::-webkit-slider-thumb {
     -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 50%;
-    background: var(--accent-primary);
-    border: 2px solid #fff; box-shadow: 0 1px 4px rgba(56, 57, 97, 0.3); cursor: pointer;
+    background: transparent; border: none; box-shadow: none; cursor: pointer;
 }
 .profile-range::-moz-range-thumb {
     width: 22px; height: 22px; border-radius: 50%;
-    background: var(--accent-primary);
-    border: 2px solid #fff; box-shadow: 0 1px 4px rgba(56, 57, 97, 0.3); cursor: pointer;
+    background: transparent; border: none; box-shadow: none; cursor: pointer;
 }
 body.dark-mode .profile-range {
     background: linear-gradient(90deg, #3a3a44 0%, #4a4a55 100%);
 }
 body.dark-mode .profile-range::-webkit-slider-thumb {
-    background: var(--accent-gold); border-color: #1a1a24;
+    background: transparent; border: none; box-shadow: none;
 }
 body.dark-mode .profile-range::-moz-range-thumb {
-    background: var(--accent-gold); border-color: #1a1a24;
+    background: transparent; border: none; box-shadow: none;
 }
 body.dark-mode .profile-slider-ticks span { color: #555; }
-body.dark-mode .profile-thumb-val { color: #1a1a24; }
+body.dark-mode .profile-thumb-val {
+    background: var(--accent-gold); border-color: #1a1a24; color: #1a1a24;
+}
 
 .info-text {
     font-size: 0.85em;
