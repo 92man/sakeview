@@ -145,15 +145,21 @@ function generateFlavorWheel() {
 
     let svg = `<svg viewBox="0 0 ${W} ${W}" xmlns="http://www.w3.org/2000/svg" class="flavor-wheel-svg">`;
 
-    // 그라데이션 정의 (중심 진한색 → 바깥 연한색)
+    // 그라데이션 정의: 중심원용 + 바깥링용 분리
     svg += '<defs>';
     WHEEL_SECTIONS.forEach(section => {
         const c = section.color;
         const midColor = isDark ? c.midD : c.mid;
         const lightColor = isDark ? c.lightD : c.light;
-        svg += `<radialGradient id="grad-${section.id}" gradientUnits="userSpaceOnUse" cx="${CX}" cy="${CY}" r="${R3_OUT}">`;
+        // 중심원: mid→light 가 R1_OUT 안에서 완결
+        svg += `<radialGradient id="gi-${section.id}" gradientUnits="userSpaceOnUse" cx="${CX}" cy="${CY}" r="${R1_OUT}">`;
         svg += `<stop offset="0%" stop-color="${midColor}"/>`;
-        svg += `<stop offset="44%" stop-color="${midColor}"/>`;
+        svg += `<stop offset="100%" stop-color="${lightColor}"/>`;
+        svg += `</radialGradient>`;
+        // 바깥링: R2_IN부터 mid→light
+        svg += `<radialGradient id="go-${section.id}" gradientUnits="userSpaceOnUse" cx="${CX}" cy="${CY}" r="${R3_OUT}">`;
+        svg += `<stop offset="0%" stop-color="${midColor}"/>`;
+        svg += `<stop offset="45%" stop-color="${midColor}"/>`;
         svg += `<stop offset="100%" stop-color="${lightColor}"/>`;
         svg += `</radialGradient>`;
     });
@@ -172,13 +178,14 @@ function generateFlavorWheel() {
             isDark ? c.midD : c.mid,
             0.35
         );
-        const gradFill = `url(#grad-${section.id})`;
+        const gradInner = `url(#gi-${section.id})`;
+        const gradOuter = `url(#go-${section.id})`;
 
-        // Ring 1: 섹션 배경 (그라데이션)
+        // Ring 1: 섹션 배경 (중심원 그라데이션)
         svg += createArcPath(
             CX, CY, R1_IN, R1_OUT,
             offset, offset + SECTION_ANGLE,
-            'wheel-cat-segment', gradFill,
+            'wheel-cat-segment', gradInner,
             `data-section="${section.id}"`
         );
 
@@ -206,8 +213,8 @@ function generateFlavorWheel() {
                     tagsHtml += createArcPath(
                         CX, CY, R2_IN, R3_OUT,
                         tagStart, tagEnd,
-                        'wheel-segment', gradFill,
-                        `${dataAttrs(tag)} data-ring="merged" data-orig-fill="${gradFill}"`
+                        'wheel-segment', gradOuter,
+                        `${dataAttrs(tag)} data-ring="merged" data-orig-fill="${gradOuter}"`
                     );
 
                     const tagMidAngle = tagStart + mergedAngle / 2;
@@ -236,8 +243,8 @@ function generateFlavorWheel() {
                     tagsHtml += createArcPath(
                         CX, CY, R2_IN, R2_OUT,
                         tagStart, tagEnd,
-                        'wheel-segment', gradFill,
-                        `${dataAttrs(tag)} data-ring="inner" data-orig-fill="${gradFill}"`
+                        'wheel-segment', gradOuter,
+                        `${dataAttrs(tag)} data-ring="inner" data-orig-fill="${gradOuter}"`
                     );
 
                     const tagMidAngle = tagStart + innerAngle / 2;
@@ -258,8 +265,8 @@ function generateFlavorWheel() {
                     tagsHtml += createArcPath(
                         CX, CY, R3_IN, R3_OUT,
                         tagStart, tagEnd,
-                        'wheel-segment wheel-segment-outer', gradFill,
-                        `${dataAttrs(tag)} data-ring="outer" data-orig-fill="${gradFill}"`
+                        'wheel-segment wheel-segment-outer', gradOuter,
+                        `${dataAttrs(tag)} data-ring="outer" data-orig-fill="${gradOuter}"`
                     );
 
                     const tagMidAngle = tagStart + outerAngle / 2;
@@ -568,7 +575,7 @@ function generateStaticWheelSvg(flavorJson, mode) {
 
     let svg = `<svg viewBox="0 0 ${vb} ${vb}" xmlns="http://www.w3.org/2000/svg" class="flavor-wheel-svg" style="pointer-events:none;">`;
 
-    // 그라데이션 정의 (풀 모드, 고유 ID)
+    // 그라데이션 정의 (풀 모드, 고유 ID): 중심원용 + 바깥링용 분리
     const sgid = ++_wheelStaticGradId;
     if (!isMini) {
         svg += '<defs>';
@@ -576,9 +583,13 @@ function generateStaticWheelSvg(flavorJson, mode) {
             const c = section.color;
             const midColor = isDark ? c.midD : c.mid;
             const lightColor = isDark ? c.lightD : c.light;
-            svg += `<radialGradient id="sg${sgid}-${section.id}" gradientUnits="userSpaceOnUse" cx="${cx}" cy="${cy}" r="${R3_OUT}">`;
+            svg += `<radialGradient id="si${sgid}-${section.id}" gradientUnits="userSpaceOnUse" cx="${cx}" cy="${cy}" r="${R1_OUT}">`;
             svg += `<stop offset="0%" stop-color="${midColor}"/>`;
-            svg += `<stop offset="44%" stop-color="${midColor}"/>`;
+            svg += `<stop offset="100%" stop-color="${lightColor}"/>`;
+            svg += `</radialGradient>`;
+            svg += `<radialGradient id="so${sgid}-${section.id}" gradientUnits="userSpaceOnUse" cx="${cx}" cy="${cy}" r="${R3_OUT}">`;
+            svg += `<stop offset="0%" stop-color="${midColor}"/>`;
+            svg += `<stop offset="45%" stop-color="${midColor}"/>`;
             svg += `<stop offset="100%" stop-color="${lightColor}"/>`;
             svg += `</radialGradient>`;
         });
@@ -591,9 +602,9 @@ function generateStaticWheelSvg(flavorJson, mode) {
     if (!isMini) {
         WHEEL_SECTIONS.forEach((section, i) => {
             const c = section.color;
-            const gradFill = `url(#sg${sgid}-${section.id})`;
+            const sGradInner = `url(#si${sgid}-${section.id})`;
 
-            svg += createArcPath(cx, cy, 0, r1Out, offset, offset + SECTION_ANGLE, '', gradFill, 'pointer-events="none"');
+            svg += createArcPath(cx, cy, 0, r1Out, offset, offset + SECTION_ANGLE, '', sGradInner, 'pointer-events="none"');
 
             const midAngle = offset + SECTION_ANGLE / 2;
             const labelR = r1Out * 0.5;
@@ -614,7 +625,7 @@ function generateStaticWheelSvg(flavorJson, mode) {
         const sections = buildWheelTags();
         sections.forEach(section => {
             const c = section.color;
-            const sGradFill = `url(#sg${sgid}-${section.id})`;
+            const sGradFill = `url(#so${sgid}-${section.id})`;
 
             const tagCount = section.tags.length;
             if (tagCount > 0) {
