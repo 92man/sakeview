@@ -1464,7 +1464,7 @@ body.dark-mode .rating-slider-wrap input[type="range"]::-moz-range-thumb {
     white-space: nowrap; color: var(--accent-primary); font-weight: 700;
 }
 .profile-slider-compact {
-    display: flex; align-items: center; gap: 6px; flex: 1; max-width: 52.5%;
+    display: flex; align-items: center; gap: 14px; flex: 1; max-width: 52.5%;
     margin-left: 12.5%;
 }
 .profile-slider-compact .profile-label-left,
@@ -1473,7 +1473,6 @@ body.dark-mode .rating-slider-wrap input[type="range"]::-moz-range-thumb {
 }
 .profile-slider-track-wrap {
     position: relative; flex: 1; min-width: 0; height: 24px;
-    padding: 0 11px;
 }
 .profile-slider-track-wrap .profile-range {
     width: 100%; position: relative; z-index: 2;
@@ -1490,7 +1489,7 @@ body.dark-mode .rating-slider-wrap input[type="range"]::-moz-range-thumb {
 }
 .profile-slider-ticks {
     display: flex; justify-content: space-between;
-    position: absolute; top: 50%; left: 11px; right: 11px;
+    position: absolute; top: 50%; left: 2px; right: 2px;
     transform: translateY(-50%); pointer-events: none; z-index: 1;
 }
 .profile-slider-ticks span {

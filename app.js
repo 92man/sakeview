@@ -79,9 +79,9 @@ function updateThumbVal(input, sid) {
     var thumb = document.getElementById('thumb_' + sid);
     if (!thumb) return;
     thumb.textContent = val;
-    // 0~5 → 0%~100% (track-wrap에 padding:0 11px 적용됨)
+    // 0~5 → 0%~100% (thumb 22px 보정: 가장자리에서 11px 안쪽)
     var pct = val / 5 * 100;
-    thumb.style.left = pct + '%';
+    thumb.style.left = 'calc(' + pct + '% + ' + (11 - pct * 0.22) + 'px)';
 }
 
 // 슬라이더 ↔ 서브카테고리 매핑
@@ -138,7 +138,7 @@ function initTastingUI() {
                         '<span class="profile-label-left">' + sliderCfg.left + '</span>' +
                         '<div class="profile-slider-track-wrap">' +
                             '<input type="range" id="slider_' + sid + '" class="profile-range" min="0" max="5" value="0" step="1" oninput="updateThumbVal(this,\'' + sid + '\')">' +
-                            '<span class="profile-thumb-val" id="thumb_' + sid + '" style="left:0%">0</span>' +
+                            '<span class="profile-thumb-val" id="thumb_' + sid + '" style="left:calc(0% + 11px)">0</span>' +
                             '<div class="profile-slider-ticks"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>' +
                         '</div>' +
                         '<span class="profile-label-right">' + sliderCfg.right + '</span>' +
