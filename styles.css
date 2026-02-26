@@ -1462,13 +1462,6 @@ body.dark-mode .rating-slider-wrap input[type="range"]::-moz-range-thumb {
     background: var(--card-bg); border-radius: 12px; padding: 14px 18px;
     border: 1px solid var(--border-light);
 }
-.profile-slider-group { padding: 14px 18px 10px; }
-.profile-slider-group-title {
-    font-size: 0.92rem; font-weight: 700; color: var(--text-primary); margin-bottom: 10px;
-}
-.profile-slider-sub { margin-bottom: 8px; }
-.profile-slider-sub:last-child { margin-bottom: 0; }
-.profile-slider-sub .profile-slider-header { font-size: 0.82rem; margin-bottom: 4px; }
 .profile-slider-header {
     font-size: 0.88rem; font-weight: 600; color: var(--text-primary); margin-bottom: 8px;
     display: flex; align-items: center; gap: 8px;
