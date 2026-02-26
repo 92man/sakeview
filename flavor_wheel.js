@@ -145,48 +145,39 @@ function generateFlavorWheel() {
 
     let svg = `<svg viewBox="0 0 ${W} ${W}" xmlns="http://www.w3.org/2000/svg" class="flavor-wheel-svg">`;
 
-    // 그라데이션 정의: 안개(기본 배경) + 리빌(레이더 웨지)
+    // 그라데이션 정의: 원본 색상 (안개 아래 숨김)
     svg += '<defs>';
     WHEEL_SECTIONS.forEach(section => {
         const c = section.color;
         const midColor = isDark ? c.midD : c.mid;
         const lightColor = isDark ? c.lightD : c.light;
-        const fogBg = isDark ? '#181818' : '#FFFFFF';
-        const fogCenter = blendColor(fogBg, midColor, 0.18);
-        const fogEdge = blendColor(fogBg, midColor, 0.06);
-        // 중심원: 안개 — 희미한 색조가 R1_OUT 안에서 완결
+        // 중심원: mid→light 가 R1_OUT 안에서 완결
         svg += `<radialGradient id="gi-${section.id}" gradientUnits="userSpaceOnUse" cx="${CX}" cy="${CY}" r="${R1_OUT}">`;
-        svg += `<stop offset="0%" stop-color="${fogCenter}"/>`;
-        svg += `<stop offset="100%" stop-color="${fogEdge}"/>`;
-        svg += `</radialGradient>`;
-        // 바깥링: 안개
-        svg += `<radialGradient id="go-${section.id}" gradientUnits="userSpaceOnUse" cx="${CX}" cy="${CY}" r="${R3_OUT}">`;
-        svg += `<stop offset="0%" stop-color="${fogCenter}"/>`;
-        svg += `<stop offset="45%" stop-color="${fogCenter}"/>`;
-        svg += `<stop offset="100%" stop-color="${fogEdge}"/>`;
-        svg += `</radialGradient>`;
-        // 레이더 리빌: 선명한 색상 (슬라이더 채울 때)
-        svg += `<radialGradient id="gr-${section.id}" gradientUnits="userSpaceOnUse" cx="${CX}" cy="${CY}" r="${R3_OUT}">`;
         svg += `<stop offset="0%" stop-color="${midColor}"/>`;
-        svg += `<stop offset="50%" stop-color="${midColor}"/>`;
-        svg += `<stop offset="100%" stop-color="${blendColor(midColor, lightColor, 0.35)}"/>`;
+        svg += `<stop offset="100%" stop-color="${lightColor}"/>`;
+        svg += `</radialGradient>`;
+        // 바깥링: mid→light
+        svg += `<radialGradient id="go-${section.id}" gradientUnits="userSpaceOnUse" cx="${CX}" cy="${CY}" r="${R3_OUT}">`;
+        svg += `<stop offset="0%" stop-color="${midColor}"/>`;
+        svg += `<stop offset="45%" stop-color="${midColor}"/>`;
+        svg += `<stop offset="100%" stop-color="${lightColor}"/>`;
         svg += `</radialGradient>`;
     });
+    // 안개 마스크: 흰=안개 보임, 검정=안개 제거(원본 색 드러남)
+    svg += `<mask id="fog-mask">`;
+    svg += `<rect width="${W}" height="${W}" fill="white"/>`;
+    WHEEL_SECTIONS.forEach((section, i) => {
+        svg += `<path class="fog-cutout" data-section="${section.id}" data-section-idx="${i}" d="" fill="black"/>`;
+    });
+    svg += `</mask>`;
     svg += '</defs>';
 
     let offset = -90;
     let labelsHtml = '';
-    let tagsHtml = '';
+    let tagArcsHtml = '';
+    let tagTextsHtml = '';
 
     sections.forEach(section => {
-        const c = section.color;
-        const midFill = isDark ? c.midD : c.mid;
-        const lightFill = isDark ? c.lightD : c.light;
-        const outerFill = blendColor(
-            isDark ? c.lightD : c.light,
-            isDark ? c.midD : c.mid,
-            0.35
-        );
         const gradInner = `url(#gi-${section.id})`;
         const gradOuter = `url(#go-${section.id})`;
 
@@ -219,7 +210,7 @@ function generateFlavorWheel() {
                     const tagStart = offset + i * mergedAngle;
                     const tagEnd = tagStart + mergedAngle;
 
-                    tagsHtml += createArcPath(
+                    tagArcsHtml += createArcPath(
                         CX, CY, R2_IN, R3_OUT,
                         tagStart, tagEnd,
                         'wheel-segment', gradOuter,
@@ -233,7 +224,7 @@ function generateFlavorWheel() {
                     if (fontSize > 0) {
                         const maxLen = getWheelMaxLen(fontSize);
                         const labelText = tag.ko.length > maxLen ? tag.ko.substring(0, maxLen - 1) + '..' : tag.ko;
-                        tagsHtml += `<text x="${tagLabelPos.x}" y="${tagLabelPos.y}" text-anchor="middle" dominant-baseline="central" class="wheel-tag-label" font-size="${fontSize}" data-wheel-expr="${escapeAttr(tag.ko)}" pointer-events="none" transform="rotate(${getTextRotation(tagMidAngle)},${tagLabelPos.x},${tagLabelPos.y})">${labelText}</text>`;
+                        tagTextsHtml += `<text x="${tagLabelPos.x}" y="${tagLabelPos.y}" text-anchor="middle" dominant-baseline="central" class="wheel-tag-label" font-size="${fontSize}" data-wheel-expr="${escapeAttr(tag.ko)}" pointer-events="none" transform="rotate(${getTextRotation(tagMidAngle)},${tagLabelPos.x},${tagLabelPos.y})">${labelText}</text>`;
                     }
                 });
             } else {
@@ -249,7 +240,7 @@ function generateFlavorWheel() {
                     const tagStart = offset + i * innerAngle;
                     const tagEnd = tagStart + innerAngle;
 
-                    tagsHtml += createArcPath(
+                    tagArcsHtml += createArcPath(
                         CX, CY, R2_IN, R2_OUT,
                         tagStart, tagEnd,
                         'wheel-segment', gradOuter,
@@ -263,7 +254,7 @@ function generateFlavorWheel() {
                     if (fontSize > 0) {
                         const maxLen = getWheelMaxLen(fontSize);
                         const labelText = tag.ko.length > maxLen ? tag.ko.substring(0, maxLen - 1) + '..' : tag.ko;
-                        tagsHtml += `<text x="${tagLabelPos.x}" y="${tagLabelPos.y}" text-anchor="middle" dominant-baseline="central" class="wheel-tag-label" font-size="${fontSize}" data-wheel-expr="${escapeAttr(tag.ko)}" pointer-events="none" transform="rotate(${getTextRotation(tagMidAngle)},${tagLabelPos.x},${tagLabelPos.y})">${labelText}</text>`;
+                        tagTextsHtml += `<text x="${tagLabelPos.x}" y="${tagLabelPos.y}" text-anchor="middle" dominant-baseline="central" class="wheel-tag-label" font-size="${fontSize}" data-wheel-expr="${escapeAttr(tag.ko)}" pointer-events="none" transform="rotate(${getTextRotation(tagMidAngle)},${tagLabelPos.x},${tagLabelPos.y})">${labelText}</text>`;
                     }
                 });
 
@@ -271,7 +262,7 @@ function generateFlavorWheel() {
                     const tagStart = offset + i * outerAngle;
                     const tagEnd = tagStart + outerAngle;
 
-                    tagsHtml += createArcPath(
+                    tagArcsHtml += createArcPath(
                         CX, CY, R3_IN, R3_OUT,
                         tagStart, tagEnd,
                         'wheel-segment wheel-segment-outer', gradOuter,
@@ -285,7 +276,7 @@ function generateFlavorWheel() {
                     if (fontSize > 0) {
                         const maxLen = getWheelMaxLen(fontSize);
                         const labelText = tag.ko.length > maxLen ? tag.ko.substring(0, maxLen - 1) + '..' : tag.ko;
-                        tagsHtml += `<text x="${tagLabelPos.x}" y="${tagLabelPos.y}" text-anchor="middle" dominant-baseline="central" class="wheel-tag-label" font-size="${fontSize}" data-wheel-expr="${escapeAttr(tag.ko)}" pointer-events="none" transform="rotate(${getTextRotation(tagMidAngle)},${tagLabelPos.x},${tagLabelPos.y})">${labelText}</text>`;
+                        tagTextsHtml += `<text x="${tagLabelPos.x}" y="${tagLabelPos.y}" text-anchor="middle" dominant-baseline="central" class="wheel-tag-label" font-size="${fontSize}" data-wheel-expr="${escapeAttr(tag.ko)}" pointer-events="none" transform="rotate(${getTextRotation(tagMidAngle)},${tagLabelPos.x},${tagLabelPos.y})">${labelText}</text>`;
                     }
                 });
             }
@@ -294,18 +285,25 @@ function generateFlavorWheel() {
         offset += SECTION_ANGLE;
     });
 
-    // 레이어 2: 섹션 라벨
-    svg += labelsHtml;
-
-    // 레이어 3: 태그 세그먼트 + 라벨
-    svg += tagsHtml;
+    // 레이어 2: 태그 아크 (안개 아래)
+    svg += tagArcsHtml;
 
     // 링 구분선
     svg += `<circle cx="${CX}" cy="${CY}" r="${R1_OUT}" fill="none" stroke="var(--wheel-line-color, rgba(255,255,255,0.6))" stroke-width="1.5" pointer-events="none"/>`;
     // R2_OUT 구분선: aroma 섹션(-90°~90°)에만 표시 (taste 섹션은 통합 링이라 제외)
     svg += `<path d="M ${CX} ${CY - R2_OUT} A ${R2_OUT} ${R2_OUT} 0 0 1 ${CX} ${CY + R2_OUT}" fill="none" stroke="var(--wheel-line-color, rgba(255,255,255,0.4))" stroke-width="0.8" pointer-events="none"/>`;
 
-    // 레이어 4: 레이더 웨지 (최상단, 태그 위)
+    // 레이어 3: 안개 오버레이 (마스크로 슬라이더 영역만 걷어냄)
+    const fogColor = isDark ? 'rgba(24,24,24,0.78)' : 'rgba(255,255,255,0.78)';
+    svg += `<circle cx="${CX}" cy="${CY}" r="${R3_OUT + 2}" fill="${fogColor}" mask="url(#fog-mask)" pointer-events="none" class="wheel-fog"/>`;
+
+    // 레이어 4: 섹션 라벨 (안개 위, 항상 보임)
+    svg += labelsHtml;
+
+    // 레이어 5: 태그 텍스트 라벨 (안개 위, 항상 보임)
+    svg += tagTextsHtml;
+
+    // 레이어 6: 레이더 웨지 윤곽선 (최상단)
     svg += `<g class="wheel-radar" pointer-events="none">`;
     sections.forEach((section, i) => {
         svg += `<path class="wheel-radar-wedge" data-section="${section.id}" data-section-idx="${i}" d="" fill="transparent" pointer-events="none"/>`;
@@ -427,8 +425,8 @@ function updateRadarOverlay(svg) {
     const SLIDER_MAX = 5;
 
     WHEEL_SECTIONS.forEach((section, i) => {
+        const cutout = svg.querySelector(`.fog-cutout[data-section="${section.id}"]`);
         const wedge = svg.querySelector(`.wheel-radar-wedge[data-section="${section.id}"]`);
-        if (!wedge) return;
 
         // 슬라이더 값(0~5)으로 웨지 크기 결정
         const sliderId = SLIDER_TO_SECTION[i];
@@ -436,8 +434,8 @@ function updateRadarOverlay(svg) {
         const sliderVal = sliderEl ? parseInt(sliderEl.value) : 0;
 
         if (sliderVal === 0) {
-            wedge.setAttribute('d', '');
-            wedge.setAttribute('fill', 'transparent');
+            if (cutout) cutout.setAttribute('d', '');
+            if (wedge) { wedge.setAttribute('d', ''); wedge.setAttribute('fill', 'transparent'); }
             return;
         }
 
@@ -451,12 +449,18 @@ function updateRadarOverlay(svg) {
         const p1 = polarToXY(CX, CY, r, sa);
         const p2 = polarToXY(CX, CY, r, ea);
 
-        wedge.setAttribute('d', `M ${CX} ${CY} L ${p1.x} ${p1.y} A ${r} ${r} 0 0 1 ${p2.x} ${p2.y} Z`);
+        const d = `M ${CX} ${CY} L ${p1.x} ${p1.y} A ${r} ${r} 0 0 1 ${p2.x} ${p2.y} Z`;
 
-        wedge.setAttribute('fill', `url(#gr-${section.id})`);
-        wedge.setAttribute('opacity', '0.92');
-        wedge.setAttribute('stroke', isDark ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.4)');
-        wedge.setAttribute('stroke-width', '0.8');
+        // 안개 마스크 컷아웃 업데이트 (안개를 걷어냄)
+        if (cutout) cutout.setAttribute('d', d);
+
+        // 웨지 윤곽선 업데이트 (경계 표시)
+        if (wedge) {
+            wedge.setAttribute('d', d);
+            wedge.setAttribute('fill', 'transparent');
+            wedge.setAttribute('stroke', isDark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.08)');
+            wedge.setAttribute('stroke-width', '0.8');
+        }
     });
 }
 
@@ -591,22 +595,14 @@ function generateStaticWheelSvg(flavorJson, mode) {
             const c = section.color;
             const midColor = isDark ? c.midD : c.mid;
             const lightColor = isDark ? c.lightD : c.light;
-            const fogBg = isDark ? '#181818' : '#FFFFFF';
-            const fogCenter = blendColor(fogBg, midColor, 0.18);
-            const fogEdge = blendColor(fogBg, midColor, 0.06);
             svg += `<radialGradient id="si${sgid}-${section.id}" gradientUnits="userSpaceOnUse" cx="${cx}" cy="${cy}" r="${R1_OUT}">`;
-            svg += `<stop offset="0%" stop-color="${fogCenter}"/>`;
-            svg += `<stop offset="100%" stop-color="${fogEdge}"/>`;
+            svg += `<stop offset="0%" stop-color="${midColor}"/>`;
+            svg += `<stop offset="100%" stop-color="${lightColor}"/>`;
             svg += `</radialGradient>`;
             svg += `<radialGradient id="so${sgid}-${section.id}" gradientUnits="userSpaceOnUse" cx="${cx}" cy="${cy}" r="${R3_OUT}">`;
-            svg += `<stop offset="0%" stop-color="${fogCenter}"/>`;
-            svg += `<stop offset="45%" stop-color="${fogCenter}"/>`;
-            svg += `<stop offset="100%" stop-color="${fogEdge}"/>`;
-            svg += `</radialGradient>`;
-            svg += `<radialGradient id="sr${sgid}-${section.id}" gradientUnits="userSpaceOnUse" cx="${cx}" cy="${cy}" r="${R3_OUT}">`;
             svg += `<stop offset="0%" stop-color="${midColor}"/>`;
-            svg += `<stop offset="50%" stop-color="${midColor}"/>`;
-            svg += `<stop offset="100%" stop-color="${blendColor(midColor, lightColor, 0.35)}"/>`;
+            svg += `<stop offset="45%" stop-color="${midColor}"/>`;
+            svg += `<stop offset="100%" stop-color="${lightColor}"/>`;
             svg += `</radialGradient>`;
         });
         svg += '</defs>';
@@ -717,19 +713,18 @@ function generateStaticWheelSvg(flavorJson, mode) {
         svg += `<path d="M ${cx} ${cy - R2_OUT} A ${R2_OUT} ${R2_OUT} 0 0 1 ${cx} ${cy + R2_OUT}" fill="none" stroke="var(--wheel-line-color, rgba(255,255,255,0.4))" stroke-width="0.8" pointer-events="none"/>`;
     }
 
-    // 3. 레이더 웨지 — 슬라이더 기반 (레거시: 태그 카운트 기반)
+    // 3. 레이더 웨지 계산 (컷아웃 + 미니용)
     const radarMaxR = isMini ? MINI_MAX_R : R3_OUT;
     const SLIDER_MAX = 5;
 
+    // 웨지 d 경로 사전 계산
+    const wedgePaths = [];
     offset = -90;
     if (hasSliderData) {
-        // 슬라이더 기반 웨지
         WHEEL_SECTIONS.forEach((section, i) => {
             const sliderKey = SLIDER_TO_SECTION[i];
             const sliderVal = sliderData[sliderKey] || 0;
-
-            if (sliderVal === 0) { offset += SECTION_ANGLE; return; }
-
+            if (sliderVal === 0) { wedgePaths.push(''); offset += SECTION_ANGLE; return; }
             const r = (sliderVal / SLIDER_MAX) * radarMaxR;
             const startAngle = offset;
             const endAngle = offset + SECTION_ANGLE;
@@ -738,9 +733,7 @@ function generateStaticWheelSvg(flavorJson, mode) {
             const ea = endAngle - gap / 2;
             const p1 = polarToXY(cx, cy, r, sa);
             const p2 = polarToXY(cx, cy, r, ea);
-
-            const rFill = isMini ? (isDark ? (RADAR_COLORS[section.id]||{dark:'#aaa'}).dark : (RADAR_COLORS[section.id]||{light:'#888'}).light) : `url(#sr${sgid}-${section.id})`;
-            svg += `<path d="M ${cx} ${cy} L ${p1.x} ${p1.y} A ${r} ${r} 0 0 1 ${p2.x} ${p2.y} Z" fill="${rFill}" opacity="${isMini ? '0.55' : '0.92'}" stroke="${isDark ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.4)'}" stroke-width="0.8" pointer-events="none"/>`;
+            wedgePaths.push(`M ${cx} ${cy} L ${p1.x} ${p1.y} A ${r} ${r} 0 0 1 ${p2.x} ${p2.y} Z`);
             offset += SECTION_ANGLE;
         });
     } else {
@@ -771,7 +764,7 @@ function generateStaticWheelSvg(flavorJson, mode) {
         });
 
         WHEEL_SECTIONS.forEach((section, i) => {
-            if (ratios[i] === 0) { offset += SECTION_ANGLE; return; }
+            if (ratios[i] === 0) { wedgePaths.push(''); offset += SECTION_ANGLE; return; }
             const r = Math.max(ratios[i] * radarMaxR, isMini ? 12 : 18);
             const startAngle = offset;
             const endAngle = offset + SECTION_ANGLE;
@@ -780,10 +773,30 @@ function generateStaticWheelSvg(flavorJson, mode) {
             const ea = endAngle - gap / 2;
             const p1 = polarToXY(cx, cy, r, sa);
             const p2 = polarToXY(cx, cy, r, ea);
-
-            const rFill2 = isMini ? (isDark ? (RADAR_COLORS[section.id]||{dark:'#aaa'}).dark : (RADAR_COLORS[section.id]||{light:'#888'}).light) : `url(#sr${sgid}-${section.id})`;
-            svg += `<path d="M ${cx} ${cy} L ${p1.x} ${p1.y} A ${r} ${r} 0 0 1 ${p2.x} ${p2.y} Z" fill="${rFill2}" opacity="${isMini ? '0.55' : '0.92'}" stroke="${isDark ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.4)'}" stroke-width="0.8" pointer-events="none"/>`;
+            wedgePaths.push(`M ${cx} ${cy} L ${p1.x} ${p1.y} A ${r} ${r} 0 0 1 ${p2.x} ${p2.y} Z`);
             offset += SECTION_ANGLE;
+        });
+    }
+
+    // 풀 모드: 안개 오버레이 + 마스크 (슬라이더 영역만 걷어냄)
+    if (!isMini) {
+        svg += `<mask id="fog-mask-${sgid}">`;
+        svg += `<rect width="${W}" height="${W}" fill="white"/>`;
+        wedgePaths.forEach((d, i) => {
+            if (d) svg += `<path d="${d}" fill="black"/>`;
+        });
+        svg += `</mask>`;
+        const sFogColor = isDark ? 'rgba(24,24,24,0.78)' : 'rgba(255,255,255,0.78)';
+        svg += `<circle cx="${cx}" cy="${cy}" r="${R3_OUT + 2}" fill="${sFogColor}" mask="url(#fog-mask-${sgid})" pointer-events="none"/>`;
+    }
+
+    // 미니 모드: 기존 색상 웨지 (안개 개념 없음)
+    if (isMini) {
+        WHEEL_SECTIONS.forEach((section, i) => {
+            if (!wedgePaths[i]) return;
+            const rc = RADAR_COLORS[section.id] || { light: '#888', dark: '#aaa' };
+            const fillColor = isDark ? rc.dark : rc.light;
+            svg += `<path d="${wedgePaths[i]}" fill="${fillColor}" opacity="0.55" stroke="${isDark ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.7)'}" stroke-width="1.2" pointer-events="none"/>`;
         });
     }
 
