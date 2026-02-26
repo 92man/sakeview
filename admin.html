@@ -316,9 +316,63 @@
                     <option value="후츠슈">후츠슈</option>
                 </select>
             </div>
+            <hr style="border:none; border-top:1px solid #eee; margin:18px 0 14px;">
+            <div style="font-size:0.85em; font-weight:600; color:#383961; margin-bottom:12px;">양조 스펙 (선택)</div>
             <div class="register-field">
-                <label>정미보합</label>
-                <input type="text" id="registerPolishRate" placeholder="예: 45%">
+                <label>주조호적미 (Rice)</label>
+                <select id="regRice" onchange="document.getElementById('regRiceCustom').style.display=this.value==='기타'?'block':'none'">
+                    <option value="">선택...</option>
+                    <option value="야마다니시키">야마다니시키 (山田錦)</option>
+                    <option value="오마치">오마치 (雄町)</option>
+                    <option value="고햐쿠만고쿠">고햐쿠만고쿠 (五百万石)</option>
+                    <option value="아이야마">아이야마 (愛山)</option>
+                    <option value="미야마니시키">미야마니시키 (美山錦)</option>
+                    <option value="하나후부키">하나후부키 (華吹雪)</option>
+                    <option value="데와산산">데와산산 (出羽燦々)</option>
+                    <option value="기타">기타 (직접입력)</option>
+                </select>
+                <input type="text" id="regRiceCustom" placeholder="직접 입력" style="display:none; margin-top:6px;">
+            </div>
+            <div class="register-field">
+                <label>정미보합 (Polishing Rate %)</label>
+                <input type="number" id="registerPolishRate" placeholder="50" min="1" max="100" step="1">
+            </div>
+            <div class="register-field">
+                <label style="color:#383961; font-weight:700;">효모 (Yeast) ⭐</label>
+                <select id="regYeast" onchange="document.getElementById('regYeastCustom').style.display=this.value==='기타'?'block':'none'">
+                    <option value="">선택...</option>
+                    <option value="7호">7호 (협회7호)</option>
+                    <option value="9호">9호 (협회9호)</option>
+                    <option value="14호">14호 (협회14호)</option>
+                    <option value="1401">1401호</option>
+                    <option value="1801">1801호</option>
+                    <option value="자사효모">자사효모</option>
+                    <option value="기타">기타 (직접입력)</option>
+                </select>
+                <input type="text" id="regYeastCustom" placeholder="직접 입력" style="display:none; margin-top:6px;">
+            </div>
+            <div class="register-field">
+                <label>일본주도 (SMV)</label>
+                <input type="number" id="regSmv" placeholder="+3" step="0.1">
+            </div>
+            <div class="register-field">
+                <label>산도 (Acidity)</label>
+                <input type="number" id="regAcidity" placeholder="1.3" min="0" step="0.1">
+            </div>
+            <div class="register-field">
+                <label>알코올 도수 (%)</label>
+                <input type="number" id="regAlcohol" placeholder="16" min="0" max="30" step="0.5">
+            </div>
+            <div class="register-field">
+                <label>살균 방식</label>
+                <select id="regPasteurization">
+                    <option value="">선택...</option>
+                    <option value="나마자케">나마자케 (생주/生酒)</option>
+                    <option value="히이레 1회">히이레 1회 (一回火入れ)</option>
+                    <option value="히이레 2회">히이레 2회 (二回火入れ)</option>
+                    <option value="나마초조">나마초조 (生貯蔵)</option>
+                    <option value="나마즈메">나마즈메 (生詰め)</option>
+                </select>
             </div>
             <div class="register-actions">
                 <button type="button" onclick="closeRegisterModal()" style="background:#ccc; color:#333;">취소</button>
@@ -629,6 +683,16 @@
             document.getElementById('registerJapanese').value = parsed.japanese;
             document.getElementById('registerGrade').value = parsed.grade;
             document.getElementById('registerPolishRate').value = '';
+            document.getElementById('regRice').value = '';
+            document.getElementById('regRiceCustom').value = '';
+            document.getElementById('regRiceCustom').style.display = 'none';
+            document.getElementById('regYeast').value = '';
+            document.getElementById('regYeastCustom').value = '';
+            document.getElementById('regYeastCustom').style.display = 'none';
+            document.getElementById('regSmv').value = '';
+            document.getElementById('regAcidity').value = '';
+            document.getElementById('regAlcohol').value = '';
+            document.getElementById('regPasteurization').value = '';
             document.getElementById('registerError').textContent = '';
             document.getElementById('registerModal').classList.add('active');
         }
@@ -643,7 +707,7 @@
             const productName = document.getElementById('registerProductName').value.trim();
             const japanese = document.getElementById('registerJapanese').value.trim();
             const grade = document.getElementById('registerGrade').value;
-            const polishRate = document.getElementById('registerPolishRate').value.trim();
+            const polishRateText = document.getElementById('registerPolishRate').value;
             const originalName = document.getElementById('registerOriginalName').dataset.original;
             const errorEl = document.getElementById('registerError');
 
@@ -656,6 +720,7 @@
                 const { data: session } = await client.auth.getSession();
                 const userId = session?.session?.user?.id;
 
+                const polishRate = polishRateText ? polishRateText + '%' : '';
                 const { error } = await client.from('custom_sakes').insert({
                     brand, brand_jp: brandJp, product_name: productName,
                     japanese, grade, polish_rate: polishRate,
@@ -669,6 +734,34 @@
                         throw error;
                     }
                     return;
+                }
+
+                // 스펙 데이터 수집 및 저장
+                let rice = document.getElementById('regRice').value;
+                if (rice === '기타') rice = document.getElementById('regRiceCustom').value.trim();
+                let yeast = document.getElementById('regYeast').value;
+                if (yeast === '기타') yeast = document.getElementById('regYeastCustom').value.trim();
+                const smv = document.getElementById('regSmv').value !== '' ? Number(document.getElementById('regSmv').value) : null;
+                const acidityVal = document.getElementById('regAcidity').value !== '' ? Number(document.getElementById('regAcidity').value) : null;
+                const alcohol = document.getElementById('regAlcohol').value !== '' ? Number(document.getElementById('regAlcohol').value) : null;
+                const pasteurization = document.getElementById('regPasteurization').value || null;
+                const polishRateNum = polishRateText ? Number(polishRateText) : null;
+
+                const hasSpec = rice || yeast || smv != null || acidityVal != null || alcohol != null || pasteurization || polishRateNum;
+                if (hasSpec) {
+                    const sakeName = japanese
+                        ? brand + ' ' + productName + ' (' + japanese + ')'
+                        : brand + ' ' + productName;
+                    await client.from('sake_specs').insert({
+                        sake_name: sakeName,
+                        rice: rice || null,
+                        polish_rate: polishRateNum,
+                        yeast: yeast || null,
+                        smv: smv,
+                        acidity: acidityVal,
+                        alcohol: alcohol,
+                        pasteurization: pasteurization
+                    });
                 }
 
                 alert('사케가 등록되었습니다!');
