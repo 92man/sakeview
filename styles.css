@@ -1465,6 +1465,7 @@ body.dark-mode .rating-slider-wrap input[type="range"]::-moz-range-thumb {
 }
 .profile-slider-compact {
     display: flex; align-items: center; gap: 6px; flex: 1; max-width: 65%;
+    margin-left: 12.5%;
 }
 .profile-slider-compact .profile-label-left,
 .profile-slider-compact .profile-label-right {
