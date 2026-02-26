@@ -1458,41 +1458,45 @@ body.dark-mode .rating-slider-wrap input[type="range"]::-moz-range-thumb {
 
 /* 맛 프로파일 슬라이더 (서브라벨 한 줄 통합) */
 .tasting-sub-label-with-slider {
-    display: flex; align-items: flex-start; gap: 8px;
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
 }
-.tasting-sub-label-with-slider .sub-label-text {
-    white-space: nowrap; padding-top: 2px;
-}
+.tasting-sub-label-with-slider .sub-label-text { white-space: nowrap; }
 .profile-slider-compact {
-    display: flex; align-items: flex-start; gap: 6px; max-width: 200px;
+    display: flex; align-items: center; gap: 6px; width: 55%;
 }
 .profile-slider-compact .profile-label-left,
 .profile-slider-compact .profile-label-right {
-    font-size: 0.65rem; color: var(--text-muted); white-space: nowrap; padding-top: 2px;
+    font-size: 0.65rem; color: var(--text-muted); white-space: nowrap;
 }
 .profile-slider-track-wrap {
-    display: flex; flex-direction: column; align-items: stretch; flex: 1; min-width: 0;
+    position: relative; flex: 1; min-width: 0; height: 20px;
 }
-.profile-slider-track-wrap .profile-range { width: 100%; }
+.profile-slider-track-wrap .profile-range {
+    width: 100%; position: relative; z-index: 2;
+}
 .profile-slider-ticks {
-    display: flex; justify-content: space-between; padding: 0 2px;
-    font-size: 0.65rem; color: var(--text-muted); margin-top: 1px;
+    display: flex; justify-content: space-between;
+    position: absolute; top: 50%; left: 2px; right: 2px;
+    transform: translateY(-50%); pointer-events: none; z-index: 1;
 }
-.profile-slider-ticks span { text-align: center; width: 12px; }
+.profile-slider-ticks span {
+    font-size: 0.6rem; color: var(--text-muted); text-align: center; width: 12px;
+    line-height: 1; font-weight: 500;
+}
 .profile-range {
-    -webkit-appearance: none; appearance: none; flex: 1; height: 6px; border-radius: 3px;
+    -webkit-appearance: none; appearance: none; flex: 1; height: 2px; border-radius: 1px;
     background: linear-gradient(90deg, var(--border-light) 0%, var(--accent-gold) 100%);
     outline: none; cursor: pointer;
 }
 .profile-range::-webkit-slider-thumb {
-    -webkit-appearance: none; appearance: none; width: 24px; height: 24px; border-radius: 50%;
+    -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%;
     background: linear-gradient(135deg, var(--accent-primary) 0%, #454780 100%);
-    border: 3px solid #fff; box-shadow: 0 2px 6px rgba(56, 57, 97, 0.3); cursor: pointer;
+    border: 2px solid #fff; box-shadow: 0 1px 4px rgba(56, 57, 97, 0.3); cursor: pointer;
 }
 .profile-range::-moz-range-thumb {
-    width: 24px; height: 24px; border-radius: 50%;
+    width: 18px; height: 18px; border-radius: 50%;
     background: linear-gradient(135deg, var(--accent-primary) 0%, #454780 100%);
-    border: 3px solid #fff; box-shadow: 0 2px 6px rgba(56, 57, 97, 0.3); cursor: pointer;
+    border: 2px solid #fff; box-shadow: 0 1px 4px rgba(56, 57, 97, 0.3); cursor: pointer;
 }
 body.dark-mode .profile-range::-webkit-slider-thumb {
     background: linear-gradient(135deg, var(--accent-gold) 0%, #B5B98A 100%);
