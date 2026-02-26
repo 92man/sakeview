@@ -195,7 +195,7 @@ function generateFlavorWheel() {
                     CX, CY, R2_IN, R2_OUT,
                     tagStart, tagEnd,
                     'wheel-segment', lightFill,
-                    `${dataAttrs(tag)} data-ring="inner"`
+                    `${dataAttrs(tag)} data-ring="inner" data-orig-fill="${lightFill}"`
                 );
 
                 const tagMidAngle = tagStart + innerAngle / 2;
@@ -218,7 +218,7 @@ function generateFlavorWheel() {
                     CX, CY, R3_IN, R3_OUT,
                     tagStart, tagEnd,
                     'wheel-segment wheel-segment-outer', outerFill,
-                    `${dataAttrs(tag)} data-ring="outer"`
+                    `${dataAttrs(tag)} data-ring="outer" data-orig-fill="${outerFill}"`
                 );
 
                 const tagMidAngle = tagStart + outerAngle / 2;
@@ -293,6 +293,13 @@ function updateWheelVisuals() {
 }
 
 function updateWheelTagBold(svg) {
+    const isDark = document.body.classList.contains('dark-mode');
+    // 섹션 색상 맵 생성
+    const sectionColors = {};
+    WHEEL_SECTIONS.forEach(s => {
+        sectionColors[s.id] = { sel: isDark ? s.color.selD : s.color.sel, light: isDark ? s.color.lightD : s.color.light };
+    });
+
     const labels = svg.querySelectorAll('text[data-wheel-expr]');
     labels.forEach(label => {
         const expr = label.dataset.wheelExpr;
@@ -318,6 +325,37 @@ function updateWheelTagBold(svg) {
             label.classList.add('wheel-tag-selected');
         } else {
             label.classList.remove('wheel-tag-selected');
+        }
+    });
+
+    // 아크 배경 색상 하이라이트
+    const arcs = svg.querySelectorAll('path.wheel-segment[data-expr]');
+    arcs.forEach(arc => {
+        const expr = arc.dataset.expr;
+        const sectionId = arc.dataset.section;
+        let isSelected = false;
+
+        // 멀티 태그 확인
+        const catId = arc.dataset.catId;
+        const subCat = arc.dataset.subCat;
+        if (catId && subCat) {
+            const catSel = tastingSelections[catId];
+            isSelected = catSel && catSel[subCat] && catSel[subCat].includes(expr);
+        }
+
+        // 단일 선택 확인
+        if (!isSelected) {
+            const uiType = arc.dataset.uiType;
+            if (uiType === '단일 선택') {
+                const radioKey = catId + '_' + subCat;
+                isSelected = tastingRadioSelections[radioKey] === expr;
+            }
+        }
+
+        const colors = sectionColors[sectionId];
+        if (colors) {
+            const origFill = arc.dataset.origFill || colors.light;
+            arc.setAttribute('fill', isSelected ? colors.sel : origFill);
         }
     });
 }
