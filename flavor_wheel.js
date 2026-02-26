@@ -325,18 +325,6 @@ function generateFlavorWheel() {
     }
 }
 
-// ── 색상 헬퍼 ──
-
-function blendColor(c1, c2, ratio) {
-    const h = s => parseInt(s, 16);
-    const r1 = h(c1.slice(1,3)), g1 = h(c1.slice(3,5)), b1 = h(c1.slice(5,7));
-    const r2 = h(c2.slice(1,3)), g2 = h(c2.slice(3,5)), b2 = h(c2.slice(5,7));
-    const r = Math.round(r1 + (r2 - r1) * ratio);
-    const g = Math.round(g1 + (g2 - g1) * ratio);
-    const b = Math.round(b1 + (b2 - b1) * ratio);
-    return `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
-}
-
 // ── 상태 업데이트 ──
 
 function updateWheelVisuals() {
@@ -666,7 +654,6 @@ function generateStaticWheelSvg(flavorJson, mode) {
                     const tagStart = offset + j * innerAngle;
                     const tagEnd = tagStart + innerAngle;
                     const isSelected = selectedSet.has(tag.ko);
-                    const isMain = (mainTags[tag.catId] === tag.ko);
 
                     svg += createArcPath(cx, cy, R2_IN, R2_OUT, tagStart, tagEnd, '', sGradFill, 'pointer-events="none"');
 
@@ -687,7 +674,6 @@ function generateStaticWheelSvg(flavorJson, mode) {
                     const tagStart = offset + j * outerAngle;
                     const tagEnd = tagStart + outerAngle;
                     const isSelected = selectedSet.has(tag.ko);
-                    const isMain = (mainTags[tag.catId] === tag.ko);
 
                     svg += createArcPath(cx, cy, R3_IN, R3_OUT, tagStart, tagEnd, '', sGradFill, 'pointer-events="none"');
 
