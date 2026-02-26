@@ -79,8 +79,8 @@ function updateThumbVal(input, sid) {
     var thumb = document.getElementById('thumb_' + sid);
     if (!thumb) return;
     thumb.textContent = val;
-    // 1~5 → 0%~100% (썸 크기 보정)
-    var pct = (val - 1) / 4 * 100;
+    // 0~5 → 0%~100% (썸 크기 보정)
+    var pct = val / 5 * 100;
     thumb.style.left = 'calc(' + pct + '% + ' + (11 - pct * 0.22) + 'px)';
 }
 
@@ -138,9 +138,9 @@ function initTastingUI() {
                     '<div class="profile-slider-compact">' +
                         '<span class="profile-label-left">' + sliderCfg.left + '</span>' +
                         '<div class="profile-slider-track-wrap">' +
-                            '<input type="range" id="slider_' + sid + '" class="profile-range" min="1" max="5" value="3" step="1" oninput="updateThumbVal(this,\'' + sid + '\')">' +
-                            '<span class="profile-thumb-val" id="thumb_' + sid + '" style="left:50%">3</span>' +
-                            '<div class="profile-slider-ticks"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>' +
+                            '<input type="range" id="slider_' + sid + '" class="profile-range" min="0" max="5" value="0" step="1" oninput="updateThumbVal(this,\'' + sid + '\')">' +
+                            '<span class="profile-thumb-val" id="thumb_' + sid + '" style="left:0%">0</span>' +
+                            '<div class="profile-slider-ticks"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>' +
                         '</div>' +
                         '<span class="profile-label-right">' + sliderCfg.right + '</span>' +
                     '</div>';
@@ -443,11 +443,11 @@ function loadTastingDataToForm(jsonStr) {
     // 이전 단일 aroma 값 → 3종으로 마이그레이션
     if (sliders.aroma && !sliders.aroma_fruit) {
         sliders.aroma_fruit = sliders.aroma;
-        sliders.aroma_dairy = 3;
-        sliders.aroma_grain = 3;
+        sliders.aroma_dairy = 0;
+        sliders.aroma_grain = 0;
     }
     sliderKeys.forEach(function(key) {
-        var val = sliders[key] || 3;
+        var val = (sliders[key] !== undefined && sliders[key] !== null) ? sliders[key] : 0;
         var el = document.getElementById('slider_' + key);
         if (el) el.value = val;
     });
@@ -471,7 +471,9 @@ function resetTastingUI() {
     // 맛 프로파일 슬라이더 초기화
     ['aroma_fruit', 'aroma_dairy', 'aroma_grain', 'sweetness', 'acidity', 'body', 'umami'].forEach(function(key) {
         var el = document.getElementById('slider_' + key);
-        if (el) el.value = 3;
+        if (el) el.value = 0;
+        var thumb = document.getElementById('thumb_' + key);
+        if (thumb) { thumb.textContent = '0'; thumb.style.left = '0%'; }
     });
     updateTastingBadges();
     updateTastingSummary();
