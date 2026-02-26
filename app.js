@@ -707,11 +707,13 @@ async function handleSignup(event) {
     try {
         const signupGender = document.getElementById('signupGender').value || null;
         const signupAge = document.getElementById('signupAge').value || null;
+        const drinkPrefChecked = document.querySelectorAll('input[name="drinkPref"]:checked');
+        const drinkPref = drinkPrefChecked.length > 0 ? Array.from(drinkPrefChecked).map(function(c) { return c.value; }) : null;
         const { data, error } = await supabaseClient.auth.signUp({
             email,
             password,
             options: {
-                data: { gender: signupGender, age_group: signupAge }
+                data: { gender: signupGender, age_group: signupAge, drink_pref: drinkPref }
             }
         });
 

@@ -92,7 +92,7 @@
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Serif+KR:wght@400;500;700;900&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=31">
+    <link rel="stylesheet" href="styles.css?v=32">
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1907306190071217"
          crossorigin="anonymous"></script>
@@ -180,6 +180,18 @@
                                 <option value="50s">50대</option>
                                 <option value="60s">60대 이상</option>
                             </select>
+                        </div>
+                    </div>
+                    <!-- 주류 취향 (중복 선택) -->
+                    <div class="signup-drink-pref">
+                        <p class="demographics-hint">사케 외에 평소 즐겨 드시는 술은 무엇인가요? (중복 선택 가능)</p>
+                        <div class="drink-pref-options">
+                            <label class="drink-pref-chip"><input type="checkbox" name="drinkPref" value="soju"><span>소주 <em>(깔끔/드라이)</em></span></label>
+                            <label class="drink-pref-chip"><input type="checkbox" name="drinkPref" value="beer"><span>맥주 <em>(청량감)</em></span></label>
+                            <label class="drink-pref-chip"><input type="checkbox" name="drinkPref" value="white_wine"><span>화이트/스파클링 와인 <em>(산미/과일향)</em></span></label>
+                            <label class="drink-pref-chip"><input type="checkbox" name="drinkPref" value="red_wine"><span>레드 와인 <em>(바디감)</em></span></label>
+                            <label class="drink-pref-chip"><input type="checkbox" name="drinkPref" value="whiskey"><span>위스키/증류주 <em>(고도수/향)</em></span></label>
+                            <label class="drink-pref-chip"><input type="checkbox" name="drinkPref" value="makgeolli"><span>막걸리/전통주 <em>(단맛/곡물향)</em></span></label>
                         </div>
                     </div>
                     <!-- 자격증 인증 옵션 -->
@@ -590,7 +602,7 @@
     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
     <script defer src="flavor_wheel.js?v=10"></script>
     <script defer src="policy_pages.js?v=11"></script>
-    <script defer src="app.js?v=21"></script>
+    <script defer src="app.js?v=22"></script>
 
 
     <!-- OCR Modal -->
