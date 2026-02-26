@@ -330,6 +330,14 @@ function collectTastingData() {
     if (Object.keys(tastingMainTags).length > 0) {
         data.mainTags = { ...tastingMainTags };
     }
+    // 맛 프로파일 슬라이더
+    data.sliders = {
+        aroma: parseInt(document.getElementById('slider_aroma').value),
+        sweetness: parseInt(document.getElementById('slider_sweetness').value),
+        acidity: parseInt(document.getElementById('slider_acidity').value),
+        body: parseInt(document.getElementById('slider_body').value),
+        umami: parseInt(document.getElementById('slider_umami').value)
+    };
     return data;
 }
 
@@ -381,6 +389,16 @@ function loadTastingDataToForm(jsonStr) {
         if (noteEl) noteEl.value = noteVal;
     });
 
+    // 맛 프로파일 슬라이더 복원
+    var sliders = data.sliders || {};
+    ['aroma', 'sweetness', 'acidity', 'body', 'umami'].forEach(function(key) {
+        var val = sliders[key] || 3;
+        var el = document.getElementById('slider_' + key);
+        if (el) el.value = val;
+        var valEl = document.getElementById('slider' + key.charAt(0).toUpperCase() + key.slice(1) + 'Val');
+        if (valEl) valEl.textContent = val;
+    });
+
     updateTastingBadges();
     updateTastingSummary();
     if (typeof updateWheelVisuals === 'function') updateWheelVisuals();
@@ -396,6 +414,13 @@ function resetTastingUI() {
     TASTING_CATEGORIES.forEach(c => {
         const noteEl = document.getElementById('catNote_' + c.id);
         if (noteEl) noteEl.value = '';
+    });
+    // 맛 프로파일 슬라이더 초기화
+    ['aroma', 'sweetness', 'acidity', 'body', 'umami'].forEach(function(key) {
+        var el = document.getElementById('slider_' + key);
+        if (el) el.value = 3;
+        var valEl = document.getElementById('slider' + key.charAt(0).toUpperCase() + key.slice(1) + 'Val');
+        if (valEl) valEl.textContent = '3';
     });
     updateTastingBadges();
     updateTastingSummary();

@@ -1456,6 +1456,51 @@ body.dark-mode .rating-slider-wrap input[type="range"]::-moz-range-thumb {
     border-color: #1a1a24;
 }
 
+/* 맛 프로파일 슬라이더 */
+.profile-sliders { display: flex; flex-direction: column; gap: 6px; }
+.profile-slider-item {
+    background: var(--card-bg); border-radius: 12px; padding: 14px 18px;
+    border: 1px solid var(--border-light);
+}
+.profile-slider-header {
+    font-size: 0.88rem; font-weight: 600; color: var(--text-primary); margin-bottom: 8px;
+    display: flex; align-items: center; gap: 8px;
+}
+.profile-slider-val {
+    font-size: 1.1rem; font-weight: 700; color: var(--accent-primary);
+}
+.profile-slider-row {
+    display: flex; align-items: center; gap: 10px;
+}
+.profile-label-left, .profile-label-right {
+    font-size: 0.75rem; color: var(--text-muted); white-space: nowrap; min-width: 42px;
+}
+.profile-label-left { text-align: right; }
+.profile-label-right { text-align: left; }
+.profile-range {
+    -webkit-appearance: none; appearance: none; flex: 1; height: 6px; border-radius: 3px;
+    background: linear-gradient(90deg, var(--border-light) 0%, var(--accent-gold) 100%);
+    outline: none; cursor: pointer;
+}
+.profile-range::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none; width: 24px; height: 24px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-primary) 0%, #454780 100%);
+    border: 3px solid #fff; box-shadow: 0 2px 6px rgba(56, 57, 97, 0.3); cursor: pointer;
+}
+.profile-range::-moz-range-thumb {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-primary) 0%, #454780 100%);
+    border: 3px solid #fff; box-shadow: 0 2px 6px rgba(56, 57, 97, 0.3); cursor: pointer;
+}
+body.dark-mode .profile-range::-webkit-slider-thumb {
+    background: linear-gradient(135deg, var(--accent-gold) 0%, #B5B98A 100%);
+    border-color: #1a1a24;
+}
+body.dark-mode .profile-range::-moz-range-thumb {
+    background: linear-gradient(135deg, var(--accent-gold) 0%, #B5B98A 100%);
+    border-color: #1a1a24;
+}
+
 .info-text {
     font-size: 0.85em;
     color: var(--text-muted);

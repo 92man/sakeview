@@ -92,7 +92,7 @@
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Serif+KR:wght@400;500;700;900&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=27">
+    <link rel="stylesheet" href="styles.css?v=28">
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1907306190071217"
          crossorigin="anonymous"></script>
@@ -410,6 +410,51 @@
                             <textarea id="personal_review" placeholder="이 사케에 대한 개인적인 생각을 자유롭게 작성하세요" rows="3"></textarea>
                         </div>
 
+                        <div class="section-title">맛 프로파일</div>
+
+                        <div class="profile-sliders">
+                            <div class="profile-slider-item">
+                                <div class="profile-slider-header">향의 강도 <span class="profile-slider-val" id="sliderAromaVal">3</span></div>
+                                <div class="profile-slider-row">
+                                    <span class="profile-label-left">온화함</span>
+                                    <input type="range" id="slider_aroma" class="profile-range" min="1" max="5" value="3" step="1" oninput="document.getElementById('sliderAromaVal').textContent=this.value">
+                                    <span class="profile-label-right">화려함</span>
+                                </div>
+                            </div>
+                            <div class="profile-slider-item">
+                                <div class="profile-slider-header">단맛 <span class="profile-slider-val" id="sliderSweetnessVal">3</span></div>
+                                <div class="profile-slider-row">
+                                    <span class="profile-label-left">드라이</span>
+                                    <input type="range" id="slider_sweetness" class="profile-range" min="1" max="5" value="3" step="1" oninput="document.getElementById('sliderSweetnessVal').textContent=this.value">
+                                    <span class="profile-label-right">스위트</span>
+                                </div>
+                            </div>
+                            <div class="profile-slider-item">
+                                <div class="profile-slider-header">산미 <span class="profile-slider-val" id="sliderAcidityVal">3</span></div>
+                                <div class="profile-slider-row">
+                                    <span class="profile-label-left">부드러움</span>
+                                    <input type="range" id="slider_acidity" class="profile-range" min="1" max="5" value="3" step="1" oninput="document.getElementById('sliderAcidityVal').textContent=this.value">
+                                    <span class="profile-label-right">쨍함</span>
+                                </div>
+                            </div>
+                            <div class="profile-slider-item">
+                                <div class="profile-slider-header">바디감 <span class="profile-slider-val" id="sliderBodyVal">3</span></div>
+                                <div class="profile-slider-row">
+                                    <span class="profile-label-left">가벼움</span>
+                                    <input type="range" id="slider_body" class="profile-range" min="1" max="5" value="3" step="1" oninput="document.getElementById('sliderBodyVal').textContent=this.value">
+                                    <span class="profile-label-right">무거움</span>
+                                </div>
+                            </div>
+                            <div class="profile-slider-item">
+                                <div class="profile-slider-header">감칠맛 <span class="profile-slider-val" id="sliderUmamiVal">3</span></div>
+                                <div class="profile-slider-row">
+                                    <span class="profile-label-left">옅음</span>
+                                    <input type="range" id="slider_umami" class="profile-range" min="1" max="5" value="3" step="1" oninput="document.getElementById('sliderUmamiVal').textContent=this.value">
+                                    <span class="profile-label-right">깊음</span>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="section-title">종합 평점</div>
 
                         <div class="form-group">
@@ -553,7 +598,7 @@
     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
     <script defer src="flavor_wheel.js?v=8"></script>
     <script defer src="policy_pages.js?v=11"></script>
-    <script defer src="app.js?v=14"></script>
+    <script defer src="app.js?v=15"></script>
 
 
     <!-- OCR Modal -->
