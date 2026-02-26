@@ -1460,19 +1460,27 @@ body.dark-mode .rating-slider-wrap input[type="range"]::-moz-range-thumb {
 .tasting-sub-label-with-slider {
     display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
 }
-.tasting-sub-label-with-slider .sub-label-text { white-space: nowrap; }
+.tasting-sub-label-with-slider .sub-label-text {
+    white-space: nowrap; color: var(--accent-primary); font-weight: 700;
+}
 .profile-slider-compact {
-    display: flex; align-items: center; gap: 6px; width: 55%;
+    display: flex; align-items: center; gap: 6px; flex: 1; max-width: 65%;
 }
 .profile-slider-compact .profile-label-left,
 .profile-slider-compact .profile-label-right {
     font-size: 0.65rem; color: var(--text-muted); white-space: nowrap;
 }
 .profile-slider-track-wrap {
-    position: relative; flex: 1; min-width: 0; height: 20px;
+    position: relative; flex: 1; min-width: 0; height: 24px;
 }
 .profile-slider-track-wrap .profile-range {
-    width: 100%; position: relative; z-index: 2;
+    width: 100%; position: relative; z-index: 3;
+}
+/* 동그라미 안 점수 표시 */
+.profile-thumb-val {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    font-size: 0.55rem; font-weight: 700; color: #fff;
+    pointer-events: none; z-index: 4;
 }
 .profile-slider-ticks {
     display: flex; justify-content: space-between;
@@ -1480,32 +1488,35 @@ body.dark-mode .rating-slider-wrap input[type="range"]::-moz-range-thumb {
     transform: translateY(-50%); pointer-events: none; z-index: 1;
 }
 .profile-slider-ticks span {
-    font-size: 0.6rem; color: var(--text-muted); text-align: center; width: 12px;
-    line-height: 1; font-weight: 500;
+    font-size: 0.6rem; color: var(--border-card); text-align: center; width: 12px;
+    line-height: 1; font-weight: 600;
 }
 .profile-range {
-    -webkit-appearance: none; appearance: none; flex: 1; height: 2px; border-radius: 1px;
-    background: linear-gradient(90deg, var(--border-light) 0%, var(--accent-gold) 100%);
+    -webkit-appearance: none; appearance: none; flex: 1; height: 3px; border-radius: 2px;
+    background: linear-gradient(90deg, #e8e0d0 0%, #d4cbb8 100%);
     outline: none; cursor: pointer;
 }
 .profile-range::-webkit-slider-thumb {
-    -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent-primary) 0%, #454780 100%);
+    -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 50%;
+    background: var(--accent-primary);
     border: 2px solid #fff; box-shadow: 0 1px 4px rgba(56, 57, 97, 0.3); cursor: pointer;
 }
 .profile-range::-moz-range-thumb {
-    width: 18px; height: 18px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent-primary) 0%, #454780 100%);
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--accent-primary);
     border: 2px solid #fff; box-shadow: 0 1px 4px rgba(56, 57, 97, 0.3); cursor: pointer;
 }
+body.dark-mode .profile-range {
+    background: linear-gradient(90deg, #3a3a44 0%, #4a4a55 100%);
+}
 body.dark-mode .profile-range::-webkit-slider-thumb {
-    background: linear-gradient(135deg, var(--accent-gold) 0%, #B5B98A 100%);
-    border-color: #1a1a24;
+    background: var(--accent-gold); border-color: #1a1a24;
 }
 body.dark-mode .profile-range::-moz-range-thumb {
-    background: linear-gradient(135deg, var(--accent-gold) 0%, #B5B98A 100%);
-    border-color: #1a1a24;
+    background: var(--accent-gold); border-color: #1a1a24;
 }
+body.dark-mode .profile-slider-ticks span { color: #555; }
+body.dark-mode .profile-thumb-val { color: #1a1a24; }
 
 .info-text {
     font-size: 0.85em;

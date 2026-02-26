@@ -73,6 +73,17 @@ let tastingCategoryNotes = {}; // { "aroma": "추가 메모", ... }
 let tastingMainTags = {}; // { "aroma": "바나나", "taste": "깔끔함", ... } 카테고리당 메인 태그 1개
 let activeTastingCategory = 'aroma';
 
+// 슬라이더 동그라미 안 점수 위치 업데이트
+function updateThumbVal(input, sid) {
+    var val = input.value;
+    var thumb = document.getElementById('thumb_' + sid);
+    if (!thumb) return;
+    thumb.textContent = val;
+    // 1~5 → 0%~100% (썸 크기 보정)
+    var pct = (val - 1) / 4 * 100;
+    thumb.style.left = 'calc(' + pct + '% + ' + (11 - pct * 0.22) + 'px)';
+}
+
 // 슬라이더 ↔ 서브카테고리 매핑
 var PROFILE_SLIDER_MAP = {
     'aroma_과일/꽃 계열': { id: 'aroma_fruit', valId: 'sliderAromaFruitVal', label: '과일/꽃 향', left: '약함', right: '강함' },
@@ -119,6 +130,7 @@ function initTastingUI() {
 
             if (sliderCfg) {
                 // 라벨 + 슬라이더(1~5 눈금)를 한 줄로
+                var sid = sliderCfg.id;
                 const labelRow = document.createElement('div');
                 labelRow.className = 'tasting-sub-label tasting-sub-label-with-slider';
                 labelRow.innerHTML =
@@ -126,7 +138,8 @@ function initTastingUI() {
                     '<div class="profile-slider-compact">' +
                         '<span class="profile-label-left">' + sliderCfg.left + '</span>' +
                         '<div class="profile-slider-track-wrap">' +
-                            '<input type="range" id="slider_' + sliderCfg.id + '" class="profile-range" min="1" max="5" value="3" step="1">' +
+                            '<input type="range" id="slider_' + sid + '" class="profile-range" min="1" max="5" value="3" step="1" oninput="updateThumbVal(this,\'' + sid + '\')">' +
+                            '<span class="profile-thumb-val" id="thumb_' + sid + '" style="left:50%">3</span>' +
                             '<div class="profile-slider-ticks"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>' +
                         '</div>' +
                         '<span class="profile-label-right">' + sliderCfg.right + '</span>' +
