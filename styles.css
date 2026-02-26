@@ -3863,6 +3863,27 @@ body.dark-mode .sidebar-view-all-btn:hover {
 
 /* === 자격증 인증 시스템 === */
 
+/* 회원가입 성별·연령대 */
+.signup-demographics { margin: 4px 0 8px; }
+.demographics-hint {
+    font-size: 0.78rem; color: var(--text-muted); text-align: center;
+    margin: 0 0 10px; line-height: 1.4;
+}
+.demographics-row { display: flex; gap: 8px; }
+.demographics-row .auth-input { flex: 1; padding: 14px 12px; font-size: 0.88rem; }
+
+/* 칩 라디오 (재구매의사 / 가격대) */
+.chip-radio-group { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip-radio input { display: none; }
+.chip-radio span {
+    display: inline-block; padding: 10px 18px; border-radius: 20px; font-size: 0.88rem;
+    border: 1.5px solid var(--border-card); background: var(--bg-card); color: var(--text-primary);
+    cursor: pointer; transition: all 0.2s;
+}
+.chip-radio input:checked + span {
+    background: var(--accent-primary); color: #fff; border-color: var(--accent-primary);
+}
+
 .cert-signup-section {
     margin: 4px 0 8px;
 }

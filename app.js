@@ -707,9 +707,14 @@ async function handleSignup(event) {
     errorDiv.textContent = '';
 
     try {
+        const signupGender = document.getElementById('signupGender').value || null;
+        const signupAge = document.getElementById('signupAge').value || null;
         const { data, error } = await supabaseClient.auth.signUp({
             email,
-            password
+            password,
+            options: {
+                data: { gender: signupGender, age_group: signupAge }
+            }
         });
 
         if (error) throw error;
@@ -929,6 +934,8 @@ async function saveTastingNote(event) {
         sake_name: sakeNameVal.trim(),
         flavor_description: JSON.stringify(tastingData),
         personal_review: document.getElementById('personal_review').value,
+        repurchase: (document.querySelector('input[name="repurchase"]:checked') || {}).value || null,
+        price_range: (document.querySelector('input[name="priceRange"]:checked') || {}).value || null,
         overall_rating: parseInt(document.getElementById('overall_rating_slider').value)
     };
 
@@ -2356,6 +2363,16 @@ async function editNote(id) {
         }
 
         document.getElementById('personal_review').value = note.personal_review || '';
+
+        // 재구매의사 / 가격대 복원
+        if (note.repurchase) {
+            var rp = document.querySelector('input[name="repurchase"][value="' + note.repurchase + '"]');
+            if (rp) rp.checked = true;
+        }
+        if (note.price_range) {
+            var pr = document.querySelector('input[name="priceRange"][value="' + note.price_range + '"]');
+            if (pr) pr.checked = true;
+        }
 
         const submitBtn = document.getElementById('submitBtn');
         submitBtn.textContent = '수정 완료';

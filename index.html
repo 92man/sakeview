@@ -92,7 +92,7 @@
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Serif+KR:wght@400;500;700;900&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=30">
+    <link rel="stylesheet" href="styles.css?v=31">
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1907306190071217"
          crossorigin="anonymous"></script>
@@ -163,6 +163,25 @@
                     <input type="email" class="auth-input" id="signupEmail" placeholder="이메일 주소" required>
                     <input type="password" class="auth-input" id="signupPassword" placeholder="비밀번호 (최소 6자)" required minlength="6">
                     <input type="password" class="auth-input" id="signupPasswordConfirm" placeholder="비밀번호 확인" required minlength="6">
+                    <!-- 성별·연령대 (선택) -->
+                    <div class="signup-demographics">
+                        <p class="demographics-hint">입력해주시면 회원님의 연령대에 딱 맞는 사케를 추천해드려요</p>
+                        <div class="demographics-row">
+                            <select class="auth-input" id="signupGender">
+                                <option value="">성별 (선택)</option>
+                                <option value="male">남</option>
+                                <option value="female">여</option>
+                            </select>
+                            <select class="auth-input" id="signupAge">
+                                <option value="">연령대 (선택)</option>
+                                <option value="20s">20대</option>
+                                <option value="30s">30대</option>
+                                <option value="40s">40대</option>
+                                <option value="50s">50대</option>
+                                <option value="60s">60대 이상</option>
+                            </select>
+                        </div>
+                    </div>
                     <!-- 자격증 인증 옵션 -->
                     <div class="cert-signup-section">
                         <label class="cert-toggle-label">
@@ -410,6 +429,24 @@
                             <textarea id="personal_review" placeholder="이 사케에 대한 개인적인 생각을 자유롭게 작성하세요" rows="3"></textarea>
                         </div>
 
+                        <div class="section-title">재구매 의사</div>
+                        <div class="form-group">
+                            <div class="chip-radio-group">
+                                <label class="chip-radio"><input type="radio" name="repurchase" value="yes"><span>있음 👍</span></label>
+                                <label class="chip-radio"><input type="radio" name="repurchase" value="no"><span>없음 👎</span></label>
+                            </div>
+                        </div>
+
+                        <div class="section-title">구입 가격대</div>
+                        <div class="form-group">
+                            <div class="chip-radio-group">
+                                <label class="chip-radio"><input type="radio" name="priceRange" value="1-5"><span>1~5만</span></label>
+                                <label class="chip-radio"><input type="radio" name="priceRange" value="5-10"><span>5~10만</span></label>
+                                <label class="chip-radio"><input type="radio" name="priceRange" value="10-20"><span>10~20만</span></label>
+                                <label class="chip-radio"><input type="radio" name="priceRange" value="20+"><span>20만 이상</span></label>
+                            </div>
+                        </div>
+
                         <div class="section-title">종합 평점</div>
 
                         <div class="form-group">
@@ -553,7 +590,7 @@
     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
     <script defer src="flavor_wheel.js?v=9"></script>
     <script defer src="policy_pages.js?v=11"></script>
-    <script defer src="app.js?v=17"></script>
+    <script defer src="app.js?v=18"></script>
 
 
     <!-- OCR Modal -->
