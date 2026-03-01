@@ -263,10 +263,13 @@
 
     async function checkConnection() {
         try {
+            var controller = new AbortController();
+            var timeout = setTimeout(function () { controller.abort(); }, isLocal ? 3000 : 10000);
             var res = await fetch(CONFIG.API_TAGS_URL, {
                 method: 'GET',
-                signal: AbortSignal.timeout(isLocal ? 3000 : 10000),
+                signal: controller.signal,
             });
+            clearTimeout(timeout);
             if (res.ok) {
                 var data = await res.json();
                 var hasModel = data.models && data.models.some(function (m) {
