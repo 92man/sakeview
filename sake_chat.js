@@ -265,7 +265,7 @@
         try {
             var res = await fetch(CONFIG.API_TAGS_URL, {
                 method: 'GET',
-                signal: AbortSignal.timeout(3000),
+                signal: AbortSignal.timeout(isLocal ? 3000 : 10000),
             });
             if (res.ok) {
                 var data = await res.json();
