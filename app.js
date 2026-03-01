@@ -876,7 +876,7 @@ async function updateSidebar() {
             const daysAgo = Math.floor((now - date) / (1000 * 60 * 60 * 24));
             const timeText = daysAgo === 0 ? '오늘' : daysAgo + '일 전';
             const stars = '★'.repeat(Math.min(Math.round((n.overall_rating || 50) / 20), 5));
-            return `<div onclick="showDetail('${n.id}')" style="display:flex;gap:12px;padding:12px;background:var(--card-bg);border:1px solid var(--border-card);border-radius:12px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--accent-gold)';this.style.boxShadow='0 2px 8px rgba(56,57,97,0.08)'" onmouseout="this.style.borderColor='var(--border-card)';this.style.boxShadow='none'">
+            return `<div onclick="showDetail('${escapeAttr(n.id)}')" style="display:flex;gap:12px;padding:12px;background:var(--card-bg);border:1px solid var(--border-card);border-radius:12px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--accent-gold)';this.style.boxShadow='0 2px 8px rgba(56,57,97,0.08)'" onmouseout="this.style.borderColor='var(--border-card)';this.style.boxShadow='none'">
                 <div style="width:48px;height:48px;border-radius:8px;background:var(--bg-muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.5em;overflow:hidden;">${n.photo ? `<img src="${sanitizePhotoUrl(n.photo)}" style="width:100%;height:100%;object-fit:cover;">` : '🍶'}</div>
                 <div style="flex:1;min-width:0;">
                     <h5 style="font-weight:700;font-size:0.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text-primary);">${escapeHtml(n.sake_name) || '이름 없음'}</h5>
@@ -1779,7 +1779,7 @@ function displayNotesList(notes) {
     container.innerHTML = `
         <div class="notes-list">
             ${notes.map(note => `
-                <div class="note-card" onclick="showDetail('${note.id}')">
+                <div class="note-card" onclick="showDetail('${escapeAttr(note.id)}')">
                     ${note.photo && sanitizePhotoUrl(note.photo) ? `
                         <img src="${sanitizePhotoUrl(note.photo)}" class="note-card-image" alt="사케">
                     ` : `

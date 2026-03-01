@@ -1,13 +1,27 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
-};
+const ALLOWED_ORIGINS = [
+  "https://sakeview.com",
+  "https://www.sakeview.com",
+  "https://sakeview.pages.dev",
+];
+
+const MAX_IMAGE_SIZE = 10_000_000; // ~7.5MB (base64 encoded)
+
+function getCorsHeaders(req: Request) {
+  const origin = req.headers.get("origin") || "";
+  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    "Access-Control-Allow-Origin": allowedOrigin,
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers":
+      "authorization, x-client-info, apikey, content-type",
+  };
+}
 
 Deno.serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
+
   // CORS preflight
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -27,6 +41,14 @@ Deno.serve(async (req) => {
       return new Response(
         JSON.stringify({ error: "이미지 데이터가 필요합니다." }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // 이미지 크기 검증
+    if (image.length > MAX_IMAGE_SIZE) {
+      return new Response(
+        JSON.stringify({ error: "이미지가 너무 큽니다. 더 작은 이미지를 사용해주세요." }),
+        { status: 413, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
