@@ -258,25 +258,25 @@ const SAKE_DATABASE = {
         "name": "고쿄 FIVE BLUE 준마이긴죠 나마",
         "japanese": "五橋 FIVE BLUE 純米吟醸生",
         "grade": "준마이긴죠",
-        "polishRate": ""
+        "polishRate": "-"
       },
       {
         "name": "고쿄 FIVE GREEN 키모토 준마이 나마겐슈",
         "japanese": "五橋 FIVE GREEN 生酛純米生原酒",
         "grade": "준마이(키모토)",
-        "polishRate": ""
+        "polishRate": "-"
       },
       {
         "name": "고쿄 FIVE ORANGE 준마이긴죠(히이레)",
         "japanese": "五橋 FIVE ORANGE 純米吟醸火入れ",
         "grade": "준마이긴죠",
-        "polishRate": ""
+        "polishRate": "-"
       },
       {
         "name": "고쿄 FIVE PINK 준마이다이긴죠 나마겐슈",
         "japanese": "五橋 FIVE PINK 純米大吟醸生原酒",
         "grade": "준마이다이긴죠",
-        "polishRate": ""
+        "polishRate": "-"
       },
       {
         "name": "준마이긴죠",
@@ -333,77 +333,6 @@ const SAKE_DATABASE = {
       }
     ]
   },
-  "고쿠류": {
-    "brandJp": "黒龍",
-    "products": [
-      {
-        "name": "고쿠류 이시다야",
-        "japanese": "黒龍 石田屋",
-        "grade": "준마이다이긴죠",
-        "polishRate": ""
-      },
-      {
-        "name": "니바이큐",
-        "japanese": "黒龍 二左衛門",
-        "grade": "준마이다이긴죠",
-        "polishRate": "35%"
-      },
-      {
-        "name": "다이긴죠",
-        "japanese": "黒龍 大吟醸",
-        "grade": "다이긴죠",
-        "polishRate": "50%"
-      },
-      {
-        "name": "류",
-        "japanese": "黒龍 龍",
-        "grade": "다이긴죠",
-        "polishRate": "40%"
-      },
-      {
-        "name": "시즈쿠",
-        "japanese": "黒龍 しずく",
-        "grade": "다이긴죠",
-        "polishRate": "35%"
-      },
-      {
-        "name": "이츠쵸라이",
-        "japanese": "黒龍 いっちょらい",
-        "grade": "긴죠",
-        "polishRate": "55%"
-      },
-      {
-        "name": "준긴",
-        "japanese": "黒龍 純吟",
-        "grade": "준마이긴죠",
-        "polishRate": "55%"
-      },
-      {
-        "name": "고쿠류 준마이다이긴죠",
-        "japanese": "黒龍 純米大吟醸",
-        "grade": "준마이다이긴죠",
-        "polishRate": ""
-      },
-      {
-        "name": "고쿠류 하치주하치고",
-        "japanese": "黒龍 八十八号",
-        "grade": "다이긴죠",
-        "polishRate": ""
-      },
-      {
-        "name": "쿠즈류 다이긴죠",
-        "japanese": "九頭龍 大吟醸",
-        "grade": "다이긴죠",
-        "polishRate": "50%"
-      },
-      {
-        "name": "쿠즈류 준마이",
-        "japanese": "九頭龍 純米",
-        "grade": "준마이",
-        "polishRate": "65%"
-      }
-    ]
-  },
   "고쿠시무소우": {
     "brandJp": "國士無双",
     "products": [
@@ -427,41 +356,6 @@ const SAKE_DATABASE = {
       }
     ]
   },
-  "구보타": {
-    "brandJp": "",
-    "products": [
-      {
-        "name": "구보타 센주",
-        "japanese": "",
-        "grade": "긴죠",
-        "polishRate": "국미50%/가케미55%"
-      },
-      {
-        "name": "구보타 만주",
-        "japanese": "",
-        "grade": "준마이다이긴죠",
-        "polishRate": "국미50%/가케미33%"
-      },
-      {
-        "name": "구보타 준마이다이긴조",
-        "japanese": "",
-        "grade": "준마이다이긴죠",
-        "polishRate": "50%"
-      },
-      {
-        "name": "구보타 헤키주",
-        "japanese": "",
-        "grade": "준마이다이긴조(야마하이)",
-        "polishRate": "50%"
-      },
-      {
-        "name": "구보타 햐쿠주",
-        "japanese": "",
-        "grade": "특별본양조",
-        "polishRate": "국미60%/가케미60%"
-      }
-    ]
-  },
   "글로우": {
     "brandJp": "",
     "products": [
@@ -470,14 +364,9 @@ const SAKE_DATABASE = {
         "japanese": "",
         "grade": "고구마소주",
         "polishRate": "-"
-      }
-    ]
-  },
-  "글로우07": {
-    "brandJp": "",
-    "products": [
+      },
       {
-        "name": "글로우07 GLOW EP07",
+        "name": "글로우 EP07 GLOW EP07",
         "japanese": "",
         "grade": "고구마소주",
         "polishRate": "-"
@@ -543,7 +432,7 @@ const SAKE_DATABASE = {
         "name": "레몬 레이슈",
         "japanese": "",
         "grade": "사케",
-        "polishRate": ""
+        "polishRate": "-"
       }
     ]
   },
@@ -566,149 +455,6 @@ const SAKE_DATABASE = {
         "name": "나마겐슈",
         "japanese": "",
         "grade": "준마이",
-        "polishRate": "-"
-      }
-    ]
-  },
-  "기타": {
-    "brandJp": "",
-    "products": [
-      {
-        "name": "오이로쿠 준마이",
-        "japanese": "",
-        "grade": "준마이",
-        "polishRate": "60%"
-      },
-      {
-        "name": "하루카 준마이 긴조",
-        "japanese": "",
-        "grade": "준마이",
-        "polishRate": "60%"
-      },
-      {
-        "name": "소사가와 노준 준마이",
-        "japanese": "",
-        "grade": "준마이",
-        "polishRate": "60%"
-      },
-      {
-        "name": "카모이즈미 코메코메",
-        "japanese": "",
-        "grade": "",
-        "polishRate": "60%"
-      },
-      {
-        "name": "아카시타이 도쿠베츠 혼조조",
-        "japanese": "",
-        "grade": "혼죠조",
-        "polishRate": "60%"
-      },
-      {
-        "name": "쿠도키죠즈 Jr. (주니어)",
-        "japanese": "",
-        "grade": "",
-        "polishRate": "44%"
-      },
-      {
-        "name": "류진 준마이 다이긴조",
-        "japanese": "",
-        "grade": "준마이",
-        "polishRate": "50%"
-      },
-      {
-        "name": "무츠핫센 레드라벨",
-        "japanese": "",
-        "grade": "",
-        "polishRate": "55%"
-      },
-      {
-        "name": "타나카 로쿠쥬고",
-        "japanese": "",
-        "grade": "",
-        "polishRate": "65%"
-      },
-      {
-        "name": "유키노보샤 히덴 야마하이",
-        "japanese": "",
-        "grade": "",
-        "polishRate": "55%"
-      },
-      {
-        "name": "타마가와 타임머신 1712",
-        "japanese": "",
-        "grade": "",
-        "polishRate": "88%"
-      },
-      {
-        "name": "비조부 유메바카리",
-        "japanese": "",
-        "grade": "",
-        "polishRate": "30%"
-      },
-      {
-        "name": "켄비시 미즈호 (쿠로마츠)",
-        "japanese": "",
-        "grade": "",
-        "polishRate": "60%"
-      },
-      {
-        "name": "키쿠마사무네 긴조",
-        "japanese": "",
-        "grade": "긴죠",
-        "polishRate": "60%"
-      },
-      {
-        "name": "노호혼 (のほほん)",
-        "japanese": "",
-        "grade": "청주",
-        "polishRate": "-"
-      },
-      {
-        "name": "무기이치 (むぎいち)",
-        "japanese": "",
-        "grade": "보리소주",
-        "polishRate": "-"
-      },
-      {
-        "name": "한잔할래? (ハンザンする？)",
-        "japanese": "",
-        "grade": "청주",
-        "polishRate": "-"
-      },
-      {
-        "name": "블랙잭고쿠카라쿠치 (ブラックジャック極辛口)",
-        "japanese": "",
-        "grade": "준마이",
-        "polishRate": "-"
-      },
-      {
-        "name": "타이쇼 (大賞)",
-        "japanese": "",
-        "grade": "준마이",
-        "polishRate": "-"
-      },
-      {
-        "name": "텐손코린 (天孫降臨)",
-        "japanese": "",
-        "grade": "고구마소주",
-        "polishRate": "-"
-      },
-      {
-        "name": "치신켄 (知心剣)",
-        "japanese": "",
-        "grade": "보리소주",
-        "polishRate": "-"
-      },
-      {
-        "name": "아카자루 (赤猿)",
-        "japanese": "",
-        "grade": "고구마소주",
-        "polishRate": "-"
-      },
-      {
-        "name": "토리카이 (鳥飼)",
-        "japanese": "",
-        "grade": "쌀소주",
         "polishRate": "-"
       }
     ]
@@ -938,12 +684,7 @@ const SAKE_DATABASE = {
         "japanese": "雄三スペシャル 오마치 純米",
         "grade": "준마이",
         "polishRate": "-"
-      }
-    ]
-  },
-  "남부비진": {
-    "brandJp": "南部美人",
-    "products": [
+      },
       {
         "name": "AWA 스파클링",
         "japanese": "南部美人 AWA SAKE",
@@ -1140,23 +881,6 @@ const SAKE_DATABASE = {
         "japanese": "大納川天花 준마이다이긴조、鴬 美山錦 無濾過生原酒",
         "grade": "준마이다이긴죠",
         "polishRate": "50%"
-      }
-    ]
-  },
-  "다이센": {
-    "brandJp": "大山",
-    "products": [
-      {
-        "name": "하이브리드 준마이다이긴조",
-        "japanese": "ハイブリッド 준마이다이긴조",
-        "grade": "준마이다이긴죠",
-        "polishRate": "-"
-      },
-      {
-        "name": "토미즈",
-        "japanese": "十水",
-        "grade": "토쿠베츠준마이",
-        "polishRate": "-"
       }
     ]
   },
@@ -1571,25 +1295,8 @@ const SAKE_DATABASE = {
       }
     ]
   },
-  "도요비진": {
-    "brandJp": "",
-    "products": [
-      {
-        "name": "도요비진 준마이다이긴조 이치반마토이",
-        "japanese": "",
-        "grade": "준마이다이긴죠",
-        "polishRate": "40%"
-      },
-      {
-        "name": "도요비진 준도잇토 준마이긴조",
-        "japanese": "",
-        "grade": "준마이긴죠",
-        "polishRate": "50%"
-      }
-    ]
-  },
   "라이후쿠": {
-    "brandJp": "",
+    "brandJp": "来福酒造",
     "products": [
       {
         "name": "라이후쿠 준마이긴조 아이야마",
@@ -1608,12 +1315,7 @@ const SAKE_DATABASE = {
         "japanese": "라이후쿠 純米 ふくまる",
         "grade": "준마이",
         "polishRate": "60%"
-      }
-    ]
-  },
-  "라이후쿠주조": {
-    "brandJp": "来福酒造",
-    "products": [
+      },
       {
         "name": "라이후쿠 X쿠로 준마이긴조 나마겐슈 지카쿠미",
         "japanese": "라이후쿠 X黒 純米吟醸 生原酒 지카쿠미",
@@ -1773,17 +1475,6 @@ const SAKE_DATABASE = {
         "japanese": "まんさくの花 純米",
         "grade": "준마이",
         "polishRate": "60%"
-      }
-    ]
-  },
-  "만주": {
-    "brandJp": "",
-    "products": [
-      {
-        "name": "자사효모 에디션",
-        "japanese": "",
-        "grade": "준마이다이긴죠",
-        "polishRate": "-"
       }
     ]
   },
@@ -2541,23 +2232,13 @@ const SAKE_DATABASE = {
         "japanese": "",
         "grade": "",
         "polishRate": "35%"
-      }
-    ]
-  },
-  "본 준마이 55": {
-    "brandJp": "",
-    "products": [
+      },
       {
-        "name": "본 준마이 55",
+        "name": "준마이 55",
         "japanese": "",
         "grade": "준마이",
         "polishRate": "55%"
-      }
-    ]
-  },
-  "본 토쿠센": {
-    "brandJp": "",
-    "products": [
+      },
       {
         "name": "준마이다이긴조",
         "japanese": "",
@@ -2602,19 +2283,14 @@ const SAKE_DATABASE = {
     ]
   },
   "사라": {
-    "brandJp": "",
+    "brandJp": "彩來",
     "products": [
       {
         "name": "사라 준마이긴조",
         "japanese": "彩来 純米吟醸",
         "grade": "준마이긴죠",
         "polishRate": "50%"
-      }
-    ]
-  },
-  "사라(彩來)": {
-    "brandJp": "彩來",
-    "products": [
+      },
       {
         "name": "준마이긴죠 무로카 나마",
         "japanese": "彩來 純米吟醸 無濾過生原酒",
@@ -2824,17 +2500,6 @@ const SAKE_DATABASE = {
       }
     ]
   },
-  "센신": {
-    "brandJp": "洗心",
-    "products": [
-      {
-        "name": "준마이다이긴조 (준마이다이긴조)",
-        "japanese": "",
-        "grade": "준마이다이긴죠",
-        "polishRate": "-"
-      }
-    ]
-  },
   "센킨": {
     "brandJp": "仙禽",
     "products": [
@@ -2897,23 +2562,13 @@ const SAKE_DATABASE = {
         "japanese": "",
         "grade": "",
         "polishRate": "50%"
-      }
-    ]
-  },
-  "센킨 무쿠": {
-    "brandJp": "",
-    "products": [
+      },
       {
         "name": "센킨 무쿠",
         "japanese": "",
         "grade": "준마이긴죠",
         "polishRate": "-"
-      }
-    ]
-  },
-  "센킨 잇세이": {
-    "brandJp": "",
-    "products": [
+      },
       {
         "name": "센킨 잇세이",
         "japanese": "",
@@ -2991,69 +2646,14 @@ const SAKE_DATABASE = {
     ]
   },
   "송죽매": {
-    "brandJp": "",
+    "brandJp": "松竹梅",
     "products": [
       {
         "name": "900",
         "japanese": "",
         "grade": "청주",
         "polishRate": "-"
-      }
-    ]
-  },
-  "쇼로쿠주조": {
-    "brandJp": "松緑酒造",
-    "products": [
-      {
-        "name": "롯콘 사파이어 준마이긴조 나마",
-        "japanese": "六根 サファイア 純米吟醸 生",
-        "grade": "준마이긴죠",
-        "polishRate": "55%"
       },
-      {
-        "name": "롯콘 루비 준마이긴조 나마",
-        "japanese": "六根 ルビー 純米吟醸 生",
-        "grade": "준마이긴죠",
-        "polishRate": "60%"
-      }
-    ]
-  },
-  "쇼추": {
-    "brandJp": "",
-    "products": [
-      {
-        "name": "재팬",
-        "japanese": "",
-        "grade": "혼합소주",
-        "polishRate": "-"
-      }
-    ]
-  },
-  "쇼츄": {
-    "brandJp": "",
-    "products": [
-      {
-        "name": "햐쿠넨노코도쿠",
-        "japanese": "百年の孤独",
-        "grade": "보리소주(프리미엄)",
-        "polishRate": "-"
-      }
-    ]
-  },
-  "쇼츄타임": {
-    "brandJp": "",
-    "products": [
-      {
-        "name": "쇼츄타임 No.17 CHOW CHY TIME NO.17",
-        "japanese": "",
-        "grade": "고구마소주",
-        "polishRate": "-"
-      }
-    ]
-  },
-  "쇼치쿠바이": {
-    "brandJp": "松竹梅",
-    "products": [
       {
         "name": "하나아미",
         "japanese": "松竹梅 花あみ",
@@ -3112,6 +2712,45 @@ const SAKE_DATABASE = {
         "name": "고카이 나마",
         "japanese": "豪快 生",
         "grade": "청주",
+        "polishRate": "-"
+      }
+    ]
+  },
+  "쇼로쿠주조": {
+    "brandJp": "松緑酒造",
+    "products": [
+      {
+        "name": "롯콘 사파이어 준마이긴조 나마",
+        "japanese": "六根 サファイア 純米吟醸 生",
+        "grade": "준마이긴죠",
+        "polishRate": "55%"
+      },
+      {
+        "name": "롯콘 루비 준마이긴조 나마",
+        "japanese": "六根 ルビー 純米吟醸 生",
+        "grade": "준마이긴죠",
+        "polishRate": "60%"
+      }
+    ]
+  },
+  "쇼츄": {
+    "brandJp": "",
+    "products": [
+      {
+        "name": "햐쿠넨노코도쿠",
+        "japanese": "百年の孤独",
+        "grade": "보리소주(프리미엄)",
+        "polishRate": "-"
+      }
+    ]
+  },
+  "쇼츄타임": {
+    "brandJp": "",
+    "products": [
+      {
+        "name": "쇼츄타임 No.17 CHOW CHY TIME NO.17",
+        "japanese": "",
+        "grade": "고구마소주",
         "polishRate": "-"
       }
     ]
@@ -3217,27 +2856,11 @@ const SAKE_DATABASE = {
         "polishRate": "60%"
       },
       {
-        "name": "토쿠베츠준마이",
-        "japanese": "",
-        "grade": "토쿠베츠준마이",
-        "polishRate": "55%"
-      }
-    ]
-  },
-  "스이게이 쇼": {
-    "brandJp": "",
-    "products": [
-      {
         "name": "스이게이 쇼",
         "japanese": "",
         "grade": "준마이다이긴죠",
         "polishRate": "40%"
-      }
-    ]
-  },
-  "스이게이주조": {
-    "brandJp": "酔鯨酒造",
-    "products": [
+      },
       {
         "name": "스이게이 토쿠베츠 준마이슈",
         "japanese": "酔鯨 토쿠베츠 준마이酒",
@@ -3843,17 +3466,6 @@ const SAKE_DATABASE = {
       }
     ]
   },
-  "아사히": {
-    "brandJp": "",
-    "products": [
-      {
-        "name": "아사히",
-        "japanese": "朝日",
-        "grade": "흑당소주",
-        "polishRate": "-"
-      }
-    ]
-  },
   "아사히야마": {
     "brandJp": "朝日山",
     "products": [
@@ -4339,23 +3951,6 @@ const SAKE_DATABASE = {
       }
     ]
   },
-  "야카부": {
-    "brandJp": "",
-    "products": [
-      {
-        "name": "준마이긴죠",
-        "japanese": "",
-        "grade": "준마이긴죠",
-        "polishRate": "50%"
-      },
-      {
-        "name": "준마이",
-        "japanese": "",
-        "grade": "준마이",
-        "polishRate": "60%"
-      }
-    ]
-  },
   "에이코후지": {
     "brandJp": "栄光冨士",
     "products": [
@@ -4503,6 +4098,18 @@ const SAKE_DATABASE = {
   "오야마": {
     "brandJp": "大山",
     "products": [
+      {
+        "name": "하이브리드 준마이다이긴조",
+        "japanese": "ハイブリッド 준마이다이긴조",
+        "grade": "준마이다이긴죠",
+        "polishRate": "-"
+      },
+      {
+        "name": "토미즈",
+        "japanese": "十水",
+        "grade": "토쿠베츠준마이",
+        "polishRate": "-"
+      },
       {
         "name": "토쿠베츠 준마이 토미즈",
         "japanese": "大山 特別純米 十水",
@@ -4655,19 +4262,19 @@ const SAKE_DATABASE = {
         "name": "기타노이나호 다이긴죠",
         "japanese": "男山 北の稲穂 大吟醸",
         "grade": "다이긴죠",
-        "polishRate": ""
+        "polishRate": "-"
       },
       {
         "name": "스시부스터",
         "japanese": "男山 つまみつつ",
         "grade": "토쿠베츠준마이",
-        "polishRate": ""
+        "polishRate": "-"
       },
       {
         "name": "히야오로시 아키사케",
         "japanese": "男山 ひやおろし 秋酒",
         "grade": "토쿠베츠준마이",
-        "polishRate": ""
+        "polishRate": "-"
       },
       {
         "name": "키타시즈쿠100％ 준마이",
@@ -4881,12 +4488,7 @@ const SAKE_DATABASE = {
         "japanese": "",
         "grade": "준마이긴죠",
         "polishRate": "55%"
-      }
-    ]
-  },
-  "요코야마 고쥬": {
-    "brandJp": "",
-    "products": [
+      },
       {
         "name": "준마이다이긴조 블랙",
         "japanese": "",
@@ -4909,12 +4511,6 @@ const SAKE_DATABASE = {
         "japanese": "",
         "grade": "준마이다이긴죠",
         "polishRate": "45%"
-      },
-      {
-        "name": "토쿠베츠준마이",
-        "japanese": "",
-        "grade": "토쿠베츠준마이",
-        "polishRate": "60%"
       }
     ]
   },
@@ -5918,8 +5514,8 @@ const SAKE_DATABASE = {
       }
     ]
   },
-  "주욘다이": {
-    "brandJp": "",
+  "쥬욘다이": {
+    "brandJp": "十四代",
     "products": [
       {
         "name": "주욘다이 혼마루 비전타마가에시",
@@ -5980,12 +5576,7 @@ const SAKE_DATABASE = {
         "japanese": "",
         "grade": "준마이다이긴죠",
         "polishRate": "35%"
-      }
-    ]
-  },
-  "쥬욘다이": {
-    "brandJp": "十四代",
-    "products": [
+      },
       {
         "name": "나나다레 니쥬",
         "japanese": "十四代 七垂二十貫",
@@ -7411,8 +7002,68 @@ const SAKE_DATABASE = {
     ]
   },
   "코쿠류": {
-    "brandJp": "黑龍",
+    "brandJp": "黒龍",
     "products": [
+      {
+        "name": "고쿠류 이시다야",
+        "japanese": "黒龍 石田屋",
+        "grade": "준마이다이긴죠",
+        "polishRate": "-"
+      },
+      {
+        "name": "니바이큐",
+        "japanese": "黒龍 二左衛門",
+        "grade": "준마이다이긴죠",
+        "polishRate": "35%"
+      },
+      {
+        "name": "다이긴죠",
+        "japanese": "黒龍 大吟醸",
+        "grade": "다이긴죠",
+        "polishRate": "50%"
+      },
+      {
+        "name": "류",
+        "japanese": "黒龍 龍",
+        "grade": "다이긴죠",
+        "polishRate": "40%"
+      },
+      {
+        "name": "이츠쵸라이",
+        "japanese": "黒龍 いっちょらい",
+        "grade": "긴죠",
+        "polishRate": "55%"
+      },
+      {
+        "name": "준긴",
+        "japanese": "黒龍 純吟",
+        "grade": "준마이긴죠",
+        "polishRate": "55%"
+      },
+      {
+        "name": "고쿠류 준마이다이긴죠",
+        "japanese": "黒龍 純米大吟醸",
+        "grade": "준마이다이긴죠",
+        "polishRate": "-"
+      },
+      {
+        "name": "고쿠류 하치주하치고",
+        "japanese": "黒龍 八十八号",
+        "grade": "다이긴죠",
+        "polishRate": "-"
+      },
+      {
+        "name": "쿠즈류 다이긴죠",
+        "japanese": "九頭龍 大吟醸",
+        "grade": "다이긴죠",
+        "polishRate": "50%"
+      },
+      {
+        "name": "쿠즈류 준마이",
+        "japanese": "九頭龍 純米",
+        "grade": "준마이",
+        "polishRate": "65%"
+      },
       {
         "name": "코쿠류 준마이다이긴조",
         "japanese": "",
@@ -7738,6 +7389,12 @@ const SAKE_DATABASE = {
     "brandJp": "久保田",
     "products": [
       {
+        "name": "준마이다이긴조 (준마이다이긴조)",
+        "japanese": "",
+        "grade": "준마이다이긴죠",
+        "polishRate": "-"
+      },
+      {
         "name": "고주 (벽수)",
         "japanese": "久保田 碧寿",
         "grade": "준마이다이긴죠 야마하이",
@@ -7801,7 +7458,7 @@ const SAKE_DATABASE = {
         "name": "추구",
         "japanese": "継",
         "grade": "준마이다이긴죠",
-        "polishRate": ""
+        "polishRate": "-"
       },
       {
         "name": "쿠보타 만주",
@@ -8102,27 +7759,11 @@ const SAKE_DATABASE = {
         "japanese": "后 준마이다이긴조 R 生酒",
         "grade": "준마이다이긴죠",
         "polishRate": "48%"
-      }
-    ]
-  },
-  "키사키50": {
-    "brandJp": "",
-    "products": [
+      },
       {
         "name": "키사키50 준마이다이긴조(쿠로라벨)",
         "japanese": "后50 준마이다이긴조（黒라벨）",
         "grade": "준마이다이긴죠",
-        "polishRate": "50%"
-      }
-    ]
-  },
-  "키센": {
-    "brandJp": "酔鯨",
-    "products": [
-      {
-        "name": "준마이긴죠 CEL-24",
-        "japanese": "酔鯨 純米吟醸 CEL-24",
-        "grade": "준마이긴죠",
         "polishRate": "50%"
       }
     ]
@@ -8359,12 +8000,7 @@ const SAKE_DATABASE = {
         "japanese": "",
         "grade": "준마이긴죠",
         "polishRate": "58%"
-      }
-    ]
-  },
-  "킨료 키라메키": {
-    "brandJp": "",
-    "products": [
+      },
       {
         "name": "준마이다이긴조",
         "japanese": "",
@@ -8527,12 +8163,6 @@ const SAKE_DATABASE = {
         "name": "토쿠베츠 준마이",
         "japanese": "貴 特別純米",
         "grade": "토쿠베츠 준마이",
-        "polishRate": "60%"
-      },
-      {
-        "name": "토쿠베츠준마이",
-        "japanese": "",
-        "grade": "토쿠베츠준마이",
         "polishRate": "60%"
       },
       {
@@ -8964,12 +8594,6 @@ const SAKE_DATABASE = {
         "polishRate": "-"
       },
       {
-        "name": "야마하이 준마이",
-        "japanese": "山廃純米",
-        "grade": "준마이",
-        "polishRate": "-"
-      },
-      {
         "name": "준마이다이긴조",
         "japanese": "純米大吟釀",
         "grade": "준마이다이긴죠",
@@ -9008,12 +8632,7 @@ const SAKE_DATABASE = {
         "japanese": "",
         "grade": "준마이다이긴죠",
         "polishRate": "35%"
-      }
-    ]
-  },
-  "텐부 준마이": {
-    "brandJp": "",
-    "products": [
+      },
       {
         "name": "텐부 준마이",
         "japanese": "",
@@ -9063,12 +8682,7 @@ const SAKE_DATABASE = {
         "japanese": "天狗櫻",
         "grade": "고구마소주",
         "polishRate": "-"
-      }
-    ]
-  },
-  "텡구자쿠라겐슈": {
-    "brandJp": "",
-    "products": [
+      },
       {
         "name": "텐구자쿠라겐슈 하마나 카즈노리 라벨",
         "japanese": "天狗櫻原酒 浜名 一憲 라벨",
@@ -9171,6 +8785,18 @@ const SAKE_DATABASE = {
   "토요비진": {
     "brandJp": "東洋美人",
     "products": [
+      {
+        "name": "도요비진 준마이다이긴조 이치반마토이",
+        "japanese": "",
+        "grade": "준마이다이긴죠",
+        "polishRate": "40%"
+      },
+      {
+        "name": "도요비진 준도잇토 준마이긴조",
+        "japanese": "",
+        "grade": "준마이긴죠",
+        "polishRate": "50%"
+      },
       {
         "name": "이삿폰",
         "japanese": "東洋美人 壱番纏",
@@ -9858,31 +9484,15 @@ const SAKE_DATABASE = {
         "japanese": "蓬莱泉 純米大吟醸",
         "grade": "준마이다이긴죠",
         "polishRate": "45%"
-      }
-    ]
-  },
-  "호라이센 비": {
-    "brandJp": "",
-    "products": [
+      },
       {
         "name": "준마이다이긴조",
         "japanese": "",
         "grade": "준마이다이긴죠",
         "polishRate": "45%"
-      }
-    ]
-  },
-  "호라이센 쿠우": {
-    "brandJp": "",
-    "products": [
-      {
-        "name": "준마이다이긴조 나마겐슈",
-        "japanese": "",
-        "grade": "준마이다이긴죠",
-        "polishRate": "40%"
       },
       {
-        "name": "준마이다이긴조",
+        "name": "준마이다이긴조 나마겐슈",
         "japanese": "",
         "grade": "준마이다이긴죠",
         "polishRate": "40%"
