@@ -3,9 +3,13 @@
     'use strict';
 
     // === CONFIGURATION ===
+    const isLocal = ['localhost', '127.0.0.1'].includes(location.hostname);
+    const OLLAMA_BASE = isLocal
+        ? 'http://localhost:11434'
+        : 'https://ai.sakeview.com';
     const CONFIG = {
-        API_URL: 'http://localhost:11434/api/generate',
-        API_TAGS_URL: 'http://localhost:11434/api/tags',
+        API_URL: OLLAMA_BASE + '/api/generate',
+        API_TAGS_URL: OLLAMA_BASE + '/api/tags',
         MODEL: 'sake-ai',
         MAX_HISTORY: 50,
         STORAGE_KEY: 'sakeChatHistory',
