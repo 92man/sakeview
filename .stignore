@@ -1,0 +1,3 @@
+// Syncthing ignore patterns for sakeview
+// Claude Code worktrees - contains Windows reserved names (nul)
+.claude/worktrees

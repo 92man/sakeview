@@ -92,7 +92,7 @@
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Serif+KR:wght@400;500;700;900&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=39">
+    <link rel="stylesheet" href="styles.css?v=40">
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1907306190071217"
          crossorigin="anonymous"></script>
@@ -405,10 +405,23 @@
 
                         <div class="form-group">
                             <label>사케 사진</label>
-                            <div class="photo-upload" onclick="document.getElementById('photoInput').click()">
-                                <input type="file" id="photoInput" accept="image/*" onchange="handlePhotoUpload(event)">
-                                <div id="uploadText"><span class="material-symbols-outlined upload-icon">add_a_photo</span>사진을 업로드하세요</div>
-                                <div id="photoPreview" class="photo-preview"></div>
+                            <div class="photo-upload-group">
+                                <div class="photo-upload-item">
+                                    <div class="photo-upload-label">앞면 (병)</div>
+                                    <div class="photo-upload" onclick="document.getElementById('photoInput').click()">
+                                        <input type="file" id="photoInput" accept="image/*" onchange="handlePhotoUpload(event)">
+                                        <div id="uploadText"><span class="material-symbols-outlined upload-icon">add_a_photo</span>앞면</div>
+                                        <div id="photoPreview" class="photo-preview"></div>
+                                    </div>
+                                </div>
+                                <div class="photo-upload-item">
+                                    <div class="photo-upload-label">뒷면 (라벨)</div>
+                                    <div class="photo-upload" onclick="document.getElementById('photoBackInput').click()">
+                                        <input type="file" id="photoBackInput" accept="image/*" onchange="handlePhotoBackUpload(event)">
+                                        <div id="uploadBackText"><span class="material-symbols-outlined upload-icon">add_a_photo</span>뒷면</div>
+                                        <div id="photoBackPreview" class="photo-preview"></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 

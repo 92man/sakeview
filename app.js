@@ -52,6 +52,7 @@ const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let currentUser = null;
 let currentPhotoData = null;
+let currentPhotoBackData = null;
 let editingNoteId = null;
 let currentCertPhotoData = null;
 let approvedCertsMap = {};
@@ -807,7 +808,26 @@ function handlePhotoUpload(event) {
             currentPhotoData = e.target.result;
             document.getElementById('uploadText').style.display = 'none';
             document.getElementById('photoPreview').innerHTML =
-                `<img src="${sanitizePhotoUrl(currentPhotoData)}" alt="사케 사진">`;
+                `<img src="${sanitizePhotoUrl(currentPhotoData)}" alt="사케 사진 앞면">`;
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function handlePhotoBackUpload(event) {
+    const file = event.target.files[0];
+    if (file) {
+        if (file.size > 5 * 1024 * 1024) {
+            alert('사진 크기는 5MB 이하만 가능합니다.');
+            event.target.value = '';
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            currentPhotoBackData = e.target.result;
+            document.getElementById('uploadBackText').style.display = 'none';
+            document.getElementById('photoBackPreview').innerHTML =
+                `<img src="${sanitizePhotoUrl(currentPhotoBackData)}" alt="사케 사진 뒷면">`;
         };
         reader.readAsDataURL(file);
     }
@@ -850,7 +870,7 @@ async function updateSidebar() {
     try {
         const { data } = await supabaseClient
             .from('tasting_notes')
-            .select('id, sake_name, created_at, overall_rating, photo')
+            .select('id, sake_name, created_at, overall_rating, photo, photo_back')
             .eq('user_id', currentUser.id)
             .order('created_at', { ascending: false });
         if (!data) return;
@@ -933,6 +953,7 @@ async function saveTastingNote(event) {
         user_id: currentUser.id,
         date: document.getElementById('date').value,
         photo: currentPhotoData,
+        photo_back: currentPhotoBackData,
         sake_name: sakeNameVal.trim(),
         flavor_description: JSON.stringify(tastingData),
         personal_review: document.getElementById('personal_review').value,
@@ -980,10 +1001,13 @@ function resetForm() {
     document.getElementById('tastingForm').reset();
     setDefaultDate();
     currentPhotoData = null;
+    currentPhotoBackData = null;
     ocrPhotoData = null;
     editingNoteId = null;
     document.getElementById('uploadText').style.display = 'block';
     document.getElementById('photoPreview').innerHTML = '';
+    document.getElementById('uploadBackText').style.display = 'block';
+    document.getElementById('photoBackPreview').innerHTML = '';
 
     const submitBtn = document.getElementById('submitBtn');
     submitBtn.textContent = '노트 저장';
@@ -2255,7 +2279,11 @@ function renderNoteDetail(note, showActions = true) {
     }
 
     return `
-        ${note.photo && sanitizePhotoUrl(note.photo) ? `<img src="${sanitizePhotoUrl(note.photo)}" class="detail-photo" alt="사케">` : ''}
+        ${(note.photo && sanitizePhotoUrl(note.photo)) || (note.photo_back && sanitizePhotoUrl(note.photo_back)) ? `
+        <div class="detail-photo-group">
+            ${note.photo && sanitizePhotoUrl(note.photo) ? `<img src="${sanitizePhotoUrl(note.photo)}" class="detail-photo" alt="사케 앞면">` : ''}
+            ${note.photo_back && sanitizePhotoUrl(note.photo_back) ? `<img src="${sanitizePhotoUrl(note.photo_back)}" class="detail-photo" alt="사케 뒷면">` : ''}
+        </div>` : ''}
         <h2 style="color: var(--accent-primary, #383961); margin-bottom: 10px;">${escapeHtml(note.sake_name)}</h2>
         <p style="color: #666; margin-bottom: 30px;">📅 ${escapeHtml(note.date)}</p>
 
@@ -2350,7 +2378,13 @@ async function editNote(id) {
             currentPhotoData = note.photo;
             document.getElementById('uploadText').style.display = 'none';
             document.getElementById('photoPreview').innerHTML =
-                `<img src="${sanitizePhotoUrl(note.photo)}" alt="사케 사진">`;
+                `<img src="${sanitizePhotoUrl(note.photo)}" alt="사케 사진 앞면">`;
+        }
+        if (note.photo_back && sanitizePhotoUrl(note.photo_back)) {
+            currentPhotoBackData = note.photo_back;
+            document.getElementById('uploadBackText').style.display = 'none';
+            document.getElementById('photoBackPreview').innerHTML =
+                `<img src="${sanitizePhotoUrl(note.photo_back)}" alt="사케 사진 뒷면">`;
         }
 
         const slider = document.getElementById('overall_rating_slider');

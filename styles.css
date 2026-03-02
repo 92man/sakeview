@@ -123,6 +123,10 @@ body.dark-mode .photo-upload {
     background: var(--bg-tertiary);
 }
 
+body.dark-mode .photo-upload-label {
+    color: var(--text-secondary, #a0a0a0);
+}
+
 body.dark-mode .detail-section {
     background: var(--bg-tertiary);
 }
@@ -1221,10 +1225,28 @@ textarea {
 }
 
 /* Photo Upload - Stitch Minimal */
+.photo-upload-group {
+    display: flex;
+    gap: 12px;
+}
+
+.photo-upload-item {
+    flex: 1;
+    min-width: 0;
+}
+
+.photo-upload-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary, #5a5a5a);
+    margin-bottom: 6px;
+    text-align: center;
+    font-weight: 500;
+}
+
 .photo-upload {
     border: 2px dashed #d1d5db;
     border-radius: 12px;
-    padding: 40px;
+    padding: 24px 12px;
     text-align: center;
     cursor: pointer;
     transition: all 0.2s;
@@ -1232,7 +1254,7 @@ textarea {
     position: relative;
     overflow: hidden;
     color: #94a3b8;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
 }
 
 .photo-upload:hover {
@@ -1250,8 +1272,8 @@ textarea {
 
 .photo-preview img {
     max-width: 100%;
-    max-height: 350px;
-    border-radius: 16px;
+    max-height: 250px;
+    border-radius: 12px;
     box-shadow: var(--shadow-medium);
     animation: fadeInScale 0.5s ease-out;
 }
@@ -1783,11 +1805,21 @@ body.dark-mode .section-title-highlight {
 }
 
 /* Detail View - Premium */
+.detail-photo-group {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.detail-photo-group .detail-photo {
+    margin-bottom: 0;
+}
+
 .detail-photo {
     width: 100%;
-    max-height: 480px;
+    max-height: 400px;
     object-fit: contain;
-    border-radius: 20px;
+    border-radius: 16px;
     margin-bottom: 40px;
     background: linear-gradient(145deg, var(--bg-tertiary) 0%, var(--bg-primary) 100%);
     box-shadow: var(--shadow-medium);
@@ -4777,6 +4809,13 @@ select:focus-visible {
 }
 
 /* prefers-color-scheme 제거: 사이트 자체 다크모드 토글(body.dark-mode)과 충돌 방지 */
+
+/* ── 상세보기 사진 그룹 반응형 ── */
+@media (max-width: 480px) {
+    .detail-photo-group {
+        flex-direction: column;
+    }
+}
 
 /* ── prefers-reduced-motion: 무한 애니메이션 비활성화 ── */
 @media (prefers-reduced-motion: reduce) {
