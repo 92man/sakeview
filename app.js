@@ -623,6 +623,7 @@ function showMainApp() {
         if (profileBtn) profileBtn.style.display = 'inline-flex';
         loadNotes();
         updateSidebar();
+        loadPendingSakes();
         submitPendingCert();
     } else {
         document.getElementById('userEmail').style.display = 'none';
@@ -982,6 +983,11 @@ async function saveTastingNote(event) {
 
             if (error) throw error;
             alert('✅ 테이스팅 노트가 저장되었습니다!');
+        }
+
+        // 뒷면 라벨 자동 분석: DB에 없는 사케 + 뒷면 사진이 있으면
+        if (sakeInputMode === 'manual' && currentPhotoBackData && !editingNoteId) {
+            triggerBackLabelAnalysis(currentPhotoBackData, sakeNameVal.trim());
         }
 
         resetForm();
@@ -2714,4 +2720,176 @@ function getCertBadgeHtml(userId) {
     });
 })();
 
+// ═══════════════════════════════════════════════
+// 뒷면 라벨 AI 분석 → pending_sakes
+// ═══════════════════════════════════════════════
 
+async function triggerBackLabelAnalysis(photoBackData, sakeName) {
+    try {
+        var imageToSend = await prepareImageForAi(photoBackData);
+        var resp = await supabaseClient.functions.invoke('sake-vision', {
+            body: { image: imageToSend }
+        });
+        if (resp.error) return;
+
+        var data = resp.data;
+        if (typeof data === 'string') {
+            try { data = JSON.parse(data); } catch(e) { return; }
+        }
+        if (!data || data.error) return;
+
+        await supabaseClient.from('pending_sakes').insert([{
+            user_id: currentUser.id,
+            brand: data.brand || '',
+            brand_jp: data.brand || '',
+            product_name: sakeName,
+            japanese: data.product || '',
+            grade: data.grade || '',
+            polish_rate: data.polishRate || '',
+            alcohol_content: data.alcoholContent || '',
+            ingredients: data.ingredients || '',
+            brewery: data.brewery || '',
+            brewery_jp: data.brewery || '',
+            region: data.breweryRegion || '',
+            volume: data.volume || '',
+            raw_text: data.rawText || '',
+            photo_back: photoBackData,
+            status: 'pending'
+        }]);
+
+        console.log('Back label analysis saved to pending_sakes');
+    } catch (err) {
+        console.error('Back label analysis error:', err);
+    }
+}
+
+// ═══════════════════════════════════════════════
+// 관리자: pending_sakes 검토/승인 UI
+// ═══════════════════════════════════════════════
+
+let pendingSakes = [];
+
+async function loadPendingSakes() {
+    if (!currentUser) return;
+    try {
+        const { data, error } = await supabaseClient
+            .from('pending_sakes')
+            .select('*')
+            .eq('status', 'pending')
+            .eq('user_id', currentUser.id)
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        pendingSakes = data || [];
+        renderPendingBadge();
+    } catch (err) {
+        console.error('Load pending sakes error:', err);
+    }
+}
+
+function renderPendingBadge() {
+    const badge = document.getElementById('pendingBadge');
+    const section = document.getElementById('pendingSection');
+    if (!badge || !section) return;
+
+    if (pendingSakes.length > 0) {
+        badge.textContent = pendingSakes.length;
+        badge.style.display = 'inline-flex';
+        section.style.display = 'block';
+        renderPendingList();
+    } else {
+        badge.style.display = 'none';
+        section.style.display = 'none';
+    }
+}
+
+function renderPendingList() {
+    const container = document.getElementById('pendingList');
+    if (!container) return;
+
+    container.innerHTML = pendingSakes.map(s => `
+        <div class="pending-card" id="pending-${s.id}">
+            <div class="pending-card-header">
+                <strong>${escapeHtml(s.product_name || s.brand || '이름 없음')}</strong>
+                <span class="pending-date">${new Date(s.created_at).toLocaleDateString('ko-KR')}</span>
+            </div>
+            <div class="pending-card-body">
+                ${s.photo_back ? `<img src="${sanitizePhotoUrl(s.photo_back)}" class="pending-photo" alt="뒷면 라벨">` : ''}
+                <div class="pending-fields">
+                    <label>브랜드 (한글)<input type="text" id="pf-brand-${s.id}" value="${escapeHtml(s.brand || '')}"></label>
+                    <label>브랜드 (일본어)<input type="text" id="pf-brandJp-${s.id}" value="${escapeHtml(s.brand_jp || '')}"></label>
+                    <label>제품명<input type="text" id="pf-product-${s.id}" value="${escapeHtml(s.product_name || '')}"></label>
+                    <label>일본어 전체명<input type="text" id="pf-japanese-${s.id}" value="${escapeHtml(s.japanese || '')}"></label>
+                    <label>등급<input type="text" id="pf-grade-${s.id}" value="${escapeHtml(s.grade || '')}"></label>
+                    <label>정미율<input type="text" id="pf-polishRate-${s.id}" value="${escapeHtml(s.polish_rate || '')}"></label>
+                    <label>알코올 도수<input type="text" id="pf-alcohol-${s.id}" value="${escapeHtml(s.alcohol_content || '')}"></label>
+                    <label>원재료<input type="text" id="pf-ingredients-${s.id}" value="${escapeHtml(s.ingredients || '')}"></label>
+                    <label>양조장<input type="text" id="pf-brewery-${s.id}" value="${escapeHtml(s.brewery || '')}"></label>
+                    <label>지역<input type="text" id="pf-region-${s.id}" value="${escapeHtml(s.region || '')}"></label>
+                    <label>용량<input type="text" id="pf-volume-${s.id}" value="${escapeHtml(s.volume || '')}"></label>
+                </div>
+            </div>
+            ${s.raw_text ? `<details class="pending-raw"><summary>원본 텍스트</summary><pre>${escapeHtml(s.raw_text)}</pre></details>` : ''}
+            <div class="pending-actions">
+                <button class="btn-approve" onclick="approvePendingSake('${s.id}')">✅ 승인</button>
+                <button class="btn-reject" onclick="rejectPendingSake('${s.id}')">❌ 거절</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+async function approvePendingSake(id) {
+    if (!currentUser) return;
+    try {
+        const editedData = {
+            brand: document.getElementById(`pf-brand-${id}`)?.value || '',
+            brand_jp: document.getElementById(`pf-brandJp-${id}`)?.value || '',
+            product_name: document.getElementById(`pf-product-${id}`)?.value || '',
+            japanese: document.getElementById(`pf-japanese-${id}`)?.value || '',
+            grade: document.getElementById(`pf-grade-${id}`)?.value || '',
+            polish_rate: document.getElementById(`pf-polishRate-${id}`)?.value || '',
+            alcohol_content: document.getElementById(`pf-alcohol-${id}`)?.value || '',
+            ingredients: document.getElementById(`pf-ingredients-${id}`)?.value || '',
+            brewery: document.getElementById(`pf-brewery-${id}`)?.value || '',
+            brewery_jp: document.getElementById(`pf-brewery-${id}`)?.value || '',
+            region: document.getElementById(`pf-region-${id}`)?.value || '',
+            volume: document.getElementById(`pf-volume-${id}`)?.value || ''
+        };
+
+        // custom_sakes에 추가
+        const { error: insertErr } = await supabaseClient
+            .from('custom_sakes')
+            .insert([editedData]);
+        if (insertErr) throw insertErr;
+
+        // pending 상태 업데이트
+        const { error: updateErr } = await supabaseClient
+            .from('pending_sakes')
+            .update({ status: 'approved' })
+            .eq('id', id)
+            .eq('user_id', currentUser.id);
+        if (updateErr) throw updateErr;
+
+        alert('✅ 사케가 DB에 추가되었습니다!');
+        await loadPendingSakes();
+        await loadAndMergeCustomSakes();
+    } catch (err) {
+        alert('❌ 승인 실패: ' + err.message);
+    }
+}
+
+async function rejectPendingSake(id) {
+    if (!confirm('이 항목을 거절하시겠습니까?')) return;
+    try {
+        const { error } = await supabaseClient
+            .from('pending_sakes')
+            .update({ status: 'rejected' })
+            .eq('id', id)
+            .eq('user_id', currentUser.id);
+        if (error) throw error;
+
+        await loadPendingSakes();
+    } catch (err) {
+        alert('❌ 거절 실패: ' + err.message);
+    }
+}

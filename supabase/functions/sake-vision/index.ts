@@ -98,7 +98,7 @@ Deno.serve(async (req) => {
 - 세로쓰기(縦書き): 오른쪽에서 왼쪽으로, 위에서 아래로 읽습니다.
 - 브랜드명은 보통 라벨에서 가장 큰 글씨입니다.
 - 등급(純米大吟醸 등)은 브랜드명보다 작은 글씨로 쓰여 있습니다.
-- 뒷면 라벨에 정미율, 원료, 양조장 정보가 있을 수 있습니다.
+- 뒷면 라벨에 정미율, 원료, 양조장, 도수, 용량, 지역 정보가 있습니다.
 
 ## 출력 형식 (JSON만 출력, 다른 텍스트 금지)
 {
@@ -106,6 +106,11 @@ Deno.serve(async (req) => {
   "product": "브랜드명 + 제품명 전체 (일본어 원문 그대로)",
   "grade": "純米大吟醸, 大吟醸, 純米吟醸, 吟醸, 特別純米, 純米, 特別本醸造, 本醸造 중 해당하는 것",
   "polishRate": "정미율 (예: 50%)",
+  "alcoholContent": "알코올 도수 (예: 16度, 15%)",
+  "ingredients": "원재료 (예: 米(国産), 米麹(国産))",
+  "brewery": "양조장/제조자 이름 (일본어 원문)",
+  "breweryRegion": "양조장 소재지/지역 (예: 山口県岩国市)",
+  "volume": "용량 (예: 720ml, 1800ml)",
   "rawText": "라벨에서 읽을 수 있는 모든 글자를 순서대로 나열"
 }`,
               },
@@ -151,6 +156,11 @@ Deno.serve(async (req) => {
         product: "",
         grade: "",
         polishRate: "",
+        alcoholContent: "",
+        ingredients: "",
+        brewery: "",
+        breweryRegion: "",
+        volume: "",
         rawText: textContent.text,
       };
     }
