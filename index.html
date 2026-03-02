@@ -98,11 +98,14 @@
          crossorigin="anonymous"></script>
 </head>
 <body>
+    <!-- Skip Navigation -->
+    <a href="#mainApp" class="skip-nav">본문으로 건너뛰기</a>
+
     <!-- Age Verification Modal -->
-    <div class="age-modal-overlay" id="ageModal">
+    <div class="age-modal-overlay" id="ageModal" role="dialog" aria-modal="true" aria-labelledby="ageModalTitle">
         <div class="age-modal">
             <div class="age-modal-icon">🍶</div>
-            <h2>연령 확인</h2>
+            <h2 id="ageModalTitle">연령 확인</h2>
             <p>
                 본 사이트는 주류(사케)에 관한 정보를 제공합니다.<br>
                 만 19세 이상만 이용할 수 있습니다.<br><br>
@@ -119,12 +122,12 @@
     </div>
 
     <!-- Cookie Consent Banner -->
-    <div class="cookie-consent" id="cookieConsent">
+    <div class="cookie-consent" id="cookieConsent" role="banner" aria-label="쿠키 동의">
         <div class="cookie-consent-content">
             <div class="cookie-consent-text">
                 🍪 사케를 보다는 더 나은 서비스 제공을 위해 쿠키를 사용합니다.
                 사이트 이용 시 쿠키 사용에 동의하게 됩니다.
-                <a href="javascript:void(0)" onclick="showPolicyPage('privacy')">개인정보처리방침</a>에서 자세한 내용을 확인하세요.
+                <a href="/privacy.html" onclick="event.preventDefault();showPolicyPage('privacy')">개인정보처리방침</a>에서 자세한 내용을 확인하세요.
             </div>
             <div class="cookie-consent-buttons">
                 <button class="cookie-btn cookie-btn-accept" onclick="acceptCookies()">동의</button>
@@ -150,10 +153,10 @@
                     계정이 없으신가요? <a onclick="showSignup()">회원가입</a>
                 </div>
                 <div class="auth-footer-links">
-                    <a href="javascript:void(0)" onclick="showPolicyPage('about')">소개</a>
-                    <a href="javascript:void(0)" onclick="showPolicyPage('guide')">사케 가이드</a>
-                    <a href="javascript:void(0)" onclick="showPolicyPage('privacy')">개인정보처리방침</a>
-                    <a href="javascript:void(0)" onclick="showPolicyPage('terms')">이용약관</a>
+                    <a href="/about.html" onclick="event.preventDefault();showPolicyPage('about')">소개</a>
+                    <a href="/guide.html" onclick="event.preventDefault();showPolicyPage('guide')">사케 가이드</a>
+                    <a href="/privacy.html" onclick="event.preventDefault();showPolicyPage('privacy')">개인정보처리방침</a>
+                    <a href="/terms.html" onclick="event.preventDefault();showPolicyPage('terms')">이용약관</a>
                 </div>
             </div>
 
@@ -161,8 +164,8 @@
             <div id="signupForm" style="display: none;">
                 <form class="auth-form" onsubmit="handleSignup(event)">
                     <input type="email" class="auth-input" id="signupEmail" placeholder="이메일 주소" required>
-                    <input type="password" class="auth-input" id="signupPassword" placeholder="비밀번호 (최소 6자)" required minlength="6">
-                    <input type="password" class="auth-input" id="signupPasswordConfirm" placeholder="비밀번호 확인" required minlength="6">
+                    <input type="password" class="auth-input" id="signupPassword" placeholder="비밀번호 (영문+숫자 8자 이상)" required minlength="8">
+                    <input type="password" class="auth-input" id="signupPasswordConfirm" placeholder="비밀번호 확인" required minlength="8">
                     <!-- 성별·연령대 (선택) -->
                     <div class="signup-demographics">
                         <p class="demographics-hint">입력해주시면 회원님의 연령대에 딱 맞는 사케를 추천해드려요</p>
@@ -220,29 +223,29 @@
                     이미 계정이 있으신가요? <a onclick="showLogin()">로그인</a>
                 </div>
                 <div class="auth-footer-links">
-                    <a href="javascript:void(0)" onclick="showPolicyPage('about')">소개</a>
-                    <a href="javascript:void(0)" onclick="showPolicyPage('guide')">사케 가이드</a>
-                    <a href="javascript:void(0)" onclick="showPolicyPage('privacy')">개인정보처리방침</a>
-                    <a href="javascript:void(0)" onclick="showPolicyPage('terms')">이용약관</a>
+                    <a href="/about.html" onclick="event.preventDefault();showPolicyPage('about')">소개</a>
+                    <a href="/guide.html" onclick="event.preventDefault();showPolicyPage('guide')">사케 가이드</a>
+                    <a href="/privacy.html" onclick="event.preventDefault();showPolicyPage('privacy')">개인정보처리방침</a>
+                    <a href="/terms.html" onclick="event.preventDefault();showPolicyPage('terms')">이용약관</a>
                 </div>
             </div>
         </div>
 
         <!-- 이메일 인증 안내 팝업 -->
-        <div class="verification-modal" id="verificationModal" style="display: none;">
+        <div class="verification-modal" id="verificationModal" role="dialog" aria-modal="true" aria-labelledby="verificationModalTitle" style="display: none;">
             <div class="verification-modal-content">
                 <div class="verification-modal-icon">📧</div>
-                <h2>이메일 인증이 필요합니다</h2>
+                <h2 id="verificationModalTitle">이메일 인증이 필요합니다</h2>
                 <p>입력하신 이메일 주소로 인증 메일을 발송했습니다.<br><strong>이메일 인증 후 로그인해주세요.</strong></p>
                 <button onclick="closeVerificationModal()">확인</button>
             </div>
         </div>
 
         <!-- 자격증 인증 모달 -->
-        <div class="cert-modal" id="certModal" style="display: none;">
+        <div class="cert-modal" id="certModal" role="dialog" aria-modal="true" aria-labelledby="certModalTitle" style="display: none;">
             <div class="cert-modal-content">
                 <div class="cert-modal-header">
-                    <h3>자격증 인증</h3>
+                    <h3 id="certModalTitle">자격증 인증</h3>
                     <button class="cert-modal-close" onclick="closeCertModal()">&times;</button>
                 </div>
                 <div id="certModalBody">
@@ -253,7 +256,7 @@
 
         <!-- Main App -->
         <div id="mainApp">
-            <div class="header">
+            <header class="header" role="banner">
                 <div class="header-inner">
                     <div class="header-left">
                         <div class="header-logo">
@@ -277,46 +280,46 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </header>
 
             <!-- Top Navigation -->
-            <div class="top-nav" id="topNav">
+            <nav class="top-nav" id="topNav" aria-label="사이트 네비게이션">
                 <div class="top-nav-section">
                     <h4 class="top-nav-title">서비스</h4>
                     <div class="top-nav-dropdown">
-                        <a href="javascript:void(0)" onclick="showPolicyPage('about')" class="top-nav-link">소개</a>
-                        <a href="javascript:void(0)" onclick="showPolicyPage('howto')" class="top-nav-link">사용법 가이드</a>
-                        <a href="javascript:void(0)" onclick="showPolicyPage('contact')" class="top-nav-link">문의하기</a>
+                        <a href="/about.html" onclick="event.preventDefault();showPolicyPage('about')" class="top-nav-link">소개</a>
+                        <a href="/howto.html" onclick="event.preventDefault();showPolicyPage('howto')" class="top-nav-link">사용법 가이드</a>
+                        <a href="/contact.html" onclick="event.preventDefault();showPolicyPage('contact')" class="top-nav-link">문의하기</a>
                     </div>
                 </div>
                 <div class="top-nav-section">
                     <h4 class="top-nav-title">사케 가이드</h4>
                     <div class="top-nav-dropdown">
-                        <a href="javascript:void(0)" onclick="showPolicyPage('guide')" class="top-nav-link">사케 종류</a>
-                        <a href="javascript:void(0)" onclick="showPolicyPage('regions')" class="top-nav-link">지역별 사케</a>
-                        <a href="javascript:void(0)" onclick="showPolicyPage('brewing')" class="top-nav-link">양조 과정</a>
-                        <a href="javascript:void(0)" onclick="showPolicyPage('etiquette')" class="top-nav-link">사케 에티켓</a>
-                        <a href="javascript:void(0)" onclick="showPolicyPage('recommendations')" class="top-nav-link">추천 사케</a>
-                        <a href="javascript:void(0)" onclick="showPolicyPage('glossary')" class="top-nav-link">용어사전</a>
-                        <a href="javascript:void(0)" onclick="showPolicyPage('faq')" class="top-nav-link">자주 묻는 질문</a>
+                        <a href="/guide.html" onclick="event.preventDefault();showPolicyPage('guide')" class="top-nav-link">사케 종류</a>
+                        <a href="/regions.html" onclick="event.preventDefault();showPolicyPage('regions')" class="top-nav-link">지역별 사케</a>
+                        <a href="/brewing.html" onclick="event.preventDefault();showPolicyPage('brewing')" class="top-nav-link">양조 과정</a>
+                        <a href="/etiquette.html" onclick="event.preventDefault();showPolicyPage('etiquette')" class="top-nav-link">사케 에티켓</a>
+                        <a href="/recommendations.html" onclick="event.preventDefault();showPolicyPage('recommendations')" class="top-nav-link">추천 사케</a>
+                        <a href="/glossary.html" onclick="event.preventDefault();showPolicyPage('glossary')" class="top-nav-link">용어사전</a>
+                        <a href="/faq.html" onclick="event.preventDefault();showPolicyPage('faq')" class="top-nav-link">자주 묻는 질문</a>
                     </div>
                 </div>
                 <div class="top-nav-section">
                     <h4 class="top-nav-title">키키자케시</h4>
                     <div class="top-nav-dropdown">
-                        <a href="javascript:void(0)" onclick="showPolicyPage('kikizakeshi')" class="top-nav-link">키키자케시란?</a>
+                        <a href="/kikizakeshi.html" onclick="event.preventDefault();showPolicyPage('kikizakeshi')" class="top-nav-link">키키자케시란?</a>
                     </div>
                 </div>
                 <div class="top-nav-section">
                     <h4 class="top-nav-title">법적 고지</h4>
                     <div class="top-nav-dropdown">
-                        <a href="javascript:void(0)" onclick="showPolicyPage('privacy')" class="top-nav-link">개인정보처리방침</a>
-                        <a href="javascript:void(0)" onclick="showPolicyPage('terms')" class="top-nav-link">이용약관</a>
+                        <a href="/privacy.html" onclick="event.preventDefault();showPolicyPage('privacy')" class="top-nav-link">개인정보처리방침</a>
+                        <a href="/terms.html" onclick="event.preventDefault();showPolicyPage('terms')" class="top-nav-link">이용약관</a>
                     </div>
                 </div>
-            </div>
+            </nav>
 
-            <div class="main-content-area">
+            <main class="main-content-area" role="main">
             <!-- Featured Hero Card (Stitch Style) -->
             <section class="stitch-hero" id="featuredSection">
                 <div class="featured-hero-card">
@@ -342,15 +345,15 @@
             <!-- Left Column: Main Content -->
             <div class="dashboard-main">
 
-            <div class="tabs">
-                <button class="tab active" onclick="switchTab('community')">커뮤니티</button>
-                <button class="tab" onclick="switchTab('new')">새 노트 작성</button>
-                <button class="tab" onclick="switchTab('list')">나의 노트</button>
+            <div class="tabs" role="tablist" aria-label="메인 탭">
+                <button class="tab active" role="tab" aria-selected="true" aria-controls="communityView" onclick="switchTab('community')">커뮤니티</button>
+                <button class="tab" role="tab" aria-selected="false" aria-controls="newView" onclick="switchTab('new')">새 노트 작성</button>
+                <button class="tab" role="tab" aria-selected="false" aria-controls="listView" onclick="switchTab('list')">나의 노트</button>
             </div>
 
             <div class="content">
                 <!-- 새 노트 작성 -->
-                <div id="newView" class="view">
+                <div id="newView" class="view" role="tabpanel" aria-label="새 노트 작성">
                     <div class="content-card-header">
                         <span class="material-symbols-outlined">add_circle</span>
                         새 노트 작성
@@ -435,13 +438,13 @@
                             </div>
                         </div>
 
-                        <div class="section-title" style="margin-top:24px;">개인적인 감상평</div>
+                        <div class="section-title section-title-highlight" style="margin-top:24px;">개인적인 감상평</div>
 
                         <div class="form-group">
                             <textarea id="personal_review" placeholder="이 사케에 대한 개인적인 생각을 자유롭게 작성하세요" rows="3"></textarea>
                         </div>
 
-                        <div class="section-title">재구매 의사</div>
+                        <div class="section-title section-title-highlight">재구매 의사</div>
                         <div class="form-group">
                             <div class="chip-radio-group">
                                 <label class="chip-radio"><input type="radio" name="repurchase" value="yes"><span>있음 👍</span></label>
@@ -449,7 +452,7 @@
                             </div>
                         </div>
 
-                        <div class="section-title">구입 가격대</div>
+                        <div class="section-title section-title-highlight">구입 가격대</div>
                         <div class="form-group">
                             <div class="chip-radio-group">
                                 <label class="chip-radio"><input type="radio" name="priceRange" value="1-5"><span>1~5만</span></label>
@@ -459,7 +462,7 @@
                             </div>
                         </div>
 
-                        <div class="section-title">종합 평점</div>
+                        <div class="section-title section-title-highlight">종합 평점</div>
 
                         <div class="form-group">
                             <label>이 사케에 몇 점을 주시겠어요?</label>
@@ -481,7 +484,7 @@
                 </div>
 
                 <!-- 저장된 노트 목록 -->
-                <div id="listView" class="view">
+                <div id="listView" class="view" role="tabpanel" aria-label="나의 노트">
                     <div class="list-view-header">
                         <div class="content-card-header content-card-header-flush">
                             <span class="material-symbols-outlined">menu_book</span>
@@ -495,7 +498,7 @@
                 </div>
 
                 <!-- 커뮤니티 뷰 -->
-                <div id="communityView" class="view active">
+                <div id="communityView" class="view active" role="tabpanel" aria-label="커뮤니티">
                     <div class="community-stats-row">
                         <div class="community-stat-card">
                             <span class="community-stat-label">총 노트 수</span>
@@ -524,7 +527,7 @@
                 </div>
 
                 <!-- 상세 보기 -->
-                <div id="detailView" class="view">
+                <div id="detailView" class="view" role="tabpanel" aria-label="상세 보기">
                     <button class="back-btn" onclick="switchTab('list')">← 목록으로</button>
                     <div id="detailContent"></div>
                 </div>
@@ -567,7 +570,7 @@
             </div>
 
             </div><!-- /dashboard-grid -->
-            </div><!-- /main-content-area -->
+            </main><!-- /main-content-area -->
 
             <!-- Footer -->
             <footer class="app-footer" id="appFooter">
@@ -607,10 +610,10 @@
 
 
     <!-- OCR Modal -->
-    <div class="ocr-modal" id="ocrModal">
+    <div class="ocr-modal" id="ocrModal" role="dialog" aria-modal="true" aria-labelledby="ocrModalTitle">
         <div class="ocr-modal-content">
             <div class="ocr-modal-header">
-                <h3>📷 사진으로 사케 찾기</h3>
+                <h3 id="ocrModalTitle">📷 사진으로 사케 찾기</h3>
                 <button class="ocr-modal-close" onclick="closeOcrModal()">&times;</button>
             </div>
 

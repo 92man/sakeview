@@ -7,7 +7,7 @@ const TASTING_DICTIONARY = [
   { category_id: "aroma", category_ko: "향", category_en: "Aroma", sub_category_ko: "과일/꽃 계열", sub_category_en: "Fruit/Floral", expression_ko: "멜론", ui_type: "멀티 태그" },
   { category_id: "aroma", category_ko: "향", category_en: "Aroma", sub_category_ko: "과일/꽃 계열", sub_category_en: "Fruit/Floral", expression_ko: "바나나", ui_type: "멀티 태그" },
   { category_id: "aroma", category_ko: "향", category_en: "Aroma", sub_category_ko: "과일/꽃 계열", sub_category_en: "Fruit/Floral", expression_ko: "복숭아", ui_type: "멀티 태그" },
-  { category_id: "aroma", category_ko: "향", category_en: "Aroma", sub_category_ko: "과일/꽃 계열", sub_category_en: "Fruit/Floral", expression_ko: "포도", ui_type: "멀티 태그" },
+  { category_id: "aroma", category_ko: "향", category_en: "Aroma", sub_category_ko: "과일/꽃 계열", sub_category_en: "Fruit/Floral", expression_ko: "청포도", ui_type: "멀티 태그" },
   { category_id: "aroma", category_ko: "향", category_en: "Aroma", sub_category_ko: "과일/꽃 계열", sub_category_en: "Fruit/Floral", expression_ko: "감귤류", ui_type: "멀티 태그" },
   { category_id: "aroma", category_ko: "향", category_en: "Aroma", sub_category_ko: "과일/꽃 계열", sub_category_en: "Fruit/Floral", expression_ko: "파인애플", ui_type: "멀티 태그" },
   { category_id: "aroma", category_ko: "향", category_en: "Aroma", sub_category_ko: "과일/꽃 계열", sub_category_en: "Fruit/Floral", expression_ko: "리치", ui_type: "멀티 태그" },
@@ -33,19 +33,19 @@ const TASTING_DICTIONARY = [
   { category_id: "aroma", category_ko: "향", category_en: "Aroma", sub_category_ko: "유제품 계열", sub_category_en: "Dairy", expression_ko: "버터밀크", ui_type: "멀티 태그" },
   { category_id: "aroma", category_ko: "향", category_en: "Aroma", sub_category_ko: "유제품 계열", sub_category_en: "Dairy", expression_ko: "커스터드", ui_type: "멀티 태그" },
   { category_id: "aroma", category_ko: "향", category_en: "Aroma", sub_category_ko: "유제품 계열", sub_category_en: "Dairy", expression_ko: "마스카포네", ui_type: "멀티 태그" },
-  // 곡물/누룩 계열
-  { category_id: "aroma", category_ko: "향", category_en: "Aroma", sub_category_ko: "곡물/누룩 계열", sub_category_en: "Grain/Koji", expression_ko: "쌀/밥", ui_type: "멀티 태그" },
-  { category_id: "aroma", category_ko: "향", category_en: "Aroma", sub_category_ko: "곡물/누룩 계열", sub_category_en: "Grain/Koji", expression_ko: "누룩", ui_type: "멀티 태그" },
-  { category_id: "aroma", category_ko: "향", category_en: "Aroma", sub_category_ko: "곡물/누룩 계열", sub_category_en: "Grain/Koji", expression_ko: "찐쌀", ui_type: "멀티 태그" },
-  { category_id: "aroma", category_ko: "향", category_en: "Aroma", sub_category_ko: "곡물/누룩 계열", sub_category_en: "Grain/Koji", expression_ko: "모찌/떡", ui_type: "멀티 태그" },
-  { category_id: "aroma", category_ko: "향", category_en: "Aroma", sub_category_ko: "곡물/누룩 계열", sub_category_en: "Grain/Koji", expression_ko: "쌀가루", ui_type: "멀티 태그" },
-  { category_id: "aroma", category_ko: "향", category_en: "Aroma", sub_category_ko: "곡물/누룩 계열", sub_category_en: "Grain/Koji", expression_ko: "누룩균향", ui_type: "멀티 태그" },
-  { category_id: "aroma", category_ko: "향", category_en: "Aroma", sub_category_ko: "곡물/누룩 계열", sub_category_en: "Grain/Koji", expression_ko: "현미", ui_type: "멀티 태그" },
-  { category_id: "aroma", category_ko: "향", category_en: "Aroma", sub_category_ko: "곡물/누룩 계열", sub_category_en: "Grain/Koji", expression_ko: "누룽지", ui_type: "멀티 태그" },
-  { category_id: "aroma", category_ko: "향", category_en: "Aroma", sub_category_ko: "곡물/누룩 계열", sub_category_en: "Grain/Koji", expression_ko: "생쌀", ui_type: "멀티 태그" },
-  { category_id: "aroma", category_ko: "향", category_en: "Aroma", sub_category_ko: "곡물/누룩 계열", sub_category_en: "Grain/Koji", expression_ko: "쌀겨", ui_type: "멀티 태그" },
-  // 기타 향
-  { category_id: "aroma", category_ko: "향", category_en: "Aroma", sub_category_ko: "기타 향", sub_category_en: "Other", expression_ko: "향신료", ui_type: "멀티 태그" },
+  // 곡물/기타 계열
+  { category_id: "aroma", category_ko: "향", category_en: "Aroma", sub_category_ko: "곡물/기타 계열", sub_category_en: "Grain/Other", expression_ko: "쌀/밥", ui_type: "멀티 태그" },
+  { category_id: "aroma", category_ko: "향", category_en: "Aroma", sub_category_ko: "곡물/기타 계열", sub_category_en: "Grain/Other", expression_ko: "누룩", ui_type: "멀티 태그" },
+  { category_id: "aroma", category_ko: "향", category_en: "Aroma", sub_category_ko: "곡물/기타 계열", sub_category_en: "Grain/Other", expression_ko: "찐쌀", ui_type: "멀티 태그" },
+  { category_id: "aroma", category_ko: "향", category_en: "Aroma", sub_category_ko: "곡물/기타 계열", sub_category_en: "Grain/Other", expression_ko: "모찌/떡", ui_type: "멀티 태그" },
+  { category_id: "aroma", category_ko: "향", category_en: "Aroma", sub_category_ko: "곡물/기타 계열", sub_category_en: "Grain/Other", expression_ko: "쌀가루", ui_type: "멀티 태그" },
+  { category_id: "aroma", category_ko: "향", category_en: "Aroma", sub_category_ko: "곡물/기타 계열", sub_category_en: "Grain/Other", expression_ko: "누룩균향", ui_type: "멀티 태그" },
+  { category_id: "aroma", category_ko: "향", category_en: "Aroma", sub_category_ko: "곡물/기타 계열", sub_category_en: "Grain/Other", expression_ko: "현미", ui_type: "멀티 태그" },
+  { category_id: "aroma", category_ko: "향", category_en: "Aroma", sub_category_ko: "곡물/기타 계열", sub_category_en: "Grain/Other", expression_ko: "누룽지", ui_type: "멀티 태그" },
+  { category_id: "aroma", category_ko: "향", category_en: "Aroma", sub_category_ko: "곡물/기타 계열", sub_category_en: "Grain/Other", expression_ko: "생쌀", ui_type: "멀티 태그" },
+  { category_id: "aroma", category_ko: "향", category_en: "Aroma", sub_category_ko: "곡물/기타 계열", sub_category_en: "Grain/Other", expression_ko: "쌀겨", ui_type: "멀티 태그" },
+  { category_id: "aroma", category_ko: "향", category_en: "Aroma", sub_category_ko: "곡물/기타 계열", sub_category_en: "Grain/Other", expression_ko: "견과류", ui_type: "멀티 태그" },
+  { category_id: "aroma", category_ko: "향", category_en: "Aroma", sub_category_ko: "곡물/기타 계열", sub_category_en: "Grain/Other", expression_ko: "향신료", ui_type: "멀티 태그" },
 
   // ===== 2. 맛 (Taste) =====
   // 단맛: 가벼운 → 진한
@@ -54,13 +54,13 @@ const TASTING_DICTIONARY = [
   { category_id: "taste", category_ko: "맛", category_en: "Taste", sub_category_ko: "단맛", sub_category_en: "Sweetness", expression_ko: "과일 단맛", ui_type: "멀티 태그" },
   { category_id: "taste", category_ko: "맛", category_en: "Taste", sub_category_ko: "단맛", sub_category_en: "Sweetness", expression_ko: "꿀 단맛", ui_type: "멀티 태그" },
   { category_id: "taste", category_ko: "맛", category_en: "Taste", sub_category_ko: "단맛", sub_category_en: "Sweetness", expression_ko: "초콜릿", ui_type: "멀티 태그" },
-  // 산미: 미네랄 → 부드러운 → 날카로운
-  { category_id: "taste", category_ko: "맛", category_en: "Taste", sub_category_ko: "산미", sub_category_en: "Acidity", expression_ko: "미네랄", ui_type: "멀티 태그" },
-  { category_id: "taste", category_ko: "맛", category_en: "Taste", sub_category_ko: "산미", sub_category_en: "Acidity", expression_ko: "부드러운 산미", ui_type: "멀티 태그" },
-  { category_id: "taste", category_ko: "맛", category_en: "Taste", sub_category_ko: "산미", sub_category_en: "Acidity", expression_ko: "사과 산미", ui_type: "멀티 태그" },
-  { category_id: "taste", category_ko: "맛", category_en: "Taste", sub_category_ko: "산미", sub_category_en: "Acidity", expression_ko: "감귤 산미", ui_type: "멀티 태그" },
-  { category_id: "taste", category_ko: "맛", category_en: "Taste", sub_category_ko: "산미", sub_category_en: "Acidity", expression_ko: "상쾌한 산미", ui_type: "멀티 태그" },
-  { category_id: "taste", category_ko: "맛", category_en: "Taste", sub_category_ko: "산미", sub_category_en: "Acidity", expression_ko: "날카로운 산미", ui_type: "멀티 태그" },
+  // 신맛: 미네랄 → 부드러운 → 날카로운
+  { category_id: "taste", category_ko: "맛", category_en: "Taste", sub_category_ko: "신맛", sub_category_en: "Acidity", expression_ko: "미네랄", ui_type: "멀티 태그" },
+  { category_id: "taste", category_ko: "맛", category_en: "Taste", sub_category_ko: "신맛", sub_category_en: "Acidity", expression_ko: "부드러운 산미", ui_type: "멀티 태그" },
+  { category_id: "taste", category_ko: "맛", category_en: "Taste", sub_category_ko: "신맛", sub_category_en: "Acidity", expression_ko: "사과 산미", ui_type: "멀티 태그" },
+  { category_id: "taste", category_ko: "맛", category_en: "Taste", sub_category_ko: "신맛", sub_category_en: "Acidity", expression_ko: "감귤 산미", ui_type: "멀티 태그" },
+  { category_id: "taste", category_ko: "맛", category_en: "Taste", sub_category_ko: "신맛", sub_category_en: "Acidity", expression_ko: "상쾌한 산미", ui_type: "멀티 태그" },
+  { category_id: "taste", category_ko: "맛", category_en: "Taste", sub_category_ko: "신맛", sub_category_en: "Acidity", expression_ko: "날카로운 산미", ui_type: "멀티 태그" },
   // 감칠맛: 카라멜 → 은은한 → 깊은
   { category_id: "taste", category_ko: "맛", category_en: "Taste", sub_category_ko: "감칠맛", sub_category_en: "Umami", expression_ko: "카라멜", ui_type: "멀티 태그" },
   { category_id: "taste", category_ko: "맛", category_en: "Taste", sub_category_ko: "감칠맛", sub_category_en: "Umami", expression_ko: "은은한 감칠맛", ui_type: "멀티 태그" },

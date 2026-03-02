@@ -1,5 +1,5 @@
 // === 사케 플레이버 휠 (6각형 — 6개 섹션 × 60°) ===
-// 과일/꽃, 유제품, 곡물/누룩, 감칠맛, 산미, 단맛
+// 과일/꽃, 유제품, 곡물/기타, 감칠맛, 신맛, 단맛
 
 const WHEEL_SECTIONS = [
     {
@@ -11,7 +11,7 @@ const WHEEL_SECTIONS = [
         ],
         order: [
             '사과', '배', '멜론', '바나나', '복숭아',
-            '포도', '감귤류', '파인애플', '리치', '딸기',
+            '청포도', '감귤류', '파인애플', '리치', '딸기',
             '벚꽃', '매화', '은방울꽃', '꿀', '풀내음',
             '삼나무', '자스민', '아카시아', '허브', '솔향'
         ]
@@ -26,15 +26,16 @@ const WHEEL_SECTIONS = [
         order: ['요거트', '생크림/크림', '우유', '버터', '크림치즈', '사워크림', '연유', '버터밀크', '커스터드', '마스카포네']
     },
     {
-        id: 'grain', name: '곡물/누룩',
+        id: 'grain', name: '곡물/기타',
         color: { mid: '#A08050', light: '#DDD0B8', sel: '#886838',
                  midD: '#302818', lightD: '#282420', selD: '#A08848' },
         sources: [
-            { catId: 'aroma', sub: '곡물/누룩 계열' }
+            { catId: 'aroma', sub: '곡물/기타 계열' }
         ],
         order: [
             '쌀/밥', '누룩', '찐쌀', '모찌/떡', '쌀가루',
-            '누룩균향', '현미', '누룽지', '생쌀', '쌀겨'
+            '누룩균향', '현미', '누룽지', '생쌀', '쌀겨',
+            '견과류', '향신료'
         ]
     },
     {
@@ -47,11 +48,11 @@ const WHEEL_SECTIONS = [
         order: ['카라멜', '은은한 감칠맛', '다시마맛', '해산물맛', '된장맛', '간장맛', '깊은 감칠맛']
     },
     {
-        id: 'sour', name: '산미',
+        id: 'sour', name: '신맛',
         color: { mid: '#789850', light: '#D4DCC0', sel: '#588038',
                  midD: '#1E2C18', lightD: '#1E2820', selD: '#70A050' },
         sources: [
-            { catId: 'taste', sub: '산미' }
+            { catId: 'taste', sub: '신맛' }
         ],
         order: ['미네랄', '부드러운 산미', '사과 산미', '감귤 산미', '상쾌한 산미', '날카로운 산미']
     },
@@ -195,7 +196,7 @@ function generateFlavorWheel() {
         const labelPos = polarToXY(CX, CY, labelR, midAngle);
         labelsHtml += `<text x="${labelPos.x}" y="${labelPos.y}" text-anchor="middle" dominant-baseline="central" class="wheel-cat-label" font-size="15">${section.name}</text>`;
 
-        // 태그 배치: taste(단맛/산미/감칠맛)는 통합 1링, aroma는 2링
+        // 태그 배치: taste(단맛/신맛/감칠맛)는 통합 1링, aroma는 2링
         const tagCount = section.tags.length;
         if (tagCount > 0) {
             const dataAttrs = (tag) =>

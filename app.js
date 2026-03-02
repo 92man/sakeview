@@ -56,6 +56,7 @@ let editingNoteId = null;
 let currentCertPhotoData = null;
 let approvedCertsMap = {};
 let approvedCertsLastLoaded = 0;
+let communityLastTab = 'community';
 
 // 등급 한글→일본어 매핑 (OCR/AI 매칭 공용)
 const GRADE_JP_MAP = {
@@ -90,9 +91,9 @@ function updateThumbVal(input, sid) {
 var PROFILE_SLIDER_MAP = {
     'aroma_과일/꽃 계열': { id: 'aroma_fruit', valId: 'sliderAromaFruitVal', label: '과일/꽃 향', left: '약함', right: '강함' },
     'aroma_유제품 계열':  { id: 'aroma_dairy', valId: 'sliderAromaDairyVal', label: '유제품 향', left: '약함', right: '강함' },
-    'aroma_곡물/누룩 계열': { id: 'aroma_grain', valId: 'sliderAromaGrainVal', label: '곡물/누룩 향', left: '약함', right: '강함' },
+    'aroma_곡물/기타 계열': { id: 'aroma_grain', valId: 'sliderAromaGrainVal', label: '곡물/기타 향', left: '약함', right: '강함' },
     'taste_단맛':         { id: 'sweetness', valId: 'sliderSweetnessVal', label: '단맛', left: '드라이', right: '스위트' },
-    'taste_산미':         { id: 'acidity', valId: 'sliderAcidityVal', label: '산미', left: '부드러움', right: '쨍함' },
+    'taste_신맛':         { id: 'acidity', valId: 'sliderAcidityVal', label: '신맛', left: '부드러움', right: '쨍함' },
     'taste_감칠맛':       { id: 'umami', valId: 'sliderUmamiVal', label: '감칠맛', left: '옅음', right: '깊음' }
 };
 
@@ -384,13 +385,14 @@ function collectTastingData() {
         data.mainTags = { ...tastingMainTags };
     }
     // 맛 프로파일 슬라이더
+    const getSliderVal = (id) => { const el = document.getElementById(id); return el ? parseInt(el.value) : 50; };
     data.sliders = {
-        aroma_fruit: parseInt(document.getElementById('slider_aroma_fruit').value),
-        aroma_dairy: parseInt(document.getElementById('slider_aroma_dairy').value),
-        aroma_grain: parseInt(document.getElementById('slider_aroma_grain').value),
-        sweetness: parseInt(document.getElementById('slider_sweetness').value),
-        acidity: parseInt(document.getElementById('slider_acidity').value),
-        umami: parseInt(document.getElementById('slider_umami').value)
+        aroma_fruit: getSliderVal('slider_aroma_fruit'),
+        aroma_dairy: getSliderVal('slider_aroma_dairy'),
+        aroma_grain: getSliderVal('slider_aroma_grain'),
+        sweetness: getSliderVal('slider_sweetness'),
+        acidity: getSliderVal('slider_acidity'),
+        umami: getSliderVal('slider_umami')
     };
     return data;
 }
@@ -2054,7 +2056,7 @@ async function loadNotesBySakeName(sakeName) {
         const { data, error } = await supabaseClient
             .from('tasting_notes')
             .select('id, sake_name, date, personal_review, overall_rating, created_at, user_id')
-            .ilike('sake_name', `%${sakeName}%`)
+            .ilike('sake_name', `%${sakeName.replace(/[%_]/g, '')}%`)
             .order('created_at', { ascending: false })
             .limit(20);
 
@@ -2244,7 +2246,7 @@ function renderNoteDetail(note, showActions = true) {
             <div class="section-title">맛</div>
             <div class="detail-section"><div class="detail-label">맛의 강도</div><div class="detail-value">${note.flavor || '-'} / 5</div></div>
             <div class="detail-section"><div class="detail-label">복잡성</div><div class="detail-value">${note.complexity_taste || '-'} / 5</div></div>
-            <div class="detail-section"><div class="detail-label">산미</div><div class="detail-value">${note.acidity || '-'} / 5</div></div>
+            <div class="detail-section"><div class="detail-label">신맛</div><div class="detail-value">${note.acidity || '-'} / 5</div></div>
             <div class="detail-section"><div class="detail-label">애프터 테이스트</div><div class="detail-value">${note.aftertaste || '-'} / 5</div></div>
         `;
         if (note.dominant_aroma) tastingHtml += `<div class="detail-section"><div class="detail-label">주체가 되는 향</div><div class="detail-value">${escapeHtml(note.dominant_aroma)}</div></div>`;
