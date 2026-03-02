@@ -1,4 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from "jsr:@supabase/supabase-js@2";
 
 const ALLOWED_ORIGINS = [
   "https://sakeview.com",
@@ -7,6 +8,34 @@ const ALLOWED_ORIGINS = [
 ];
 
 const MAX_IMAGE_SIZE = 10_000_000; // ~7.5MB (base64 encoded)
+const ALLOWED_MEDIA_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+
+// --- Rate Limiting (인메모리, isolate 수준) ---
+const RATE_LIMIT_WINDOW_MS = 60_000; // 1분
+const RATE_LIMIT_MAX_REQUESTS = 5;   // 1분당 최대 5회 (사용자당)
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+
+function checkRateLimit(userId: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(userId);
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(userId, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return true;
+  }
+  if (entry.count >= RATE_LIMIT_MAX_REQUESTS) {
+    return false;
+  }
+  entry.count++;
+  return true;
+}
+
+// 오래된 rate limit 엔트리 정리 (메모리 누수 방지)
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, entry] of rateLimitMap) {
+    if (now > entry.resetAt) rateLimitMap.delete(key);
+  }
+}, RATE_LIMIT_WINDOW_MS);
 
 function getCorsHeaders(req: Request) {
   const origin = req.headers.get("origin") || "";
@@ -28,10 +57,41 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // --- JWT 인증 검증 ---
+    const authHeader = req.headers.get("authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return new Response(
+        JSON.stringify({ error: "인증이 필요합니다." }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const supabaseClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+      { global: { headers: { Authorization: authHeader } } }
+    );
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+    if (authError || !user) {
+      return new Response(
+        JSON.stringify({ error: "유효하지 않은 인증 토큰입니다." }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // --- Rate Limiting ---
+    if (!checkRateLimit(user.id)) {
+      return new Response(
+        JSON.stringify({ error: "요청이 너무 많습니다. 잠시 후 다시 시도해주세요." }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json", "Retry-After": "60" } }
+      );
+    }
+
     const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
     if (!apiKey) {
+      console.error("ANTHROPIC_API_KEY is not set");
       return new Response(
-        JSON.stringify({ error: "ANTHROPIC_API_KEY가 설정되지 않았습니다." }),
+        JSON.stringify({ error: "서버 설정 오류입니다." }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -59,6 +119,14 @@ Deno.serve(async (req) => {
     if (dataUrlMatch) {
       mediaType = dataUrlMatch[1];
       base64Data = dataUrlMatch[2];
+    }
+
+    // 허용된 MIME 타입 검증
+    if (!ALLOWED_MEDIA_TYPES.includes(mediaType)) {
+      return new Response(
+        JSON.stringify({ error: "지원하지 않는 이미지 형식입니다. JPEG, PNG, WebP, GIF만 가능합니다." }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     // Claude API 호출
@@ -161,7 +229,7 @@ Deno.serve(async (req) => {
   } catch (err) {
     console.error("Edge function error:", err);
     return new Response(
-      JSON.stringify({ error: "서버 오류가 발생했습니다: " + (err as Error).message }),
+      JSON.stringify({ error: "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요." }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }

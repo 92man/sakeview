@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'sakeview-v44';
+const CACHE_VERSION = 'sakeview-v45';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -40,9 +40,9 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Network-first for Supabase API calls
+  // Network-only for Supabase API calls (사용자 데이터 캐시 금지)
   if (url.hostname.includes('supabase.co')) {
-    event.respondWith(networkFirst(request));
+    event.respondWith(networkOnly(request));
     return;
   }
 
@@ -75,6 +75,21 @@ async function cacheFirst(request) {
     }
     return response;
   } catch (error) {
+    return offlineFallback();
+  }
+}
+
+async function networkOnly(request) {
+  try {
+    return await fetch(request);
+  } catch (error) {
+    const url = new URL(request.url);
+    if (url.hostname.includes('supabase.co')) {
+      return new Response(
+        JSON.stringify({ error: 'offline', message: '오프라인 상태입니다.' }),
+        { status: 503, headers: { 'Content-Type': 'application/json; charset=utf-8' } }
+      );
+    }
     return offlineFallback();
   }
 }

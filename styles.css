@@ -172,16 +172,16 @@ body.dark-mode [class*="policy"] {
     color: var(--text-primary);
 }
 
-body.dark-mode div[style*="max-width: 900px"] {
+body.dark-mode .policy-content-wrap {
     color: var(--text-primary);
 }
 
-body.dark-mode div[style*="background: #f8f9fa"] {
+body.dark-mode .policy-info-box {
     background: var(--bg-tertiary) !important;
     color: var(--text-primary);
 }
 
-body.dark-mode div[style*="background: white"] {
+body.dark-mode .policy-card-box {
     background: var(--card-bg) !important;
     color: var(--text-primary);
 }
@@ -859,7 +859,8 @@ body.dark-mode .auth-title {
 }
 
 .auth-input:focus {
-    outline: none;
+    outline: 2px solid var(--accent-gold);
+    outline-offset: 2px;
     border-color: var(--accent-gold);
     box-shadow: 0 0 0 4px rgba(219, 223, 172, 0.1);
     transform: translateY(-2px);
@@ -1202,7 +1203,8 @@ input[type="date"]:focus,
 input[type="email"]:focus,
 input[type="password"]:focus,
 textarea:focus {
-    outline: none;
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
     border-color: var(--accent-primary);
     box-shadow: 0 0 0 3px rgba(56, 57, 97, 0.1);
 }
@@ -1344,7 +1346,10 @@ body.dark-mode .rating-scale label:has(input:checked) {
 }
 
 .rating-scale input[type="radio"] {
-    display: none;
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
 }
 
 /* Rating Scale 10 - Premium Style */
@@ -1391,7 +1396,10 @@ body.dark-mode .rating-scale label:has(input:checked) {
 }
 
 .rating-scale-10 input[type="radio"] {
-    display: none;
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
 }
 
 body.dark-mode .rating-scale-10 label:has(input:checked) {
@@ -1413,6 +1421,10 @@ body.dark-mode .rating-scale-10 label:has(input:checked) {
     background: linear-gradient(90deg, var(--border-light) 0%, var(--accent-gold) 100%);
     outline: none;
     cursor: pointer;
+}
+.rating-slider-wrap input[type="range"]:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 4px;
 }
 .rating-slider-wrap input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
@@ -1500,6 +1512,10 @@ body.dark-mode .rating-slider-wrap input[type="range"]::-moz-range-thumb {
     -webkit-appearance: none; appearance: none; flex: 1; height: 3px; border-radius: 2px;
     background: linear-gradient(90deg, #e8e0d0 0%, #d4cbb8 100%);
     outline: none; cursor: pointer;
+}
+.profile-range:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 4px;
 }
 .profile-range::-webkit-slider-thumb {
     -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 50%;
@@ -2380,7 +2396,8 @@ html {
 }
 
 .sake-search-input:focus {
-    outline: none;
+    outline: 2px solid var(--accent-gold);
+    outline-offset: 2px;
     border-color: var(--accent-gold);
     box-shadow: 0 0 0 4px rgba(219, 223, 172, 0.1);
 }
@@ -3444,6 +3461,10 @@ body.dark-mode .ocr-match-item:hover {
     color: var(--text-primary);
 }
 .community-search-wrap input:focus {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+}
+.community-search-wrap input:focus {
     border-color: #DBDFAC;
 }
 #communitySearchResults {
@@ -3906,7 +3927,7 @@ body.dark-mode .sidebar-view-all-btn:hover {
 .signup-drink-pref { margin-top: 4px; }
 .drink-pref-options { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 .drink-pref-chip { cursor: pointer; }
-.drink-pref-chip input { display: none; }
+.drink-pref-chip input { position: absolute; opacity: 0; width: 0; height: 0; }
 .drink-pref-chip span {
     display: inline-block; padding: 8px 14px; border-radius: 20px; font-size: 0.82rem;
     border: 1.5px solid var(--border-card); background: var(--bg-card); color: var(--text-secondary);
@@ -3920,7 +3941,7 @@ body.dark-mode .sidebar-view-all-btn:hover {
 
 /* 칩 라디오 (재구매의사 / 가격대) */
 .chip-radio-group { display: flex; flex-wrap: wrap; gap: 8px; }
-.chip-radio input { display: none; }
+.chip-radio input { position: absolute; opacity: 0; width: 0; height: 0; }
 .chip-radio span {
     display: inline-block; padding: 10px 18px; border-radius: 20px; font-size: 0.88rem;
     border: 1.5px solid var(--border-card); background: var(--bg-card); color: var(--text-primary);
@@ -4560,6 +4581,10 @@ body.dark-mode .sake-chat-input-wrap:focus-within {
     background: transparent;
     font-size: 14px;
     font-family: inherit;
+}
+#sake-chat-window textarea.sake-chat-input:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
     color: var(--text-primary);
     resize: none;
     min-height: 21px !important;
@@ -4698,5 +4723,67 @@ body.dark-mode #sake-chat-window {
 @media (max-width: 480px) {
     .sake-chat-msg-bubble {
         max-width: 88%;
+    }
+}
+
+/* ── 글로벌 포커스 표시기 (키보드 접근성) ── */
+:focus-visible {
+    outline: 2px solid var(--accent-primary, #383961);
+    outline-offset: 2px;
+}
+button:focus-visible,
+a:focus-visible,
+select:focus-visible {
+    outline: 2px solid var(--accent-primary, #383961);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* ── Skip Navigation (스크린리더/키보드 사용자용) ── */
+.skip-nav {
+    position: absolute;
+    top: -100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent-primary, #383961);
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 0 0 8px 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    z-index: 100000;
+    text-decoration: none;
+    transition: top 0.2s;
+}
+.skip-nav:focus {
+    top: 0;
+}
+
+/* ── prefers-color-scheme: 시스템 다크모드 자동 감지 ── */
+@media (prefers-color-scheme: dark) {
+    body:not(.light-mode-forced) {
+        --bg-primary: #0a0a0f;
+        --bg-secondary: #12121a;
+        --bg-tertiary: #1a1a24;
+        --text-primary: #f0f0f0;
+        --text-secondary: #a0a0a0;
+        --text-muted: #707070;
+        --accent-primary: #7A7CB0;
+        --accent-gold: #E5E8C0;
+        --border-card: #1e293b;
+        --card-bg: #12121a;
+        --input-bg: #0a0a0f;
+    }
+}
+
+/* ── prefers-reduced-motion: 무한 애니메이션 비활성화 ── */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
     }
 }

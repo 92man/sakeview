@@ -56,6 +56,7 @@ let editingNoteId = null;
 let currentCertPhotoData = null;
 let approvedCertsMap = {};
 let approvedCertsLastLoaded = 0;
+let communityLastTab = 'community';
 
 // 등급 한글→일본어 매핑 (OCR/AI 매칭 공용)
 const GRADE_JP_MAP = {
@@ -384,13 +385,14 @@ function collectTastingData() {
         data.mainTags = { ...tastingMainTags };
     }
     // 맛 프로파일 슬라이더
+    const getSliderVal = (id) => { const el = document.getElementById(id); return el ? parseInt(el.value) : 50; };
     data.sliders = {
-        aroma_fruit: parseInt(document.getElementById('slider_aroma_fruit').value),
-        aroma_dairy: parseInt(document.getElementById('slider_aroma_dairy').value),
-        aroma_grain: parseInt(document.getElementById('slider_aroma_grain').value),
-        sweetness: parseInt(document.getElementById('slider_sweetness').value),
-        acidity: parseInt(document.getElementById('slider_acidity').value),
-        umami: parseInt(document.getElementById('slider_umami').value)
+        aroma_fruit: getSliderVal('slider_aroma_fruit'),
+        aroma_dairy: getSliderVal('slider_aroma_dairy'),
+        aroma_grain: getSliderVal('slider_aroma_grain'),
+        sweetness: getSliderVal('slider_sweetness'),
+        acidity: getSliderVal('slider_acidity'),
+        umami: getSliderVal('slider_umami')
     };
     return data;
 }
@@ -2054,7 +2056,7 @@ async function loadNotesBySakeName(sakeName) {
         const { data, error } = await supabaseClient
             .from('tasting_notes')
             .select('id, sake_name, date, personal_review, overall_rating, created_at, user_id')
-            .ilike('sake_name', `%${sakeName}%`)
+            .ilike('sake_name', `%${sakeName.replace(/[%_]/g, '')}%`)
             .order('created_at', { ascending: false })
             .limit(20);
 

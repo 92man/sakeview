@@ -1,6 +1,6 @@
 ﻿const POLICY_PAGES = {
     privacy: () => `
-            <div style="max-width: 900px; margin: 0 auto; padding: 20px;">
+            <div class="policy-content-wrap" style="max-width: 900px; margin: 0 auto; padding: 20px;">
                 <h1 style="margin: 30px 0 20px; color: var(--accent-primary);">개인정보처리방침</h1>
                 <div style="line-height: 1.8; color: var(--text-primary);">
                     <p><strong>1. 수집하는 정보</strong></p>
@@ -57,13 +57,13 @@
                     <p style="margin-top: 20px;"><strong>8. 연락처</strong></p>
                     <p>개인정보에 관한 문의는 sakeview@sakeview.com으로 연락주세요.</p>
 
-                    <p style="margin-top: 30px; color: var(--text-muted); font-size: 0.9em;">마지막 업데이트: ${new Date().toLocaleDateString('ko-KR')}</p>
+                    <p style="margin-top: 30px; color: var(--text-muted); font-size: 0.9em;">마지막 업데이트: 2026. 3. 2.</p>
                 </div>
             </div>
     `,
 
     terms: () => `
-            <div style="max-width: 900px; margin: 0 auto; padding: 20px;">
+            <div class="policy-content-wrap" style="max-width: 900px; margin: 0 auto; padding: 20px;">
                 <h1 style="margin: 30px 0 20px; color: var(--accent-primary);">이용약관</h1>
                 <div style="line-height: 1.8; color: var(--text-primary);">
                     <p><strong>1. 서비스 개요</strong></p>
@@ -109,13 +109,13 @@
                     <p style="margin-top: 20px;"><strong>11. 문의</strong></p>
                     <p>약관에 관한 문의는 sakeview@sakeview.com으로 연락주세요.</p>
 
-                    <p style="margin-top: 30px; color: var(--text-muted); font-size: 0.9em;">마지막 업데이트: ${new Date().toLocaleDateString('ko-KR')}</p>
+                    <p style="margin-top: 30px; color: var(--text-muted); font-size: 0.9em;">마지막 업데이트: 2026. 3. 2.</p>
                 </div>
             </div>
     `,
 
     about: () => `
-            <div style="max-width: 900px; margin: 0 auto; padding: 20px;">
+            <div class="policy-content-wrap" style="max-width: 900px; margin: 0 auto; padding: 20px;">
                 <div style="text-align: center; margin-bottom: 50px;">
                     <h1 style="font-size: 2.8em; margin: 20px 0; color: var(--accent-primary); font-family: 'Cormorant Garamond', serif;">사케를 보다</h1>
                     <p style="font-size: 1.1em; color: var(--text-muted); letter-spacing: 3px;">SAKE VIEW</p>
@@ -226,7 +226,7 @@
 
                     <p style="margin-top: 50px; color: var(--text-muted); font-size: 0.9em; text-align: center;">
                         © 2026 Sake View. All rights reserved.<br>
-                        마지막 업데이트: ${new Date().toLocaleDateString('ko-KR')}
+                        마지막 업데이트: 2026. 3. 2.
                     </p>
                 </div>
             </div>
@@ -606,14 +606,14 @@
                     </div>
 
                     <p style="margin-top: 50px; color: var(--text-muted); font-size: 0.9em; text-align: center;">
-                        마지막 업데이트: ${new Date().toLocaleDateString('ko-KR')}
+                        마지막 업데이트: 2026. 3. 2.
                     </p>
                 </div>
             </div>
     `,
 
     glossary: () => `
-            <div style="max-width: 900px; margin: 0 auto; padding: 20px;">
+            <div class="policy-content-wrap" style="max-width: 900px; margin: 0 auto; padding: 20px;">
                 <div style="text-align: center; margin-bottom: 50px;">
                     <h1 style="font-size: 2.5em; margin: 20px 0; color: var(--accent-primary); font-family: 'Cormorant Garamond', serif;">사케 용어사전</h1>
                     <p style="color: var(--text-muted);">사케를 이해하기 위한 필수 용어 모음</p>
@@ -788,14 +788,14 @@
 
                     <p style="margin-top: 50px; color: var(--text-muted); font-size: 0.9em; text-align: center;">
                         총 30개 이상의 용어가 수록되어 있습니다.<br>
-                        마지막 업데이트: ${new Date().toLocaleDateString('ko-KR')}
+                        마지막 업데이트: 2026. 3. 2.
                     </p>
                 </div>
             </div>
     `,
 
     howto: () => `
-            <div style="max-width: 900px; margin: 0 auto; padding: 20px;">
+            <div class="policy-content-wrap" style="max-width: 900px; margin: 0 auto; padding: 20px;">
                 <div style="text-align: center; margin-bottom: 50px;">
                     <h1 style="font-size: 2.5em; margin: 20px 0; color: var(--accent-primary); font-family: 'Cormorant Garamond', serif;">서비스 사용법</h1>
                     <p style="color: var(--text-muted);">사케를 보다를 200% 활용하는 방법</p>
@@ -907,7 +907,7 @@
                     </div>
 
                     <p style="margin-top: 50px; color: var(--text-muted); font-size: 0.9em; text-align: center;">
-                        마지막 업데이트: ${new Date().toLocaleDateString('ko-KR')}
+                        마지막 업데이트: 2026. 3. 2.
                     </p>
                 </div>
             </div>
@@ -1043,7 +1043,7 @@
                     </div>
 
                     <p style="margin-top: 50px; color: var(--text-muted); font-size: 0.9em; text-align: center;">
-                        마지막 업데이트: ${new Date().toLocaleDateString('ko-KR')}
+                        마지막 업데이트: 2026. 3. 2.
                     </p>
                 </div>
             </div>
@@ -1222,14 +1222,14 @@
                     </div>
 
                     <p style="margin-top: 50px; color: var(--text-muted); font-size: 0.9em; text-align: center;">
-                        마지막 업데이트: ${new Date().toLocaleDateString('ko-KR')}
+                        마지막 업데이트: 2026. 3. 2.
                     </p>
                 </div>
             </div>
     `,
 
     etiquette: () => `
-            <div style="max-width: 900px; margin: 0 auto; padding: 20px;">
+            <div class="policy-content-wrap" style="max-width: 900px; margin: 0 auto; padding: 20px;">
                 <div style="text-align: center; margin-bottom: 50px;">
                     <h1 style="font-size: 2.5em; margin: 20px 0; color: var(--accent-primary); font-family: 'Cormorant Garamond', serif;">사케 에티켓</h1>
                     <p style="color: var(--text-muted);">알면 더 즐거운 사케 음주 예절</p>
@@ -1370,7 +1370,7 @@
                     </div>
 
                     <p style="margin-top: 50px; color: var(--text-muted); font-size: 0.9em; text-align: center;">
-                        마지막 업데이트: ${new Date().toLocaleDateString('ko-KR')}
+                        마지막 업데이트: 2026. 3. 2.
                     </p>
                 </div>
             </div>
@@ -1536,7 +1536,7 @@
 
                     <p style="margin-top: 50px; color: var(--text-muted); font-size: 0.9em; text-align: center;">
                         ※ 가격은 한국 시장 기준 참고가이며 변동될 수 있습니다.<br>
-                        마지막 업데이트: ${new Date().toLocaleDateString('ko-KR')}
+                        마지막 업데이트: 2026. 3. 2.
                     </p>
                 </div>
             </div>
@@ -1691,14 +1691,14 @@
                     </div>
 
                     <p style="margin-top: 50px; color: var(--text-muted); font-size: 0.9em; text-align: center;">
-                        마지막 업데이트: ${new Date().toLocaleDateString('ko-KR')}
+                        마지막 업데이트: 2026. 3. 2.
                     </p>
                 </div>
             </div>
     `,
 
     faq: () => `
-            <div style="max-width: 900px; margin: 0 auto; padding: 20px;">
+            <div class="policy-content-wrap" style="max-width: 900px; margin: 0 auto; padding: 20px;">
                 <div style="text-align: center; margin-bottom: 50px;">
                     <h1 style="font-size: 2.5em; margin: 20px 0; color: var(--accent-primary); font-family: 'Cormorant Garamond', serif;">자주 묻는 질문</h1>
                     <p style="color: var(--text-muted);">사케를 보다 서비스와 사케에 관한 FAQ</p>
@@ -1839,7 +1839,7 @@
 
                     <p style="margin-top: 50px; color: var(--text-muted); font-size: 0.9em; text-align: center;">
                         자주 묻는 질문은 지속적으로 업데이트됩니다.<br>
-                        마지막 업데이트: ${new Date().toLocaleDateString('ko-KR')}
+                        마지막 업데이트: 2026. 3. 2.
                     </p>
                 </div>
             </div>

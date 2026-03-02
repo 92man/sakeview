@@ -508,9 +508,7 @@ function getTextRotation(angle) {
     return Math.round(r * 100) / 100;
 }
 
-function escapeAttr(str) {
-    return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
+// escapeAttr()는 app.js에서 정의됨 — 중복 제거
 
 let _wheelStaticGradId = 0;
 
