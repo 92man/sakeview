@@ -581,25 +581,38 @@ function generateStaticWheelSvg(flavorJson, mode) {
 
     // ── 미니 모드: 깔끔한 레이더 차트 ──
     if (isMini) {
-        const miniStep = MINI_MAX_R / 5;
+        // 풀 모드와 동일한 비율 유지: 중심원 → 바깥원
+        const MINI_CENTER_R = Math.round(MINI_MAX_R * (R1_OUT / R3_OUT)); // ≈52
+        const miniScoreRange = MINI_MAX_R - MINI_CENTER_R; // ≈93
+        const miniStep = miniScoreRange / 5;
 
-        // 그리드 원 (참고선)
+        // 중심원 배경 (각 섹션 색상)
+        let offset = -90;
+        WHEEL_SECTIONS.forEach(section => {
+            const c = section.color;
+            svg += createArcPath(cx, cy, 0, MINI_CENTER_R, offset, offset + SECTION_ANGLE, '', c.light, 'pointer-events="none" opacity="0.6"');
+            offset += SECTION_ANGLE;
+        });
+        svg += `<circle cx="${cx}" cy="${cy}" r="${MINI_CENTER_R}" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="0.8" pointer-events="none"/>`;
+
+        // 그리드 원 (점수 1~5 참고선)
         for (let s = 1; s <= 5; s++) {
-            svg += `<circle cx="${cx}" cy="${cy}" r="${s * miniStep}" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="0.5" pointer-events="none"/>`;
+            svg += `<circle cx="${cx}" cy="${cy}" r="${MINI_CENTER_R + s * miniStep}" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="0.5" pointer-events="none"/>`;
         }
 
         // 축선
         WHEEL_SECTIONS.forEach((_, i) => {
             const angle = -90 + i * SECTION_ANGLE + SECTION_ANGLE / 2;
-            const p = polarToXY(cx, cy, MINI_MAX_R, angle);
-            svg += `<line x1="${cx}" y1="${cy}" x2="${p.x}" y2="${p.y}" stroke="rgba(0,0,0,0.06)" stroke-width="0.5" pointer-events="none"/>`;
+            const pIn = polarToXY(cx, cy, MINI_CENTER_R, angle);
+            const pOut = polarToXY(cx, cy, MINI_MAX_R, angle);
+            svg += `<line x1="${pIn.x}" y1="${pIn.y}" x2="${pOut.x}" y2="${pOut.y}" stroke="rgba(0,0,0,0.06)" stroke-width="0.5" pointer-events="none"/>`;
         });
 
-        // 6각형 꼭지점
+        // 6각형 꼭지점 (중심원 가장자리부터 시작 — 풀 모드와 동일 비율)
         const vertices = WHEEL_SECTIONS.map((_, i) => {
             const angle = -90 + i * SECTION_ANGLE + SECTION_ANGLE / 2;
-            const r = (scores[i] / 5) * MINI_MAX_R;
-            return polarToXY(cx, cy, Math.max(r, 2), angle);
+            const r = MINI_CENTER_R + (scores[i] / 5) * miniScoreRange;
+            return polarToXY(cx, cy, r, angle);
         });
 
         // 섹션별 삼각형 (중심 → 꼭지점 → 다음 꼭지점)
