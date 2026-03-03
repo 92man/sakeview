@@ -13,6 +13,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="sake_database.js"></script>
     <script src="tasting_dictionary.js"></script>
+    <script src="flavor_wheel.js?v=19"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -42,6 +43,8 @@
         thead { background: #f0f0f0; }
         th { padding: 12px; text-align: left; font-weight: 600; color: #383961; border-bottom: 2px solid #ddd; }
         td { padding: 12px; border-bottom: 1px solid #eee; }
+        .static-wheel-mini { width: 40px; height: 40px; margin: 0 auto; }
+        .static-wheel-mini svg { width: 100%; height: 100%; }
         tr:hover { background: #f9f9f9; }
         .clickable-row { cursor: pointer; }
         .clickable-row:hover { background: #eef2ff !important; }
@@ -1044,48 +1047,7 @@
             return tags.length > 0 ? tags.slice(0, 3).map(t => escapeHtml(t)).join(', ') : '-';
         }
 
-        // 미니 파이 차트 (카테고리별 태그 수로 파이 그리기)
-        const PIE_COLORS = {
-            aroma: '#f9a8d4', taste: '#93c5fd', body: '#86efac',
-            finish: '#fcd34d', overall: '#c4b5fd', kr_context: '#fdba74'
-        };
-
-        function generateMiniPie(note) {
-            const td = parseTastingV2(note);
-            if (!td) return '';
-            const segments = [];
-            Object.entries(td.categories).forEach(([catId, catData]) => {
-                let count = 0;
-                Object.values(catData).forEach(val => {
-                    if (Array.isArray(val)) count += val.length;
-                    else if (val) count++;
-                });
-                if (count > 0) segments.push({ catId, count });
-            });
-            if (segments.length === 0) return '';
-            const total = segments.reduce((s, seg) => s + seg.count, 0);
-            const r = 16, cx = 18, cy = 18;
-            let svg = `<svg viewBox="0 0 36 36" width="36" height="36" style="vertical-align:middle;">`;
-            let startAngle = -90;
-            segments.forEach(seg => {
-                const angle = (seg.count / total) * 360;
-                const endAngle = startAngle + angle;
-                const largeArc = angle > 180 ? 1 : 0;
-                const x1 = cx + r * Math.cos(startAngle * Math.PI / 180);
-                const y1 = cy + r * Math.sin(startAngle * Math.PI / 180);
-                const x2 = cx + r * Math.cos(endAngle * Math.PI / 180);
-                const y2 = cy + r * Math.sin(endAngle * Math.PI / 180);
-                const color = PIE_COLORS[seg.catId] || '#ddd';
-                if (segments.length === 1) {
-                    svg += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${color}"/>`;
-                } else {
-                    svg += `<path d="M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${largeArc},1 ${x2},${y2} Z" fill="${color}"/>`;
-                }
-                startAngle = endAngle;
-            });
-            svg += `</svg>`;
-            return svg;
-        }
+        // 미니 플레이버 휠 — flavor_wheel.js의 generateStaticWheelSvg 사용
 
         function topTags(tagCounts, limit) {
             if (!tagCounts || Object.keys(tagCounts).length === 0) return '-';
@@ -1154,7 +1116,7 @@
                     <td>${userId}</td>
                     <td><span class="sake-name-link" onclick="openSpecModal('${escapeAttr(n.sake_name)}')">${sakeName}</span>${badge}</td>
                     <td>${rating}</td>
-                    <td>${generateMiniPie(n)}</td>
+                    <td>${typeof generateStaticWheelSvg === 'function' ? generateStaticWheelSvg(n.flavor_description, 'mini') : ''}</td>
                     <td style="font-size:0.85em;">${getCategorySummary(n, 'aroma')}</td>
                     <td style="font-size:0.85em;">${getCategorySummary(n, 'taste')}</td>
                     <td style="font-size:0.85em;">${getCategorySummary(n, 'body')}</td>
