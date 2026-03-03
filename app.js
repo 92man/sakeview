@@ -1777,7 +1777,7 @@ async function loadNotes() {
     try {
         const { data, error } = await supabaseClient
             .from('tasting_notes')
-            .select('id, sake_name, date, overall_rating, flavor_description, dominant_aroma, created_at')
+            .select('id, sake_name, date, overall_rating, flavor_description, dominant_aroma, created_at, photo, photo_back')
             .eq('user_id', currentUser.id)
             .order('created_at', { ascending: false });
 

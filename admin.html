@@ -12,6 +12,7 @@
     <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192x192.png">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="sake_database.js"></script>
+    <script src="tasting_dictionary.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -134,6 +135,10 @@
                     <h3>인증 대기</h3>
                     <div class="number" id="pendingCerts" style="color:#f59e0b;">0</div>
                 </div>
+                <div class="stat-card">
+                    <h3>등록 사케 (커스텀)</h3>
+                    <div class="number" id="customSakeCount">0</div>
+                </div>
             </div>
 
             <div class="table-container">
@@ -149,6 +154,26 @@
                     </thead>
                     <tbody id="unregisteredSakeTable">
                         <tr><td colspan="4">데이터 로딩 중...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-container">
+                <h3>📋 등록된 사케 목록 (커스텀)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>브랜드</th>
+                            <th>제품명</th>
+                            <th>일본어</th>
+                            <th>등급</th>
+                            <th>정미보합</th>
+                            <th>등록일</th>
+                            <th>작업</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customSakeTable">
+                        <tr><td colspan="7">데이터 로딩 중...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -235,20 +260,15 @@
                             <th>사케 이름</th>
                             <th>기록</th>
                             <th>평균평점</th>
-                            <th>색감</th>
-                            <th>투명도</th>
-                            <th>점도</th>
-                            <th>향 강도</th>
-                            <th>향 복합도</th>
-                            <th>향 선명도</th>
-                            <th>맛의 강도</th>
-                            <th>맛 복합도</th>
-                            <th>산미</th>
+                            <th>향 (Aroma)</th>
+                            <th>맛 (Taste)</th>
+                            <th>바디감</th>
                             <th>여운</th>
+                            <th>전체 인상</th>
                         </tr>
                     </thead>
                     <tbody id="sakeTable">
-                        <tr><td colspan="13">데이터 로딩 중...</td></tr>
+                        <tr><td colspan="8">데이터 로딩 중...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -261,10 +281,10 @@
                             <th>날짜</th>
                             <th>사용자</th>
                             <th>사케</th>
-                            <th>색감</th>
-                            <th>투명도</th>
+                            <th>평점</th>
                             <th>향</th>
                             <th>맛</th>
+                            <th>바디/여운</th>
                         </tr>
                     </thead>
                     <tbody id="notesTable">
@@ -282,6 +302,7 @@
                 <h3>사케 등록</h3>
                 <button class="register-modal-close" onclick="closeRegisterModal()">&times;</button>
             </div>
+            <div style="font-size:0.8em; color:#999; margin-bottom:12px;">* 표시가 있는 항목만 필수입니다. 나머지는 비워두셔도 됩니다.</div>
             <div class="register-original">
                 <label>원본 이름</label>
                 <div id="registerOriginalName" style="padding:8px; background:#f5f5f5; border-radius:6px; font-size:0.95em;"></div>
@@ -341,7 +362,7 @@
                 <input type="number" id="registerPolishRate" placeholder="50" min="1" max="100" step="1">
             </div>
             <div class="register-field">
-                <label style="color:#383961; font-weight:700;">효모 (Yeast) ⭐</label>
+                <label>효모 (Yeast)</label>
                 <select id="regYeast" onchange="document.getElementById('regYeastCustom').style.display=this.value==='기타'?'block':'none'">
                     <option value="">선택...</option>
                     <option value="7호">7호 (협회7호)</option>
@@ -450,7 +471,7 @@
                 <input type="number" id="specPolishRate" placeholder="50" min="1" max="100" step="1">
             </div>
             <div class="register-field">
-                <label style="color:#383961; font-weight:700;">효모 (Yeast) ⭐</label>
+                <label>효모 (Yeast)</label>
                 <select id="specYeast" onchange="document.getElementById('specYeastCustom').style.display=this.value==='기타'?'block':'none'">
                     <option value="">선택...</option>
                     <option value="7호">7호 (협회7호)</option>
@@ -491,6 +512,59 @@
                 <button type="button" onclick="saveSpec()" style="background:#383961; color:white;">저장</button>
             </div>
             <div id="specError" style="color:#e74c3c; text-align:center; margin-top:10px;"></div>
+        </div>
+    </div>
+
+    <!-- 커스텀 사케 수정 모달 -->
+    <div class="register-modal" id="editCustomSakeModal">
+        <div class="register-modal-content">
+            <div class="register-modal-header">
+                <h3>사케 수정</h3>
+                <button class="register-modal-close" onclick="closeEditCustomSakeModal()">&times;</button>
+            </div>
+            <input type="hidden" id="editCsId">
+            <div class="register-field">
+                <label>브랜드명 (한글) *</label>
+                <input type="text" id="editCsBrand">
+            </div>
+            <div class="register-field">
+                <label>브랜드 일본어</label>
+                <input type="text" id="editCsBrandJp">
+            </div>
+            <div class="register-field">
+                <label>제품명 (한글) *</label>
+                <input type="text" id="editCsProductName">
+            </div>
+            <div class="register-field">
+                <label>제품 일본어</label>
+                <input type="text" id="editCsJapanese">
+            </div>
+            <div class="register-field">
+                <label>등급</label>
+                <select id="editCsGrade">
+                    <option value="">선택...</option>
+                    <option value="다이긴죠">다이긴죠</option>
+                    <option value="긴죠">긴죠</option>
+                    <option value="준마이 다이긴죠">준마이 다이긴죠</option>
+                    <option value="준마이 긴죠">준마이 긴죠</option>
+                    <option value="준마이">준마이</option>
+                    <option value="혼죠조">혼죠조</option>
+                    <option value="도쿠베츠 준마이">도쿠베츠 준마이</option>
+                    <option value="도쿠베츠 혼죠조">도쿠베츠 혼죠조</option>
+                    <option value="나마자케">나마자케</option>
+                    <option value="니고리">니고리</option>
+                    <option value="후츠슈">후츠슈</option>
+                </select>
+            </div>
+            <div class="register-field">
+                <label>정미보합 (%)</label>
+                <input type="text" id="editCsPolishRate">
+            </div>
+            <div class="register-actions">
+                <button type="button" onclick="closeEditCustomSakeModal()" style="background:#ccc; color:#333;">취소</button>
+                <button type="button" onclick="saveEditCustomSake()" style="background:#383961; color:white;">저장</button>
+            </div>
+            <div id="editCsError" style="color:#e74c3c; text-align:center; margin-top:10px;"></div>
         </div>
     </div>
 
@@ -576,8 +650,91 @@
         let customSakesData = [];
 
         async function loadCustomSakes() {
-            const { data, error } = await client.from('custom_sakes').select('*');
+            const { data, error } = await client.from('custom_sakes').select('*').order('created_at', { ascending: false });
             if (!error && data) customSakesData = data;
+            renderCustomSakesTable();
+            const countEl = document.getElementById('customSakeCount');
+            if (countEl) countEl.textContent = customSakesData.length;
+        }
+
+        function renderCustomSakesTable() {
+            let html = '';
+            customSakesData.forEach(cs => {
+                const d = cs.created_at ? new Date(cs.created_at).toLocaleDateString('ko-KR') : '-';
+                html += `<tr>
+                    <td>${escapeHtml(cs.brand)}${cs.brand_jp ? ' <span style="color:#999;font-size:0.85em;">(' + escapeHtml(cs.brand_jp) + ')</span>' : ''}</td>
+                    <td>${escapeHtml(cs.product_name)}</td>
+                    <td>${escapeHtml(cs.japanese || '-')}</td>
+                    <td>${escapeHtml(cs.grade || '-')}</td>
+                    <td>${escapeHtml(cs.polish_rate || '-')}</td>
+                    <td>${d}</td>
+                    <td>
+                        <button onclick="editCustomSake('${escapeAttr(cs.id)}')" style="padding:4px 8px;border:none;background:#3498db;color:white;border-radius:4px;cursor:pointer;font-size:0.8em;margin-right:4px;">수정</button>
+                        <button onclick="deleteCustomSake('${escapeAttr(cs.id)}','${escapeAttr(cs.brand + ' ' + cs.product_name)}')" style="padding:4px 8px;border:none;background:#e74c3c;color:white;border-radius:4px;cursor:pointer;font-size:0.8em;">삭제</button>
+                    </td>
+                </tr>`;
+            });
+            document.getElementById('customSakeTable').innerHTML = html || '<tr><td colspan="7">등록된 커스텀 사케 없음</td></tr>';
+        }
+
+        function editCustomSake(id) {
+            const cs = customSakesData.find(c => c.id == id);
+            if (!cs) return;
+            document.getElementById('editCsId').value = cs.id;
+            document.getElementById('editCsBrand').value = cs.brand || '';
+            document.getElementById('editCsBrandJp').value = cs.brand_jp || '';
+            document.getElementById('editCsProductName').value = cs.product_name || '';
+            document.getElementById('editCsJapanese').value = cs.japanese || '';
+            document.getElementById('editCsGrade').value = cs.grade || '';
+            document.getElementById('editCsPolishRate').value = cs.polish_rate || '';
+            document.getElementById('editCsError').textContent = '';
+            document.getElementById('editCustomSakeModal').classList.add('active');
+        }
+
+        function closeEditCustomSakeModal() {
+            document.getElementById('editCustomSakeModal').classList.remove('active');
+        }
+
+        async function saveEditCustomSake() {
+            const id = document.getElementById('editCsId').value;
+            const brand = document.getElementById('editCsBrand').value.trim();
+            const productName = document.getElementById('editCsProductName').value.trim();
+            const errorEl = document.getElementById('editCsError');
+
+            if (!brand || !productName) {
+                errorEl.textContent = '브랜드명과 제품명은 필수입니다.';
+                return;
+            }
+
+            try {
+                const { error } = await client.from('custom_sakes').update({
+                    brand: brand,
+                    brand_jp: document.getElementById('editCsBrandJp').value.trim() || null,
+                    product_name: productName,
+                    japanese: document.getElementById('editCsJapanese').value.trim() || null,
+                    grade: document.getElementById('editCsGrade').value || null,
+                    polish_rate: document.getElementById('editCsPolishRate').value.trim() || null
+                }).eq('id', id);
+
+                if (error) throw error;
+                alert('수정되었습니다!');
+                closeEditCustomSakeModal();
+                await loadCustomSakes();
+            } catch (e) {
+                errorEl.textContent = '수정 실패: ' + e.message;
+            }
+        }
+
+        async function deleteCustomSake(id, name) {
+            if (!confirm(name + ' 을(를) 삭제하시겠습니까?')) return;
+            try {
+                const { error } = await client.from('custom_sakes').delete().eq('id', id);
+                if (error) throw error;
+                alert('삭제되었습니다.');
+                await loadCustomSakes();
+            } catch (e) {
+                alert('삭제 실패: ' + e.message);
+            }
         }
 
         function buildKnownSakeNames() {
@@ -859,36 +1016,67 @@
             });
         }
 
+        // === 테이스팅 V2 파서 ===
+        function parseTastingV2(note) {
+            if (!note.flavor_description) return null;
+            try {
+                const td = typeof note.flavor_description === 'string' ? JSON.parse(note.flavor_description) : note.flavor_description;
+                if (!td || td.version !== 2 || !td.categories) return null;
+                return td;
+            } catch(e) { return null; }
+        }
+
+        function getCategoryTags(td, catId) {
+            if (!td || !td.categories || !td.categories[catId]) return [];
+            const catData = td.categories[catId];
+            const tags = [];
+            Object.values(catData).forEach(val => {
+                if (Array.isArray(val)) tags.push(...val);
+                else if (typeof val === 'string') tags.push(val);
+            });
+            return tags;
+        }
+
+        function getCategorySummary(note, catId) {
+            const td = parseTastingV2(note);
+            const tags = getCategoryTags(td, catId);
+            return tags.length > 0 ? tags.slice(0, 3).map(t => escapeHtml(t)).join(', ') : '-';
+        }
+
+        function topTags(tagCounts, limit) {
+            if (!tagCounts || Object.keys(tagCounts).length === 0) return '-';
+            return Object.entries(tagCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, limit)
+                .map(([tag]) => escapeHtml(tag))
+                .join(', ');
+        }
+
         function drawTables(notes) {
-            // Sake Stats
+            // Sake Stats — V2 태그 기반
             const stats = {};
             notes.forEach(n => {
-                if (!stats[n.sake_name]) stats[n.sake_name] = { 
-                    count: 0, 
-                    overall_rating_sum: 0,
-                    clarity: 0, 
-                    transparency: 0,
-                    viscosity: 0,
-                    aroma_intensity: 0,
-                    complexity_aroma: 0,
-                    sharpness: 0,
-                    flavor: 0,
-                    complexity_taste: 0,
-                    acidity: 0,
-                    aftertaste: 0
+                if (!stats[n.sake_name]) stats[n.sake_name] = {
+                    count: 0, overall_rating_sum: 0, tagsByCategory: {}
                 };
-                stats[n.sake_name].count++;
-                stats[n.sake_name].overall_rating_sum += n.overall_rating || 0;
-                stats[n.sake_name].clarity += n.clarity_rating || 0;
-                stats[n.sake_name].transparency += n.transparency || 0;
-                stats[n.sake_name].viscosity += n.viscosity || 0;
-                stats[n.sake_name].aroma_intensity += n.aroma_intensity || 0;
-                stats[n.sake_name].complexity_aroma += n.complexity_aroma || 0;
-                stats[n.sake_name].sharpness += n.sharpness || 0;
-                stats[n.sake_name].flavor += n.flavor || 0;
-                stats[n.sake_name].complexity_taste += n.complexity_taste || 0;
-                stats[n.sake_name].acidity += n.acidity || 0;
-                stats[n.sake_name].aftertaste += n.aftertaste || 0;
+                const s = stats[n.sake_name];
+                s.count++;
+                s.overall_rating_sum += n.overall_rating || 0;
+
+                const td = parseTastingV2(n);
+                if (td) {
+                    Object.entries(td.categories).forEach(([catId, catData]) => {
+                        if (!s.tagsByCategory[catId]) s.tagsByCategory[catId] = {};
+                        Object.values(catData).forEach(val => {
+                            const tags = Array.isArray(val) ? val : [val];
+                            tags.forEach(tag => {
+                                if (typeof tag === 'string') {
+                                    s.tagsByCategory[catId][tag] = (s.tagsByCategory[catId][tag] || 0) + 1;
+                                }
+                            });
+                        });
+                    });
+                }
             });
 
             const specNames = new Set(sakeSpecsData.map(s => s.sake_name));
@@ -900,28 +1088,32 @@
                     <td><span class="sake-name-link" onclick="openSpecModal('${escapeAttr(sake)}')">${escapeHtml(sake)}</span>${badge}</td>
                     <td>${s.count}</td>
                     <td>${avgOverall}</td>
-                    <td>${(s.clarity/s.count).toFixed(1)}</td>
-                    <td>${(s.transparency/s.count).toFixed(1)}</td>
-                    <td>${(s.viscosity/s.count).toFixed(1)}</td>
-                    <td>${(s.aroma_intensity/s.count).toFixed(1)}</td>
-                    <td>${(s.complexity_aroma/s.count).toFixed(1)}</td>
-                    <td>${(s.sharpness/s.count).toFixed(1)}</td>
-                    <td>${(s.flavor/s.count).toFixed(1)}</td>
-                    <td>${(s.complexity_taste/s.count).toFixed(1)}</td>
-                    <td>${(s.acidity/s.count).toFixed(1)}</td>
-                    <td>${(s.aftertaste/s.count).toFixed(1)}</td>
+                    <td style="font-size:0.85em;">${topTags(s.tagsByCategory['aroma'], 3)}</td>
+                    <td style="font-size:0.85em;">${topTags(s.tagsByCategory['taste'], 3)}</td>
+                    <td style="font-size:0.85em;">${topTags(s.tagsByCategory['body'], 2)}</td>
+                    <td style="font-size:0.85em;">${topTags(s.tagsByCategory['finish'], 2)}</td>
+                    <td style="font-size:0.85em;">${topTags(s.tagsByCategory['overall'], 2)}</td>
                 </tr>`;
             });
-            document.getElementById('sakeTable').innerHTML = html || '<tr><td colspan="13">데이터 없음</td></tr>';
+            document.getElementById('sakeTable').innerHTML = html || '<tr><td colspan="8">데이터 없음</td></tr>';
 
-            // Recent Notes
+            // Recent Notes — V2 태그 기반
             html = '';
             notes.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 30).forEach(n => {
                 const d = new Date(n.created_at).toLocaleDateString('ko-KR');
                 const userId = n.user_id ? escapeHtml(n.user_id.substring(0, 8)) : '-';
                 const sakeName = escapeHtml(n.sake_name);
                 const badge = specNames.has(n.sake_name) ? '<span class="spec-done">완</span>' : '';
-                html += `<tr><td>${d}</td><td>${userId}</td><td><span class="sake-name-link" onclick="openSpecModal('${escapeAttr(n.sake_name)}')">${sakeName}</span>${badge}</td><td>${n.clarity_rating||'-'}</td><td>${n.transparency||'-'}</td><td>${n.aroma_intensity||'-'}</td><td>${n.flavor||'-'}</td></tr>`;
+                const rating = n.overall_rating ? (n.overall_rating / 20).toFixed(1) + '★' : '-';
+                html += `<tr>
+                    <td>${d}</td>
+                    <td>${userId}</td>
+                    <td><span class="sake-name-link" onclick="openSpecModal('${escapeAttr(n.sake_name)}')">${sakeName}</span>${badge}</td>
+                    <td>${rating}</td>
+                    <td style="font-size:0.85em;">${getCategorySummary(n, 'aroma')}</td>
+                    <td style="font-size:0.85em;">${getCategorySummary(n, 'taste')}</td>
+                    <td style="font-size:0.85em;">${getCategorySummary(n, 'body')}</td>
+                </tr>`;
             });
             document.getElementById('notesTable').innerHTML = html || '<tr><td colspan="7">데이터 없음</td></tr>';
         }
