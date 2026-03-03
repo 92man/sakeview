@@ -282,13 +282,14 @@
                             <th>사용자</th>
                             <th>사케</th>
                             <th>평점</th>
+                            <th style="width:50px;"></th>
                             <th>향</th>
                             <th>맛</th>
                             <th>바디/여운</th>
                         </tr>
                     </thead>
                     <tbody id="notesTable">
-                        <tr><td colspan="7">데이터 로딩 중...</td></tr>
+                        <tr><td colspan="8">데이터 로딩 중...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -1043,6 +1044,49 @@
             return tags.length > 0 ? tags.slice(0, 3).map(t => escapeHtml(t)).join(', ') : '-';
         }
 
+        // 미니 파이 차트 (카테고리별 태그 수로 파이 그리기)
+        const PIE_COLORS = {
+            aroma: '#f9a8d4', taste: '#93c5fd', body: '#86efac',
+            finish: '#fcd34d', overall: '#c4b5fd', kr_context: '#fdba74'
+        };
+
+        function generateMiniPie(note) {
+            const td = parseTastingV2(note);
+            if (!td) return '';
+            const segments = [];
+            Object.entries(td.categories).forEach(([catId, catData]) => {
+                let count = 0;
+                Object.values(catData).forEach(val => {
+                    if (Array.isArray(val)) count += val.length;
+                    else if (val) count++;
+                });
+                if (count > 0) segments.push({ catId, count });
+            });
+            if (segments.length === 0) return '';
+            const total = segments.reduce((s, seg) => s + seg.count, 0);
+            const r = 16, cx = 18, cy = 18;
+            let svg = `<svg viewBox="0 0 36 36" width="36" height="36" style="vertical-align:middle;">`;
+            let startAngle = -90;
+            segments.forEach(seg => {
+                const angle = (seg.count / total) * 360;
+                const endAngle = startAngle + angle;
+                const largeArc = angle > 180 ? 1 : 0;
+                const x1 = cx + r * Math.cos(startAngle * Math.PI / 180);
+                const y1 = cy + r * Math.sin(startAngle * Math.PI / 180);
+                const x2 = cx + r * Math.cos(endAngle * Math.PI / 180);
+                const y2 = cy + r * Math.sin(endAngle * Math.PI / 180);
+                const color = PIE_COLORS[seg.catId] || '#ddd';
+                if (segments.length === 1) {
+                    svg += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${color}"/>`;
+                } else {
+                    svg += `<path d="M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${largeArc},1 ${x2},${y2} Z" fill="${color}"/>`;
+                }
+                startAngle = endAngle;
+            });
+            svg += `</svg>`;
+            return svg;
+        }
+
         function topTags(tagCounts, limit) {
             if (!tagCounts || Object.keys(tagCounts).length === 0) return '-';
             return Object.entries(tagCounts)
@@ -1083,7 +1127,7 @@
             let html = '';
             Object.entries(stats).sort((a, b) => b[1].count - a[1].count).forEach(([sake, s]) => {
                 const avgOverall = (s.overall_rating_sum / s.count).toFixed(1);
-                const badge = specNames.has(sake) ? '<span class="spec-done">완</span>' : '';
+                const badge = specNames.has(sake) ? '<sup class="spec-done">완</sup>' : '';
                 html += `<tr>
                     <td><span class="sake-name-link" onclick="openSpecModal('${escapeAttr(sake)}')">${escapeHtml(sake)}</span>${badge}</td>
                     <td>${s.count}</td>
@@ -1103,19 +1147,20 @@
                 const d = new Date(n.created_at).toLocaleDateString('ko-KR');
                 const userId = n.user_id ? escapeHtml(n.user_id.substring(0, 8)) : '-';
                 const sakeName = escapeHtml(n.sake_name);
-                const badge = specNames.has(n.sake_name) ? '<span class="spec-done">완</span>' : '';
-                const rating = n.overall_rating ? (n.overall_rating / 20).toFixed(1) + '★' : '-';
+                const badge = specNames.has(n.sake_name) ? '<sup class="spec-done">완</sup>' : '';
+                const rating = n.overall_rating ? n.overall_rating : '-';
                 html += `<tr>
                     <td>${d}</td>
                     <td>${userId}</td>
                     <td><span class="sake-name-link" onclick="openSpecModal('${escapeAttr(n.sake_name)}')">${sakeName}</span>${badge}</td>
                     <td>${rating}</td>
+                    <td>${generateMiniPie(n)}</td>
                     <td style="font-size:0.85em;">${getCategorySummary(n, 'aroma')}</td>
                     <td style="font-size:0.85em;">${getCategorySummary(n, 'taste')}</td>
                     <td style="font-size:0.85em;">${getCategorySummary(n, 'body')}</td>
                 </tr>`;
             });
-            document.getElementById('notesTable').innerHTML = html || '<tr><td colspan="7">데이터 없음</td></tr>';
+            document.getElementById('notesTable').innerHTML = html || '<tr><td colspan="8">데이터 없음</td></tr>';
         }
 
         // === 자격증 인증 심사 ===
