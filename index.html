@@ -90,8 +90,10 @@
             },
         }
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Serif+KR:wght@400;500;700;900&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Serif+KR:wght@400;500;700;900&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <link rel="stylesheet" href="styles.css?v=40">
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1907306190071217"
@@ -144,13 +146,13 @@
             <!-- 로그인 폼 -->
             <div id="loginForm">
                 <form class="auth-form" onsubmit="handleLogin(event)">
-                    <input type="email" class="auth-input" id="loginEmail" placeholder="이메일 주소" required>
-                    <input type="password" class="auth-input" id="loginPassword" placeholder="비밀번호" required>
+                    <input type="email" class="auth-input" id="loginEmail" placeholder="이메일 주소" required autocomplete="email">
+                    <input type="password" class="auth-input" id="loginPassword" placeholder="비밀번호" required autocomplete="current-password">
                     <button type="submit" class="auth-btn" id="loginSubmitBtn"><span class="spinner"></span><span class="btn-text">로그인</span></button>
                     <div id="loginError" class="auth-error"></div>
                 </form>
                 <div class="auth-switch">
-                    계정이 없으신가요? <a onclick="showSignup()">회원가입</a>
+                    계정이 없으신가요? <a href="#" onclick="event.preventDefault();showSignup()">회원가입</a>
                 </div>
                 <div class="auth-footer-links">
                     <a href="/about.html" onclick="event.preventDefault();showPolicyPage('about')">소개</a>
@@ -163,9 +165,9 @@
             <!-- 회원가입 폼 -->
             <div id="signupForm" style="display: none;">
                 <form class="auth-form" onsubmit="handleSignup(event)">
-                    <input type="email" class="auth-input" id="signupEmail" placeholder="이메일 주소" required>
-                    <input type="password" class="auth-input" id="signupPassword" placeholder="비밀번호 (영문+숫자 8자 이상)" required minlength="8">
-                    <input type="password" class="auth-input" id="signupPasswordConfirm" placeholder="비밀번호 확인" required minlength="8">
+                    <input type="email" class="auth-input" id="signupEmail" placeholder="이메일 주소" required autocomplete="email">
+                    <input type="password" class="auth-input" id="signupPassword" placeholder="비밀번호 (영문+숫자 8자 이상)" required minlength="8" autocomplete="new-password">
+                    <input type="password" class="auth-input" id="signupPasswordConfirm" placeholder="비밀번호 확인" required minlength="8" autocomplete="new-password">
                     <!-- 성별·연령대 (선택) -->
                     <div class="signup-demographics">
                         <p class="demographics-hint">입력해주시면 회원님의 연령대에 딱 맞는 사케를 추천해드려요</p>
@@ -220,7 +222,7 @@
                     <div id="signupError" class="auth-error"></div>
                 </form>
                 <div class="auth-switch">
-                    이미 계정이 있으신가요? <a onclick="showLogin()">로그인</a>
+                    이미 계정이 있으신가요? <a href="#" onclick="event.preventDefault();showLogin()">로그인</a>
                 </div>
                 <div class="auth-footer-links">
                     <a href="/about.html" onclick="event.preventDefault();showPolicyPage('about')">소개</a>
@@ -246,7 +248,7 @@
             <div class="cert-modal-content">
                 <div class="cert-modal-header">
                     <h3 id="certModalTitle">자격증 인증</h3>
-                    <button class="cert-modal-close" onclick="closeCertModal()">&times;</button>
+                    <button class="cert-modal-close" onclick="closeCertModal()" aria-label="닫기">&times;</button>
                 </div>
                 <div id="certModalBody">
                     <div class="loading">인증 상태 확인 중...</div>
@@ -324,7 +326,7 @@
             <section class="stitch-hero" id="featuredSection">
                 <div class="featured-hero-card">
                     <div class="featured-hero-overlay"></div>
-                    <img id="featuredImage" src="" alt="추천 사케" class="featured-hero-image">
+                    <img id="featuredImage" alt="추천 사케" class="featured-hero-image">
                     <div class="placeholder" style="display:none;">🍶</div>
                     <div class="stitch-hero-text">
                         <span class="featured-label">이번 주의 추천</span>
@@ -346,14 +348,14 @@
             <div class="dashboard-main">
 
             <div class="tabs" role="tablist" aria-label="메인 탭">
-                <button class="tab active" role="tab" aria-selected="true" aria-controls="communityView" onclick="switchTab('community')">커뮤니티</button>
-                <button class="tab" role="tab" aria-selected="false" aria-controls="newView" onclick="switchTab('new')">새 노트 작성</button>
-                <button class="tab" role="tab" aria-selected="false" aria-controls="listView" onclick="switchTab('list')">나의 노트</button>
+                <button class="tab active" role="tab" id="tab-community" aria-selected="true" aria-controls="communityView" tabindex="0" onclick="switchTab('community')">커뮤니티</button>
+                <button class="tab" role="tab" id="tab-new" aria-selected="false" aria-controls="newView" tabindex="-1" onclick="switchTab('new')">새 노트 작성</button>
+                <button class="tab" role="tab" id="tab-list" aria-selected="false" aria-controls="listView" tabindex="-1" onclick="switchTab('list')">나의 노트</button>
             </div>
 
             <div class="content">
                 <!-- 새 노트 작성 -->
-                <div id="newView" class="view" role="tabpanel" aria-label="새 노트 작성">
+                <div id="newView" class="view" role="tabpanel" aria-labelledby="tab-new">
                     <div class="content-card-header">
                         <span class="material-symbols-outlined">add_circle</span>
                         새 노트 작성
@@ -361,10 +363,10 @@
                     <form id="tastingForm" onsubmit="saveTastingNote(event)">
                         <div class="form-row-2col">
                             <div class="form-group">
-                                <label>사케 이름 *</label>
+                                <label for="sakeSearchInput">사케 이름 *</label>
                             </div>
                             <div class="form-group">
-                                <label>날짜 *</label>
+                                <label for="date">날짜 *</label>
                                 <input type="date" id="date" required>
                             </div>
                         </div>
@@ -478,7 +480,7 @@
                         <div class="section-title section-title-highlight">종합 평점</div>
 
                         <div class="form-group">
-                            <label>이 사케에 몇 점을 주시겠어요?</label>
+                            <label for="overall_rating_slider">이 사케에 몇 점을 주시겠어요?</label>
                             <div class="rating-item rating-item-centered">
                                 <div class="rating-slider-wrap">
                                     <input type="range" id="overall_rating_slider" min="0" max="100" value="50" step="1" oninput="document.getElementById('ratingValue').textContent=this.value">
@@ -497,7 +499,7 @@
                 </div>
 
                 <!-- 저장된 노트 목록 -->
-                <div id="listView" class="view" role="tabpanel" aria-label="나의 노트">
+                <div id="listView" class="view" role="tabpanel" aria-labelledby="tab-list">
                     <div class="list-view-header">
                         <div class="content-card-header content-card-header-flush">
                             <span class="material-symbols-outlined">menu_book</span>
@@ -521,7 +523,7 @@
                 </div>
 
                 <!-- 커뮤니티 뷰 -->
-                <div id="communityView" class="view active" role="tabpanel" aria-label="커뮤니티">
+                <div id="communityView" class="view active" role="tabpanel" aria-labelledby="tab-community">
                     <div class="community-stats-row">
                         <div class="community-stat-card">
                             <span class="community-stat-label">총 노트 수</span>
@@ -637,7 +639,7 @@
         <div class="ocr-modal-content">
             <div class="ocr-modal-header">
                 <h3 id="ocrModalTitle">📷 사진으로 사케 찾기</h3>
-                <button class="ocr-modal-close" onclick="closeOcrModal()">&times;</button>
+                <button class="ocr-modal-close" onclick="closeOcrModal()" aria-label="닫기">&times;</button>
             </div>
 
             <input type="file" id="ocrFileInput" accept="image/*" style="display:none;" onchange="handleOcrPhoto(event)">
@@ -678,19 +680,21 @@
     </div>
 
     <script>
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/service-worker.js').then(function(reg) {
-            reg.update();
-            reg.addEventListener('updatefound', function() {
-                var newSW = reg.installing;
-                newSW.addEventListener('statechange', function() {
-                    if (newSW.state === 'activated') {
-                        location.reload();
-                    }
+    window.addEventListener('load', function() {
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js').then(function(reg) {
+                reg.update();
+                reg.addEventListener('updatefound', function() {
+                    var newSW = reg.installing;
+                    newSW.addEventListener('statechange', function() {
+                        if (newSW.state === 'activated' && confirm('새 버전이 있습니다. 새로고침할까요?')) {
+                            location.reload();
+                        }
+                    });
                 });
             });
-        });
-    }
+        }
+    });
     </script>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"c268f029452b4c718cfc112352f6ff95","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>

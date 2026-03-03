@@ -386,7 +386,7 @@ function collectTastingData() {
         data.mainTags = { ...tastingMainTags };
     }
     // 맛 프로파일 슬라이더
-    const getSliderVal = (id) => { const el = document.getElementById(id); return el ? parseInt(el.value) : 50; };
+    const getSliderVal = (id) => { const el = document.getElementById(id); return el ? parseInt(el.value) : 0; };
     data.sliders = {
         aroma_fruit: getSliderVal('slider_aroma_fruit'),
         aroma_dairy: getSliderVal('slider_aroma_dairy'),
@@ -589,14 +589,47 @@ function sanitizePhotoUrl(url) {
     return '';
 }
 
+// base64 data URL → Supabase Storage 업로드, public URL 반환
+async function uploadPhotoToStorage(base64DataUrl, noteId, suffix) {
+    var match = base64DataUrl.match(/^data:(image\/\w+);base64,(.+)$/);
+    if (!match) return null;
+    var mimeType = match[1];
+    var ext = mimeType === 'image/png' ? 'png' : 'jpg';
+    var byteStr = atob(match[2]);
+    var bytes = new Uint8Array(byteStr.length);
+    for (var i = 0; i < byteStr.length; i++) bytes[i] = byteStr.charCodeAt(i);
+    var blob = new Blob([bytes], { type: mimeType });
+
+    var path = currentUser.id + '/' + noteId + '_' + suffix + '.' + ext;
+    var result = await supabaseClient.storage
+        .from('sake-photos')
+        .upload(path, blob, { upsert: true, contentType: mimeType });
+    if (result.error) { console.error('Photo upload error:', result.error); return null; }
+
+    var urlResult = supabaseClient.storage
+        .from('sake-photos')
+        .getPublicUrl(path);
+    return urlResult.data.publicUrl;
+}
+
+// Storage에서 사진 삭제
+async function deletePhotoFromStorage(photoUrl) {
+    if (!photoUrl || !photoUrl.includes('/sake-photos/')) return;
+    var pathMatch = photoUrl.match(/\/sake-photos\/(.+)$/);
+    if (!pathMatch) return;
+    await supabaseClient.storage.from('sake-photos').remove([pathMatch[1]]);
+}
+
 // 페이지 로드 시 인증 상태 확인
 async function checkAuth() {
-    const { data: { session } } = await supabaseClient.auth.getSession();
-    
-    if (session) {
-        currentUser = session.user;
+    try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (session) {
+            currentUser = session.user;
+        }
+    } catch (err) {
+        console.error('Auth check failed:', err);
     }
-    
     // 항상 메인 앱 표시 (로그인 여부와 관계없이)
     showMainApp();
 }
@@ -950,11 +983,15 @@ async function saveTastingNote(event) {
     submitBtn.textContent = '저장 중...';
 
     const tastingData = collectTastingData();
+    const isEditing = !!editingNoteId;
+    const photoFront = currentPhotoData;
+    const photoBack = currentPhotoBackData;
+
     const noteData = {
         user_id: currentUser.id,
         date: document.getElementById('date').value,
-        photo: currentPhotoData,
-        photo_back: currentPhotoBackData,
+        photo: null,
+        photo_back: null,
         sake_name: sakeNameVal.trim(),
         flavor_description: JSON.stringify(tastingData),
         personal_review: document.getElementById('personal_review').value,
@@ -963,8 +1000,15 @@ async function saveTastingNote(event) {
         overall_rating: parseInt(document.getElementById('overall_rating_slider').value)
     };
 
+    // 편집 시: URL이면 유지, base64면 나중에 업로드
+    if (isEditing) {
+        noteData.photo = (photoFront && !photoFront.startsWith('data:')) ? photoFront : null;
+        noteData.photo_back = (photoBack && !photoBack.startsWith('data:')) ? photoBack : null;
+    }
+
     try {
-        if (editingNoteId) {
+        var savedNoteId;
+        if (isEditing) {
             // 수정
             const { error } = await supabaseClient
                 .from('tasting_notes')
@@ -973,21 +1017,41 @@ async function saveTastingNote(event) {
                 .eq('user_id', currentUser.id);
 
             if (error) throw error;
-            alert('✅ 테이스팅 노트가 수정되었습니다!');
+            savedNoteId = editingNoteId;
             editingNoteId = null;
         } else {
             // 새로 생성
-            const { error } = await supabaseClient
+            const { data: inserted, error } = await supabaseClient
                 .from('tasting_notes')
-                .insert([noteData]);
+                .insert([noteData])
+                .select('id')
+                .single();
 
             if (error) throw error;
-            alert('✅ 테이스팅 노트가 저장되었습니다!');
+            savedNoteId = inserted.id;
         }
 
+        // base64 사진이 있으면 Storage에 업로드 후 URL로 UPDATE
+        var photoUpdates = {};
+        if (photoFront && photoFront.startsWith('data:')) {
+            var frontUrl = await uploadPhotoToStorage(photoFront, savedNoteId, 'front');
+            if (frontUrl) photoUpdates.photo = frontUrl;
+        }
+        if (photoBack && photoBack.startsWith('data:')) {
+            var backUrl = await uploadPhotoToStorage(photoBack, savedNoteId, 'back');
+            if (backUrl) photoUpdates.photo_back = backUrl;
+        }
+        if (Object.keys(photoUpdates).length > 0) {
+            await supabaseClient.from('tasting_notes')
+                .update(photoUpdates)
+                .eq('id', savedNoteId);
+        }
+
+        alert(isEditing ? '✅ 테이스팅 노트가 수정되었습니다!' : '✅ 테이스팅 노트가 저장되었습니다!');
+
         // 뒷면 라벨 자동 분석: DB에 없는 사케 + 뒷면 사진이 있으면
-        if (sakeInputMode === 'manual' && currentPhotoBackData && !editingNoteId) {
-            triggerBackLabelAnalysis(currentPhotoBackData, sakeNameVal.trim());
+        if (sakeInputMode === 'manual' && photoBack && !isEditing) {
+            triggerBackLabelAnalysis(photoBack, sakeNameVal.trim());
         }
 
         resetForm();
@@ -2004,7 +2068,7 @@ function displayCommunityFeed(notes, container, avgMap) {
         }
 
         const hiddenClass = idx >= 3 ? ' community-feed-card-hidden' : '';
-        return `<div class="community-feed-card${hiddenClass}" onclick="showCommunityDetail('${note.id}')">
+        return `<div class="community-feed-card${hiddenClass}" onclick="showCommunityDetail('${escapeAttr(note.id)}')">
             <div class="community-feed-card-header">
                 <div class="community-avatar" style="background:${avatarColor}">${avatarInitial}</div>
                 <div class="community-feed-card-info">
@@ -2316,8 +2380,8 @@ function renderNoteDetail(note, showActions = true) {
             </div>
         </div>
 
-        ${showActions ? `<button class="edit-btn" onclick="editNote('${note.id}')">✏️ 수정</button>
-        <button class="delete-btn" onclick="deleteNote('${note.id}')">🗑️ 삭제</button>` : ''}
+        ${showActions ? `<button class="edit-btn" onclick="editNote('${escapeAttr(note.id)}')">✏️ 수정</button>
+        <button class="delete-btn" onclick="deleteNote('${escapeAttr(note.id)}')">🗑️ 삭제</button>` : ''}
     `;
 }
 
@@ -2429,6 +2493,19 @@ async function editNote(id) {
 async function deleteNote(id) {
     if (confirm('정말 이 테이스팅 노트를 삭제하시겠습니까?')) {
         try {
+            // Storage 사진 삭제를 위해 먼저 URL 조회
+            var { data: note } = await supabaseClient
+                .from('tasting_notes')
+                .select('photo, photo_back')
+                .eq('id', id)
+                .eq('user_id', currentUser.id)
+                .single();
+
+            if (note) {
+                await deletePhotoFromStorage(note.photo);
+                await deletePhotoFromStorage(note.photo_back);
+            }
+
             const { error } = await supabaseClient
                 .from('tasting_notes')
                 .delete()
@@ -2738,6 +2815,13 @@ async function triggerBackLabelAnalysis(photoBackData, sakeName) {
         }
         if (!data || data.error) return;
 
+        // pending_sakes용 사진 Storage 업로드
+        var pendingPhotoUrl = null;
+        if (photoBackData && photoBackData.startsWith('data:image/')) {
+            var pendingId = 'pending_' + Date.now();
+            pendingPhotoUrl = await uploadPhotoToStorage(photoBackData, pendingId, 'back');
+        }
+
         await supabaseClient.from('pending_sakes').insert([{
             user_id: currentUser.id,
             brand: data.brand || '',
@@ -2753,7 +2837,7 @@ async function triggerBackLabelAnalysis(photoBackData, sakeName) {
             region: data.breweryRegion || '',
             volume: data.volume || '',
             raw_text: data.rawText || '',
-            photo_back: photoBackData,
+            photo_back: pendingPhotoUrl || photoBackData,
             status: 'pending'
         }]);
 

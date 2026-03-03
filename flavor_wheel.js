@@ -68,15 +68,6 @@ const WHEEL_SECTIONS = [
 ];
 
 // 레이더 전용 색상 (높은 채도, 구별 최적화)
-const RADAR_COLORS = {
-    fruit_flower: { light: '#D6286B', dark: '#E84888' },
-    dairy:        { light: '#2878C8', dark: '#5098E0' },
-    grain:        { light: '#D08818', dark: '#D89830' },
-    umami:        { light: '#7B40A8', dark: '#9860C0' },
-    sour:         { light: '#18944C', dark: '#30B068' },
-    sweet:        { light: '#D84040', dark: '#E06060' }
-};
-
 // 휠 섹션 인덱스 ↔ 슬라이더 ID 매핑
 const SLIDER_TO_SECTION = ['aroma_fruit', 'aroma_dairy', 'aroma_grain', 'umami', 'acidity', 'sweetness'];
 
@@ -89,9 +80,11 @@ const SECTION_ANGLE = 60;
 
 // ── 데이터 빌드 ──
 
+let _cachedWheelTags = null;
 function buildWheelTags() {
+    if (_cachedWheelTags) return _cachedWheelTags;
     const structure = buildTastingStructure();
-    return WHEEL_SECTIONS.map(section => {
+    _cachedWheelTags = WHEEL_SECTIONS.map(section => {
         const tags = [];
         section.sources.forEach(src => {
             const cat = structure[src.catId];
@@ -118,6 +111,7 @@ function buildWheelTags() {
         }
         return { ...section, tags };
     });
+    return _cachedWheelTags;
 }
 
 // ── 폰트 크기 헬퍼 ──
@@ -204,7 +198,7 @@ function generateFlavorWheel() {
         const midAngle = offset + SECTION_ANGLE / 2;
         const labelR = R1_OUT * 0.48;
         const labelPos = polarToXY(CX, CY, labelR, midAngle);
-        labelsHtml += `<text x="${labelPos.x}" y="${labelPos.y}" text-anchor="middle" dominant-baseline="central" class="wheel-cat-label" font-size="13">${section.name}</text>`;
+        labelsHtml += `<text x="${labelPos.x}" y="${labelPos.y}" text-anchor="middle" dominant-baseline="central" class="wheel-cat-label" font-size="13">${escapeAttr(section.name)}</text>`;
 
         // 태그 배치
         const tagCount = section.tags.length;
@@ -227,7 +221,7 @@ function generateFlavorWheel() {
                     if (fontSize > 0) {
                         const maxLen = getWheelMaxLen(fontSize);
                         const labelText = tag.ko.length > maxLen ? tag.ko.substring(0, maxLen - 1) + '..' : tag.ko;
-                        tagTextsHtml += `<text x="${tagLabelPos.x}" y="${tagLabelPos.y}" text-anchor="middle" dominant-baseline="central" class="wheel-tag-label" font-size="${fontSize}" data-wheel-expr="${escapeAttr(tag.ko)}" pointer-events="none" transform="rotate(${getTextRotation(tagMidAngle)},${tagLabelPos.x},${tagLabelPos.y})">${labelText}</text>`;
+                        tagTextsHtml += `<text x="${tagLabelPos.x}" y="${tagLabelPos.y}" text-anchor="middle" dominant-baseline="central" class="wheel-tag-label" font-size="${fontSize}" data-wheel-expr="${escapeAttr(tag.ko)}" pointer-events="none" transform="rotate(${getTextRotation(tagMidAngle)},${tagLabelPos.x},${tagLabelPos.y})">${escapeAttr(labelText)}</text>`;
                     }
                 });
             } else {
@@ -249,7 +243,7 @@ function generateFlavorWheel() {
                     if (fontSize > 0) {
                         const maxLen = getWheelMaxLen(fontSize);
                         const labelText = tag.ko.length > maxLen ? tag.ko.substring(0, maxLen - 1) + '..' : tag.ko;
-                        tagTextsHtml += `<text x="${tagLabelPos.x}" y="${tagLabelPos.y}" text-anchor="middle" dominant-baseline="central" class="wheel-tag-label" font-size="${fontSize}" data-wheel-expr="${escapeAttr(tag.ko)}" pointer-events="none" transform="rotate(${getTextRotation(tagMidAngle)},${tagLabelPos.x},${tagLabelPos.y})">${labelText}</text>`;
+                        tagTextsHtml += `<text x="${tagLabelPos.x}" y="${tagLabelPos.y}" text-anchor="middle" dominant-baseline="central" class="wheel-tag-label" font-size="${fontSize}" data-wheel-expr="${escapeAttr(tag.ko)}" pointer-events="none" transform="rotate(${getTextRotation(tagMidAngle)},${tagLabelPos.x},${tagLabelPos.y})">${escapeAttr(labelText)}</text>`;
                     }
                 });
 
@@ -264,7 +258,7 @@ function generateFlavorWheel() {
                     if (fontSize > 0) {
                         const maxLen = getWheelMaxLen(fontSize);
                         const labelText = tag.ko.length > maxLen ? tag.ko.substring(0, maxLen - 1) + '..' : tag.ko;
-                        tagTextsHtml += `<text x="${tagLabelPos.x}" y="${tagLabelPos.y}" text-anchor="middle" dominant-baseline="central" class="wheel-tag-label" font-size="${fontSize}" data-wheel-expr="${escapeAttr(tag.ko)}" pointer-events="none" transform="rotate(${getTextRotation(tagMidAngle)},${tagLabelPos.x},${tagLabelPos.y})">${labelText}</text>`;
+                        tagTextsHtml += `<text x="${tagLabelPos.x}" y="${tagLabelPos.y}" text-anchor="middle" dominant-baseline="central" class="wheel-tag-label" font-size="${fontSize}" data-wheel-expr="${escapeAttr(tag.ko)}" pointer-events="none" transform="rotate(${getTextRotation(tagMidAngle)},${tagLabelPos.x},${tagLabelPos.y})">${escapeAttr(labelText)}</text>`;
                     }
                 });
             }
@@ -414,7 +408,7 @@ function updateRadarOverlay(svg) {
     WHEEL_SECTIONS.forEach((section, i) => {
         const sliderId = SLIDER_TO_SECTION[i];
         const sliderEl = document.getElementById('slider_' + sliderId);
-        const sliderVal = sliderEl ? parseInt(sliderEl.value) : 0;
+        const sliderVal = sliderEl ? (parseInt(sliderEl.value) || 0) : 0;
         if (sliderVal > 0) hasAnyScore = true;
 
         const axisAngle = -90 + i * SECTION_ANGLE + SECTION_ANGLE / 2;
@@ -498,9 +492,9 @@ function polarToXY(cx, cy, r, angleDeg) {
 }
 
 function getTextRotation(angle) {
-    let r = angle;
+    let r = ((angle % 360) + 360) % 360;
     if (r > 90 && r < 270) r += 180;
-    if (r > 360) r -= 360;
+    if (r >= 360) r -= 360;
     return Math.round(r * 100) / 100;
 }
 
@@ -661,7 +655,7 @@ function generateStaticWheelSvg(flavorJson, mode) {
         const midAngle = offset + SECTION_ANGLE / 2;
         const labelR = R1_OUT * 0.48;
         const pos = polarToXY(cx, cy, labelR, midAngle);
-        svg += `<text x="${pos.x}" y="${pos.y}" text-anchor="middle" dominant-baseline="central" class="wheel-cat-label" font-size="13" pointer-events="none">${section.name}</text>`;
+        svg += `<text x="${pos.x}" y="${pos.y}" text-anchor="middle" dominant-baseline="central" class="wheel-cat-label" font-size="13" pointer-events="none">${escapeAttr(section.name)}</text>`;
         offset += SECTION_ANGLE;
     });
 
@@ -706,7 +700,7 @@ function generateStaticWheelSvg(flavorJson, mode) {
                     const maxLen = getWheelMaxLen(fs);
                     const labelText = tag.ko.length > maxLen ? tag.ko.substring(0, maxLen - 1) + '..' : tag.ko;
                     const cls = `wheel-tag-label${selectedSet.has(tag.ko) ? ' wheel-tag-selected' : ''}`;
-                    svg += `<text x="${tagLabelPos.x}" y="${tagLabelPos.y}" text-anchor="middle" dominant-baseline="central" class="${cls}" font-size="${fs}" pointer-events="none" transform="rotate(${getTextRotation(tagMidAngle)},${tagLabelPos.x},${tagLabelPos.y})">${labelText}</text>`;
+                    svg += `<text x="${tagLabelPos.x}" y="${tagLabelPos.y}" text-anchor="middle" dominant-baseline="central" class="${cls}" font-size="${fs}" pointer-events="none" transform="rotate(${getTextRotation(tagMidAngle)},${tagLabelPos.x},${tagLabelPos.y})">${escapeAttr(labelText)}</text>`;
                 }
             });
 
@@ -722,7 +716,7 @@ function generateStaticWheelSvg(flavorJson, mode) {
                     const maxLen = getWheelMaxLen(fs);
                     const labelText = tag.ko.length > maxLen ? tag.ko.substring(0, maxLen - 1) + '..' : tag.ko;
                     const cls = `wheel-tag-label${selectedSet.has(tag.ko) ? ' wheel-tag-selected' : ''}`;
-                    svg += `<text x="${tagLabelPos.x}" y="${tagLabelPos.y}" text-anchor="middle" dominant-baseline="central" class="${cls}" font-size="${fs}" pointer-events="none" transform="rotate(${getTextRotation(tagMidAngle)},${tagLabelPos.x},${tagLabelPos.y})">${labelText}</text>`;
+                    svg += `<text x="${tagLabelPos.x}" y="${tagLabelPos.y}" text-anchor="middle" dominant-baseline="central" class="${cls}" font-size="${fs}" pointer-events="none" transform="rotate(${getTextRotation(tagMidAngle)},${tagLabelPos.x},${tagLabelPos.y})">${escapeAttr(labelText)}</text>`;
                 }
             });
         }
