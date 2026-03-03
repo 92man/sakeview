@@ -615,16 +615,20 @@ function generateStaticWheelSvg(flavorJson, mode) {
             return polarToXY(cx, cy, r, angle);
         });
 
-        // 섹션별 삼각형 (중심 → 꼭지점 → 다음 꼭지점)
-        vertices.forEach((v, i) => {
-            const nextV = vertices[(i + 1) % 6];
-            const rc = RADAR_COLORS[WHEEL_SECTIONS[i].id] || { light: '#888' };
-            const fillColor = isDark ? (rc.dark || '#aaa') : rc.light;
-            svg += `<polygon points="${cx},${cy} ${v.x},${v.y} ${nextV.x},${nextV.y}" fill="${fillColor}" opacity="0.4" pointer-events="none"/>`;
+        // 풀 휠과 동일한 방식: 섹션 파이 색상을 6각형으로 클리핑
+        const hexClipId = 'mhc' + sgid;
+        svg += `<defs><clipPath id="${hexClipId}"><polygon points="${verticesStr(vertices)}"/></clipPath></defs>`;
+        offset = -90;
+        svg += `<g clip-path="url(#${hexClipId})" pointer-events="none">`;
+        WHEEL_SECTIONS.forEach(section => {
+            const c = section.color;
+            svg += createArcPath(cx, cy, 0, MINI_MAX_R, offset, offset + SECTION_ANGLE, '', c.mid, 'opacity="0.45"');
+            offset += SECTION_ANGLE;
         });
+        svg += `</g>`;
 
         // 6각형 윤곽
-        svg += `<polygon points="${verticesStr(vertices)}" fill="none" stroke="${isDark ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.8)'}" stroke-width="1.2" stroke-linejoin="round" pointer-events="none"/>`;
+        svg += `<polygon points="${verticesStr(vertices)}" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linejoin="round" pointer-events="none"/>`;
 
         svg += `</svg>`;
         const wrapperClass = 'static-wheel-mini';
