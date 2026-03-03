@@ -161,25 +161,7 @@
                 </table>
             </div>
 
-            <div class="table-container">
-                <h3>📋 등록된 사케 목록 (커스텀)</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>브랜드</th>
-                            <th>제품명</th>
-                            <th>일본어</th>
-                            <th>등급</th>
-                            <th>정미보합</th>
-                            <th>등록일</th>
-                            <th>작업</th>
-                        </tr>
-                    </thead>
-                    <tbody id="customSakeTable">
-                        <tr><td colspan="7">데이터 로딩 중...</td></tr>
-                    </tbody>
-                </table>
-            </div>
+            <!-- 커스텀 사케 목록은 사케 스펙 관리 테이블에 통합됨 -->
 
             <div class="table-container">
                 <h3>🏅 자격증 인증 요청</h3>
@@ -230,27 +212,32 @@
 
             <div class="table-container">
                 <div class="spec-header">
-                    <h3>🍶 사케 스펙 관리</h3>
+                    <h3>🍶 사케 & 스펙 관리</h3>
                     <div class="spec-search-wrapper">
                         <input type="text" id="specSearchInput" placeholder="사케 이름 검색..." oninput="searchSakeForSpec(this.value)">
                         <div class="spec-autocomplete" id="specAutocomplete"></div>
                     </div>
                 </div>
+                <div style="margin-bottom:8px;font-size:0.85em;color:#888;">
+                    <span style="display:inline-block;width:8px;height:8px;background:#e0f2fe;border:1px solid #7dd3fc;border-radius:2px;margin-right:3px;"></span> 커스텀 등록
+                    <span style="margin-left:12px;display:inline-block;width:8px;height:8px;background:#fff;border:1px solid #ddd;border-radius:2px;margin-right:3px;"></span> DB 등록
+                </div>
                 <table>
                     <thead>
                         <tr>
                             <th>사케명</th>
-                            <th>쌀</th>
+                            <th>등급</th>
                             <th>정미보합</th>
                             <th>효모</th>
                             <th>일본주도</th>
                             <th>산도</th>
                             <th>도수</th>
                             <th>살균</th>
+                            <th>작업</th>
                         </tr>
                     </thead>
                     <tbody id="specTable">
-                        <tr><td colspan="8">데이터 로딩 중...</td></tr>
+                        <tr><td colspan="9">데이터 로딩 중...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -662,23 +649,8 @@
         }
 
         function renderCustomSakesTable() {
-            let html = '';
-            customSakesData.forEach(cs => {
-                const d = cs.created_at ? new Date(cs.created_at).toLocaleDateString('ko-KR') : '-';
-                html += `<tr>
-                    <td>${escapeHtml(cs.brand)}${cs.brand_jp ? ' <span style="color:#999;font-size:0.85em;">(' + escapeHtml(cs.brand_jp) + ')</span>' : ''}</td>
-                    <td>${escapeHtml(cs.product_name)}</td>
-                    <td>${escapeHtml(cs.japanese || '-')}</td>
-                    <td>${escapeHtml(cs.grade || '-')}</td>
-                    <td>${escapeHtml(cs.polish_rate || '-')}</td>
-                    <td>${d}</td>
-                    <td>
-                        <button onclick="editCustomSake('${escapeAttr(cs.id)}')" style="padding:4px 8px;border:none;background:#3498db;color:white;border-radius:4px;cursor:pointer;font-size:0.8em;margin-right:4px;">수정</button>
-                        <button onclick="deleteCustomSake('${escapeAttr(cs.id)}','${escapeAttr(cs.brand + ' ' + cs.product_name)}')" style="padding:4px 8px;border:none;background:#e74c3c;color:white;border-radius:4px;cursor:pointer;font-size:0.8em;">삭제</button>
-                    </td>
-                </tr>`;
-            });
-            document.getElementById('customSakeTable').innerHTML = html || '<tr><td colspan="7">등록된 커스텀 사케 없음</td></tr>';
+            // 통합 테이블로 이동 — renderSpecTable()에서 함께 렌더링
+            renderSpecTable();
         }
 
         function editCustomSake(id) {
@@ -1349,20 +1321,66 @@
         }
 
         function renderSpecTable() {
+            // 통합 테이블: 커스텀 사케 + 스펙 데이터를 하나로
+            // 1. 스펙이 있는 사케명 → spec 매핑
+            const specMap = {};
+            sakeSpecsData.forEach(s => { specMap[s.sake_name] = s; });
+
+            // 2. 커스텀 사케명 → custom 매핑
+            const customMap = {};
+            customSakesData.forEach(cs => {
+                const fullName = cs.japanese
+                    ? cs.brand + ' ' + cs.product_name + ' (' + cs.japanese + ')'
+                    : cs.brand + ' ' + cs.product_name;
+                customMap[fullName] = cs;
+                if (cs.original_name) customMap[cs.original_name] = cs;
+            });
+
+            // 3. 모든 사케명 수집 (중복 제거)
+            const allNames = new Set([...Object.keys(specMap), ...Object.keys(customMap)]);
+            const rows = [];
+            allNames.forEach(name => {
+                const spec = specMap[name];
+                const cs = customMap[name];
+                rows.push({ name, spec, cs, isCustom: !!cs });
+            });
+            // 커스텀 먼저, 그 다음 DB 등록순
+            rows.sort((a, b) => {
+                if (a.isCustom !== b.isCustom) return a.isCustom ? -1 : 1;
+                return a.name.localeCompare(b.name, 'ko');
+            });
+
             let html = '';
-            sakeSpecsData.forEach(s => {
-                html += `<tr class="clickable-row" onclick="openSpecModal('${escapeAttr(s.sake_name)}')">
-                    <td>${escapeHtml(s.sake_name)}</td>
-                    <td>${escapeHtml(s.rice || '-')}</td>
-                    <td>${s.polish_rate ? s.polish_rate + '%' : '-'}</td>
-                    <td>${escapeHtml(s.yeast || '-')}</td>
-                    <td>${s.smv != null ? (s.smv > 0 ? '+' : '') + s.smv : '-'}</td>
-                    <td>${s.acidity != null ? s.acidity : '-'}</td>
-                    <td>${s.alcohol != null ? s.alcohol + '%' : '-'}</td>
-                    <td>${escapeHtml(s.pasteurization || '-')}</td>
+            rows.forEach(({ name, spec, cs, isCustom }) => {
+                const bgStyle = isCustom ? 'background:#f0f9ff;' : '';
+                const grade = cs ? (cs.grade || '-') : (spec && spec.grade ? spec.grade : '-');
+                const polishRate = spec ? (spec.polish_rate ? spec.polish_rate + '%' : (cs && cs.polish_rate ? cs.polish_rate : '-')) : (cs && cs.polish_rate ? cs.polish_rate : '-');
+                const yeast = spec ? escapeHtml(spec.yeast || '-') : '-';
+                const smv = spec ? (spec.smv != null ? (spec.smv > 0 ? '+' : '') + spec.smv : '-') : '-';
+                const acidity = spec ? (spec.acidity != null ? spec.acidity : '-') : '-';
+                const alcohol = spec ? (spec.alcohol != null ? spec.alcohol + '%' : '-') : '-';
+                const pasteurization = spec ? escapeHtml(spec.pasteurization || '-') : '-';
+
+                let actionBtns = `<button onclick="openSpecModal('${escapeAttr(name)}')" style="padding:4px 8px;border:none;background:#6b7280;color:white;border-radius:4px;cursor:pointer;font-size:0.8em;" title="스펙 편집">스펙</button>`;
+                if (cs) {
+                    actionBtns = `<button onclick="editCustomSake('${escapeAttr(cs.id)}')" style="padding:4px 8px;border:none;background:#3498db;color:white;border-radius:4px;cursor:pointer;font-size:0.75em;margin-right:3px;" title="사케 정보 수정">수정</button>` +
+                        `<button onclick="deleteCustomSake('${escapeAttr(cs.id)}','${escapeAttr(cs.brand + ' ' + cs.product_name)}')" style="padding:4px 8px;border:none;background:#e74c3c;color:white;border-radius:4px;cursor:pointer;font-size:0.75em;margin-right:3px;" title="사케 삭제">삭제</button>` +
+                        `<button onclick="openSpecModal('${escapeAttr(name)}')" style="padding:4px 8px;border:none;background:#6b7280;color:white;border-radius:4px;cursor:pointer;font-size:0.75em;" title="스펙 편집">스펙</button>`;
+                }
+
+                html += `<tr style="${bgStyle}">
+                    <td>${escapeHtml(name)}</td>
+                    <td>${escapeHtml(grade)}</td>
+                    <td>${polishRate}</td>
+                    <td>${yeast}</td>
+                    <td>${smv}</td>
+                    <td>${acidity}</td>
+                    <td>${alcohol}</td>
+                    <td>${pasteurization}</td>
+                    <td style="white-space:nowrap;">${actionBtns}</td>
                 </tr>`;
             });
-            document.getElementById('specTable').innerHTML = html || '<tr><td colspan="8">등록된 스펙 없음</td></tr>';
+            document.getElementById('specTable').innerHTML = html || '<tr><td colspan="9">등록된 사케 없음</td></tr>';
         }
 
         function openSpecModal(sakeName) {

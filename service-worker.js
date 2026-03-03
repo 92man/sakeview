@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'sakeview-v51';
+const CACHE_VERSION = 'sakeview-v52';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
