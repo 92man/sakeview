@@ -2309,7 +2309,7 @@ async function loadCommunityFeed() {
     try {
         const { data, error } = await supabaseClient
             .from('tasting_notes')
-            .select('id, sake_name, date, personal_review, overall_rating, created_at, user_id, flavor_description')
+            .select('id, sake_name, date, personal_review, overall_rating, created_at, user_id, flavor_description, photo')
             .order('created_at', { ascending: false })
             .limit(20);
 
@@ -2359,7 +2359,9 @@ function displayCommunityFeed(notes, container, avgMap) {
         const uid = note.user_id || 'anon';
         const nickname = _displayNameMap[uid];
         const userLabel = nickname || ('User' + uid.substring(0, 4));
-        const thumbHtml = `<div class="community-thumb community-thumb-default" data-note-id="${escapeAttr(note.id)}">🍶</div>`;
+        const thumbHtml = note.photo
+            ? `<div class="community-thumb"><img src="${escapeAttr(note.photo)}" alt="" loading="lazy" onerror="this.parentElement.classList.add('community-thumb-default');this.parentElement.innerHTML='🍶';"></div>`
+            : `<div class="community-thumb community-thumb-default">🍶</div>`;
         const timeAgo = getTimeAgo(note.created_at);
         const reviewText = note.personal_review || '';
         const truncated = reviewText.length > 120 ? reviewText.substring(0, 120) + '...' : reviewText;
@@ -2409,81 +2411,11 @@ function displayCommunityFeed(notes, container, avgMap) {
         html += `<button class="community-feed-more-btn" onclick="expandCommunityFeed(this)">더보기 (${notes.length - 3}개)</button>`;
     }
     container.innerHTML = html;
-    lazyLoadCommunityPhotos(notes.map(n => n.id));
 }
 
 function expandCommunityFeed(btn) {
     document.querySelectorAll('.community-feed-card-hidden').forEach(el => el.classList.remove('community-feed-card-hidden'));
     btn.remove();
-    // 숨겨진 카드가 보이면 사진 로드 트리거
-    document.querySelectorAll('.community-thumb[data-note-id]').forEach(el => {
-        if (el.dataset.photoLoaded) return;
-        if (_communityPhotoObserver) _communityPhotoObserver.observe(el);
-    });
-}
-
-var _communityPhotoObserver = null;
-async function lazyLoadCommunityPhotos(noteIds) {
-    if (!noteIds || noteIds.length === 0) return;
-    try {
-        // 사진이 있는 노트 ID만 가져옴 (실제 base64 데이터는 가져오지 않음)
-        const { data } = await supabaseClient
-            .from('tasting_notes')
-            .select('id')
-            .in('id', noteIds)
-            .not('photo', 'is', null);
-        if (!data || data.length === 0) return;
-        const photoIds = new Set(data.map(n => n.id));
-
-        // IntersectionObserver로 보이는 카드만 사진 로드
-        if (_communityPhotoObserver) _communityPhotoObserver.disconnect();
-        _communityPhotoObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (!entry.isIntersecting) return;
-                const el = entry.target;
-                const noteId = el.dataset.noteId;
-                if (!noteId || el.dataset.photoLoaded) return;
-                el.dataset.photoLoaded = '1';
-                _communityPhotoObserver.unobserve(el);
-                loadSinglePhoto(noteId, el);
-            });
-        }, { rootMargin: '200px' });
-
-        document.querySelectorAll('.community-thumb[data-note-id]').forEach(el => {
-            if (photoIds.has(el.dataset.noteId)) {
-                _communityPhotoObserver.observe(el);
-            }
-        });
-    } catch (e) {
-        console.error('lazyLoadCommunityPhotos error:', e);
-    }
-}
-
-async function loadSinglePhoto(noteId, thumbEl) {
-    try {
-        thumbEl.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;opacity:0.5;">⏳</div>';
-        const { data } = await supabaseClient
-            .from('tasting_notes')
-            .select('photo')
-            .eq('id', noteId)
-            .single();
-        if (data && data.photo) {
-            var img = new Image();
-            img.onload = function() {
-                thumbEl.classList.remove('community-thumb-default');
-                thumbEl.innerHTML = '';
-                thumbEl.appendChild(img);
-            };
-            img.onerror = function() { thumbEl.innerHTML = '🍶'; };
-            img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
-            img.src = data.photo;
-        } else {
-            thumbEl.innerHTML = '🍶';
-        }
-    } catch (e) {
-        thumbEl.innerHTML = '🍶';
-        console.error('loadSinglePhoto error:', e);
-    }
 }
 
 function searchCommunityNotes(query) {
@@ -2540,7 +2472,7 @@ async function loadNotesBySakeName(sakeName) {
     try {
         const { data, error } = await supabaseClient
             .from('tasting_notes')
-            .select('id, sake_name, date, personal_review, overall_rating, created_at, user_id, flavor_description')
+            .select('id, sake_name, date, personal_review, overall_rating, created_at, user_id, flavor_description, photo')
             .ilike('sake_name', `%${sakeName.replace(/[%_]/g, '')}%`)
             .order('created_at', { ascending: false })
             .limit(20);
@@ -2566,7 +2498,7 @@ async function loadNotesByUser(userId) {
     try {
         const { data, error } = await supabaseClient
             .from('tasting_notes')
-            .select('id, sake_name, date, personal_review, overall_rating, created_at, user_id, flavor_description')
+            .select('id, sake_name, date, personal_review, overall_rating, created_at, user_id, flavor_description, photo')
             .eq('user_id', userId)
             .order('created_at', { ascending: false })
             .limit(50);
@@ -2610,7 +2542,7 @@ async function filterCommunityByGrade(grade) {
     try {
         const { data, error } = await supabaseClient
             .from('tasting_notes')
-            .select('id, sake_name, date, personal_review, overall_rating, created_at, user_id, flavor_description')
+            .select('id, sake_name, date, personal_review, overall_rating, created_at, user_id, flavor_description, photo')
             .in('sake_name', sakeNames.slice(0, 50))
             .order('created_at', { ascending: false })
             .limit(20);
@@ -3274,6 +3206,108 @@ async function triggerBackLabelAnalysis(photoBackData, sakeName) {
     } catch (err) {
         console.error('Back label analysis error:', err);
     }
+}
+
+// ═══════════════════════════════════════════════
+// 사진 마이그레이션: base64 → Supabase Storage
+// ═══════════════════════════════════════════════
+
+async function migrateUploadToStorage(base64DataUrl, userId, noteId, suffix) {
+    var match = base64DataUrl.match(/^data:(image\/\w+);base64,(.+)$/);
+    if (!match) return null;
+    var mimeType = match[1];
+    var ext = mimeType === 'image/png' ? 'png' : 'jpg';
+    var byteStr = atob(match[2]);
+    var bytes = new Uint8Array(byteStr.length);
+    for (var i = 0; i < byteStr.length; i++) bytes[i] = byteStr.charCodeAt(i);
+    var blob = new Blob([bytes], { type: mimeType });
+
+    var path = userId + '/' + noteId + '_' + suffix + '.' + ext;
+    var result = await supabaseClient.storage
+        .from('sake-photos')
+        .upload(path, blob, { upsert: true, contentType: mimeType });
+    if (result.error) { console.error('Migration upload error (' + path + '):', result.error); return null; }
+
+    var urlResult = supabaseClient.storage.from('sake-photos').getPublicUrl(path);
+    return urlResult.data.publicUrl;
+}
+
+async function migratePhotosToStorage() {
+    if (!currentUser) { alert('로그인이 필요합니다.'); return; }
+    console.log('=== 사진 마이그레이션 시작 ===');
+
+    // 1. base64 사진이 있는 노트 ID 조회 (경량)
+    var { data: frontIds } = await supabaseClient
+        .from('tasting_notes').select('id').like('photo', 'data:%');
+    var { data: backIds } = await supabaseClient
+        .from('tasting_notes').select('id').like('photo_back', 'data:%');
+    var idSet = {};
+    (frontIds || []).forEach(function(n) { idSet[n.id] = true; });
+    (backIds || []).forEach(function(n) { idSet[n.id] = true; });
+    var allIds = Object.keys(idSet);
+
+    if (allIds.length === 0) {
+        console.log('마이그레이션 대상 없음 — 모든 사진이 이미 Storage URL입니다.');
+        return { total: 0, success: 0, failed: 0 };
+    }
+    console.log('마이그레이션 대상: ' + allIds.length + '건');
+
+    var success = 0, failed = 0;
+    for (var i = 0; i < allIds.length; i++) {
+        var noteId = allIds[i];
+        try {
+            var { data: note } = await supabaseClient
+                .from('tasting_notes')
+                .select('id, user_id, photo, photo_back')
+                .eq('id', noteId).single();
+            if (!note) { failed++; continue; }
+
+            var updates = {};
+            if (note.photo && note.photo.startsWith('data:')) {
+                var frontUrl = await migrateUploadToStorage(note.photo, note.user_id, note.id, 'front');
+                if (frontUrl) updates.photo = frontUrl;
+                else { failed++; console.error('[' + (i+1) + '/' + allIds.length + '] FAIL front: ' + noteId); continue; }
+            }
+            if (note.photo_back && note.photo_back.startsWith('data:')) {
+                var backUrl = await migrateUploadToStorage(note.photo_back, note.user_id, note.id, 'back');
+                if (backUrl) updates.photo_back = backUrl;
+                else { failed++; console.error('[' + (i+1) + '/' + allIds.length + '] FAIL back: ' + noteId); continue; }
+            }
+
+            if (Object.keys(updates).length > 0) {
+                var { error: updateErr } = await supabaseClient
+                    .from('tasting_notes').update(updates).eq('id', noteId);
+                if (updateErr) { failed++; console.error('[' + (i+1) + '/' + allIds.length + '] DB update fail:', updateErr); continue; }
+            }
+            success++;
+            console.log('[' + (i+1) + '/' + allIds.length + '] OK: ' + noteId);
+        } catch (e) {
+            failed++;
+            console.error('[' + (i+1) + '/' + allIds.length + '] ERROR:', e);
+        }
+    }
+
+    // pending_sakes도 처리
+    try {
+        var { data: pendingBase64 } = await supabaseClient
+            .from('pending_sakes').select('id, user_id, photo_back').like('photo_back', 'data:%');
+        if (pendingBase64 && pendingBase64.length > 0) {
+            console.log('pending_sakes 마이그레이션: ' + pendingBase64.length + '건');
+            for (var j = 0; j < pendingBase64.length; j++) {
+                var p = pendingBase64[j];
+                var pUrl = await migrateUploadToStorage(p.photo_back, p.user_id, 'pending_' + p.id, 'back');
+                if (pUrl) {
+                    await supabaseClient.from('pending_sakes').update({ photo_back: pUrl }).eq('id', p.id);
+                    console.log('pending [' + (j+1) + '/' + pendingBase64.length + '] OK');
+                }
+            }
+        }
+    } catch (e) { console.error('pending_sakes migration error:', e); }
+
+    var result = { total: allIds.length, success: success, failed: failed };
+    console.log('=== 마이그레이션 완료 ===', result);
+    alert('마이그레이션 완료!\n성공: ' + success + '건\n실패: ' + failed + '건');
+    return result;
 }
 
 // ═══════════════════════════════════════════════
