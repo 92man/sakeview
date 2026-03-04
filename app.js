@@ -1786,14 +1786,8 @@ let communitySearchTimeout = null;
 
 async function loadCommunityStats() {
     try {
-        // 총 노트 수 + 활성 유저 수를 병렬 조회
-        const [notesResult, usersResult] = await Promise.all([
-            supabaseClient.from('tasting_notes').select('id', { count: 'exact', head: true }),
-            supabaseClient.from('tasting_notes').select('user_id').order('created_at', { ascending: false }).limit(100)
-        ]);
+        const notesResult = await supabaseClient.from('tasting_notes').select('id', { count: 'exact', head: true });
         const totalNotes = notesResult.count;
-        const recentUsers = usersResult.data;
-        const activeUsers = recentUsers ? new Set(recentUsers.map(u => u.user_id)).size : 0;
 
         let sakeCount = 0;
         if (typeof SAKE_DATABASE !== 'undefined') {
@@ -1802,7 +1796,6 @@ async function loadCommunityStats() {
 
         const el = (id) => document.getElementById(id);
         if (el('communityTotalNotes')) el('communityTotalNotes').textContent = (totalNotes || 0).toLocaleString();
-        if (el('communityActiveUsers')) el('communityActiveUsers').textContent = activeUsers.toLocaleString();
         if (el('communitySakeDb')) el('communitySakeDb').textContent = sakeCount.toLocaleString();
     } catch (e) {
         console.error('Community stats error:', e);

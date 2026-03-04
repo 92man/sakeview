@@ -1,7 +1,7 @@
 /* ===== Community View ===== */
 .community-stats-row {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 16px;
     margin-bottom: 32px;
 }
@@ -9,7 +9,7 @@
     background: var(--card-bg);
     border: 1px solid var(--border-card);
     border-radius: 12px;
-    padding: 20px 24px;
+    padding: 24px 28px;
     display: flex;
     flex-direction: column;
 }
@@ -21,10 +21,10 @@
     letter-spacing: 0.05em;
 }
 .community-stat-value {
-    font-size: 2.25rem;
+    font-size: 2.5rem;
     font-weight: 800;
     color: var(--text-primary);
-    margin: 4px 0;
+    margin: 6px 0;
     line-height: 1.1;
 }
 .community-stat-sub {
@@ -402,17 +402,22 @@ body.dark-mode .community-thumb-default {
 /* Community Mobile */
 @media (max-width: 768px) {
     .community-stats-row {
-        grid-template-columns: 1fr;
-        gap: 12px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-bottom: 20px;
     }
     .community-stat-card {
-        flex-direction: row;
+        flex-direction: column;
         align-items: center;
-        justify-content: space-between;
-        padding: 16px 20px;
+        text-align: center;
+        padding: 14px 10px;
+        min-width: 0;
     }
     .community-stat-value {
-        font-size: 1.3rem;
+        font-size: 1.4rem;
+    }
+    .community-stat-label {
+        font-size: 0.7rem;
     }
     .community-feed-card {
         padding: 16px;
