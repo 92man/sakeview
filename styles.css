@@ -3383,6 +3383,11 @@ body.dark-mode .ocr-match-item:hover {
     gap: 12px;
     margin-bottom: 16px;
 }
+.community-feed-card-header .static-wheel-mini {
+    width: 64px;
+    height: 64px;
+    margin-top: 0;
+}
 .community-avatar {
     width: 44px;
     height: 44px;
