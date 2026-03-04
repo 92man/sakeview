@@ -185,3 +185,53 @@ function setDefaultDate() {
         dateInput.valueAsDate = new Date();
     }
 }
+
+// === DOM 헬퍼 ===
+
+// 요소 보이기 (null-safe)
+function showEl(id, displayType) {
+    var el = document.getElementById(id);
+    if (el) el.style.display = displayType || 'block';
+}
+
+// 요소 숨기기 (null-safe)
+function hideEl(id) {
+    var el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+}
+
+// === 테이스팅 태그 추출 ===
+
+// flavor_description JSON에서 태그 배열 추출
+function extractTastingTags(flavorJson, catFilter) {
+    if (!flavorJson) return [];
+    try {
+        var td = JSON.parse(flavorJson);
+        if (!td || td.version !== 2 || !td.categories) return [];
+        var tags = [];
+        var cats = catFilter
+            ? catFilter.reduce(function(o, id) { if (td.categories[id]) o[id] = td.categories[id]; return o; }, {})
+            : td.categories;
+        Object.values(cats).forEach(function(catData) {
+            Object.values(catData).forEach(function(val) {
+                if (Array.isArray(val)) tags.push.apply(tags, val);
+                else tags.push(val);
+            });
+        });
+        return tags;
+    } catch(e) { return []; }
+}
+
+// === 사진 HTML 생성 ===
+
+// 사진 <img> 태그 생성 (sanitize + transform + fallback 포함)
+function buildPhotoImg(url, width, height, cssClass, alt) {
+    var safe = sanitizePhotoUrl(url);
+    if (!safe) return '';
+    var src = sanitizePhotoUrl(getTransformedPhotoUrl(url, width, height || width));
+    return '<img src="' + escapeAttr(src) + '"' +
+        (cssClass ? ' class="' + cssClass + '"' : '') +
+        ' alt="' + escapeAttr(alt || '') + '"' +
+        ' loading="lazy"' +
+        ' onerror="imgTransformFallback(this)">';
+}

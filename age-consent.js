@@ -2,13 +2,13 @@
 (function() {
     const ageVerified = localStorage.getItem('ageVerified');
     if (!ageVerified) {
-        document.getElementById('ageModal').style.display = 'flex';
+        showEl('ageModal', 'flex');
     }
 
     const cookieConsent = localStorage.getItem('cookieConsent');
     if (!cookieConsent && ageVerified) {
         setTimeout(() => {
-            document.getElementById('cookieConsent').style.display = 'block';
+            showEl('cookieConsent');
         }, 1500);
     }
 })();
@@ -16,12 +16,12 @@
 function confirmAge(isAdult) {
     if (isAdult) {
         localStorage.setItem('ageVerified', 'true');
-        document.getElementById('ageModal').style.display = 'none';
+        hideEl('ageModal');
 
         const cookieConsent = localStorage.getItem('cookieConsent');
         if (!cookieConsent) {
             setTimeout(() => {
-                document.getElementById('cookieConsent').style.display = 'block';
+                showEl('cookieConsent');
             }, 1000);
         }
     } else {
@@ -32,10 +32,10 @@ function confirmAge(isAdult) {
 
 function acceptCookies() {
     localStorage.setItem('cookieConsent', 'accepted');
-    document.getElementById('cookieConsent').style.display = 'none';
+    hideEl('cookieConsent');
 }
 
 function declineCookies() {
     localStorage.setItem('cookieConsent', 'declined');
-    document.getElementById('cookieConsent').style.display = 'none';
+    hideEl('cookieConsent');
 }

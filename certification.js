@@ -1,29 +1,12 @@
 // === 자격증 인증 시스템 ===
 
 function handleCertPhotoUpload(event, previewId) {
-    const file = event.target.files[0];
-    if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
-        alert('파일 크기는 5MB 이하여야 합니다.');
-        event.target.value = '';
-        return;
-    }
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        currentCertPhotoData = e.target.result;
-        const preview = document.getElementById(previewId);
-        if (preview) {
-            preview.innerHTML = `<img src="${sanitizePhotoUrl(currentCertPhotoData)}" alt="자격증 사진">`;
-        }
-        const uploadEl = event.target.parentElement.querySelector('[id$="UploadText"], [id$="uploadText"]');
-        if (uploadEl) uploadEl.style.display = 'none';
-    };
-    reader.readAsDataURL(file);
+    _handlePhoto(event, function(data) { currentCertPhotoData = data; }, null, previewId, '자격증 사진', false);
 }
 
 function toggleSignupCert() {
     const checked = document.getElementById('signupCertToggle').checked;
-    document.getElementById('signupCertFields').style.display = checked ? 'block' : 'none';
+    if (checked) { showEl('signupCertFields'); } else { hideEl('signupCertFields'); }
     if (!checked) {
         currentCertPhotoData = null;
         document.getElementById('signupCertType').value = '';
@@ -63,7 +46,7 @@ async function openCertModal() {
         alert('로그인이 필요합니다.');
         return;
     }
-    document.getElementById('certModal').style.display = 'flex';
+    showEl('certModal', 'flex');
     const body = document.getElementById('certModalBody');
     body.innerHTML = '<div class="loading">인증 상태 확인 중...</div>';
     try {
@@ -80,7 +63,7 @@ async function openCertModal() {
 }
 
 function closeCertModal() {
-    document.getElementById('certModal').style.display = 'none';
+    hideEl('certModal');
     currentCertPhotoData = null;
 }
 

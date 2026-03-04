@@ -51,7 +51,7 @@ function updateFeaturedSake() {
 }
 
 function hideFeatured() {
-    document.getElementById('featuredSection').style.display = 'none';
+    hideEl('featuredSection');
 }
 
 function hideFeaturedToday() {
@@ -65,9 +65,9 @@ function checkFeaturedVisibility() {
     const today = new Date().toDateString();
 
     if (hiddenUntil === today) {
-        document.getElementById('featuredSection').style.display = 'none';
+        hideEl('featuredSection');
     } else {
-        document.getElementById('featuredSection').style.display = 'block';
+        showEl('featuredSection');
         updateFeaturedSake();
     }
 }

@@ -464,19 +464,19 @@ async function migrateRemoveMainTags() {
 
 // 인증 컨테이너 표시
 function showAuthContainer() {
-    document.getElementById('authContainer').style.display = 'block';
-    document.getElementById('mainApp').style.display = 'none';
+    showEl('authContainer');
+    hideEl('mainApp');
 }
 
 // 메인 앱 표시
 function showMainApp() {
-    document.getElementById('authContainer').style.display = 'none';
-    document.getElementById('mainApp').style.display = 'block';
-    document.getElementById('appFooter').style.display = 'block';
+    hideEl('authContainer');
+    showEl('mainApp');
+    showEl('appFooter');
 
     // 로그인 상태에 따라 버튼 표시/숨김
     if (currentUser) {
-        document.getElementById('loginBtn').style.display = 'none';
+        hideEl('loginBtn');
         var profileWrapper = document.getElementById('profileMenuWrapper');
         if (profileWrapper) profileWrapper.style.display = 'block';
         updateProfileUI();
@@ -486,7 +486,7 @@ function showMainApp() {
         submitPendingCert();
         migrateRemoveMainTags();
     } else {
-        document.getElementById('loginBtn').style.display = 'inline-block';
+        showEl('loginBtn', 'inline-block');
         var profileWrapper = document.getElementById('profileMenuWrapper');
         if (profileWrapper) profileWrapper.style.display = 'none';
     }
@@ -497,14 +497,14 @@ function showMainApp() {
 
 // 로그인/회원가입 폼 전환
 function showLogin() {
-    document.getElementById('loginForm').style.display = 'block';
-    document.getElementById('signupForm').style.display = 'none';
+    showEl('loginForm');
+    hideEl('signupForm');
     document.getElementById('loginError').textContent = '';
 }
 
 function showSignup() {
-    document.getElementById('loginForm').style.display = 'none';
-    document.getElementById('signupForm').style.display = 'block';
+    hideEl('loginForm');
+    showEl('signupForm');
     document.getElementById('signupError').textContent = '';
 }
 
@@ -607,12 +607,12 @@ async function handleSignup(event) {
 
 // 이메일 인증 팝업 표시
 function showVerificationModal() {
-    document.getElementById('verificationModal').style.display = 'flex';
+    showEl('verificationModal', 'flex');
 }
 
 // 이메일 인증 팝업 닫기
 function closeVerificationModal() {
-    document.getElementById('verificationModal').style.display = 'none';
+    hideEl('verificationModal');
 }
 
 // 로그아웃
@@ -865,7 +865,7 @@ document.addEventListener('keydown', function(e) {
 
 
 // 사진 업로드 공통 핸들러
-function _handlePhoto(event, setData, uploadTextId, previewId, altText) {
+function _handlePhoto(event, setData, uploadTextId, previewId, altText, compress) {
     const file = event.target.files[0];
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) {
@@ -875,11 +875,11 @@ function _handlePhoto(event, setData, uploadTextId, previewId, altText) {
     }
     const reader = new FileReader();
     reader.onload = async function(e) {
-        var compressed = await compressImageForUpload(e.target.result);
-        setData(compressed);
-        document.getElementById(uploadTextId).style.display = 'none';
-        document.getElementById(previewId).innerHTML =
-            `<img src="${sanitizePhotoUrl(compressed)}" alt="${altText}">`;
+        var result = (compress !== false) ? await compressImageForUpload(e.target.result) : e.target.result;
+        setData(result);
+        if (uploadTextId) hideEl(uploadTextId);
+        var previewEl = document.getElementById(previewId);
+        if (previewEl) previewEl.innerHTML = `<img src="${sanitizePhotoUrl(result)}" alt="${escapeAttr(altText)}">`;
     };
     reader.readAsDataURL(file);
 }
@@ -1089,9 +1089,9 @@ function resetForm() {
     currentPhotoBackData = null;
     ocrPhotoData = null;
     editingNoteId = null;
-    document.getElementById('uploadText').style.display = 'block';
+    showEl('uploadText');
     document.getElementById('photoPreview').innerHTML = '';
-    document.getElementById('uploadBackText').style.display = 'block';
+    showEl('uploadBackText');
     document.getElementById('photoBackPreview').innerHTML = '';
 
     const submitBtn = document.getElementById('submitBtn');
@@ -1436,7 +1436,7 @@ function _showOcrPreview() {
     var previewImg = document.getElementById('ocrPreviewImg');
     previewImg.src = ocrPhotoData;
     previewImg.style.display = 'block';
-    document.getElementById('ocrPlaceholder').style.display = 'none';
+    hideEl('ocrPlaceholder');
     document.getElementById('ocrPhotoArea').classList.add('has-photo');
     document.getElementById('ocrStartBtn').disabled = false;
 }
@@ -1719,7 +1719,7 @@ function renderNotes() {
                 ${sorted.map(note => `
                     <div class="note-card" onclick="showDetail('${escapeAttr(note.id)}')">
                         ${note.photo && sanitizePhotoUrl(note.photo) ? `
-                            <img src="${sanitizePhotoUrl(getTransformedPhotoUrl(note.photo, 400, 400))}" class="note-card-image" alt="사케" loading="lazy" onerror="imgTransformFallback(this)">
+                            ${buildPhotoImg(note.photo, 400, 400, 'note-card-image', '사케')}
                         ` : `
                             <div class="note-card-image">🍶</div>
                         `}
@@ -1745,43 +1745,18 @@ function renderNotes() {
 
 // 컴팩트 뷰용 태그 추출
 function getCompactTags(note) {
-    if (!note.flavor_description) return '';
-    try {
-        var td = JSON.parse(note.flavor_description);
-        if (td && td.version === 2 && td.categories) {
-            var tags = [];
-            Object.values(td.categories).forEach(function(catData) {
-                Object.values(catData).forEach(function(val) {
-                    if (Array.isArray(val)) tags.push.apply(tags, val);
-                    else tags.push(val);
-                });
-            });
-            return tags.slice(0, 3).map(function(t) { return '<span class="notes-compact-tag">' + escapeHtml(t) + '</span>'; }).join('');
-        }
-    } catch(e) {}
-    return '';
+    var tags = extractTastingTags(note.flavor_description);
+    if (tags.length === 0) return '';
+    return tags.slice(0, 3).map(function(t) { return '<span class="notes-compact-tag">' + escapeHtml(t) + '</span>'; }).join('');
 }
 
 // 상세 보기
 function getTastingPreview(note) {
-    if (!note.flavor_description) {
-        return note.dominant_aroma ? escapeHtml(note.dominant_aroma.substring(0, 60)) : '';
+    var tags = extractTastingTags(note.flavor_description);
+    if (tags.length > 0) {
+        var preview = tags.slice(0, 5).join(', ');
+        return escapeHtml(preview) + (tags.length > 5 ? ' ...' : '');
     }
-    try {
-        const td = JSON.parse(note.flavor_description);
-        if (td && td.version === 2 && td.categories) {
-            const tags = [];
-            Object.values(td.categories).forEach(catData => {
-                Object.values(catData).forEach(val => {
-                    if (Array.isArray(val)) tags.push(...val);
-                    else tags.push(val);
-                });
-            });
-            if (tags.length === 0) return '';
-            const preview = tags.slice(0, 5).join(', ');
-            return escapeHtml(preview) + (tags.length > 5 ? ' ...' : '');
-        }
-    } catch(e) {}
     return note.dominant_aroma ? escapeHtml(note.dominant_aroma.substring(0, 60)) : '';
 }
 
@@ -1905,25 +1880,10 @@ function displayCommunityFeed(notes, container, avgMap, showMore) {
         }
 
         // 향·맛·바디감 태그만 추출
-        let allTagsHtml = '';
-        if (note.flavor_description) {
-            try {
-                const td = JSON.parse(note.flavor_description);
-                if (td && td.version === 2 && td.categories) {
-                    const allTags = [];
-                    ['aroma', 'taste', 'body'].forEach(catId => {
-                        const catData = td.categories[catId];
-                        if (!catData) return;
-                        Object.values(catData).forEach(val => {
-                            (Array.isArray(val) ? val : [val]).forEach(t => allTags.push(t));
-                        });
-                    });
-                    if (allTags.length > 0) {
-                        allTagsHtml = '<div class="community-feed-card-tags">' + allTags.map(t => '<span class="community-tag">' + escapeHtml(t) + '</span>').join('') + '</div>';
-                    }
-                }
-            } catch(e) {}
-        }
+        var allTags = extractTastingTags(note.flavor_description, ['aroma', 'taste', 'body']);
+        var allTagsHtml = allTags.length > 0
+            ? '<div class="community-feed-card-tags">' + allTags.map(function(t) { return '<span class="community-tag">' + escapeHtml(t) + '</span>'; }).join('') + '</div>'
+            : '';
 
 
         return `<div class="community-feed-card" onclick="showCommunityDetail('${escapeAttr(note.id)}')">
@@ -2264,8 +2224,8 @@ function renderNoteDetail(note, showActions = true) {
     return `
         ${(note.photo && sanitizePhotoUrl(note.photo)) || (note.photo_back && sanitizePhotoUrl(note.photo_back)) ? `
         <div class="detail-photo-group">
-            ${note.photo && sanitizePhotoUrl(note.photo) ? `<img src="${sanitizePhotoUrl(getTransformedPhotoUrl(note.photo, 800))}" class="detail-photo" alt="사케 앞면" onerror="imgTransformFallback(this)">` : ''}
-            ${note.photo_back && sanitizePhotoUrl(note.photo_back) ? `<img src="${sanitizePhotoUrl(getTransformedPhotoUrl(note.photo_back, 800))}" class="detail-photo" alt="사케 뒷면" onerror="imgTransformFallback(this)">` : ''}
+            ${note.photo && sanitizePhotoUrl(note.photo) ? buildPhotoImg(note.photo, 800, 800, 'detail-photo', '사케 앞면') : ''}
+            ${note.photo_back && sanitizePhotoUrl(note.photo_back) ? buildPhotoImg(note.photo_back, 800, 800, 'detail-photo', '사케 뒷면') : ''}
         </div>` : ''}
         <h2 style="color: var(--accent-primary, #383961); margin-bottom: 10px;">${escapeHtml(note.sake_name)}</h2>
         <p style="color: #666; margin-bottom: 30px;">📅 ${escapeHtml(note.date)}</p>
@@ -2359,13 +2319,13 @@ async function editNote(id) {
         
         if (note.photo && sanitizePhotoUrl(note.photo)) {
             currentPhotoData = note.photo;
-            document.getElementById('uploadText').style.display = 'none';
+            hideEl('uploadText');
             document.getElementById('photoPreview').innerHTML =
                 `<img src="${sanitizePhotoUrl(note.photo)}" alt="사케 사진 앞면">`;
         }
         if (note.photo_back && sanitizePhotoUrl(note.photo_back)) {
             currentPhotoBackData = note.photo_back;
-            document.getElementById('uploadBackText').style.display = 'none';
+            hideEl('uploadBackText');
             document.getElementById('photoBackPreview').innerHTML =
                 `<img src="${sanitizePhotoUrl(note.photo_back)}" alt="사케 사진 뒷면">`;
         }
@@ -2458,7 +2418,7 @@ function showPolicyPage(type) {
 }
 
 function hidePolicyPage() {
-    document.getElementById('policyView').style.display = 'none';
+    hideEl('policyView');
 }
 
 // 사케 가이드 페이지 함수 (4번 작업에서 사용될 예정)
