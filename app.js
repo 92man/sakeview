@@ -2357,12 +2357,9 @@ function displayCommunityFeed(notes, container, avgMap) {
 
     const cards = notes.map((note, idx) => {
         const uid = note.user_id || 'anon';
-        const avatarColor = getAvatarColor(uid);
         const nickname = _displayNameMap[uid];
         const userLabel = nickname || ('User' + uid.substring(0, 4));
-        const avatarHtml = nickname
-            ? `<div class="community-avatar community-avatar-name" style="background:${avatarColor}">${escapeHtml(nickname)}</div>`
-            : `<div class="community-avatar" style="background:${avatarColor}">${getAvatarInitial(uid)}</div>`;
+        const thumbHtml = `<div class="community-thumb community-thumb-default" data-note-id="${escapeAttr(note.id)}">🍶</div>`;
         const timeAgo = getTimeAgo(note.created_at);
         const reviewText = note.personal_review || '';
         const truncated = reviewText.length > 120 ? reviewText.substring(0, 120) + '...' : reviewText;
@@ -2394,7 +2391,7 @@ function displayCommunityFeed(notes, container, avgMap) {
         const hiddenClass = idx >= 3 ? ' community-feed-card-hidden' : '';
         return `<div class="community-feed-card${hiddenClass}" onclick="showCommunityDetail('${escapeAttr(note.id)}')">
             <div class="community-feed-card-header">
-                ${avatarHtml}
+                ${thumbHtml}
                 <div class="community-feed-card-info">
                     <div class="community-feed-card-name">${escapeHtml(note.sake_name || '이름 없음')}${getCertBadgeHtml(uid)}</div>
                     <div class="community-feed-card-meta">Shared by <span class="community-feed-author" data-tooltip="${escapeAttr(userLabel)} 님의 노트만 보기" onclick="event.stopPropagation(); loadNotesByUser('${escapeAttr(uid)}')">${escapeHtml(userLabel)}</span> · ${timeAgo}</div>
@@ -2412,11 +2409,81 @@ function displayCommunityFeed(notes, container, avgMap) {
         html += `<button class="community-feed-more-btn" onclick="expandCommunityFeed(this)">더보기 (${notes.length - 3}개)</button>`;
     }
     container.innerHTML = html;
+    lazyLoadCommunityPhotos(notes.map(n => n.id));
 }
 
 function expandCommunityFeed(btn) {
     document.querySelectorAll('.community-feed-card-hidden').forEach(el => el.classList.remove('community-feed-card-hidden'));
     btn.remove();
+    // 숨겨진 카드가 보이면 사진 로드 트리거
+    document.querySelectorAll('.community-thumb[data-note-id]').forEach(el => {
+        if (el.dataset.photoLoaded) return;
+        if (_communityPhotoObserver) _communityPhotoObserver.observe(el);
+    });
+}
+
+var _communityPhotoObserver = null;
+async function lazyLoadCommunityPhotos(noteIds) {
+    if (!noteIds || noteIds.length === 0) return;
+    try {
+        // 사진이 있는 노트 ID만 가져옴 (실제 base64 데이터는 가져오지 않음)
+        const { data } = await supabaseClient
+            .from('tasting_notes')
+            .select('id')
+            .in('id', noteIds)
+            .not('photo', 'is', null);
+        if (!data || data.length === 0) return;
+        const photoIds = new Set(data.map(n => n.id));
+
+        // IntersectionObserver로 보이는 카드만 사진 로드
+        if (_communityPhotoObserver) _communityPhotoObserver.disconnect();
+        _communityPhotoObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                const el = entry.target;
+                const noteId = el.dataset.noteId;
+                if (!noteId || el.dataset.photoLoaded) return;
+                el.dataset.photoLoaded = '1';
+                _communityPhotoObserver.unobserve(el);
+                loadSinglePhoto(noteId, el);
+            });
+        }, { rootMargin: '200px' });
+
+        document.querySelectorAll('.community-thumb[data-note-id]').forEach(el => {
+            if (photoIds.has(el.dataset.noteId)) {
+                _communityPhotoObserver.observe(el);
+            }
+        });
+    } catch (e) {
+        console.error('lazyLoadCommunityPhotos error:', e);
+    }
+}
+
+async function loadSinglePhoto(noteId, thumbEl) {
+    try {
+        thumbEl.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;opacity:0.5;">⏳</div>';
+        const { data } = await supabaseClient
+            .from('tasting_notes')
+            .select('photo')
+            .eq('id', noteId)
+            .single();
+        if (data && data.photo) {
+            var img = new Image();
+            img.onload = function() {
+                thumbEl.classList.remove('community-thumb-default');
+                thumbEl.innerHTML = '';
+                thumbEl.appendChild(img);
+            };
+            img.onerror = function() { thumbEl.innerHTML = '🍶'; };
+            img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+            img.src = data.photo;
+        } else {
+            thumbEl.innerHTML = '🍶';
+        }
+    } catch (e) {
+        thumbEl.innerHTML = '🍶';
+        console.error('loadSinglePhoto error:', e);
+    }
 }
 
 function searchCommunityNotes(query) {
@@ -2473,7 +2540,7 @@ async function loadNotesBySakeName(sakeName) {
     try {
         const { data, error } = await supabaseClient
             .from('tasting_notes')
-            .select('id, sake_name, date, personal_review, overall_rating, created_at, user_id')
+            .select('id, sake_name, date, personal_review, overall_rating, created_at, user_id, flavor_description')
             .ilike('sake_name', `%${sakeName.replace(/[%_]/g, '')}%`)
             .order('created_at', { ascending: false })
             .limit(20);
@@ -2543,7 +2610,7 @@ async function filterCommunityByGrade(grade) {
     try {
         const { data, error } = await supabaseClient
             .from('tasting_notes')
-            .select('id, sake_name, date, personal_review, overall_rating, created_at, user_id')
+            .select('id, sake_name, date, personal_review, overall_rating, created_at, user_id, flavor_description')
             .in('sake_name', sakeNames.slice(0, 50))
             .order('created_at', { ascending: false })
             .limit(20);
@@ -2575,15 +2642,14 @@ async function showCommunityDetail(id) {
         if (error) throw error;
 
         const uid = note.user_id || 'anon';
-        const avatarColor = getAvatarColor(uid);
 
         // 닉네임 로드
         await loadDisplayNames([uid]);
         const nickname = _displayNameMap[uid];
         const userLabel = nickname || ('User' + uid.substring(0, 4));
-        const detailAvatarHtml = nickname
-            ? `<div class="community-avatar community-avatar-name" style="background:${avatarColor};height:32px;font-size:0.78rem;">${escapeHtml(nickname)}</div>`
-            : `<div class="community-avatar" style="background:${avatarColor};width:36px;height:36px;font-size:0.85rem;">${getAvatarInitial(uid)}</div>`;
+        const detailThumbHtml = note.photo
+            ? `<div class="community-thumb" style="width:40px;height:40px;border-radius:6px;"><img src="${escapeAttr(note.photo)}" alt="" style="width:100%;height:100%;object-fit:cover;"></div>`
+            : `<div class="community-thumb community-thumb-default" style="width:40px;height:40px;border-radius:6px;font-size:1.2rem;">🍶</div>`;
 
         // renderNoteDetail을 재사용하여 새/구 형식 모두 지원
         const isOwner = currentUser && currentUser.id === uid;
@@ -2592,7 +2658,7 @@ async function showCommunityDetail(id) {
         detailContent.innerHTML = `
             <button class="back-btn" onclick="switchTab('community')" style="margin-bottom:16px;">← 커뮤니티로</button>
             <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
-                ${detailAvatarHtml}
+                ${detailThumbHtml}
                 <span style="font-size:0.85rem;color:#64748b;">Shared by <span class="community-feed-author" data-tooltip="${escapeAttr(userLabel)} 님의 노트만 보기" onclick="loadNotesByUser('${escapeAttr(uid)}')">${escapeHtml(userLabel)}</span>${getCertBadgeHtml(uid)}</span>
             </div>
             ${noteDetailHtml}

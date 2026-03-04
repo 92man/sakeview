@@ -3384,9 +3384,31 @@ body.dark-mode .ocr-match-item:hover {
     margin-bottom: 16px;
 }
 .community-feed-card-header .static-wheel-mini {
-    width: 64px;
-    height: 64px;
+    width: 74px;
+    height: 74px;
     margin-top: 0;
+}
+.community-thumb {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.community-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.community-thumb-default {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-card-alt, #f1f5f9);
+    font-size: 1.4rem;
+}
+body.dark-mode .community-thumb-default {
+    background: #2a2a45;
 }
 .community-avatar {
     width: 44px;
@@ -3490,14 +3512,14 @@ body.dark-mode .ocr-match-item:hover {
     background: var(--accent-primary);
 }
 .community-feed-card-rating {
-    font-size: 1.4rem;
+    font-size: 1.6rem;
     font-weight: 800;
     color: var(--accent-primary, #383961);
     flex-shrink: 0;
     line-height: 1;
 }
 .community-feed-card-rating-max {
-    font-size: 0.7rem;
+    font-size: 0.8rem;
     font-weight: 600;
     color: #94a3b8;
 }
@@ -3633,8 +3655,8 @@ body.dark-mode .ocr-match-item:hover {
         gap: 8px;
     }
     .community-feed-card-header .static-wheel-mini {
-        width: 56px;
-        height: 56px;
+        width: 74px;
+        height: 74px;
         margin-top: 0;
     }
 }
