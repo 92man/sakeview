@@ -1,48 +1,3 @@
-// Age Verification & Cookie Consent
-(function() {
-    // 연령 확인
-    const ageVerified = localStorage.getItem('ageVerified');
-    if (!ageVerified) {
-        document.getElementById('ageModal').style.display = 'flex';
-    }
-
-    // 쿠키 동의 확인
-    const cookieConsent = localStorage.getItem('cookieConsent');
-    if (!cookieConsent && ageVerified) {
-        setTimeout(() => {
-            document.getElementById('cookieConsent').style.display = 'block';
-        }, 1500);
-    }
-})();
-
-function confirmAge(isAdult) {
-    if (isAdult) {
-        localStorage.setItem('ageVerified', 'true');
-        document.getElementById('ageModal').style.display = 'none';
-
-        // 연령 확인 후 쿠키 동의 배너 표시
-        const cookieConsent = localStorage.getItem('cookieConsent');
-        if (!cookieConsent) {
-            setTimeout(() => {
-                document.getElementById('cookieConsent').style.display = 'block';
-            }, 1000);
-        }
-    } else {
-        alert('만 19세 미만은 이용할 수 없습니다.');
-        window.location.href = 'https://www.google.com';
-    }
-}
-
-function acceptCookies() {
-    localStorage.setItem('cookieConsent', 'accepted');
-    document.getElementById('cookieConsent').style.display = 'none';
-}
-
-function declineCookies() {
-    localStorage.setItem('cookieConsent', 'declined');
-    document.getElementById('cookieConsent').style.display = 'none';
-}
-
 // Supabase 초기화
 const SUPABASE_URL = 'https://atgfrwohilgucmheyuzu.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0Z2Zyd29oaWxndWNtaGV5dXp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk2NjAyNTUsImV4cCI6MjA4NTIzNjI1NX0.CoyHTds_3BRl5p6wAehlqaevrdkqp1BzymnTnqhzy2Y';
@@ -490,135 +445,6 @@ function resetTastingUI() {
     switchTastingCategory('aroma');
 }
 
-// 이번 주의 추천 사케 데이터 (주간 순환)
-const featuredSakes = [
-    {
-        name: "닷사이 준마이 다이긴죠 23",
-        kanji: "獺祭 純米大吟醸 磨き二割三分",
-        image: "image/dassai23.jpg",
-        description: "야마구치현의 명품 사케 닷사이. 23% 정미보합의 준마이 다이긴죠로, 극도로 정제된 쌀로 만들어져 깨끗하고 섬세한 맛이 특징입니다. 과일향이 풍부하며 부드러운 단맛과 산미의 균형이 완벽합니다.",
-        meta: ["🏭 아사히슈조", "📍 야마구치현", "🌾 야마다니시키"]
-    },
-    {
-        name: "쿠보타 만주",
-        kanji: "久保田 萬壽",
-        image: "image/kubota_manju.jpg",
-        description: "니가타현을 대표하는 프리미엄 사케. 우아한 향과 깔끔한 맛이 조화를 이루며, 부드러운 목넘김이 특징입니다. 축하 자리나 특별한 날에 어울리는 명품 사케입니다.",
-        meta: ["🏭 아사히슈조", "📍 니가타현", "🌾 고시히카리"]
-    },
-    {
-        name: "핫카이산 준마이 다이긴죠",
-        kanji: "八海山 純米大吟醸",
-        image: "image/hakkaisan_junmai_daiginjo.jpg",
-        description: "니가타의 명수로 빚은 깨끗하고 청량한 사케. 은은한 과일향과 부드러운 감칠맛이 특징이며, 어떤 음식과도 잘 어울리는 만능 사케입니다.",
-        meta: ["🏭 핫카이조", "📍 니가타현", "🌾 야마다니시키"]
-    },
-    {
-        name: "쥬욘다이 혼조조",
-        kanji: "十四代 本醸造",
-        image: "image/juyondai_honjozo.jpg",
-        description: "환상의 사케로 불리는 쥬욘다이. 화려한 과일향과 달콤한 맛, 깔끔한 여운이 완벽한 조화를 이룹니다. 구하기 어려운 프리미엄 사케의 대표주자입니다.",
-        meta: ["🏭 타카기슈조", "📍 야마가타현", "🌾 야마다니시키"]
-    }
-];
-
-// 주간 추천 사케 표시
-function updateFeaturedSake() {
-    // 주간 순환: 1월 1주차 = 0, 2주차 = 1, ...
-    const now = new Date();
-    const weekNumber = Math.floor((now - new Date(now.getFullYear(), 0, 1)) / (7 * 24 * 60 * 60 * 1000));
-    const sakeIndex = weekNumber % featuredSakes.length;
-    const sake = featuredSakes[sakeIndex];
-
-    document.getElementById('featuredTitle').innerHTML = 
-        `${sake.name} <span class="featured-kanji">(${sake.kanji})</span>`;
-    document.getElementById('featuredDesc').textContent = sake.description;
-    document.getElementById('featuredMeta').innerHTML = 
-        sake.meta.map(item => `<span>${item}</span>`).join('');
-    
-    const img = document.getElementById('featuredImage');
-    img.src = sake.image;
-    img.onerror = function() {
-        this.style.display = 'none';
-        this.nextElementSibling.style.display = 'flex';
-    };
-}
-
-// 추천 섹션 닫기
-function hideFeatured() {
-    document.getElementById('featuredSection').style.display = 'none';
-}
-
-// 오늘은 그만보기
-function hideFeaturedToday() {
-    const today = new Date().toDateString();
-    localStorage.setItem('hideFeaturedUntil', today);
-    hideFeatured();
-}
-
-// 추천 섹션 표시 여부 확인
-function checkFeaturedVisibility() {
-    const hiddenUntil = localStorage.getItem('hideFeaturedUntil');
-    const today = new Date().toDateString();
-    
-    if (hiddenUntil === today) {
-        document.getElementById('featuredSection').style.display = 'none';
-    } else {
-        document.getElementById('featuredSection').style.display = 'block';
-        updateFeaturedSake();
-    }
-}
-
-// HTML 이스케이프 함수
-function escapeHtml(text) {
-    if (!text) return '';
-    return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
-
-// HTML 속성용 이스케이프 (싱글쿼트 포함)
-function escapeAttr(text) {
-    if (!text) return '';
-    return escapeHtml(text).replace(/'/g, '&#39;');
-}
-
-// photo URL 검증 (data: URI 또는 https만 허용)
-function sanitizePhotoUrl(url) {
-    if (!url) return '';
-    if (url.startsWith('data:image/')) return url;
-    if (url.startsWith('https://')) return encodeURI(url);
-    return '';
-}
-
-// base64 data URL → Supabase Storage 업로드, public URL 반환
-async function uploadPhotoToStorage(base64DataUrl, noteId, suffix) {
-    var match = base64DataUrl.match(/^data:(image\/\w+);base64,(.+)$/);
-    if (!match) return null;
-    var mimeType = match[1];
-    var ext = mimeType === 'image/png' ? 'png' : 'jpg';
-    var byteStr = atob(match[2]);
-    var bytes = new Uint8Array(byteStr.length);
-    for (var i = 0; i < byteStr.length; i++) bytes[i] = byteStr.charCodeAt(i);
-    var blob = new Blob([bytes], { type: mimeType });
-
-    var path = currentUser.id + '/' + noteId + '_' + suffix + '.' + ext;
-    var result = await supabaseClient.storage
-        .from('sake-photos')
-        .upload(path, blob, { upsert: true, contentType: mimeType });
-    if (result.error) { console.error('Photo upload error:', result.error); return null; }
-
-    var urlResult = supabaseClient.storage
-        .from('sake-photos')
-        .getPublicUrl(path);
-    return urlResult.data.publicUrl;
-}
-
-// Storage에서 사진 삭제
-async function deletePhotoFromStorage(photoUrl) {
-    if (!photoUrl || !photoUrl.includes('/sake-photos/')) return;
-    var pathMatch = photoUrl.match(/\/sake-photos\/(.+)$/);
-    if (!pathMatch) return;
-    await supabaseClient.storage.from('sake-photos').remove([pathMatch[1]]);
-}
 
 // 페이지 로드 시 인증 상태 확인
 async function checkAuth() {
@@ -1034,71 +860,32 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
-// 테마 설정
-function loadTheme() {
-    const savedTheme = localStorage.getItem('sakeAppTheme');
-    const themeIcon = document.getElementById('themeIcon');
-    if (savedTheme === 'dark') {
-        document.body.classList.add('dark-mode');
-        if (themeIcon) themeIcon.textContent = 'dark_mode';
-    } else {
-        if (themeIcon) themeIcon.textContent = 'light_mode';
-    }
-}
 
-function toggleTheme() {
-    document.body.classList.toggle('dark-mode');
-    const isDark = document.body.classList.contains('dark-mode');
-    const themeIcon = document.getElementById('themeIcon');
-    if (themeIcon) themeIcon.textContent = isDark ? 'dark_mode' : 'light_mode';
-    localStorage.setItem('sakeAppTheme', isDark ? 'dark' : 'light');
-}
-
-// 날짜 기본값
-function setDefaultDate() {
-    const dateInput = document.getElementById('date');
-    if (dateInput) {
-        dateInput.valueAsDate = new Date();
-    }
-}
-
-// 사진 업로드
-function handlePhotoUpload(event) {
+// 사진 업로드 공통 핸들러
+function _handlePhoto(event, setData, uploadTextId, previewId, altText) {
     const file = event.target.files[0];
-    if (file) {
-        if (file.size > 5 * 1024 * 1024) {
-            alert('사진 크기는 5MB 이하만 가능합니다.');
-            event.target.value = '';
-            return;
-        }
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            currentPhotoData = e.target.result;
-            document.getElementById('uploadText').style.display = 'none';
-            document.getElementById('photoPreview').innerHTML =
-                `<img src="${sanitizePhotoUrl(currentPhotoData)}" alt="사케 사진 앞면">`;
-        };
-        reader.readAsDataURL(file);
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+        alert('사진 크기는 5MB 이하만 가능합니다.');
+        event.target.value = '';
+        return;
     }
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        setData(e.target.result);
+        document.getElementById(uploadTextId).style.display = 'none';
+        document.getElementById(previewId).innerHTML =
+            `<img src="${sanitizePhotoUrl(e.target.result)}" alt="${altText}">`;
+    };
+    reader.readAsDataURL(file);
+}
+
+function handlePhotoUpload(event) {
+    _handlePhoto(event, v => { currentPhotoData = v; }, 'uploadText', 'photoPreview', '사케 사진 앞면');
 }
 
 function handlePhotoBackUpload(event) {
-    const file = event.target.files[0];
-    if (file) {
-        if (file.size > 5 * 1024 * 1024) {
-            alert('사진 크기는 5MB 이하만 가능합니다.');
-            event.target.value = '';
-            return;
-        }
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            currentPhotoBackData = e.target.result;
-            document.getElementById('uploadBackText').style.display = 'none';
-            document.getElementById('photoBackPreview').innerHTML =
-                `<img src="${sanitizePhotoUrl(currentPhotoBackData)}" alt="사케 사진 뒷면">`;
-        };
-        reader.readAsDataURL(file);
-    }
+    _handlePhoto(event, v => { currentPhotoBackData = v; }, 'uploadBackText', 'photoBackPreview', '사케 사진 뒷면');
 }
 
 // 탭 전환
@@ -1183,17 +970,6 @@ async function updateSidebar() {
 }
 
 
-// 라디오 버튼 값 가져오기
-function getRadioValue(name) {
-    const radio = document.querySelector(`input[name="${name}"]:checked`);
-    return radio ? parseInt(radio.value) : 3;
-}
-
-// 라디오 버튼 값 설정
-function setRadioValue(name, value) {
-    const radio = document.querySelector(`input[name="${name}"][value="${value}"]`);
-    if (radio) radio.checked = true;
-}
 
 // 테이스팅 노트 저장
 async function saveTastingNote(event) {
@@ -1320,239 +1096,8 @@ function resetForm() {
     resetTastingUI();
 }
 
-// === 사케 이름 선택기 (Sake Selector) ===
-let selectedBrand = null;
-let selectedProduct = null;
-let sakeInputMode = 'db';
-
-async function loadAndMergeCustomSakes() {
-    try {
-        const { data, error } = await supabaseClient
-            .from('custom_sakes')
-            .select('*');
-        if (error || !data || data.length === 0) return;
-        for (const cs of data) {
-            const product = {
-                name: cs.product_name,
-                japanese: cs.japanese || '',
-                grade: cs.grade || '',
-                polishRate: cs.polish_rate || '-'
-            };
-            if (SAKE_DATABASE[cs.brand]) {
-                const exists = SAKE_DATABASE[cs.brand].products.some(p => p.name === product.name);
-                if (!exists) SAKE_DATABASE[cs.brand].products.push(product);
-                if (!SAKE_DATABASE[cs.brand].brandJp && cs.brand_jp) {
-                    SAKE_DATABASE[cs.brand].brandJp = cs.brand_jp;
-                }
-            } else {
-                SAKE_DATABASE[cs.brand] = {
-                    brandJp: cs.brand_jp || '',
-                    products: [product]
-                };
-            }
-        }
-    } catch (e) {
-        console.error('Custom sakes merge error:', e);
-    }
-}
-
-function initSakeSelector() {
-    if (typeof SAKE_DATABASE === 'undefined') return;
-    renderBrandList(Object.keys(SAKE_DATABASE).sort());
-
-    // Event delegation for brand clicks
-    document.getElementById('brandList').addEventListener('click', function(e) {
-        var item = e.target.closest('.sake-list-item');
-        if (item && item.dataset.brand) selectBrand(item.dataset.brand);
-    });
-
-    // Event delegation for product clicks
-    document.getElementById('productList').addEventListener('click', function(e) {
-        var item = e.target.closest('.sake-list-item');
-        if (item && item.dataset.idx !== undefined) selectProduct(parseInt(item.dataset.idx));
-    });
-}
-
-function renderBrandList(brands) {
-    var brandList = document.getElementById('brandList');
-    var html = '<div class="sake-list-header">브랜드 (' + brands.length + ')</div>';
-    brands.forEach(function(brand) {
-        var isSelected = selectedBrand === brand ? ' selected' : '';
-        var entry = SAKE_DATABASE[brand];
-        var label = escapeHtml(brand);
-        if (entry.brandJp) label += ' <span class="item-jp">(' + escapeHtml(entry.brandJp) + ')</span>';
-        html += '<div class="sake-list-item' + isSelected + '" data-brand="' + escapeHtml(brand) + '">' + label + '<div class="item-sub">' + entry.products.length + '개 제품</div></div>';
-    });
-    brandList.innerHTML = html;
-}
-
-function filterBrands(query) {
-    if (typeof SAKE_DATABASE === 'undefined') return;
-    var brands = Object.keys(SAKE_DATABASE).sort();
-    var q = query.toLowerCase().trim();
-    var filtered = q ? brands.filter(function(b) {
-        var entry = SAKE_DATABASE[b];
-        return b.toLowerCase().includes(q) || (entry.brandJp && entry.brandJp.includes(q));
-    }) : brands;
-    renderBrandList(filtered);
-}
-
-function selectBrand(brand) {
-    selectedBrand = brand;
-    selectedProduct = null;
-
-    // Highlight selected brand
-    document.querySelectorAll('#brandList .sake-list-item').forEach(function(el) {
-        el.classList.toggle('selected', el.dataset.brand === brand);
-    });
-
-    // Populate product list
-    var productList = document.getElementById('productList');
-    var products = SAKE_DATABASE[brand].products;
-    var html = '<div class="sake-list-header">제품 (' + products.length + ')</div>';
-    products.forEach(function(p, idx) {
-        html += '<div class="sake-list-item" data-idx="' + idx + '">' + escapeHtml(p.name) + '<div class="item-sub">' + escapeHtml(p.japanese) + '</div></div>';
-    });
-    productList.innerHTML = html;
-
-    updateSakeDisplay();
-}
-
-function selectProduct(idx) {
-    if (!selectedBrand) return;
-    var products = SAKE_DATABASE[selectedBrand].products;
-    selectedProduct = products[idx];
-
-    // Highlight selected product
-    document.querySelectorAll('#productList .sake-list-item').forEach(function(el) {
-        el.classList.toggle('selected', parseInt(el.dataset.idx) === idx);
-    });
-
-    updateSakeDisplay();
-}
-
-function updateSakeDisplay() {
-    const display = document.getElementById('sakeSelectedDisplay');
-    const hidden = document.getElementById('sakeName');
-
-    if (selectedBrand && selectedProduct) {
-        const fullName = selectedBrand + ' ' + selectedProduct.name;
-        const japaneseName = selectedProduct.japanese;
-        const displayName = fullName + (japaneseName ? ' (' + japaneseName + ')' : '');
-
-        document.getElementById('sakeSelectedText').textContent = fullName;
-        document.getElementById('sakeSelectedSub').textContent = japaneseName || '';
-        display.classList.add('visible');
-        hidden.value = displayName;
-    } else {
-        display.classList.remove('visible');
-        hidden.value = '';
-    }
-}
-
-function clearSakeSelection() {
-    selectedBrand = null;
-    selectedProduct = null;
-    document.querySelectorAll('#brandList .sake-list-item').forEach(function(el) { el.classList.remove('selected'); });
-    const productList = document.getElementById('productList');
-    productList.innerHTML = '<div class="sake-list-header">제품</div><div class="sake-product-empty">브랜드를 선택하세요</div>';
-    document.getElementById('sakeSelectedDisplay').classList.remove('visible');
-    document.getElementById('sakeName').value = '';
-}
-
-function toggleSakeInputMode(mode) {
-    sakeInputMode = mode;
-    document.querySelectorAll('.sake-selector-tab').forEach(function(tab, i) {
-        tab.classList.toggle('active', (i === 0 && mode === 'db') || (i === 1 && mode === 'manual'));
-    });
-    document.getElementById('sakeDbPanel').classList.toggle('active', mode === 'db');
-    document.getElementById('sakeManualPanel').classList.toggle('active', mode === 'manual');
-
-    // Sync hidden field
-    if (mode === 'manual') {
-        document.getElementById('sakeName').value = document.getElementById('sakeNameManual').value;
-    } else {
-        updateSakeDisplay();
-    }
-}
-
-function getSakeNameValue() {
-    if (sakeInputMode === 'manual') {
-        return document.getElementById('sakeNameManual').value;
-    }
-    return document.getElementById('sakeName').value;
-}
-
-function resetSakeSelector() {
-    sakeInputMode = 'db';
-    selectedBrand = null;
-    selectedProduct = null;
-    document.querySelectorAll('.sake-selector-tab').forEach(function(tab, i) {
-        tab.classList.toggle('active', i === 0);
-    });
-    document.getElementById('sakeDbPanel').classList.add('active');
-    document.getElementById('sakeManualPanel').classList.remove('active');
-    document.getElementById('brandSearch').value = '';
-    document.getElementById('sakeNameManual').value = '';
-    document.getElementById('sakeName').value = '';
-    document.getElementById('sakeSelectedDisplay').classList.remove('visible');
-    if (typeof SAKE_DATABASE !== 'undefined') renderBrandList(Object.keys(SAKE_DATABASE).sort());
-    var productList = document.getElementById('productList');
-    productList.innerHTML = '<div class="sake-list-header">제품</div><div class="sake-product-empty">브랜드를 선택하세요</div>';
-    // OCR 모달 상태 초기화
-    ocrPhotoData = null;
-    var ocrPreview = document.getElementById('ocrPreviewImg');
-    if (ocrPreview) { ocrPreview.style.display = 'none'; ocrPreview.src = ''; }
-    var ocrPlaceholder = document.getElementById('ocrPlaceholder');
-    if (ocrPlaceholder) ocrPlaceholder.style.display = '';
-    var ocrPhotoArea = document.getElementById('ocrPhotoArea');
-    if (ocrPhotoArea) ocrPhotoArea.classList.remove('has-photo');
-    var ocrStartBtn = document.getElementById('ocrStartBtn');
-    if (ocrStartBtn) ocrStartBtn.disabled = true;
-    var ocrResults = document.getElementById('ocrResults');
-    if (ocrResults) ocrResults.classList.remove('active');
-    var ocrProgress = document.getElementById('ocrProgress');
-    if (ocrProgress) ocrProgress.classList.remove('active');
-}
-
-function setSakeNameFromNote(sakeName) {
-    if (!sakeName) return;
-    // Try to find the sake in DB
-    if (typeof SAKE_DATABASE !== 'undefined') {
-        for (var brand in SAKE_DATABASE) {
-            var products = SAKE_DATABASE[brand].products;
-            for (var i = 0; i < products.length; i++) {
-                var p = products[i];
-                var fullName = brand + ' ' + p.name;
-                var displayName = fullName + (p.japanese ? ' (' + p.japanese + ')' : '');
-                if (sakeName === displayName || sakeName === fullName) {
-                    toggleSakeInputMode('db');
-                    selectBrand(brand);
-                    selectProduct(i);
-                    // Scroll brand into view
-                    var brandEl = document.querySelector('#brandList .sake-list-item.selected');
-                    if (brandEl) brandEl.scrollIntoView({ block: 'nearest' });
-                    return;
-                }
-            }
-        }
-    }
-    // Not found in DB - switch to manual mode
-    toggleSakeInputMode('manual');
-    document.getElementById('sakeNameManual').value = sakeName;
-    document.getElementById('sakeName').value = sakeName;
-}
-
-// Sync manual input to hidden field
+// 테이스팅 UI 초기화 (DOMContentLoaded)
 document.addEventListener('DOMContentLoaded', function() {
-    var manualInput = document.getElementById('sakeNameManual');
-    if (manualInput) {
-        manualInput.addEventListener('input', function() {
-            if (sakeInputMode === 'manual') {
-                document.getElementById('sakeName').value = this.value;
-            }
-        });
-    }
     initTastingUI();
 });
 
@@ -1881,6 +1426,16 @@ function matchOcrTextToDatabase(ocrText) {
     );
 }
 
+// OCR 사진 프리뷰 공통 헬퍼
+function _showOcrPreview() {
+    var previewImg = document.getElementById('ocrPreviewImg');
+    previewImg.src = ocrPhotoData;
+    previewImg.style.display = 'block';
+    document.getElementById('ocrPlaceholder').style.display = 'none';
+    document.getElementById('ocrPhotoArea').classList.add('has-photo');
+    document.getElementById('ocrStartBtn').disabled = false;
+}
+
 // 사진 처리
 function handleOcrPhoto(event) {
     var file = event.target.files[0];
@@ -1888,12 +1443,7 @@ function handleOcrPhoto(event) {
     var reader = new FileReader();
     reader.onload = function(e) {
         ocrPhotoData = e.target.result;
-        var previewImg = document.getElementById('ocrPreviewImg');
-        previewImg.src = ocrPhotoData;
-        previewImg.style.display = 'block';
-        document.getElementById('ocrPlaceholder').style.display = 'none';
-        document.getElementById('ocrPhotoArea').classList.add('has-photo');
-        document.getElementById('ocrStartBtn').disabled = false;
+        _showOcrPreview();
     };
     reader.readAsDataURL(file);
 }
@@ -1907,7 +1457,6 @@ function selectOcrMethod(method) {
     });
 }
 
-
 // 진행바 업데이트
 function updateOcrProgress(percent, text) {
     document.getElementById('ocrProgressBar').style.width = percent + '%';
@@ -1918,15 +1467,9 @@ function updateOcrProgress(percent, text) {
 function openOcrModal() {
     document.getElementById('ocrModal').classList.add('active');
     document.body.style.overflow = 'hidden';
-    // 기존 업로드 사진이 있으면 사용
     if (currentPhotoData && !ocrPhotoData) {
         ocrPhotoData = currentPhotoData;
-        var previewImg = document.getElementById('ocrPreviewImg');
-        previewImg.src = ocrPhotoData;
-        previewImg.style.display = 'block';
-        document.getElementById('ocrPlaceholder').style.display = 'none';
-        document.getElementById('ocrPhotoArea').classList.add('has-photo');
-        document.getElementById('ocrStartBtn').disabled = false;
+        _showOcrPreview();
     }
 }
 
@@ -2240,38 +1783,6 @@ function getTastingPreview(note) {
 // ===== Community Functions =====
 let communitySearchTimeout = null;
 
-function hashUserId(uid) {
-    let hash = 0;
-    for (let i = 0; i < uid.length; i++) {
-        hash = ((hash << 5) - hash) + uid.charCodeAt(i);
-        hash |= 0;
-    }
-    return Math.abs(hash);
-}
-
-function getAvatarColor(uid) {
-    const colors = ['#6366f1','#8b5cf6','#ec4899','#f43f5e','#f97316','#eab308','#22c55e','#14b8a6','#06b6d4','#3b82f6'];
-    return colors[hashUserId(uid) % colors.length];
-}
-
-function getAvatarInitial(uid) {
-    const initials = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    return initials[hashUserId(uid) % initials.length];
-}
-
-function getTimeAgo(dateStr) {
-    const now = new Date();
-    const date = new Date(dateStr);
-    const diffMs = now - date;
-    const diffMin = Math.floor(diffMs / 60000);
-    if (diffMin < 1) return '방금 전';
-    if (diffMin < 60) return diffMin + '분 전';
-    const diffHours = Math.floor(diffMin / 60);
-    if (diffHours < 24) return diffHours + '시간 전';
-    const diffDays = Math.floor(diffHours / 24);
-    if (diffDays < 30) return diffDays + '일 전';
-    return date.toLocaleDateString('ko-KR');
-}
 
 async function loadCommunityStats() {
     try {
@@ -2914,229 +2425,6 @@ function showSakeGuide() {
     showPolicyPage('guide');
 }
 
-// === 자격증 인증 시스템 ===
-
-function handleCertPhotoUpload(event, previewId) {
-    const file = event.target.files[0];
-    if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
-        alert('파일 크기는 5MB 이하여야 합니다.');
-        event.target.value = '';
-        return;
-    }
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        currentCertPhotoData = e.target.result;
-        const preview = document.getElementById(previewId);
-        if (preview) {
-            preview.innerHTML = `<img src="${sanitizePhotoUrl(currentCertPhotoData)}" alt="자격증 사진">`;
-        }
-        // 업로드 텍스트 숨기기
-        const uploadEl = event.target.parentElement.querySelector('[id$="UploadText"], [id$="uploadText"]');
-        if (uploadEl) uploadEl.style.display = 'none';
-    };
-    reader.readAsDataURL(file);
-}
-
-function toggleSignupCert() {
-    const checked = document.getElementById('signupCertToggle').checked;
-    document.getElementById('signupCertFields').style.display = checked ? 'block' : 'none';
-    if (!checked) {
-        currentCertPhotoData = null;
-        document.getElementById('signupCertType').value = '';
-        const preview = document.getElementById('signupCertPreview');
-        if (preview) preview.innerHTML = '';
-        const uploadText = document.getElementById('signupCertUploadText');
-        if (uploadText) uploadText.style.display = 'block';
-    }
-}
-
-async function submitPendingCert() {
-    if (!currentUser) return;
-    const pending = localStorage.getItem('pendingCert');
-    if (!pending) return;
-    try {
-        const certData = JSON.parse(pending);
-        const { error } = await supabaseClient
-            .from('certifications')
-            .insert([{
-                user_id: currentUser.id,
-                user_email: currentUser.email,
-                cert_type: certData.cert_type,
-                cert_photo: certData.cert_photo,
-                status: 'pending'
-            }]);
-        if (!error) {
-            localStorage.removeItem('pendingCert');
-            alert('자격증 인증 요청이 제출되었습니다. 관리자 검토 후 승인됩니다.');
-        }
-    } catch (e) {
-        console.error('Pending cert submission error:', e);
-    }
-}
-
-async function openCertModal() {
-    if (!currentUser) {
-        alert('로그인이 필요합니다.');
-        return;
-    }
-    document.getElementById('certModal').style.display = 'flex';
-    const body = document.getElementById('certModalBody');
-    body.innerHTML = '<div class="loading">인증 상태 확인 중...</div>';
-    try {
-        const { data: certs, error } = await supabaseClient
-            .from('certifications')
-            .select('*')
-            .eq('user_id', currentUser.id)
-            .order('created_at', { ascending: false });
-        if (error) throw error;
-        renderCertModalContent(certs || []);
-    } catch (e) {
-        body.innerHTML = `<p style="color:#e74c3c;">오류: ${escapeHtml(e.message)}</p>`;
-    }
-}
-
-function closeCertModal() {
-    document.getElementById('certModal').style.display = 'none';
-    currentCertPhotoData = null;
-}
-
-function renderCertModalContent(certs) {
-    const body = document.getElementById('certModalBody');
-    const kikizakeshi = certs.find(c => c.cert_type === 'kikizakeshi');
-    const sommelier = certs.find(c => c.cert_type === 'sommelier');
-    let html = renderCertTypeSection('kikizakeshi', '키키자케시 (利酒師)', kikizakeshi);
-    html += '<hr style="border:none;border-top:1px solid var(--border-card);margin:20px 0;">';
-    html += renderCertTypeSection('sommelier', '사케 소믈리에', sommelier);
-    body.innerHTML = html;
-}
-
-function renderCertTypeSection(certType, label, certRecord) {
-    const badgeIcon = certType === 'kikizakeshi' ? '🏅' : '🎖️';
-
-    if (!certRecord) {
-        return `<div class="cert-type-section">
-            <h4>${badgeIcon} ${escapeHtml(label)}</h4>
-            <p class="cert-status-text">미신청</p>
-            <div class="cert-apply-form">
-                <div class="cert-photo-upload" onclick="document.getElementById('certPhotoInput_${certType}').click()">
-                    <input type="file" id="certPhotoInput_${certType}" accept="image/*"
-                           onchange="handleCertPhotoUpload(event, 'certPreview_${certType}')" style="display:none;">
-                    <div id="certUploadText_${certType}"><span class="material-symbols-outlined" style="font-size:24px;">upload_file</span><br>자격증 사진 업로드</div>
-                    <div id="certPreview_${certType}" class="cert-photo-preview"></div>
-                </div>
-                <button class="auth-btn" style="margin-top:12px;width:100%;" onclick="submitCertApplication('${certType}')">
-                    <span class="btn-text">인증 신청</span>
-                </button>
-            </div>
-        </div>`;
-    }
-
-    if (certRecord.status === 'pending') {
-        return `<div class="cert-type-section">
-            <h4>${badgeIcon} ${escapeHtml(label)}</h4>
-            <div class="cert-status-badge pending">심사 중</div>
-            <p class="cert-status-text">관리자 검토 대기 중입니다.</p>
-            <p class="cert-submitted-date">신청일: ${new Date(certRecord.created_at).toLocaleDateString('ko-KR')}</p>
-        </div>`;
-    }
-
-    if (certRecord.status === 'approved') {
-        return `<div class="cert-type-section">
-            <h4>${badgeIcon} ${escapeHtml(label)}</h4>
-            <div class="cert-status-badge approved">${badgeIcon} 인증 완료</div>
-            <p class="cert-status-text">커뮤니티 노트에 배지가 표시됩니다.</p>
-        </div>`;
-    }
-
-    if (certRecord.status === 'rejected') {
-        return `<div class="cert-type-section">
-            <h4>${badgeIcon} ${escapeHtml(label)}</h4>
-            <div class="cert-status-badge rejected">반려됨</div>
-            ${certRecord.reject_reason ? `<p class="cert-reject-reason">사유: ${escapeHtml(certRecord.reject_reason)}</p>` : ''}
-            <div class="cert-apply-form">
-                <div class="cert-photo-upload" onclick="document.getElementById('certPhotoInput_${certType}').click()">
-                    <input type="file" id="certPhotoInput_${certType}" accept="image/*"
-                           onchange="handleCertPhotoUpload(event, 'certPreview_${certType}')" style="display:none;">
-                    <div id="certUploadText_${certType}"><span class="material-symbols-outlined" style="font-size:24px;">upload_file</span><br>자격증 사진 다시 업로드</div>
-                    <div id="certPreview_${certType}" class="cert-photo-preview"></div>
-                </div>
-                <button class="auth-btn" style="margin-top:12px;width:100%;" onclick="submitCertApplication('${certType}')">
-                    <span class="btn-text">재신청</span>
-                </button>
-            </div>
-        </div>`;
-    }
-    return '';
-}
-
-async function submitCertApplication(certType) {
-    if (!currentUser) return;
-    if (!currentCertPhotoData) {
-        alert('자격증 사진을 업로드해주세요.');
-        return;
-    }
-    try {
-        const { error } = await supabaseClient
-            .from('certifications')
-            .insert([{
-                user_id: currentUser.id,
-                user_email: currentUser.email,
-                cert_type: certType,
-                cert_photo: currentCertPhotoData,
-                status: 'pending'
-            }]);
-        if (error) {
-            if (error.code === '23505') {
-                alert('이미 신청 중이거나 승인된 자격증입니다.');
-            } else {
-                throw error;
-            }
-            return;
-        }
-        alert('자격증 인증 요청이 제출되었습니다!');
-        currentCertPhotoData = null;
-        openCertModal();
-    } catch (e) {
-        alert('신청 실패: ' + e.message);
-    }
-}
-
-async function loadApprovedCerts() {
-    const CACHE_TTL = 5 * 60 * 1000;
-    if (Date.now() - approvedCertsLastLoaded < CACHE_TTL && Object.keys(approvedCertsMap).length > 0) return;
-    try {
-        const { data, error } = await supabaseClient
-            .from('certifications')
-            .select('user_id, cert_type')
-            .eq('status', 'approved');
-        if (error) throw error;
-        approvedCertsMap = {};
-        (data || []).forEach(cert => {
-            if (!approvedCertsMap[cert.user_id]) {
-                approvedCertsMap[cert.user_id] = [];
-            }
-            approvedCertsMap[cert.user_id].push(cert.cert_type);
-        });
-        approvedCertsLastLoaded = Date.now();
-    } catch (e) {
-        console.error('Failed to load approved certs:', e);
-    }
-}
-
-function getCertBadgeHtml(userId) {
-    const certs = approvedCertsMap[userId];
-    if (!certs || certs.length === 0) return '';
-    let badges = '';
-    if (certs.includes('kikizakeshi')) {
-        badges += '<span class="cert-badge" title="키키자케시 인증">🏅</span>';
-    }
-    if (certs.includes('sommelier')) {
-        badges += '<span class="cert-badge" title="사케 소믈리에 인증">🎖️</span>';
-    }
-    return badges;
-}
-
 // 모바일 터치 드롭다운 (hover 대신 tap으로 토글)
 (function() {
     if (!('ontouchstart' in window)) return;
@@ -3212,25 +2500,7 @@ async function triggerBackLabelAnalysis(photoBackData, sakeName) {
 // 사진 마이그레이션: base64 → Supabase Storage
 // ═══════════════════════════════════════════════
 
-async function migrateUploadToStorage(base64DataUrl, userId, noteId, suffix) {
-    var match = base64DataUrl.match(/^data:(image\/\w+);base64,(.+)$/);
-    if (!match) return null;
-    var mimeType = match[1];
-    var ext = mimeType === 'image/png' ? 'png' : 'jpg';
-    var byteStr = atob(match[2]);
-    var bytes = new Uint8Array(byteStr.length);
-    for (var i = 0; i < byteStr.length; i++) bytes[i] = byteStr.charCodeAt(i);
-    var blob = new Blob([bytes], { type: mimeType });
-
-    var path = userId + '/' + noteId + '_' + suffix + '.' + ext;
-    var result = await supabaseClient.storage
-        .from('sake-photos')
-        .upload(path, blob, { upsert: true, contentType: mimeType });
-    if (result.error) { console.error('Migration upload error (' + path + '):', result.error); return null; }
-
-    var urlResult = supabaseClient.storage.from('sake-photos').getPublicUrl(path);
-    return urlResult.data.publicUrl;
-}
+// migrateUploadToStorage는 uploadPhotoToStorage(base64, noteId, suffix, userId)로 통합됨
 
 async function migratePhotosToStorage() {
     if (!currentUser) { alert('로그인이 필요합니다.'); return; }
@@ -3264,12 +2534,12 @@ async function migratePhotosToStorage() {
 
             var updates = {};
             if (note.photo && note.photo.startsWith('data:')) {
-                var frontUrl = await migrateUploadToStorage(note.photo, note.user_id, note.id, 'front');
+                var frontUrl = await uploadPhotoToStorage(note.photo, note.id, 'front', note.user_id);
                 if (frontUrl) updates.photo = frontUrl;
                 else { failed++; console.error('[' + (i+1) + '/' + allIds.length + '] FAIL front: ' + noteId); continue; }
             }
             if (note.photo_back && note.photo_back.startsWith('data:')) {
-                var backUrl = await migrateUploadToStorage(note.photo_back, note.user_id, note.id, 'back');
+                var backUrl = await uploadPhotoToStorage(note.photo_back, note.id, 'back', note.user_id);
                 if (backUrl) updates.photo_back = backUrl;
                 else { failed++; console.error('[' + (i+1) + '/' + allIds.length + '] FAIL back: ' + noteId); continue; }
             }
@@ -3295,7 +2565,7 @@ async function migratePhotosToStorage() {
             console.log('pending_sakes 마이그레이션: ' + pendingBase64.length + '건');
             for (var j = 0; j < pendingBase64.length; j++) {
                 var p = pendingBase64[j];
-                var pUrl = await migrateUploadToStorage(p.photo_back, p.user_id, 'pending_' + p.id, 'back');
+                var pUrl = await uploadPhotoToStorage(p.photo_back, 'pending_' + p.id, 'back', p.user_id);
                 if (pUrl) {
                     await supabaseClient.from('pending_sakes').update({ photo_back: pUrl }).eq('id', p.id);
                     console.log('pending [' + (j+1) + '/' + pendingBase64.length + '] OK');
