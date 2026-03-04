@@ -803,6 +803,25 @@ async function handleLogout() {
 let _profileData = null; // profiles 테이블에서 불러온 데이터 캐시
 let _nickCheckTimer = null;
 
+// ═══════════════════════════════════════════════
+// 커뮤니티 닉네임 맵
+// ═══════════════════════════════════════════════
+let _displayNameMap = {};
+
+async function loadDisplayNames(userIds) {
+    const missing = userIds.filter(id => id && !(id in _displayNameMap));
+    if (missing.length === 0) return;
+    try {
+        const { data } = await supabaseClient
+            .from('profiles')
+            .select('user_id, display_name')
+            .in('user_id', missing);
+        if (data) data.forEach(r => { _displayNameMap[r.user_id] = r.display_name || ''; });
+    } catch (e) {
+        console.error('loadDisplayNames error:', e);
+    }
+}
+
 function toggleProfileDropdown() {
     var dropdown = document.getElementById('profileDropdown');
     var trigger = document.getElementById('profileTrigger');
@@ -2296,6 +2315,8 @@ async function loadCommunityFeed() {
 
         if (error) throw error;
         await loadApprovedCerts();
+        const userIds = [...new Set((data || []).map(n => n.user_id).filter(Boolean))];
+        await loadDisplayNames(userIds);
         displayCommunityFeed(data || [], container, buildAvgMap(data));
     } catch (e) {
         console.error('Community feed error:', e);
@@ -2338,7 +2359,7 @@ function displayCommunityFeed(notes, container, avgMap) {
         const uid = note.user_id || 'anon';
         const avatarColor = getAvatarColor(uid);
         const avatarInitial = getAvatarInitial(uid);
-        const userLabel = 'User' + uid.substring(0, 4);
+        const userLabel = _displayNameMap[uid] || ('User' + uid.substring(0, 4));
         const timeAgo = getTimeAgo(note.created_at);
         const reviewText = note.personal_review || '';
         const truncated = reviewText.length > 120 ? reviewText.substring(0, 120) + '...' : reviewText;
@@ -2373,7 +2394,7 @@ function displayCommunityFeed(notes, container, avgMap) {
                 <div class="community-avatar" style="background:${avatarColor}">${avatarInitial}</div>
                 <div class="community-feed-card-info">
                     <div class="community-feed-card-name">${escapeHtml(note.sake_name || '이름 없음')}${getCertBadgeHtml(uid)}</div>
-                    <div class="community-feed-card-meta">Shared by ${escapeHtml(userLabel)} · ${timeAgo}</div>
+                    <div class="community-feed-card-meta">Shared by <span class="community-feed-author" onclick="event.stopPropagation(); loadNotesByUser('${escapeAttr(uid)}')">${escapeHtml(userLabel)}</span> · ${timeAgo}</div>
                 </div>
                 ${typeof generateStaticWheelSvg === 'function' ? generateStaticWheelSvg(note.flavor_description, 'mini') : ''}
                 ${ratingDisplay}
@@ -2455,9 +2476,40 @@ async function loadNotesBySakeName(sakeName) {
             .limit(20);
 
         if (error) throw error;
+        const userIds = [...new Set((data || []).map(n => n.user_id).filter(Boolean))];
+        await loadDisplayNames(userIds);
         displayCommunityFeed(data || [], container, buildAvgMap(data));
     } catch (e) {
         container.innerHTML = `<div class="community-empty"><p>검색 결과를 불러올 수 없습니다.</p></div>`;
+    }
+}
+
+async function loadNotesByUser(userId) {
+    const container = document.getElementById('communityFeedList');
+    if (!container) return;
+    container.innerHTML = '<div class="loading">노트를 불러오는 중</div>';
+
+    const nickname = _displayNameMap[userId] || ('User' + userId.substring(0, 4));
+    const feedHeader = document.querySelector('.community-feed-header h3');
+    if (feedHeader) feedHeader.innerHTML = `<span class="community-feed-back-btn" onclick="loadCommunityFeed()">← 전체 보기</span> ${escapeHtml(nickname)} 님의 테이스팅 노트`;
+
+    try {
+        const { data, error } = await supabaseClient
+            .from('tasting_notes')
+            .select('id, sake_name, date, personal_review, overall_rating, created_at, user_id, flavor_description')
+            .eq('user_id', userId)
+            .order('created_at', { ascending: false })
+            .limit(50);
+
+        if (error) throw error;
+
+        const notes = data || [];
+        const userIds = [...new Set(notes.map(n => n.user_id).filter(Boolean))];
+        await loadDisplayNames(userIds);
+        displayCommunityFeed(notes, container, buildAvgMap(notes));
+    } catch (e) {
+        console.error('loadNotesByUser error:', e);
+        container.innerHTML = `<div class="community-empty"><p>노트를 불러올 수 없습니다.</p></div>`;
     }
 }
 
@@ -2494,6 +2546,8 @@ async function filterCommunityByGrade(grade) {
             .limit(20);
 
         if (error) throw error;
+        const userIds = [...new Set((data || []).map(n => n.user_id).filter(Boolean))];
+        await loadDisplayNames(userIds);
         displayCommunityFeed(data || [], container, buildAvgMap(data));
     } catch (e) {
         container.innerHTML = `<div class="community-empty"><p>필터 결과를 불러올 수 없습니다.</p></div>`;
@@ -2520,7 +2574,10 @@ async function showCommunityDetail(id) {
         const uid = note.user_id || 'anon';
         const avatarColor = getAvatarColor(uid);
         const avatarInitial = getAvatarInitial(uid);
-        const userLabel = 'User' + uid.substring(0, 4);
+
+        // 닉네임 로드
+        await loadDisplayNames([uid]);
+        const userLabel = _displayNameMap[uid] || ('User' + uid.substring(0, 4));
 
         // renderNoteDetail을 재사용하여 새/구 형식 모두 지원
         const isOwner = currentUser && currentUser.id === uid;
@@ -2530,7 +2587,7 @@ async function showCommunityDetail(id) {
             <button class="back-btn" onclick="switchTab('community')" style="margin-bottom:16px;">← 커뮤니티로</button>
             <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
                 <div class="community-avatar" style="background:${avatarColor};width:36px;height:36px;font-size:0.85rem;">${avatarInitial}</div>
-                <span style="font-size:0.85rem;color:#64748b;">Shared by ${escapeHtml(userLabel)}${getCertBadgeHtml(uid)}</span>
+                <span style="font-size:0.85rem;color:#64748b;">Shared by <span class="community-feed-author" onclick="loadNotesByUser('${escapeAttr(uid)}')">${escapeHtml(userLabel)}</span>${getCertBadgeHtml(uid)}</span>
             </div>
             ${noteDetailHtml}
         `;

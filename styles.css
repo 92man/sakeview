@@ -3414,6 +3414,27 @@ body.dark-mode .ocr-match-item:hover {
     color: #94a3b8;
     margin-top: 2px;
 }
+.community-feed-author {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text-secondary);
+    transition: color 0.15s;
+}
+.community-feed-author:hover {
+    color: var(--accent-primary);
+    text-decoration: underline;
+}
+.community-feed-back-btn {
+    cursor: pointer;
+    color: var(--accent-primary);
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-right: 8px;
+    transition: opacity 0.15s;
+}
+.community-feed-back-btn:hover {
+    opacity: 0.7;
+}
 .community-rating-dots {
     display: flex;
     gap: 4px;
