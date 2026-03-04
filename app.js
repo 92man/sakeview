@@ -27,7 +27,7 @@ const GRADE_JP_MAP = {
 let tastingSelections = {}; // { "aroma": { "과일 계열": ["사과","배"], ... }, ... }
 let tastingRadioSelections = {}; // { "body_무게감": "미디엄 바디", ... }
 let tastingCategoryNotes = {}; // { "aroma": "추가 메모", ... }
-let tastingMainTags = {}; // { "aroma": "바나나", "taste": "깔끔함", ... } 카테고리당 메인 태그 1개
+let tastingMainTags = {}; // 미사용 (하위호환용 유지)
 let activeTastingCategory = 'aroma';
 
 // 슬라이더 동그라미 안 점수 위치 업데이트
@@ -195,23 +195,11 @@ function toggleTastingTag(el) {
 
     const arr = tastingSelections[catId][subCat];
     const idx = arr.indexOf(expr);
-    const isMain = tastingMainTags[catId] === expr;
 
-    if (isMain) {
-        // 메인 태그 클릭 → 선택 해제
+    if (idx >= 0) {
+        // 이미 선택된 태그 클릭 → 선택 해제
         arr.splice(idx, 1);
-        el.classList.remove('selected', 'main-tag');
-        delete tastingMainTags[catId];
-    } else if (idx >= 0) {
-        // 이미 선택된 태그 클릭 → 메인으로 설정
-        // 기존 메인 태그 해제
-        if (tastingMainTags[catId]) {
-            document.querySelectorAll('.tasting-tag[data-cat-id="' + catId + '"].main-tag').forEach(t => {
-                t.classList.remove('main-tag');
-            });
-        }
-        tastingMainTags[catId] = expr;
-        el.classList.add('main-tag');
+        el.classList.remove('selected');
     } else {
         // 미선택 태그 클릭 → 선택
         arr.push(expr);
@@ -336,10 +324,6 @@ function collectTastingData() {
         const noteVal = (tastingCategoryNotes[cat.id] || '').trim();
         if (noteVal) data.notes[cat.id] = noteVal;
     });
-    // 메인 태그 저장
-    if (Object.keys(tastingMainTags).length > 0) {
-        data.mainTags = { ...tastingMainTags };
-    }
     // 맛 프로파일 슬라이더
     const getSliderVal = (id) => { const el = document.getElementById(id); return el ? parseInt(el.value) : 0; };
     data.sliders = {
@@ -383,17 +367,6 @@ function loadTastingDataToForm(jsonStr) {
         });
     });
 
-    // 메인 태그 복원
-    tastingMainTags = {};
-    if (data.mainTags) {
-        Object.entries(data.mainTags).forEach(([catId, mainExpr]) => {
-            tastingMainTags[catId] = mainExpr;
-            document.querySelectorAll('.tasting-tag[data-cat-id="' + catId + '"]').forEach(el => {
-                if (el.dataset.expr === mainExpr) el.classList.add('main-tag');
-            });
-        });
-    }
-
     // 카테고리별 노트 복원
     Object.entries(data.notes || {}).forEach(([catId, noteVal]) => {
         tastingCategoryNotes[catId] = noteVal;
@@ -427,7 +400,7 @@ function resetTastingUI() {
     tastingCategoryNotes = {};
     tastingMainTags = {};
     TASTING_CATEGORIES.forEach(c => { tastingSelections[c.id] = {}; });
-    document.querySelectorAll('.tasting-tag.selected, .tasting-tag.main-tag, .tasting-radio.selected').forEach(el => el.classList.remove('selected', 'main-tag'));
+    document.querySelectorAll('.tasting-tag.selected, .tasting-radio.selected').forEach(el => el.classList.remove('selected'));
     TASTING_CATEGORIES.forEach(c => {
         const noteEl = document.getElementById('catNote_' + c.id);
         if (noteEl) noteEl.value = '';
@@ -460,6 +433,35 @@ async function checkAuth() {
     showMainApp();
 }
 
+// mainTags 제거 마이그레이션 (1회 실행)
+async function migrateRemoveMainTags() {
+    if (!currentUser) return;
+    if (localStorage.getItem('migrate_mainTags_done_' + currentUser.id)) return;
+    try {
+        const { data } = await supabaseClient
+            .from('tasting_notes')
+            .select('id, flavor_description')
+            .eq('user_id', currentUser.id);
+        if (!data) return;
+        const updates = [];
+        data.forEach(note => {
+            if (!note.flavor_description) return;
+            try {
+                const td = JSON.parse(note.flavor_description);
+                if (td.mainTags) {
+                    delete td.mainTags;
+                    updates.push({ id: note.id, fd: JSON.stringify(td) });
+                }
+            } catch(e) {}
+        });
+        for (const u of updates) {
+            await supabaseClient.from('tasting_notes').update({ flavor_description: u.fd }).eq('id', u.id);
+        }
+        localStorage.setItem('migrate_mainTags_done_' + currentUser.id, '1');
+        if (updates.length > 0) console.log('mainTags 마이그레이션 완료:', updates.length + '개 노트');
+    } catch(e) { console.error('mainTags 마이그레이션 오류:', e); }
+}
+
 // 인증 컨테이너 표시
 function showAuthContainer() {
     document.getElementById('authContainer').style.display = 'block';
@@ -482,6 +484,7 @@ function showMainApp() {
         updateSidebar();
         loadPendingSakes();
         submitPendingCert();
+        migrateRemoveMainTags();
     } else {
         document.getElementById('loginBtn').style.display = 'inline-block';
         var profileWrapper = document.getElementById('profileMenuWrapper');
@@ -1901,15 +1904,20 @@ function displayCommunityFeed(notes, container, avgMap, showMore) {
             ratingDisplay = `<span class="community-feed-card-rating">${note.overall_rating}<span class="community-feed-card-rating-max">/100</span></span>`;
         }
 
-        // 메인 태그 추출
-        let mainTagsHtml = '';
+        // 선택된 모든 태그 추출
+        let allTagsHtml = '';
         if (note.flavor_description) {
             try {
                 const td = JSON.parse(note.flavor_description);
-                if (td.mainTags) {
-                    const tags = Object.values(td.mainTags);
-                    if (tags.length > 0) {
-                        mainTagsHtml = '<div class="community-feed-card-main-tags">' + tags.map(t => '<span class="community-main-tag">' + escapeHtml(t) + '</span>').join('') + '</div>';
+                if (td && td.version === 2 && td.categories) {
+                    const allTags = [];
+                    Object.values(td.categories).forEach(catData => {
+                        Object.values(catData).forEach(val => {
+                            (Array.isArray(val) ? val : [val]).forEach(t => allTags.push(t));
+                        });
+                    });
+                    if (allTags.length > 0) {
+                        allTagsHtml = '<div class="community-feed-card-tags">' + allTags.map(t => '<span class="community-tag">' + escapeHtml(t) + '</span>').join('') + '</div>';
                     }
                 }
             } catch(e) {}
@@ -1926,7 +1934,7 @@ function displayCommunityFeed(notes, container, avgMap, showMore) {
                 ${typeof generateStaticWheelSvg === 'function' ? generateStaticWheelSvg(note.flavor_description, 'mini') : ''}
                 ${ratingDisplay}
             </div>
-            ${mainTagsHtml}
+            ${allTagsHtml}
             ${truncated ? `<div class="community-feed-card-text">${escapeHtml(truncated)}</div>` : ''}
         </div>`;
     });
@@ -2166,7 +2174,7 @@ function renderNoteDetail(note, showActions = true) {
                 const catMap = {};
                 TASTING_CATEGORIES.forEach(c => { catMap[c.id] = c; });
 
-                const mainTags = td.mainTags || {};
+                // mainTags 미사용 (폐기됨)
                 tastingHtml += '<div class="section-title">테이스팅 노트</div>';
                 if (typeof generateStaticWheelSvg === 'function') {
                     tastingHtml += generateStaticWheelSvg(note.flavor_description, 'full');
@@ -2176,8 +2184,6 @@ function renderNoteDetail(note, showActions = true) {
                     if (!catInfo) return;
                     tastingHtml += '<div class="detail-tasting-section">';
                     tastingHtml += '<div class="detail-tasting-cat-title">' + catInfo.icon + ' ' + escapeHtml(catInfo.ko) + '</div>';
-
-                    const catMain = mainTags[catId] || null;
 
                     // "상황"은 단독 줄, 나머지는 서브카테고리명 없이 태그만 합쳐서 표시
                     const normalTags = [];
@@ -2191,15 +2197,10 @@ function renderNoteDetail(note, showActions = true) {
                         }
                     });
 
-                    // 일반 태그 (메인 태그는 맨 앞 + ★ 강조)
                     if (normalTags.length > 0) {
-                        if (catMain && normalTags.includes(catMain)) {
-                            normalTags.sort((a, b) => (a === catMain ? -1 : b === catMain ? 1 : 0));
-                        }
                         tastingHtml += '<div class="detail-tasting-sub"><div class="detail-tasting-tags">';
                         normalTags.forEach(v => {
-                            const isMain = (v === catMain);
-                            tastingHtml += '<span class="detail-tasting-tag' + (isMain ? ' detail-main-tag' : '') + '">' + escapeHtml(v) + '</span>';
+                            tastingHtml += '<span class="detail-tasting-tag">' + escapeHtml(v) + '</span>';
                         });
                         tastingHtml += '</div></div>';
                     }

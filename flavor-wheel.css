@@ -75,10 +75,6 @@
     opacity: 1;
 }
 
-.wheel-segment.main-tag {
-    opacity: 1;
-}
-
 .wheel-cat-label {
     fill: #333;
     font-weight: 700;

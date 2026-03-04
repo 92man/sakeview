@@ -162,7 +162,7 @@
 
                     <div style="background: var(--card-bg); border-left: 4px solid var(--accent-gold); padding: 25px; margin-bottom: 20px; border-radius: 0 16px 16px 0;">
                         <h3 style="color: var(--accent-gold); margin-bottom: 12px;">🍶 버튼식 테이스팅 노트</h3>
-                        <p>향, 맛, 바디감, 여운, 페어링 등 카테고리별로 준비된 태그를 탭하면 테이스팅 노트가 완성됩니다. 메인 태그를 지정해 가장 인상적인 특징을 강조할 수도 있습니다.</p>
+                        <p>향, 맛, 바디감, 여운, 페어링 등 카테고리별로 준비된 태그를 탭하면 테이스팅 노트가 완성됩니다. 태그를 탭해 인상적인 특징을 기록할 수 있습니다.</p>
                     </div>
 
                     <div style="background: var(--card-bg); border-left: 4px solid var(--accent-rose); padding: 25px; margin-bottom: 20px; border-radius: 0 16px 16px 0;">
@@ -853,11 +853,6 @@
                             <li><strong>여운:</strong> 피니시의 길이와 인상</li>
                             <li><strong>페어링:</strong> 함께 먹은 음식과 상황</li>
                         </ul>
-                    </div>
-
-                    <div style="background: var(--card-bg); border-left: 4px solid var(--accent-gold); padding: 25px; margin-bottom: 20px; border-radius: 0 16px 16px 0;">
-                        <h3 style="color: var(--accent-gold); margin-bottom: 12px;">★ 메인 태그 지정</h3>
-                        <p style="color: var(--text-secondary);">이미 선택한 태그를 한 번 더 탭하면 해당 카테고리의 <strong>메인 태그</strong>로 지정됩니다. 메인 태그는 금색으로 강조되어 가장 인상적인 특징을 한눈에 보여줍니다.</p>
                     </div>
 
                     <div style="background: var(--card-bg); border-left: 4px solid var(--accent-rose); padding: 25px; margin-bottom: 40px; border-radius: 0 16px 16px 0;">
@@ -1817,7 +1812,7 @@
 
                     <div style="background: var(--card-bg); padding: 25px; border-radius: 16px; margin-bottom: 20px; border: 1px solid var(--border-light);">
                         <h3 style="color: var(--accent-primary); margin-bottom: 12px;">Q. 테이스팅 노트는 어떻게 작성하나요?</h3>
-                        <p style="color: var(--text-secondary);">'새 노트' 탭에서 사케를 선택한 후, 향 · 맛 · 바디감 · 여운 · 페어링 카테고리별로 느낀 특징을 태그로 탭하세요. 한 번 더 탭하면 메인 태그로 지정됩니다. 마지막으로 0~100점 종합 평점과 감상평을 남기면 완성!</p>
+                        <p style="color: var(--text-secondary);">'새 노트' 탭에서 사케를 선택한 후, 향 · 맛 · 바디감 · 여운 · 페어링 카테고리별로 느낀 특징을 태그로 탭하세요. 마지막으로 0~100점 종합 평점과 감상평을 남기면 완성!</p>
                     </div>
 
                     <div style="background: var(--card-bg); padding: 25px; border-radius: 16px; margin-bottom: 20px; border: 1px solid var(--border-light);">

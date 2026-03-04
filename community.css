@@ -305,20 +305,20 @@ body.dark-mode .community-thumb-default {
     line-height: 1.6;
     margin-top: 4px;
 }
-.community-feed-card-main-tags {
+.community-feed-card-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 5px;
+    gap: 4px;
     margin-top: 8px;
 }
-.community-main-tag {
+.community-tag {
     display: inline-block;
-    padding: 2px 9px;
+    padding: 2px 8px;
     background: rgba(56, 57, 97, 0.08);
     color: var(--accent-primary, #383961);
     border-radius: 10px;
-    font-size: 0.72rem;
-    font-weight: 600;
+    font-size: 0.7rem;
+    font-weight: 500;
 }
 .community-feed-card-hidden {
     display: none;

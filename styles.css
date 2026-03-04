@@ -2412,30 +2412,6 @@ html {
     border-color: var(--accent-primary, #383961);
     box-shadow: 0 2px 8px rgba(56, 57, 97, 0.25);
 }
-.tasting-tag.main-tag {
-    background: linear-gradient(135deg, #d4a017, #f0c040);
-    color: #1a1a2e;
-    border-color: #d4a017;
-    box-shadow: 0 2px 10px rgba(212, 160, 23, 0.4);
-    font-weight: 700;
-    position: relative;
-}
-.tasting-tag.main-tag::before {
-    content: '★';
-    position: absolute;
-    top: -7px;
-    left: -5px;
-    font-size: 0.75rem;
-    color: #e53935;
-    text-shadow: 0 0 2px rgba(229, 57, 53, 0.5);
-}
-.main-tag-hint {
-    font-size: 0.7rem;
-    color: #d4a017;
-    font-weight: 500;
-    margin-right: auto;
-    margin-left: 8px;
-}
 .tasting-radio-group {
     display: flex;
     flex-wrap: wrap;
@@ -2552,22 +2528,6 @@ html {
     font-size: 0.8rem;
     font-weight: 600;
     white-space: nowrap;
-}
-.detail-main-tag {
-    background: linear-gradient(135deg, #d4a017, #f0c040);
-    color: #1a1a2e;
-    box-shadow: 0 1px 6px rgba(212, 160, 23, 0.3);
-    font-weight: 700;
-    position: relative;
-}
-.detail-main-tag::before {
-    content: '★';
-    position: absolute;
-    top: -6px;
-    left: -4px;
-    font-size: 0.65rem;
-    color: #e53935;
-    text-shadow: 0 0 2px rgba(229, 57, 53, 0.5);
 }
 
 @media (max-width: 768px) {
