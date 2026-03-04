@@ -800,6 +800,9 @@ async function handleLogout() {
 // 프로필 드롭다운 메뉴
 // ═══════════════════════════════════════════════
 
+let _profileData = null; // profiles 테이블에서 불러온 데이터 캐시
+let _nickCheckTimer = null;
+
 function toggleProfileDropdown() {
     var dropdown = document.getElementById('profileDropdown');
     var trigger = document.getElementById('profileTrigger');
@@ -810,12 +813,7 @@ function toggleProfileDropdown() {
     } else {
         dropdown.classList.add('open');
         if (trigger) trigger.setAttribute('aria-expanded', 'true');
-        // 현재 닉네임을 input에 세팅
-        var input = document.getElementById('displayNameInput');
-        if (input && currentUser) {
-            var meta = currentUser.user_metadata || {};
-            input.value = meta.display_name || '';
-        }
+        loadProfileForm();
     }
 }
 
@@ -826,39 +824,155 @@ function closeProfileDropdown() {
     if (trigger) trigger.setAttribute('aria-expanded', 'false');
 }
 
-async function saveDisplayName() {
+// 프로필 폼에 현재 값 채우기
+async function loadProfileForm() {
     if (!currentUser) return;
-    var input = document.getElementById('displayNameInput');
-    var displayName = input.value.trim();
 
+    // profiles 테이블에서 로드 (캐시 없으면)
+    if (!_profileData) {
+        try {
+            var { data } = await supabaseClient
+                .from('profiles')
+                .select('display_name, gender, age_group, drink_pref')
+                .eq('user_id', currentUser.id)
+                .single();
+            _profileData = data || {};
+        } catch (e) {
+            _profileData = {};
+        }
+    }
+
+    // user_metadata에서 fallback
+    var meta = currentUser.user_metadata || {};
+    var nick = _profileData.display_name || meta.display_name || '';
+    var gender = _profileData.gender || meta.gender || '';
+    var age = _profileData.age_group || meta.age_group || '';
+    var drinks = _profileData.drink_pref || meta.drink_pref || [];
+
+    document.getElementById('displayNameInput').value = nick;
+    document.getElementById('profileGender').value = gender;
+    document.getElementById('profileAge').value = age;
+
+    // 주류 취향 체크박스
+    document.querySelectorAll('input[name="profileDrink"]').forEach(function(cb) {
+        cb.checked = Array.isArray(drinks) && drinks.indexOf(cb.value) !== -1;
+    });
+
+    // 닉네임 상태 초기화
+    document.getElementById('nickStatus').textContent = '';
+}
+
+// 닉네임 입력 시 실시간 중복 체크 (debounce)
+document.addEventListener('input', function(e) {
+    if (e.target.id !== 'displayNameInput') return;
+    clearTimeout(_nickCheckTimer);
+    var statusEl = document.getElementById('nickStatus');
+    var name = e.target.value.trim();
+    if (!name) { statusEl.textContent = ''; statusEl.className = 'profile-nick-status'; return; }
+    statusEl.textContent = '확인 중...';
+    statusEl.className = 'profile-nick-status checking';
+    _nickCheckTimer = setTimeout(function() { checkNickname(name); }, 400);
+});
+
+async function checkNickname(name) {
+    var statusEl = document.getElementById('nickStatus');
+    if (!currentUser || !name) return;
+    try {
+        var { data, error } = await supabaseClient
+            .from('profiles')
+            .select('user_id')
+            .eq('display_name', name)
+            .neq('user_id', currentUser.id)
+            .limit(1);
+        if (error) throw error;
+        if (data && data.length > 0) {
+            statusEl.textContent = '이미 사용 중인 닉네임입니다';
+            statusEl.className = 'profile-nick-status error';
+        } else {
+            statusEl.textContent = '사용 가능한 닉네임입니다';
+            statusEl.className = 'profile-nick-status ok';
+        }
+    } catch (e) {
+        statusEl.textContent = '';
+        statusEl.className = 'profile-nick-status';
+    }
+}
+
+// 전체 프로필 저장
+async function saveProfile() {
+    if (!currentUser) return;
+
+    var displayName = document.getElementById('displayNameInput').value.trim();
+    var gender = document.getElementById('profileGender').value;
+    var age = document.getElementById('profileAge').value;
+    var drinks = [];
+    document.querySelectorAll('input[name="profileDrink"]:checked').forEach(function(cb) {
+        drinks.push(cb.value);
+    });
+
+    // 닉네임 검증
     if (displayName.length > 20) {
         alert('닉네임은 20자 이하로 입력해주세요.');
         return;
     }
 
+    var btn = document.getElementById('profileSaveBtn');
+    btn.disabled = true;
+
     try {
-        var btn = document.getElementById('saveDisplayNameBtn');
-        btn.disabled = true;
+        // 1) 닉네임 중복 체크
+        if (displayName) {
+            var { data: dup } = await supabaseClient
+                .from('profiles')
+                .select('user_id')
+                .eq('display_name', displayName)
+                .neq('user_id', currentUser.id)
+                .limit(1);
+            if (dup && dup.length > 0) {
+                alert('이미 사용 중인 닉네임입니다. 다른 닉네임을 입력해주세요.');
+                btn.disabled = false;
+                return;
+            }
+        }
 
-        var { data, error } = await supabaseClient.auth.updateUser({
-            data: { display_name: displayName }
+        // 2) profiles 테이블 UPSERT
+        var { error: profileErr } = await supabaseClient
+            .from('profiles')
+            .upsert({
+                user_id: currentUser.id,
+                display_name: displayName || null,
+                gender: gender || null,
+                age_group: age || null,
+                drink_pref: drinks.length > 0 ? drinks : null,
+                updated_at: new Date().toISOString()
+            }, { onConflict: 'user_id' });
+        if (profileErr) throw profileErr;
+
+        // 3) user_metadata도 동기화
+        var { data: authData, error: authErr } = await supabaseClient.auth.updateUser({
+            data: { display_name: displayName, gender: gender, age_group: age, drink_pref: drinks }
         });
+        if (authErr) throw authErr;
 
-        if (error) throw error;
-
-        currentUser = data.user;
+        currentUser = authData.user;
+        _profileData = { display_name: displayName, gender: gender, age_group: age, drink_pref: drinks };
         updateProfileUI();
 
-        // 저장 완료 피드백
-        btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;">done_all</span>';
+        // 성공 피드백
+        btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;">done_all</span> 저장 완료';
         setTimeout(function() {
-            btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;">check</span>';
+            btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;">save</span> 저장';
             btn.disabled = false;
-        }, 1200);
+        }, 1500);
 
     } catch (e) {
-        alert('닉네임 저장 실패: ' + e.message);
-        document.getElementById('saveDisplayNameBtn').disabled = false;
+        var msg = e.message || '';
+        if (msg.indexOf('duplicate') !== -1 || msg.indexOf('unique') !== -1) {
+            alert('이미 사용 중인 닉네임입니다. 다른 닉네임을 입력해주세요.');
+        } else {
+            alert('프로필 저장 실패: ' + msg);
+        }
+        btn.disabled = false;
     }
 }
 

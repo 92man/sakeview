@@ -4367,6 +4367,83 @@ body.dark-mode .profile-edit-save {
     color: var(--accent-primary, #383961);
 }
 
+/* 닉네임 상태 메시지 */
+.profile-nick-status {
+    font-size: 0.72rem;
+    margin-top: 4px;
+    display: block;
+    min-height: 1em;
+}
+.profile-nick-status.checking { color: var(--text-muted); }
+.profile-nick-status.ok { color: #22c55e; }
+.profile-nick-status.error { color: #ef4444; }
+
+/* 셀렉트 박스 */
+.profile-edit-select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1.5px solid var(--border-card);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    background: var(--input-bg, #fff);
+    color: var(--text-primary);
+    font-family: inherit;
+    transition: border-color 0.2s;
+    appearance: auto;
+}
+.profile-edit-select:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+}
+body.dark-mode .profile-edit-select {
+    background: var(--bg-secondary, #1e1e35);
+}
+
+/* 주류 취향 체크박스 */
+.profile-drink-checks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+}
+.profile-drink-check {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+}
+.profile-drink-check input[type="checkbox"] {
+    accent-color: var(--accent-primary, #383961);
+    width: 15px;
+    height: 15px;
+}
+
+/* 프로필 저장 버튼 */
+.profile-save-btn {
+    width: 100%;
+    padding: 9px 16px;
+    border: none;
+    border-radius: 8px;
+    background: var(--accent-primary, #383961);
+    color: white;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s;
+}
+.profile-save-btn:hover { opacity: 0.9; }
+.profile-save-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+body.dark-mode .profile-save-btn {
+    background: var(--accent-secondary, #DBDFAC);
+    color: var(--accent-primary, #383961);
+}
+
 /* 메뉴 항목 */
 .profile-dropdown-item {
     display: flex;
