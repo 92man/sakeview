@@ -592,10 +592,12 @@ function generateStaticWheelSvg(flavorJson, mode) {
             svg += `<line x1="${cx}" y1="${cy}" x2="${p.x}" y2="${p.y}" stroke="rgba(0,0,0,0.08)" stroke-width="0.8" pointer-events="none"/>`;
         });
 
-        // 3) 6각형 꼭지점 (중심부터, score 0→0, score 5→R)
+        // 3) 6각형 꼭지점 (풀 휠과 동일 비율: score 0→MIN_R, score 5→R)
+        const MIN_R = Math.round(R * (R1_OUT / R3_OUT)); // ≈52 (중심원 비율)
+        const scoreRange = R - MIN_R;
         const vertices = WHEEL_SECTIONS.map((_, i) => {
             const angle = -90 + i * SECTION_ANGLE + SECTION_ANGLE / 2;
-            const r = (scores[i] / 5) * R;
+            const r = MIN_R + (scores[i] / 5) * scoreRange;
             return polarToXY(cx, cy, r, angle);
         });
 
