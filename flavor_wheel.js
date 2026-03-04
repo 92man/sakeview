@@ -621,11 +621,11 @@ function generateStaticWheelSvg(flavorJson, mode) {
 
         // 7) 축 라벨 (원 바깥)
         const MINI_LABELS = ['과일/꽃', '유제품', '곡물류', '감칠맛', '신맛', '단맛'];
-        const labelR = R + 42;
+        const labelR = R + 46;
         WHEEL_SECTIONS.forEach((_, i) => {
             const angle = -90 + i * SECTION_ANGLE + SECTION_ANGLE / 2;
             const p = polarToXY(cx, cy, labelR, angle);
-            svg += `<text x="${p.x}" y="${p.y}" text-anchor="middle" dominant-baseline="central" font-size="38" font-weight="600" fill="var(--text-muted, #9a9a9a)" pointer-events="none">${MINI_LABELS[i]}</text>`;
+            svg += `<text x="${p.x}" y="${p.y}" text-anchor="middle" dominant-baseline="central" font-size="44" font-weight="800" fill="var(--text-muted, #9a9a9a)" pointer-events="none">${MINI_LABELS[i]}</text>`;
         });
 
         svg += `</svg>`;
