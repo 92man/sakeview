@@ -565,7 +565,7 @@ function generateStaticWheelSvg(flavorJson, mode) {
     const isDark = false;
     const isMini = (mode === 'mini');
 
-    const vb = isMini ? 460 : W;
+    const vb = isMini ? 480 : W;
     const cx = vb / 2, cy = vb / 2;
     const MINI_MAX_R = isMini ? 140 : (vb / 2 - 5);
 
