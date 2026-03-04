@@ -5135,21 +5135,16 @@ body.dark-mode .btn-reject {
 }
 .notes-compact-wheel {
     flex-shrink: 0;
-    width: 86px;
-    height: 86px;
+    width: 64px;
+    height: 64px;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
 }
 .notes-compact-wheel .static-wheel-mini {
-    width: 86px;
-    height: 86px;
+    width: 64px;
+    height: 64px;
     margin: 0;
-}
-.notes-compact-wheel svg {
-    width: 86px !important;
-    height: 86px !important;
 }
 .notes-compact-rating {
     font-size: 1rem;
