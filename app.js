@@ -871,11 +871,12 @@ function _handlePhoto(event, setData, uploadTextId, previewId, altText) {
         return;
     }
     const reader = new FileReader();
-    reader.onload = function(e) {
-        setData(e.target.result);
+    reader.onload = async function(e) {
+        var compressed = await compressImageForUpload(e.target.result);
+        setData(compressed);
         document.getElementById(uploadTextId).style.display = 'none';
         document.getElementById(previewId).innerHTML =
-            `<img src="${sanitizePhotoUrl(e.target.result)}" alt="${altText}">`;
+            `<img src="${sanitizePhotoUrl(compressed)}" alt="${altText}">`;
     };
     reader.readAsDataURL(file);
 }
@@ -925,7 +926,7 @@ async function updateSidebar() {
     try {
         const { data } = await supabaseClient
             .from('tasting_notes')
-            .select('id, sake_name, created_at, overall_rating, photo, photo_back')
+            .select('id, sake_name, created_at, overall_rating, photo')
             .eq('user_id', currentUser.id)
             .order('created_at', { ascending: false });
         if (!data) return;
@@ -954,7 +955,7 @@ async function updateSidebar() {
             const timeText = daysAgo === 0 ? '오늘' : daysAgo + '일 전';
             const stars = '★'.repeat(Math.min(Math.round((n.overall_rating || 50) / 20), 5));
             return `<div onclick="showDetail('${escapeAttr(n.id)}')" style="display:flex;gap:12px;padding:12px;background:var(--card-bg);border:1px solid var(--border-card);border-radius:12px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--accent-gold)';this.style.boxShadow='0 2px 8px rgba(56,57,97,0.08)'" onmouseout="this.style.borderColor='var(--border-card)';this.style.boxShadow='none'">
-                <div style="width:48px;height:48px;border-radius:8px;background:var(--bg-muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.5em;overflow:hidden;">${n.photo ? `<img src="${sanitizePhotoUrl(n.photo)}" style="width:100%;height:100%;object-fit:cover;">` : '🍶'}</div>
+                <div style="width:48px;height:48px;border-radius:8px;background:var(--bg-muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.5em;overflow:hidden;">${n.photo ? `<img src="${sanitizePhotoUrl(getTransformedPhotoUrl(n.photo, 96, 96))}" loading="lazy" style="width:100%;height:100%;object-fit:cover;">` : '🍶'}</div>
                 <div style="flex:1;min-width:0;">
                     <h5 style="font-weight:700;font-size:0.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text-primary);">${escapeHtml(n.sake_name) || '이름 없음'}</h5>
                     <div style="display:flex;align-items:center;gap:8px;margin-top:2px;">
@@ -1058,6 +1059,7 @@ async function saveTastingNote(event) {
         }
 
         alert(isEditing ? '✅ 테이스팅 노트가 수정되었습니다!' : '✅ 테이스팅 노트가 저장되었습니다!');
+        _feedCache = null; // 피드 캐시 무효화
 
         // 뒷면 라벨 자동 분석: DB에 없는 사케 + 뒷면 사진이 있으면
         if (sakeInputMode === 'manual' && photoBack && !isEditing) {
@@ -1645,7 +1647,7 @@ async function loadNotes() {
     try {
         const { data, error } = await supabaseClient
             .from('tasting_notes')
-            .select('id, sake_name, date, overall_rating, flavor_description, dominant_aroma, created_at, photo, photo_back')
+            .select('id, sake_name, date, overall_rating, flavor_description, dominant_aroma, created_at, photo')
             .eq('user_id', currentUser.id)
             .order('created_at', { ascending: false });
 
@@ -1714,7 +1716,7 @@ function renderNotes() {
                 ${sorted.map(note => `
                     <div class="note-card" onclick="showDetail('${escapeAttr(note.id)}')">
                         ${note.photo && sanitizePhotoUrl(note.photo) ? `
-                            <img src="${sanitizePhotoUrl(note.photo)}" class="note-card-image" alt="사케">
+                            <img src="${sanitizePhotoUrl(getTransformedPhotoUrl(note.photo, 400, 400))}" class="note-card-image" alt="사케" loading="lazy">
                         ` : `
                             <div class="note-card-image">🍶</div>
                         `}
@@ -1802,26 +1804,40 @@ async function loadCommunityStats() {
     }
 }
 
+var _feedCache = null;
+var _feedCacheTTL = 120000; // 2분
+
 async function loadCommunityFeed() {
     const container = document.getElementById('communityFeedList');
     if (!container) return;
-    container.innerHTML = '<div class="loading">커뮤니티 노트를 불러오는 중</div>';
 
     const feedHeader = document.querySelector('.community-feed-header h3');
     if (feedHeader) feedHeader.textContent = 'New Tasting Notes';
 
+    // sessionStorage 캐시 확인
+    if (_feedCache && Date.now() - _feedCache.ts < _feedCacheTTL) {
+        await loadApprovedCerts();
+        const userIds = [...new Set(_feedCache.data.map(n => n.user_id).filter(Boolean))];
+        await loadDisplayNames(userIds);
+        displayCommunityFeed(_feedCache.data, container, buildAvgMap(_feedCache.data));
+        return;
+    }
+
+    container.innerHTML = '<div class="loading">커뮤니티 노트를 불러오는 중</div>';
+
     try {
         const { data, error } = await supabaseClient
             .from('tasting_notes')
-            .select('id, sake_name, date, personal_review, overall_rating, created_at, user_id, flavor_description, photo')
+            .select('id, sake_name, personal_review, overall_rating, created_at, user_id, flavor_description, photo')
             .order('created_at', { ascending: false })
-            .limit(20);
+            .limit(3);
 
         if (error) throw error;
+        _feedCache = { ts: Date.now(), data: data || [] };
         await loadApprovedCerts();
         const userIds = [...new Set((data || []).map(n => n.user_id).filter(Boolean))];
         await loadDisplayNames(userIds);
-        displayCommunityFeed(data || [], container, buildAvgMap(data));
+        displayCommunityFeed(data || [], container, buildAvgMap(data), true);
     } catch (e) {
         console.error('Community feed error:', e);
         container.innerHTML = `<div class="community-empty">
@@ -1848,7 +1864,7 @@ function buildAvgMap(notes) {
     return avgMap;
 }
 
-function displayCommunityFeed(notes, container, avgMap) {
+function displayCommunityFeed(notes, container, avgMap, showMore) {
     avgMap = avgMap || {};
     if (!notes || notes.length === 0) {
         container.innerHTML = `<div class="community-empty">
@@ -1864,7 +1880,7 @@ function displayCommunityFeed(notes, container, avgMap) {
         const nickname = _displayNameMap[uid];
         const userLabel = nickname || ('User' + uid.substring(0, 4));
         const thumbHtml = note.photo
-            ? `<div class="community-thumb"><img src="${escapeAttr(note.photo)}" alt="" loading="lazy" onerror="this.parentElement.classList.add('community-thumb-default');this.parentElement.innerHTML='🍶';"></div>`
+            ? `<div class="community-thumb"><img src="${escapeAttr(getTransformedPhotoUrl(note.photo, 96, 96))}" alt="" loading="lazy" onerror="this.parentElement.classList.add('community-thumb-default');this.parentElement.innerHTML='🍶';"></div>`
             : `<div class="community-thumb community-thumb-default">🍶</div>`;
         const timeAgo = getTimeAgo(note.created_at);
         const reviewText = note.personal_review || '';
@@ -1894,8 +1910,8 @@ function displayCommunityFeed(notes, container, avgMap) {
             } catch(e) {}
         }
 
-        const hiddenClass = idx >= 3 ? ' community-feed-card-hidden' : '';
-        return `<div class="community-feed-card${hiddenClass}" onclick="showCommunityDetail('${escapeAttr(note.id)}')">
+
+        return `<div class="community-feed-card" onclick="showCommunityDetail('${escapeAttr(note.id)}')">
             <div class="community-feed-card-header">
                 ${thumbHtml}
                 <div class="community-feed-card-info">
@@ -1911,15 +1927,39 @@ function displayCommunityFeed(notes, container, avgMap) {
     });
 
     let html = cards.join('');
-    if (notes.length > 3) {
-        html += `<button class="community-feed-more-btn" onclick="expandCommunityFeed(this)">더보기 (${notes.length - 3}개)</button>`;
+    if (showMore && notes.length >= 3) {
+        html += `<button class="community-feed-more-btn" onclick="loadMoreCommunityFeed(${notes.length})">더보기</button>`;
     }
     container.innerHTML = html;
 }
 
-function expandCommunityFeed(btn) {
-    document.querySelectorAll('.community-feed-card-hidden').forEach(el => el.classList.remove('community-feed-card-hidden'));
-    btn.remove();
+async function loadMoreCommunityFeed(offset) {
+    const btn = document.querySelector('.community-feed-more-btn');
+    if (btn) btn.textContent = '불러오는 중...';
+    try {
+        const { data, error } = await supabaseClient
+            .from('tasting_notes')
+            .select('id, sake_name, personal_review, overall_rating, created_at, user_id, flavor_description, photo')
+            .order('created_at', { ascending: false })
+            .range(offset, offset + 9);
+        if (error) throw error;
+        if (!data || data.length === 0) { if (btn) btn.remove(); return; }
+        const userIds = [...new Set(data.map(n => n.user_id).filter(Boolean))];
+        await loadDisplayNames(userIds);
+        const container = document.getElementById('communityFeedList');
+        if (btn) btn.remove();
+        const avgMap = buildAvgMap(data);
+        const tempDiv = document.createElement('div');
+        displayCommunityFeed(data, tempDiv, avgMap, false);
+        container.insertAdjacentHTML('beforeend', tempDiv.innerHTML);
+        if (data.length >= 10) {
+            container.insertAdjacentHTML('beforeend',
+                `<button class="community-feed-more-btn" onclick="loadMoreCommunityFeed(${offset + data.length})">더보기</button>`);
+        }
+    } catch (e) {
+        console.error('Load more error:', e);
+        if (btn) btn.textContent = '더보기';
+    }
 }
 
 function searchCommunityNotes(query) {
@@ -1976,7 +2016,7 @@ async function loadNotesBySakeName(sakeName) {
     try {
         const { data, error } = await supabaseClient
             .from('tasting_notes')
-            .select('id, sake_name, date, personal_review, overall_rating, created_at, user_id, flavor_description, photo')
+            .select('id, sake_name, personal_review, overall_rating, created_at, user_id, flavor_description, photo')
             .ilike('sake_name', `%${sakeName.replace(/[%_]/g, '')}%`)
             .order('created_at', { ascending: false })
             .limit(20);
@@ -2002,7 +2042,7 @@ async function loadNotesByUser(userId) {
     try {
         const { data, error } = await supabaseClient
             .from('tasting_notes')
-            .select('id, sake_name, date, personal_review, overall_rating, created_at, user_id, flavor_description, photo')
+            .select('id, sake_name, personal_review, overall_rating, created_at, user_id, flavor_description, photo')
             .eq('user_id', userId)
             .order('created_at', { ascending: false })
             .limit(50);
@@ -2046,7 +2086,7 @@ async function filterCommunityByGrade(grade) {
     try {
         const { data, error } = await supabaseClient
             .from('tasting_notes')
-            .select('id, sake_name, date, personal_review, overall_rating, created_at, user_id, flavor_description, photo')
+            .select('id, sake_name, personal_review, overall_rating, created_at, user_id, flavor_description, photo')
             .in('sake_name', sakeNames.slice(0, 50))
             .order('created_at', { ascending: false })
             .limit(20);
@@ -2084,7 +2124,7 @@ async function showCommunityDetail(id) {
         const nickname = _displayNameMap[uid];
         const userLabel = nickname || ('User' + uid.substring(0, 4));
         const detailThumbHtml = note.photo
-            ? `<div class="community-thumb" style="width:40px;height:40px;border-radius:6px;"><img src="${escapeAttr(note.photo)}" alt="" style="width:100%;height:100%;object-fit:cover;"></div>`
+            ? `<div class="community-thumb" style="width:40px;height:40px;border-radius:6px;"><img src="${escapeAttr(getTransformedPhotoUrl(note.photo, 80, 80))}" alt="" style="width:100%;height:100%;object-fit:cover;"></div>`
             : `<div class="community-thumb community-thumb-default" style="width:40px;height:40px;border-radius:6px;font-size:1.2rem;">🍶</div>`;
 
         // renderNoteDetail을 재사용하여 새/구 형식 모두 지원
@@ -2216,8 +2256,8 @@ function renderNoteDetail(note, showActions = true) {
     return `
         ${(note.photo && sanitizePhotoUrl(note.photo)) || (note.photo_back && sanitizePhotoUrl(note.photo_back)) ? `
         <div class="detail-photo-group">
-            ${note.photo && sanitizePhotoUrl(note.photo) ? `<img src="${sanitizePhotoUrl(note.photo)}" class="detail-photo" alt="사케 앞면">` : ''}
-            ${note.photo_back && sanitizePhotoUrl(note.photo_back) ? `<img src="${sanitizePhotoUrl(note.photo_back)}" class="detail-photo" alt="사케 뒷면">` : ''}
+            ${note.photo && sanitizePhotoUrl(note.photo) ? `<img src="${sanitizePhotoUrl(getTransformedPhotoUrl(note.photo, 800))}" class="detail-photo" alt="사케 앞면">` : ''}
+            ${note.photo_back && sanitizePhotoUrl(note.photo_back) ? `<img src="${sanitizePhotoUrl(getTransformedPhotoUrl(note.photo_back, 800))}" class="detail-photo" alt="사케 뒷면">` : ''}
         </div>` : ''}
         <h2 style="color: var(--accent-primary, #383961); margin-bottom: 10px;">${escapeHtml(note.sake_name)}</h2>
         <p style="color: #666; margin-bottom: 30px;">📅 ${escapeHtml(note.date)}</p>

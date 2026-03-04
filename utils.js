@@ -20,6 +20,38 @@ function sanitizePhotoUrl(url) {
     return '';
 }
 
+// 업로드용 이미지 압축 (max 1200px, JPEG 0.82)
+function compressImageForUpload(base64DataUrl) {
+    return new Promise(function(resolve, reject) {
+        if (!base64DataUrl || !base64DataUrl.startsWith('data:image')) {
+            resolve(base64DataUrl);
+            return;
+        }
+        var img = new Image();
+        img.onload = function() {
+            var canvas = document.createElement('canvas');
+            var maxSize = 1200;
+            var scale = Math.min(maxSize / img.width, maxSize / img.height, 1);
+            canvas.width = Math.round(img.width * scale);
+            canvas.height = Math.round(img.height * scale);
+            var ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL('image/jpeg', 0.82));
+        };
+        img.onerror = function() { resolve(base64DataUrl); };
+        img.src = base64DataUrl;
+    });
+}
+
+// Supabase Storage 이미지 변환 URL 생성
+function getTransformedPhotoUrl(url, width, height) {
+    if (!url || !url.includes('/storage/v1/object/public/')) return url;
+    return url.replace(
+        '/storage/v1/object/public/',
+        '/storage/v1/render/image/public/'
+    ) + '?width=' + width + '&height=' + (height || width) + '&resize=cover';
+}
+
 // base64 data URL → Supabase Storage 업로드, public URL 반환
 // userId를 지정하면 해당 ID로, 생략하면 currentUser.id 사용
 async function uploadPhotoToStorage(base64DataUrl, noteId, suffix, userId) {
