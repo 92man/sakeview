@@ -2358,8 +2358,11 @@ function displayCommunityFeed(notes, container, avgMap) {
     const cards = notes.map((note, idx) => {
         const uid = note.user_id || 'anon';
         const avatarColor = getAvatarColor(uid);
-        const avatarInitial = getAvatarInitial(uid);
-        const userLabel = _displayNameMap[uid] || ('User' + uid.substring(0, 4));
+        const nickname = _displayNameMap[uid];
+        const userLabel = nickname || ('User' + uid.substring(0, 4));
+        const avatarHtml = nickname
+            ? `<div class="community-avatar community-avatar-name" style="background:${avatarColor}">${escapeHtml(nickname)}</div>`
+            : `<div class="community-avatar" style="background:${avatarColor}">${getAvatarInitial(uid)}</div>`;
         const timeAgo = getTimeAgo(note.created_at);
         const reviewText = note.personal_review || '';
         const truncated = reviewText.length > 120 ? reviewText.substring(0, 120) + '...' : reviewText;
@@ -2391,10 +2394,10 @@ function displayCommunityFeed(notes, container, avgMap) {
         const hiddenClass = idx >= 3 ? ' community-feed-card-hidden' : '';
         return `<div class="community-feed-card${hiddenClass}" onclick="showCommunityDetail('${escapeAttr(note.id)}')">
             <div class="community-feed-card-header">
-                <div class="community-avatar" style="background:${avatarColor}">${avatarInitial}</div>
+                ${avatarHtml}
                 <div class="community-feed-card-info">
                     <div class="community-feed-card-name">${escapeHtml(note.sake_name || '이름 없음')}${getCertBadgeHtml(uid)}</div>
-                    <div class="community-feed-card-meta">Shared by <span class="community-feed-author" onclick="event.stopPropagation(); loadNotesByUser('${escapeAttr(uid)}')">${escapeHtml(userLabel)}</span> · ${timeAgo}</div>
+                    <div class="community-feed-card-meta">Shared by <span class="community-feed-author" data-tooltip="${escapeAttr(userLabel)} 님의 노트만 보기" onclick="event.stopPropagation(); loadNotesByUser('${escapeAttr(uid)}')">${escapeHtml(userLabel)}</span> · ${timeAgo}</div>
                 </div>
                 ${typeof generateStaticWheelSvg === 'function' ? generateStaticWheelSvg(note.flavor_description, 'mini') : ''}
                 ${ratingDisplay}
@@ -2573,11 +2576,14 @@ async function showCommunityDetail(id) {
 
         const uid = note.user_id || 'anon';
         const avatarColor = getAvatarColor(uid);
-        const avatarInitial = getAvatarInitial(uid);
 
         // 닉네임 로드
         await loadDisplayNames([uid]);
-        const userLabel = _displayNameMap[uid] || ('User' + uid.substring(0, 4));
+        const nickname = _displayNameMap[uid];
+        const userLabel = nickname || ('User' + uid.substring(0, 4));
+        const detailAvatarHtml = nickname
+            ? `<div class="community-avatar community-avatar-name" style="background:${avatarColor};height:32px;font-size:0.78rem;">${escapeHtml(nickname)}</div>`
+            : `<div class="community-avatar" style="background:${avatarColor};width:36px;height:36px;font-size:0.85rem;">${getAvatarInitial(uid)}</div>`;
 
         // renderNoteDetail을 재사용하여 새/구 형식 모두 지원
         const isOwner = currentUser && currentUser.id === uid;
@@ -2586,8 +2592,8 @@ async function showCommunityDetail(id) {
         detailContent.innerHTML = `
             <button class="back-btn" onclick="switchTab('community')" style="margin-bottom:16px;">← 커뮤니티로</button>
             <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
-                <div class="community-avatar" style="background:${avatarColor};width:36px;height:36px;font-size:0.85rem;">${avatarInitial}</div>
-                <span style="font-size:0.85rem;color:#64748b;">Shared by <span class="community-feed-author" onclick="loadNotesByUser('${escapeAttr(uid)}')">${escapeHtml(userLabel)}</span>${getCertBadgeHtml(uid)}</span>
+                ${detailAvatarHtml}
+                <span style="font-size:0.85rem;color:#64748b;">Shared by <span class="community-feed-author" data-tooltip="${escapeAttr(userLabel)} 님의 노트만 보기" onclick="loadNotesByUser('${escapeAttr(uid)}')">${escapeHtml(userLabel)}</span>${getCertBadgeHtml(uid)}</span>
             </div>
             ${noteDetailHtml}
         `;
