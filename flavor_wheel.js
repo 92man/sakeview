@@ -565,9 +565,9 @@ function generateStaticWheelSvg(flavorJson, mode) {
     const isDark = false;
     const isMini = (mode === 'mini');
 
-    const vb = isMini ? 380 : W;
+    const vb = isMini ? 460 : W;
     const cx = vb / 2, cy = vb / 2;
-    const MINI_MAX_R = isMini ? 130 : (vb / 2 - 5);
+    const MINI_MAX_R = isMini ? 140 : (vb / 2 - 5);
 
     let svg = `<svg viewBox="0 0 ${vb} ${vb}" xmlns="http://www.w3.org/2000/svg" class="flavor-wheel-svg" style="pointer-events:none;">`;
 
@@ -620,12 +620,12 @@ function generateStaticWheelSvg(flavorJson, mode) {
         svg += `<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="var(--border-card, #e2e8f0)" stroke-width="2.5" pointer-events="none"/>`;
 
         // 7) 축 라벨 (원 바깥)
-        const MINI_LABELS = ['과꽃', '유제', '곡물', '감칠', '신맛', '단맛'];
-        const labelR = R + 22;
+        const MINI_LABELS = ['과일/꽃', '유제품', '곡물류', '감칠맛', '신맛', '단맛'];
+        const labelR = R + 42;
         WHEEL_SECTIONS.forEach((_, i) => {
             const angle = -90 + i * SECTION_ANGLE + SECTION_ANGLE / 2;
             const p = polarToXY(cx, cy, labelR, angle);
-            svg += `<text x="${p.x}" y="${p.y}" text-anchor="middle" dominant-baseline="central" font-size="22" font-weight="600" fill="var(--text-muted, #9a9a9a)" pointer-events="none">${MINI_LABELS[i]}</text>`;
+            svg += `<text x="${p.x}" y="${p.y}" text-anchor="middle" dominant-baseline="central" font-size="38" font-weight="600" fill="var(--text-muted, #9a9a9a)" pointer-events="none">${MINI_LABELS[i]}</text>`;
         });
 
         svg += `</svg>`;
