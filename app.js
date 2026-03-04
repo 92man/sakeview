@@ -870,9 +870,9 @@ function updateProfileUI() {
     var email = currentUser.email || '';
     var initial = (displayName || email).charAt(0).toUpperCase();
 
-    // 헤더 아바타 이니셜
-    var avatarLetter = document.getElementById('profileAvatarLetter');
-    if (avatarLetter) avatarLetter.textContent = initial;
+    // 헤더 트리거 텍스트 (닉네임 또는 이메일)
+    var triggerName = document.getElementById('profileTriggerName');
+    if (triggerName) triggerName.textContent = displayName || email;
 
     // 드롭다운 아바타
     var dropdownAvatar = document.getElementById('dropdownAvatarLetter');
