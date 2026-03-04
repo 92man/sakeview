@@ -5140,6 +5140,12 @@ body.dark-mode .btn-reject {
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
+}
+.notes-compact-wheel .static-wheel-mini {
+    width: 32px;
+    height: 32px;
+    margin: 0;
 }
 .notes-compact-wheel svg {
     width: 32px !important;
