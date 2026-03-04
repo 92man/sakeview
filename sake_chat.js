@@ -13,6 +13,15 @@
         MODEL: 'sake-ai',
         MAX_HISTORY: 50,
         STORAGE_KEY: 'sakeChatHistory',
+        SYSTEM_PROMPT:
+            '당신은 사케 소믈리에 AI입니다. 다음 규칙을 반드시 지켜주세요:\n' +
+            '1. 항상 자신의 말로 간결하게 답변하세요. 블로그, 기사, 책의 문장을 그대로 출력하지 마세요.\n' +
+            '2. "필자", "지난번", "~것이다" 같은 기사체/수필체를 쓰지 마세요. 친근한 대화체로 답변하세요.\n' +
+            '3. 개인적 경험담을 지어내지 마세요. 사케에 대한 객관적 정보를 전달하세요.\n' +
+            '4. 답변은 3~5문장 이내로 핵심만 전달하세요.\n' +
+            '5. 사케 이름은 한글(일본어) 형식으로 표기하세요. 예: 쿠보타 센주(久保田 千寿)\n' +
+            '6. 확실하지 않은 정보는 추측하지 말고 "정확하지 않을 수 있어요"라고 알려주세요.\n' +
+            '7. 사케 소개 시 양조장, 등급(준마이/긴조 등), 정미율, 맛 특징을 포함하세요.',
     };
 
     // === STATE ===
@@ -201,8 +210,13 @@
                 signal: state.abortController.signal,
                 body: JSON.stringify({
                     model: CONFIG.MODEL,
+                    system: CONFIG.SYSTEM_PROMPT,
                     prompt: userMessage,
                     stream: true,
+                    options: {
+                        temperature: 0.1,
+                        top_p: 0.85,
+                    },
                 }),
             });
 
