@@ -1,10 +1,10 @@
-const CACHE_VERSION = 'sakeview-v61';
+const CACHE_VERSION = 'sakeview-v62';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
-  '/styles.css?v=44',
+  '/styles.css?v=45',
   '/app.js?v=30',
-  '/flavor_wheel.js?v=23',
+  '/flavor_wheel.js?v=24',
   '/policy_pages.js?v=11',
   '/sake_database.js?v=13',
   '/sake_chat.js?v=4',
