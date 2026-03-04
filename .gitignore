@@ -1,2 +1,58 @@
+# Backup directories
 backup/
 backup-300/
+
+# Build artifacts & tool caches
+.wrangler/
+node_modules/
+dist/
+.cache/
+
+# Syncthing
+.stfolder/
+.stignore
+
+# Claude Code local files
+.claude/settings.local.json
+.claude/launch.json
+.claude/serve.js
+.claude/worktrees/
+
+# Data / source files (not needed in deployed site)
+FTdata/
+kakao/
+*.xlsx
+*.pptx
+*.bak
+*.old
+*.backup
+flavor_profiles.json
+
+# Duplicate / alternate versions
+sake_database_new.js
+
+# One-time utility scripts
+convert_excel_to_db.py
+generate-icons.html
+generate-og-image.html
+
+# Test / sample images
+[0-9].jpg
+[0-9][0-9].jpg
+KakaoTalk_*.jpg
+
+# Screenshots
+화면 캡처*
+
+# Personal files
+파발마.txt
+
+# Environment / secrets
+.env
+.env.*
+.env.local
+.env.*.local
+
+# Supabase local
+supabase/.branches
+supabase/.temp
