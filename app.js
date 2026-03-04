@@ -955,7 +955,7 @@ async function updateSidebar() {
             const timeText = daysAgo === 0 ? '오늘' : daysAgo + '일 전';
             const stars = '★'.repeat(Math.min(Math.round((n.overall_rating || 50) / 20), 5));
             return `<div onclick="showDetail('${escapeAttr(n.id)}')" style="display:flex;gap:12px;padding:12px;background:var(--card-bg);border:1px solid var(--border-card);border-radius:12px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--accent-gold)';this.style.boxShadow='0 2px 8px rgba(56,57,97,0.08)'" onmouseout="this.style.borderColor='var(--border-card)';this.style.boxShadow='none'">
-                <div style="width:48px;height:48px;border-radius:8px;background:var(--bg-muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.5em;overflow:hidden;">${n.photo ? `<img src="${sanitizePhotoUrl(getTransformedPhotoUrl(n.photo, 96, 96))}" loading="lazy" style="width:100%;height:100%;object-fit:cover;">` : '🍶'}</div>
+                <div style="width:48px;height:48px;border-radius:8px;background:var(--bg-muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.5em;overflow:hidden;">${n.photo ? `<img src="${sanitizePhotoUrl(getTransformedPhotoUrl(n.photo, 96, 96))}" loading="lazy" onerror="imgTransformFallback(this)" style="width:100%;height:100%;object-fit:cover;">` : '🍶'}</div>
                 <div style="flex:1;min-width:0;">
                     <h5 style="font-weight:700;font-size:0.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text-primary);">${escapeHtml(n.sake_name) || '이름 없음'}</h5>
                     <div style="display:flex;align-items:center;gap:8px;margin-top:2px;">
@@ -1716,7 +1716,7 @@ function renderNotes() {
                 ${sorted.map(note => `
                     <div class="note-card" onclick="showDetail('${escapeAttr(note.id)}')">
                         ${note.photo && sanitizePhotoUrl(note.photo) ? `
-                            <img src="${sanitizePhotoUrl(getTransformedPhotoUrl(note.photo, 400, 400))}" class="note-card-image" alt="사케" loading="lazy">
+                            <img src="${sanitizePhotoUrl(getTransformedPhotoUrl(note.photo, 400, 400))}" class="note-card-image" alt="사케" loading="lazy" onerror="imgTransformFallback(this)">
                         ` : `
                             <div class="note-card-image">🍶</div>
                         `}
@@ -1834,6 +1834,11 @@ async function loadCommunityFeed() {
 
         if (error) throw error;
         _feedCache = { ts: Date.now(), data: data || [] };
+        // Transform API 프로브 (최초 1회)
+        if (_imageTransformEnabled === null && data && data.length > 0) {
+            var probePhoto = data.find(function(n) { return n.photo; });
+            if (probePhoto) probeImageTransform(probePhoto.photo);
+        }
         await loadApprovedCerts();
         const userIds = [...new Set((data || []).map(n => n.user_id).filter(Boolean))];
         await loadDisplayNames(userIds);
@@ -1880,7 +1885,7 @@ function displayCommunityFeed(notes, container, avgMap, showMore) {
         const nickname = _displayNameMap[uid];
         const userLabel = nickname || ('User' + uid.substring(0, 4));
         const thumbHtml = note.photo
-            ? `<div class="community-thumb"><img src="${escapeAttr(getTransformedPhotoUrl(note.photo, 96, 96))}" alt="" loading="lazy" onerror="this.parentElement.classList.add('community-thumb-default');this.parentElement.innerHTML='🍶';"></div>`
+            ? `<div class="community-thumb"><img src="${escapeAttr(getTransformedPhotoUrl(note.photo, 96, 96))}" alt="" loading="lazy" onerror="imgTransformFallback(this)||this.parentElement.classList.add('community-thumb-default');"></div>`
             : `<div class="community-thumb community-thumb-default">🍶</div>`;
         const timeAgo = getTimeAgo(note.created_at);
         const reviewText = note.personal_review || '';
@@ -2124,7 +2129,7 @@ async function showCommunityDetail(id) {
         const nickname = _displayNameMap[uid];
         const userLabel = nickname || ('User' + uid.substring(0, 4));
         const detailThumbHtml = note.photo
-            ? `<div class="community-thumb" style="width:40px;height:40px;border-radius:6px;"><img src="${escapeAttr(getTransformedPhotoUrl(note.photo, 80, 80))}" alt="" style="width:100%;height:100%;object-fit:cover;"></div>`
+            ? `<div class="community-thumb" style="width:40px;height:40px;border-radius:6px;"><img src="${escapeAttr(getTransformedPhotoUrl(note.photo, 80, 80))}" alt="" onerror="imgTransformFallback(this)" style="width:100%;height:100%;object-fit:cover;"></div>`
             : `<div class="community-thumb community-thumb-default" style="width:40px;height:40px;border-radius:6px;font-size:1.2rem;">🍶</div>`;
 
         // renderNoteDetail을 재사용하여 새/구 형식 모두 지원
@@ -2256,8 +2261,8 @@ function renderNoteDetail(note, showActions = true) {
     return `
         ${(note.photo && sanitizePhotoUrl(note.photo)) || (note.photo_back && sanitizePhotoUrl(note.photo_back)) ? `
         <div class="detail-photo-group">
-            ${note.photo && sanitizePhotoUrl(note.photo) ? `<img src="${sanitizePhotoUrl(getTransformedPhotoUrl(note.photo, 800))}" class="detail-photo" alt="사케 앞면">` : ''}
-            ${note.photo_back && sanitizePhotoUrl(note.photo_back) ? `<img src="${sanitizePhotoUrl(getTransformedPhotoUrl(note.photo_back, 800))}" class="detail-photo" alt="사케 뒷면">` : ''}
+            ${note.photo && sanitizePhotoUrl(note.photo) ? `<img src="${sanitizePhotoUrl(getTransformedPhotoUrl(note.photo, 800))}" class="detail-photo" alt="사케 앞면" onerror="imgTransformFallback(this)">` : ''}
+            ${note.photo_back && sanitizePhotoUrl(note.photo_back) ? `<img src="${sanitizePhotoUrl(getTransformedPhotoUrl(note.photo_back, 800))}" class="detail-photo" alt="사케 뒷면" onerror="imgTransformFallback(this)">` : ''}
         </div>` : ''}
         <h2 style="color: var(--accent-primary, #383961); margin-bottom: 10px;">${escapeHtml(note.sake_name)}</h2>
         <p style="color: #666; margin-bottom: 30px;">📅 ${escapeHtml(note.date)}</p>

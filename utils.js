@@ -43,13 +43,39 @@ function compressImageForUpload(base64DataUrl) {
     });
 }
 
-// Supabase Storage 이미지 변환 URL 생성
+// Supabase Storage 이미지 변환 URL 생성 (Transform API 미활성 시 원본 반환)
+var _imageTransformEnabled = null; // null=미확인, true/false=확인됨
+
 function getTransformedPhotoUrl(url, width, height) {
+    if (_imageTransformEnabled === false) return url;
     if (!url || !url.includes('/storage/v1/object/public/')) return url;
     return url.replace(
         '/storage/v1/object/public/',
         '/storage/v1/render/image/public/'
     ) + '?width=' + width + '&height=' + (height || width) + '&resize=cover';
+}
+
+// Transform API 사용 가능 여부 프로브 (앱 시작 시 1회)
+function probeImageTransform(sampleUrl) {
+    if (!sampleUrl || !sampleUrl.includes('/storage/v1/object/public/')) return;
+    var testUrl = getTransformedPhotoUrl(sampleUrl, 48, 48);
+    fetch(testUrl, { method: 'HEAD' }).then(function(r) {
+        _imageTransformEnabled = r.ok;
+        if (!r.ok) console.warn('Image Transform API 미활성 — 원본 URL 사용');
+    }).catch(function() { _imageTransformEnabled = false; });
+}
+
+// img onerror 시 원본 URL로 폴백 (true 반환 = 폴백 시도됨)
+function imgTransformFallback(img) {
+    if (img.dataset.fallback) return false;
+    var src = img.src;
+    if (src.includes('/storage/v1/render/image/public/')) {
+        img.dataset.fallback = '1';
+        img.src = src.replace('/storage/v1/render/image/public/', '/storage/v1/object/public/').split('?')[0];
+        _imageTransformEnabled = false;
+        return true; // 폴백 시도 중 — 추가 onerror 동작 방지
+    }
+    return false;
 }
 
 // base64 data URL → Supabase Storage 업로드, public URL 반환
