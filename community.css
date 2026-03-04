@@ -74,7 +74,7 @@
     color: #94a3b8;
 }
 .community-cta {
-    background: #383961;
+    background: var(--accent-primary);
     color: #fff;
     border-radius: 16px;
     padding: 24px;
@@ -92,8 +92,8 @@
     line-height: 1.5;
 }
 .community-cta button {
-    background: #DBDFAC;
-    color: #383961;
+    background: var(--accent-secondary);
+    color: var(--accent-primary);
     border: none;
     width: 100%;
     padding: 12px;
@@ -143,7 +143,7 @@
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 .community-feed-card:hover {
-    border-color: #DBDFAC;
+    border-color: var(--accent-gold);
     box-shadow: 0 4px 12px rgba(56, 57, 97, 0.06);
 }
 .community-feed-card-header {
@@ -177,7 +177,7 @@
     font-size: 1.4rem;
 }
 body.dark-mode .community-thumb-default {
-    background: #2a2a45;
+    background: var(--bg-tertiary);
 }
 .community-avatar {
     width: 44px;
@@ -386,7 +386,7 @@ body.dark-mode .community-thumb-default {
     transition: all 0.2s;
 }
 .community-search-item:hover {
-    border-color: #DBDFAC;
+    border-color: var(--accent-gold);
     background: #fff;
 }
 .community-empty {
@@ -432,52 +432,24 @@ body.dark-mode .community-thumb-default {
     }
 }
 
-/* Community Dark Mode */
-body.dark-mode .community-stat-card {
-    background: #1e1e35;
-    border-color: #383961;
-}
-body.dark-mode .community-stat-value {
-    color: #f1f5f9;
-}
-body.dark-mode .community-stat-label {
-    color: #94a3b8;
-}
-body.dark-mode .community-feed-header h3,
-body.dark-mode .community-sidebar-title,
-body.dark-mode .community-sidebar-subtitle {
-    color: #f1f5f9;
-}
-body.dark-mode .community-feed-card {
-    background: #1e1e35;
-    border-color: #383961;
-}
-body.dark-mode .community-feed-card-name {
-    color: #f1f5f9;
-}
-body.dark-mode .community-feed-card-text {
-    color: #cbd5e1;
-}
-body.dark-mode .community-search-wrap input {
-    background: #1e1e35;
-    border-color: #383961;
-    color: #f1f5f9;
-}
-body.dark-mode .community-search-item {
-    background: #1e1e35;
-    border-color: #383961;
-    color: #cbd5e1;
-}
+/* Community Dark Mode
+   — var(--text-primary) = #f0f0f0 in dark, ~= #f1f5f9 → 별도 오버라이드 불필요
+   — var(--card-bg)/var(--border-card) 이미 다크모드 적용 → 중복 제거 */
+body.dark-mode .community-stat-card,
+body.dark-mode .community-feed-card,
+body.dark-mode .community-search-wrap input,
+body.dark-mode .community-search-item,
 body.dark-mode .community-categories button {
-    background: #1e1e35;
-    border-color: #383961;
-    color: #cbd5e1;
+    background: var(--bg-tertiary);
+    border-color: var(--border-card);
+}
+body.dark-mode .community-feed-card-text,
+body.dark-mode .community-search-item,
+body.dark-mode .community-categories button {
+    color: var(--text-secondary);
 }
 body.dark-mode .community-feed-card-rating {
-    color: #DBDFAC;
-}
-body.dark-mode .community-view-all-btn {
-    color: #94a3b8;
+    color: var(--accent-gold);
 }
 body.dark-mode .community-view-all-btn:hover {
     background: rgba(255,255,255,0.05);

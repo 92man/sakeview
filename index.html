@@ -94,10 +94,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Serif+KR:wght@400;500;700;900&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <link rel="stylesheet" href="styles.css?v=57">
-    <link rel="stylesheet" href="sake-selector.css?v=1">
-    <link rel="stylesheet" href="community.css?v=4">
-    <link rel="stylesheet" href="certification.css?v=1">
+    <link rel="stylesheet" href="styles.css?v=58">
+    <link rel="stylesheet" href="sake-selector.css?v=2">
+    <link rel="stylesheet" href="community.css?v=5">
+    <link rel="stylesheet" href="certification.css?v=2">
     <link rel="stylesheet" href="flavor-wheel.css?v=2">
     <link rel="stylesheet" href="chat.css?v=1">
     <!-- Google AdSense -->
@@ -109,7 +109,7 @@
     <a href="#mainApp" class="skip-nav">본문으로 건너뛰기</a>
 
     <!-- Age Verification Modal -->
-    <div class="age-modal-overlay" id="ageModal" role="dialog" aria-modal="true" aria-labelledby="ageModalTitle">
+    <div class="modal-overlay age-modal-overlay" id="ageModal" role="dialog" aria-modal="true" aria-labelledby="ageModalTitle">
         <div class="age-modal">
             <div class="age-modal-icon">🍶</div>
             <h2 id="ageModalTitle">연령 확인</h2>
@@ -239,8 +239,8 @@
         </div>
 
         <!-- 이메일 인증 안내 팝업 -->
-        <div class="verification-modal" id="verificationModal" role="dialog" aria-modal="true" aria-labelledby="verificationModalTitle" style="display: none;">
-            <div class="verification-modal-content">
+        <div class="modal-overlay verification-modal" id="verificationModal" role="dialog" aria-modal="true" aria-labelledby="verificationModalTitle" style="display: none;">
+            <div class="modal-content-base verification-modal-content">
                 <div class="verification-modal-icon">📧</div>
                 <h2 id="verificationModalTitle">이메일 인증이 필요합니다</h2>
                 <p>입력하신 이메일 주소로 인증 메일을 발송했습니다.<br><strong>이메일 인증 후 로그인해주세요.</strong></p>
@@ -249,8 +249,8 @@
         </div>
 
         <!-- 자격증 인증 모달 -->
-        <div class="cert-modal" id="certModal" role="dialog" aria-modal="true" aria-labelledby="certModalTitle" style="display: none;">
-            <div class="cert-modal-content">
+        <div class="modal-overlay cert-modal" id="certModal" role="dialog" aria-modal="true" aria-labelledby="certModalTitle" style="display: none;">
+            <div class="modal-content-base cert-modal-content">
                 <div class="cert-modal-header">
                     <h3 id="certModalTitle">자격증 인증</h3>
                     <button class="cert-modal-close" onclick="closeCertModal()" aria-label="닫기">&times;</button>
@@ -720,8 +720,8 @@
 
 
     <!-- OCR Modal -->
-    <div class="ocr-modal" id="ocrModal" role="dialog" aria-modal="true" aria-labelledby="ocrModalTitle">
-        <div class="ocr-modal-content">
+    <div class="modal-overlay ocr-modal" id="ocrModal" role="dialog" aria-modal="true" aria-labelledby="ocrModalTitle">
+        <div class="modal-content-base ocr-modal-content">
             <div class="ocr-modal-header">
                 <h3 id="ocrModalTitle">📷 사진으로 사케 찾기</h3>
                 <button class="ocr-modal-close" onclick="closeOcrModal()" aria-label="닫기">&times;</button>

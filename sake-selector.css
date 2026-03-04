@@ -178,7 +178,6 @@
 }
 
 body.dark-mode .sake-selector-tab {
-    background: var(--input-bg);
     border-color: var(--border-medium);
 }
 
@@ -187,25 +186,15 @@ body.dark-mode .sake-selector-tab.active {
 }
 
 body.dark-mode .sake-search-input {
-    background: var(--input-bg);
     border-color: var(--border-medium);
-    color: var(--text-primary);
 }
 
 body.dark-mode .sake-search-input:focus {
     box-shadow: 0 0 0 4px rgba(122, 124, 176, 0.15);
 }
 
-body.dark-mode .sake-list {
-    background: var(--input-bg);
-    border-color: var(--border-medium);
-}
-
-body.dark-mode .sake-list-header {
-    background: var(--bg-tertiary);
-    border-color: var(--border-medium);
-}
-
+body.dark-mode .sake-list,
+body.dark-mode .sake-list-header,
 body.dark-mode .sake-list-item {
     border-color: var(--border-medium);
 }
@@ -248,26 +237,13 @@ body.dark-mode .sake-selected-display {
 }
 
 .ocr-modal {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
     background: rgba(0, 0, 0, 0.7);
-    display: none;
-    align-items: center;
-    justify-content: center;
     z-index: 10001;
     backdrop-filter: blur(5px);
-    padding: 16px;
 }
 .ocr-modal.active { display: flex; }
 
 .ocr-modal-content {
-    background: var(--card-bg);
-    border-radius: 20px;
-    width: 100%;
-    max-width: 480px;
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: var(--shadow-elevated);
     padding: 28px 24px;
 }
 .ocr-modal-header {
@@ -533,18 +509,9 @@ body.dark-mode .sake-selected-display {
     color: var(--accent-gold);
 }
 
-/* OCR Dark Mode */
-body.dark-mode .ocr-modal-content {
-    background: var(--card-bg);
-}
-body.dark-mode .ocr-modal-close {
-    background: var(--bg-tertiary);
-}
-body.dark-mode .ocr-photo-area {
-    border-color: var(--border-medium);
-}
+/* OCR Dark Mode — .ocr-modal-content, .ocr-modal-close, .ocr-photo-area는
+   라이트모드와 동일 변수 사용으로 별도 오버라이드 불필요 */
 body.dark-mode .ocr-method-btn {
-    background: var(--input-bg);
     border-color: var(--border-medium);
 }
 body.dark-mode .ocr-match-item {
