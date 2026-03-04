@@ -4997,6 +4997,213 @@ body.dark-mode .btn-reject {
     color: var(--text-secondary, #a0a0a0);
 }
 
+/* ── 나의 노트: 툴바 + 카드 평점 + 컴팩트 리스트 ── */
+.notes-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    margin-bottom: 8px;
+}
+.notes-sort-btns {
+    display: flex;
+    gap: 6px;
+}
+.notes-sort-btn {
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border-card);
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.notes-sort-btn.active {
+    background: var(--accent-primary);
+    color: #fff;
+    border-color: var(--accent-primary);
+}
+.notes-view-toggle {
+    display: flex;
+    gap: 4px;
+}
+.notes-view-btn {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    border: 1px solid var(--border-card);
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.notes-view-btn .material-symbols-outlined {
+    font-size: 20px;
+}
+.notes-view-btn.active {
+    background: var(--accent-primary);
+    color: #fff;
+    border-color: var(--accent-primary);
+}
+
+/* 카드 뷰 헤더 (이름 + 평점) */
+.note-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+}
+.note-card-header .note-card-name {
+    flex: 1;
+    min-width: 0;
+}
+.note-card-rating {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--accent-primary, #383961);
+    flex-shrink: 0;
+    line-height: 1;
+}
+.note-card-rating-max {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: #94a3b8;
+}
+
+/* 컴팩트 리스트 */
+.notes-compact-list {
+    display: flex;
+    flex-direction: column;
+}
+.notes-compact-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-light);
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.notes-compact-item:hover {
+    background: var(--bg-muted);
+}
+.notes-compact-date {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    flex-shrink: 0;
+    width: 40px;
+    text-align: center;
+}
+.notes-compact-name {
+    flex: 1;
+    min-width: 0;
+    font-weight: 600;
+    font-size: 0.92rem;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.notes-compact-tags {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+}
+.notes-compact-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: var(--bg-muted);
+    color: var(--text-secondary);
+    font-size: 0.72rem;
+    white-space: nowrap;
+}
+.notes-compact-wheel {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.notes-compact-wheel svg {
+    width: 32px !important;
+    height: 32px !important;
+}
+.notes-compact-rating {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--accent-primary, #383961);
+    flex-shrink: 0;
+    min-width: 36px;
+    text-align: right;
+    line-height: 1;
+}
+.notes-compact-rating-max {
+    font-size: 0.6rem;
+    font-weight: 600;
+    color: #94a3b8;
+}
+
+/* 모바일 반응형 */
+@media (max-width: 600px) {
+    .notes-compact-tags {
+        display: none;
+    }
+    .notes-compact-date {
+        width: 32px;
+        font-size: 0.75rem;
+    }
+    .notes-toolbar {
+        padding: 6px 12px;
+    }
+    .notes-sort-btn {
+        padding: 4px 10px;
+        font-size: 0.78rem;
+    }
+}
+
+/* 다크모드 */
+body.dark-mode .notes-sort-btn {
+    background: var(--bg-tertiary);
+    border-color: var(--border-medium);
+    color: var(--text-secondary);
+}
+body.dark-mode .notes-sort-btn.active {
+    background: var(--accent-primary);
+    color: #fff;
+    border-color: var(--accent-primary);
+}
+body.dark-mode .notes-view-btn {
+    background: var(--bg-tertiary);
+    border-color: var(--border-medium);
+    color: var(--text-secondary);
+}
+body.dark-mode .notes-view-btn.active {
+    background: var(--accent-primary);
+    color: #fff;
+    border-color: var(--accent-primary);
+}
+body.dark-mode .notes-compact-item {
+    border-color: var(--border-medium);
+}
+body.dark-mode .notes-compact-item:hover {
+    background: var(--bg-tertiary);
+}
+body.dark-mode .notes-compact-tag {
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+}
+body.dark-mode .note-card-rating,
+body.dark-mode .notes-compact-rating {
+    color: var(--accent-gold);
+}
+
 /* ── prefers-reduced-motion: 무한 애니메이션 비활성화 ── */
 @media (prefers-reduced-motion: reduce) {
     *,

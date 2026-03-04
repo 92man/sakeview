@@ -1820,6 +1820,33 @@ function selectOcrMatch(brand, productIdx) {
     closeOcrModal();
 }
 
+// ===== 나의 노트 상태 =====
+let currentNotes = [];
+let notesSortBy = 'date';
+let notesViewMode = 'card';
+
+function sortNotes(by) {
+    notesSortBy = by;
+    document.querySelectorAll('.notes-sort-btn').forEach(b => b.classList.toggle('active', b.dataset.sort === by));
+    renderNotes();
+}
+
+function setNotesView(mode) {
+    notesViewMode = mode;
+    document.querySelectorAll('.notes-view-btn').forEach(b => b.classList.toggle('active', b.dataset.view === mode));
+    renderNotes();
+}
+
+// 툴바 이벤트 바인딩
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.notes-sort-btn').forEach(btn => {
+        btn.addEventListener('click', function() { sortNotes(this.dataset.sort); });
+    });
+    document.querySelectorAll('.notes-view-btn').forEach(btn => {
+        btn.addEventListener('click', function() { setNotesView(this.dataset.view); });
+    });
+});
+
 // 노트 목록 불러오기
 async function loadNotes() {
     const container = document.getElementById('notesList');
@@ -1847,7 +1874,10 @@ async function loadNotes() {
 
         if (error) throw error;
 
-        displayNotesList(data);
+        currentNotes = data || [];
+        var toolbar = document.getElementById('notesToolbar');
+        if (toolbar) toolbar.style.display = currentNotes.length > 0 ? '' : 'none';
+        renderNotes();
     } catch (error) {
         container.innerHTML = `<div class="empty-state">
             <div class="empty-state-icon">❌</div>
@@ -1857,10 +1887,11 @@ async function loadNotes() {
     }
 }
 
-// 노트 목록 표시
-function displayNotesList(notes) {
+// 노트 목록 렌더링 (정렬 + 뷰모드)
+function renderNotes() {
     const container = document.getElementById('notesList');
-    
+    const notes = currentNotes;
+
     if (!notes || notes.length === 0) {
         container.innerHTML = `
             <div class="empty-state">
@@ -1872,27 +1903,79 @@ function displayNotesList(notes) {
         return;
     }
 
-    container.innerHTML = `
-        <div class="notes-list">
-            ${notes.map(note => `
-                <div class="note-card" onclick="showDetail('${escapeAttr(note.id)}')">
-                    ${note.photo && sanitizePhotoUrl(note.photo) ? `
-                        <img src="${sanitizePhotoUrl(note.photo)}" class="note-card-image" alt="사케">
-                    ` : `
-                        <div class="note-card-image">🍶</div>
-                    `}
-                    <div class="note-card-content">
-                        <div class="note-card-name">${escapeHtml(note.sake_name)}</div>
-                        <div class="note-card-date">📅 ${escapeHtml(note.date)}</div>
-                        <div class="note-card-summary">
-                            ${getTastingPreview(note)}
+    // 정렬
+    var sorted = notes.slice();
+    if (notesSortBy === 'name') {
+        sorted.sort(function(a, b) { return (a.sake_name || '').localeCompare(b.sake_name || '', 'ko'); });
+    } else if (notesSortBy === 'rating') {
+        sorted.sort(function(a, b) { return (b.overall_rating || 0) - (a.overall_rating || 0); });
+    } else {
+        sorted.sort(function(a, b) { return new Date(b.created_at) - new Date(a.created_at); });
+    }
+
+    if (notesViewMode === 'compact') {
+        container.innerHTML = '<div class="notes-compact-list">' + sorted.map(function(note) {
+            var dateStr = '';
+            if (note.date) {
+                var parts = note.date.split('-');
+                dateStr = parts.length >= 3 ? parts[1] + '.' + parts[2] : note.date;
+            }
+            var tagsHtml = getCompactTags(note);
+            var wheelHtml = typeof generateStaticWheelSvg === 'function' ? generateStaticWheelSvg(note.flavor_description, 'mini') : '';
+            var ratingHtml = note.overall_rating ? '<span class="notes-compact-rating">' + note.overall_rating + '<span class="notes-compact-rating-max">/100</span></span>' : '';
+            return '<div class="notes-compact-item" onclick="showDetail(\'' + escapeAttr(note.id) + '\')">' +
+                '<span class="notes-compact-date">' + escapeHtml(dateStr) + '</span>' +
+                '<span class="notes-compact-name">' + escapeHtml(note.sake_name) + '</span>' +
+                '<span class="notes-compact-tags">' + tagsHtml + '</span>' +
+                '<span class="notes-compact-wheel">' + wheelHtml + '</span>' +
+                ratingHtml +
+            '</div>';
+        }).join('') + '</div>';
+    } else {
+        container.innerHTML = `
+            <div class="notes-list">
+                ${sorted.map(note => `
+                    <div class="note-card" onclick="showDetail('${escapeAttr(note.id)}')">
+                        ${note.photo && sanitizePhotoUrl(note.photo) ? `
+                            <img src="${sanitizePhotoUrl(note.photo)}" class="note-card-image" alt="사케">
+                        ` : `
+                            <div class="note-card-image">🍶</div>
+                        `}
+                        <div class="note-card-content">
+                            <div class="note-card-header">
+                                <div class="note-card-name">${escapeHtml(note.sake_name)}</div>
+                                ${note.overall_rating ? `<span class="note-card-rating">${note.overall_rating}<span class="note-card-rating-max">/100</span></span>` : ''}
+                            </div>
+                            <div class="note-card-date">${escapeHtml(note.date)}</div>
+                            <div class="note-card-summary">
+                                ${getTastingPreview(note)}
+                            </div>
+                            ${typeof generateStaticWheelSvg === 'function' ? generateStaticWheelSvg(note.flavor_description, 'mini') : ''}
                         </div>
-                        ${typeof generateStaticWheelSvg === 'function' ? generateStaticWheelSvg(note.flavor_description, 'mini') : ''}
                     </div>
-                </div>
-            `).join('')}
-        </div>
-    `;
+                `).join('')}
+            </div>
+        `;
+    }
+}
+
+// 컴팩트 뷰용 태그 추출
+function getCompactTags(note) {
+    if (!note.flavor_description) return '';
+    try {
+        var td = JSON.parse(note.flavor_description);
+        if (td && td.version === 2 && td.categories) {
+            var tags = [];
+            Object.values(td.categories).forEach(function(catData) {
+                Object.values(catData).forEach(function(val) {
+                    if (Array.isArray(val)) tags.push.apply(tags, val);
+                    else tags.push(val);
+                });
+            });
+            return tags.slice(0, 3).map(function(t) { return '<span class="notes-compact-tag">' + escapeHtml(t) + '</span>'; }).join('');
+        }
+    } catch(e) {}
+    return '';
 }
 
 // 상세 보기
