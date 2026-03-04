@@ -584,7 +584,7 @@ function generateStaticWheelSvg(flavorJson, mode) {
         let offset = -90;
         WHEEL_SECTIONS.forEach(section => {
             const c = section.color;
-            svg += createArcPath(cx, cy, 0, MINI_CENTER_R, offset, offset + SECTION_ANGLE, '', c.light, 'pointer-events="none" opacity="0.6"');
+            svg += createArcPath(cx, cy, 0, MINI_CENTER_R, offset, offset + SECTION_ANGLE, '', c.mid, 'pointer-events="none" opacity="0.55"');
             offset += SECTION_ANGLE;
         });
         svg += `<circle cx="${cx}" cy="${cy}" r="${MINI_CENTER_R}" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="0.8" pointer-events="none"/>`;

@@ -1943,14 +1943,16 @@ function renderNotes() {
                         `}
                         <div class="note-card-content">
                             <div class="note-card-header">
-                                <div class="note-card-name">${escapeHtml(note.sake_name)}</div>
+                                <div class="note-card-header-text">
+                                    <div class="note-card-name">${escapeHtml(note.sake_name)}</div>
+                                    <div class="note-card-date">${escapeHtml(note.date)}</div>
+                                </div>
+                                ${typeof generateStaticWheelSvg === 'function' ? generateStaticWheelSvg(note.flavor_description, 'mini') : ''}
                                 ${note.overall_rating ? `<span class="note-card-rating">${note.overall_rating}<span class="note-card-rating-max">/100</span></span>` : ''}
                             </div>
-                            <div class="note-card-date">${escapeHtml(note.date)}</div>
                             <div class="note-card-summary">
                                 ${getTastingPreview(note)}
                             </div>
-                            ${typeof generateStaticWheelSvg === 'function' ? generateStaticWheelSvg(note.flavor_description, 'mini') : ''}
                         </div>
                     </div>
                 `).join('')}

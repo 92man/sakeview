@@ -5051,16 +5051,26 @@ body.dark-mode .btn-reject {
     border-color: var(--accent-primary);
 }
 
-/* 카드 뷰 헤더 (이름 + 평점) */
+/* 카드 뷰 헤더 (이름 + 휠 + 평점) */
 .note-card-header {
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 8px;
+    align-items: center;
+    gap: 10px;
 }
-.note-card-header .note-card-name {
+.note-card-header-text {
     flex: 1;
     min-width: 0;
+}
+.note-card-header .note-card-name {
+    min-width: 0;
+}
+.note-card-header .note-card-date {
+    margin-top: 2px;
+}
+.note-card-header .static-wheel-mini {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
 }
 .note-card-rating {
     font-size: 1.3rem;
