@@ -1,0 +1,162 @@
+/* === 플레이버 휠 === */
+.flavor-wheel-section {
+    margin-bottom: 16px;
+}
+
+.flavor-wheel-toggle {
+    width: 100%;
+    padding: 10px 16px;
+    background: var(--bg-subtle);
+    border: 1.5px solid var(--border-card);
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: background 0.2s, border-color 0.2s;
+    font-family: inherit;
+}
+
+.flavor-wheel-toggle:hover {
+    background: var(--bg-muted);
+    border-color: var(--border-card-hover);
+}
+
+.flavor-wheel-container {
+    margin-top: 12px;
+    overflow: visible;
+}
+
+.flavor-wheel-wrapper {
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+.flavor-wheel-svg {
+    width: 100%;
+    height: auto;
+    --wheel-line-color: rgba(255,255,255,0.6);
+}
+
+.wheel-center-circle {
+    fill: #FAF8F6;
+    stroke: #D8CCD0;
+    stroke-width: 1.5;
+}
+
+.wheel-center-text {
+    fill: #5A4050;
+    font-weight: 700;
+    font-family: inherit;
+}
+
+.wheel-cat-segment {
+    opacity: 1;
+    stroke: rgba(255,255,255,0.5);
+    stroke-width: 0.5;
+}
+
+.wheel-segment {
+    opacity: 1;
+    stroke: rgba(255,255,255,0.6);
+    stroke-width: 0.3;
+    transition: opacity 0.15s, fill 0.15s;
+}
+
+.wheel-segment:hover {
+    opacity: 1;
+}
+
+.wheel-segment.selected {
+    opacity: 1;
+}
+
+.wheel-segment.main-tag {
+    opacity: 1;
+}
+
+.wheel-cat-label {
+    fill: #333;
+    font-weight: 700;
+    font-family: inherit;
+    pointer-events: none;
+}
+
+.wheel-tag-label {
+    fill: #4A3040;
+    font-weight: 400;
+    font-family: inherit;
+    pointer-events: none;
+}
+.wheel-tag-label.wheel-tag-selected {
+    fill: #1a1a1a;
+    font-weight: 900;
+}
+
+.wheel-tooltip {
+    position: fixed;
+    padding: 5px 10px;
+    background: rgba(0,0,0,0.8);
+    color: #fff;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.wheel-tooltip.visible {
+    opacity: 1;
+}
+
+/* 다크모드: 휠은 항상 라이트모드 색상 유지 (별도 오버라이드 없음) */
+
+/* 반응형: 모바일 */
+@media (max-width: 480px) {
+    .flavor-wheel-wrapper {
+        max-width: 100%;
+    }
+
+    .wheel-cat-label {
+        font-size: 13px;
+    }
+}
+
+/* Static flavor wheel (saved notes) */
+.static-wheel-mini {
+    width: 80px;
+    height: 80px;
+    margin-top: 8px;
+    flex-shrink: 0;
+}
+.static-wheel-full {
+    max-width: 400px;
+    margin: 0 auto 16px;
+}
+.static-wheel-mini svg,
+.static-wheel-full svg {
+    width: 100%;
+    height: 100%;
+}
+@media (max-width: 480px) {
+    .static-wheel-mini {
+        width: 56px;
+        height: 56px;
+        margin-top: 4px;
+    }
+    .static-wheel-full {
+        max-width: 100%;
+    }
+}
+@media (max-width: 768px) {
+    .static-wheel-mini,
+    .static-wheel-full {
+        overflow: visible;
+    }
+}
