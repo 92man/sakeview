@@ -573,56 +573,49 @@ function generateStaticWheelSvg(flavorJson, mode) {
 
     const sgid = ++_wheelStaticGradId;
 
-    // ── 미니 모드: 깔끔한 레이더 차트 ──
+    // ── 미니 모드: 원형 테두리 + 6각형 레이더 ──
     if (isMini) {
-        // 풀 모드와 동일한 비율 유지: 중심원 → 바깥원
-        const MINI_CENTER_R = Math.round(MINI_MAX_R * (R1_OUT / R3_OUT)); // ≈52
-        const miniScoreRange = MINI_MAX_R - MINI_CENTER_R; // ≈93
-        const miniStep = miniScoreRange / 5;
+        const R = MINI_MAX_R; // 원 반지름 (최대)
 
-        // 중심원 배경 (각 섹션 색상)
+        // 1) 바깥 원 배경: 옅은 섹션 파이
         let offset = -90;
         WHEEL_SECTIONS.forEach(section => {
             const c = section.color;
-            svg += createArcPath(cx, cy, 0, MINI_CENTER_R, offset, offset + SECTION_ANGLE, '', c.mid, 'pointer-events="none" opacity="0.55"');
+            svg += createArcPath(cx, cy, 0, R, offset, offset + SECTION_ANGLE, '', c.light, 'pointer-events="none" opacity="0.35"');
             offset += SECTION_ANGLE;
         });
-        svg += `<circle cx="${cx}" cy="${cy}" r="${MINI_CENTER_R}" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="0.8" pointer-events="none"/>`;
 
-        // 그리드 원 (점수 1~5 참고선)
-        for (let s = 1; s <= 5; s++) {
-            svg += `<circle cx="${cx}" cy="${cy}" r="${MINI_CENTER_R + s * miniStep}" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="0.5" pointer-events="none"/>`;
-        }
-
-        // 축선
+        // 2) 축선 (중심 → 원 가장자리)
         WHEEL_SECTIONS.forEach((_, i) => {
             const angle = -90 + i * SECTION_ANGLE + SECTION_ANGLE / 2;
-            const pIn = polarToXY(cx, cy, MINI_CENTER_R, angle);
-            const pOut = polarToXY(cx, cy, MINI_MAX_R, angle);
-            svg += `<line x1="${pIn.x}" y1="${pIn.y}" x2="${pOut.x}" y2="${pOut.y}" stroke="rgba(0,0,0,0.06)" stroke-width="0.5" pointer-events="none"/>`;
+            const p = polarToXY(cx, cy, R, angle);
+            svg += `<line x1="${cx}" y1="${cy}" x2="${p.x}" y2="${p.y}" stroke="rgba(0,0,0,0.08)" stroke-width="0.8" pointer-events="none"/>`;
         });
 
-        // 6각형 꼭지점 (중심원 가장자리부터 시작 — 풀 모드와 동일 비율)
+        // 3) 6각형 꼭지점 (중심부터, score 0→0, score 5→R)
         const vertices = WHEEL_SECTIONS.map((_, i) => {
             const angle = -90 + i * SECTION_ANGLE + SECTION_ANGLE / 2;
-            const r = MINI_CENTER_R + (scores[i] / 5) * miniScoreRange;
+            const r = (scores[i] / 5) * R;
             return polarToXY(cx, cy, r, angle);
         });
 
-        // 풀 휠과 동일한 방식: 섹션 파이 색상을 6각형으로 클리핑
+        // 4) 섹션별 색칠 (6각형 클리핑)
         const hexClipId = 'mhc' + sgid;
         svg += `<defs><clipPath id="${hexClipId}"><polygon points="${verticesStr(vertices)}"/></clipPath></defs>`;
         offset = -90;
         svg += `<g clip-path="url(#${hexClipId})" pointer-events="none">`;
         WHEEL_SECTIONS.forEach(section => {
             const c = section.color;
-            svg += createArcPath(cx, cy, 0, MINI_MAX_R, offset, offset + SECTION_ANGLE, '', c.mid, 'opacity="0.45"');
+            svg += createArcPath(cx, cy, 0, R, offset, offset + SECTION_ANGLE, '', c.mid, 'opacity="0.7"');
             offset += SECTION_ANGLE;
         });
         svg += `</g>`;
 
-        // 6각형 윤곽
-        svg += `<polygon points="${verticesStr(vertices)}" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.2" stroke-linejoin="round" pointer-events="none"/>`;
+        // 5) 6각형 윤곽선
+        svg += `<polygon points="${verticesStr(vertices)}" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linejoin="round" pointer-events="none"/>`;
+
+        // 6) 바깥 원 테두리
+        svg += `<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="var(--border-card, #e2e8f0)" stroke-width="2.5" pointer-events="none"/>`;
 
         svg += `</svg>`;
         const wrapperClass = 'static-wheel-mini';
