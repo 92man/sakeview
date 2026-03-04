@@ -1904,14 +1904,16 @@ function displayCommunityFeed(notes, container, avgMap, showMore) {
             ratingDisplay = `<span class="community-feed-card-rating">${note.overall_rating}<span class="community-feed-card-rating-max">/100</span></span>`;
         }
 
-        // 선택된 모든 태그 추출
+        // 향·맛·바디감 태그만 추출
         let allTagsHtml = '';
         if (note.flavor_description) {
             try {
                 const td = JSON.parse(note.flavor_description);
                 if (td && td.version === 2 && td.categories) {
                     const allTags = [];
-                    Object.values(td.categories).forEach(catData => {
+                    ['aroma', 'taste', 'body'].forEach(catId => {
+                        const catData = td.categories[catId];
+                        if (!catData) return;
                         Object.values(catData).forEach(val => {
                             (Array.isArray(val) ? val : [val]).forEach(t => allTags.push(t));
                         });
