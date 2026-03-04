@@ -648,22 +648,18 @@ function showMainApp() {
 
     // 로그인 상태에 따라 버튼 표시/숨김
     if (currentUser) {
-        document.getElementById('userEmail').style.display = 'inline';
-        document.getElementById('userEmail').textContent = currentUser.email;
-        document.getElementById('logoutBtn').style.display = 'inline-block';
         document.getElementById('loginBtn').style.display = 'none';
-        const profileBtn = document.getElementById('profileBtn');
-        if (profileBtn) profileBtn.style.display = 'inline-flex';
+        var profileWrapper = document.getElementById('profileMenuWrapper');
+        if (profileWrapper) profileWrapper.style.display = 'block';
+        updateProfileUI();
         loadNotes();
         updateSidebar();
         loadPendingSakes();
         submitPendingCert();
     } else {
-        document.getElementById('userEmail').style.display = 'none';
-        document.getElementById('logoutBtn').style.display = 'none';
         document.getElementById('loginBtn').style.display = 'inline-block';
-        const profileBtn = document.getElementById('profileBtn');
-        if (profileBtn) profileBtn.style.display = 'none';
+        var profileWrapper = document.getElementById('profileMenuWrapper');
+        if (profileWrapper) profileWrapper.style.display = 'none';
     }
     // 기본 탭이 커뮤니티이므로 초기 로드
     loadCommunityStats();
@@ -799,6 +795,111 @@ async function handleLogout() {
         showMainApp(); // 메인 앱으로 돌아가되 로그인 버튼 표시
     }
 }
+
+// ═══════════════════════════════════════════════
+// 프로필 드롭다운 메뉴
+// ═══════════════════════════════════════════════
+
+function toggleProfileDropdown() {
+    var dropdown = document.getElementById('profileDropdown');
+    var trigger = document.getElementById('profileTrigger');
+    if (!dropdown) return;
+    var isOpen = dropdown.classList.contains('open');
+    if (isOpen) {
+        closeProfileDropdown();
+    } else {
+        dropdown.classList.add('open');
+        if (trigger) trigger.setAttribute('aria-expanded', 'true');
+        // 현재 닉네임을 input에 세팅
+        var input = document.getElementById('displayNameInput');
+        if (input && currentUser) {
+            var meta = currentUser.user_metadata || {};
+            input.value = meta.display_name || '';
+        }
+    }
+}
+
+function closeProfileDropdown() {
+    var dropdown = document.getElementById('profileDropdown');
+    var trigger = document.getElementById('profileTrigger');
+    if (dropdown) dropdown.classList.remove('open');
+    if (trigger) trigger.setAttribute('aria-expanded', 'false');
+}
+
+async function saveDisplayName() {
+    if (!currentUser) return;
+    var input = document.getElementById('displayNameInput');
+    var displayName = input.value.trim();
+
+    if (displayName.length > 20) {
+        alert('닉네임은 20자 이하로 입력해주세요.');
+        return;
+    }
+
+    try {
+        var btn = document.getElementById('saveDisplayNameBtn');
+        btn.disabled = true;
+
+        var { data, error } = await supabaseClient.auth.updateUser({
+            data: { display_name: displayName }
+        });
+
+        if (error) throw error;
+
+        currentUser = data.user;
+        updateProfileUI();
+
+        // 저장 완료 피드백
+        btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;">done_all</span>';
+        setTimeout(function() {
+            btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;">check</span>';
+            btn.disabled = false;
+        }, 1200);
+
+    } catch (e) {
+        alert('닉네임 저장 실패: ' + e.message);
+        document.getElementById('saveDisplayNameBtn').disabled = false;
+    }
+}
+
+function updateProfileUI() {
+    if (!currentUser) return;
+
+    var meta = currentUser.user_metadata || {};
+    var displayName = meta.display_name || '';
+    var email = currentUser.email || '';
+    var initial = (displayName || email).charAt(0).toUpperCase();
+
+    // 헤더 아바타 이니셜
+    var avatarLetter = document.getElementById('profileAvatarLetter');
+    if (avatarLetter) avatarLetter.textContent = initial;
+
+    // 드롭다운 아바타
+    var dropdownAvatar = document.getElementById('dropdownAvatarLetter');
+    if (dropdownAvatar) dropdownAvatar.textContent = initial;
+
+    // 드롭다운 닉네임
+    var nameEl = document.getElementById('dropdownDisplayName');
+    if (nameEl) nameEl.textContent = displayName || email.split('@')[0];
+
+    // 드롭다운 이메일
+    var emailEl = document.getElementById('dropdownEmail');
+    if (emailEl) emailEl.textContent = email;
+}
+
+// 드롭다운 바깥 클릭 / Escape로 닫기
+document.addEventListener('click', function(e) {
+    var wrapper = document.getElementById('profileMenuWrapper');
+    if (!wrapper) return;
+    if (!wrapper.contains(e.target)) {
+        closeProfileDropdown();
+    }
+});
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeProfileDropdown();
+    }
+});
 
 // 테마 설정
 function loadTheme() {
