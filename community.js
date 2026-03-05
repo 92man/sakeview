@@ -12,28 +12,6 @@ var communitySortBy = 'date';
 var communityViewMode = 'card';
 var _communityAllNotes = [];
 
-// Lazy wheel rendering via IntersectionObserver
-var _wheelObserver = null;
-function observeWheels(container) {
-    if (!_wheelObserver) {
-        _wheelObserver = new IntersectionObserver(function(entries) {
-            entries.forEach(function(entry) {
-                if (entry.isIntersecting) {
-                    var el = entry.target;
-                    var flavor = el.getAttribute('data-flavor');
-                    if (flavor && typeof generateStaticWheelSvg === 'function') {
-                        var svgHtml = generateStaticWheelSvg(flavor, 'mini');
-                        if (svgHtml) el.outerHTML = svgHtml;
-                    }
-                    _wheelObserver.unobserve(el);
-                }
-            });
-        }, { rootMargin: '200px' });
-    }
-    var placeholders = container.querySelectorAll('.static-wheel-mini[data-flavor]');
-    placeholders.forEach(function(el) { _wheelObserver.observe(el); });
-}
-
 async function loadCommunityStats() {
     try {
         const notesResult = await supabaseClient.from('tasting_notes').select('id', { count: 'exact', head: true });
@@ -191,7 +169,7 @@ function _displayCompactFeed(notes, container, avgMap, showMore) {
             ? '<span class="community-compact-rating">' + note.overall_rating + '<span class="community-compact-rating-max">/100</span></span>'
             : '';
         var wheelHtml = note.flavor_description
-            ? '<div class="community-compact-wheel"><div class="static-wheel-mini" data-flavor="' + escapeAttr(note.flavor_description) + '"></div></div>'
+            ? '<div class="community-compact-wheel">' + (generateStaticWheelSvg(note.flavor_description, 'mini') || '') + '</div>'
             : '<div class="community-compact-wheel"></div>';
 
         return '<div class="community-compact-item" onclick="showCommunityDetail(\'' + escapeAttr(note.id) + '\')">'
@@ -209,7 +187,6 @@ function _displayCompactFeed(notes, container, avgMap, showMore) {
         html += '<button class="community-feed-more-btn" onclick="loadMoreCommunityFeed(' + _communityAllNotes.length + ')">더보기</button>';
     }
     container.innerHTML = html;
-    observeWheels(container);
 }
 
 // ── 이벤트 바인딩 ──
@@ -268,7 +245,7 @@ function displayCommunityFeed(notes, container, avgMap, showMore) {
                     <div class="community-feed-card-name">${escapeHtml(note.sake_name || '이름 없음')}${getCertBadgeHtml(uid)}</div>
                     <div class="community-feed-card-meta">Shared by <span class="community-feed-author" data-tooltip="${escapeAttr(userLabel)} 님의 노트만 보기" onclick="event.stopPropagation(); loadNotesByUser('${escapeAttr(uid)}')">${escapeHtml(userLabel)}</span> · ${timeAgo}</div>
                 </div>
-                ${note.flavor_description ? `<div class="static-wheel-mini" data-flavor="${escapeAttr(note.flavor_description)}"></div>` : ''}
+                ${note.flavor_description ? (generateStaticWheelSvg(note.flavor_description, 'mini') || '') : ''}
                 ${ratingDisplay}
             </div>
             ${allTagsHtml}
@@ -281,7 +258,6 @@ function displayCommunityFeed(notes, container, avgMap, showMore) {
         html += `<button class="community-feed-more-btn" onclick="loadMoreCommunityFeed(${notes.length})">더보기</button>`;
     }
     container.innerHTML = html;
-    observeWheels(container);
 }
 
 async function loadMoreCommunityFeed(offset) {
