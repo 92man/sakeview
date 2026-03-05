@@ -503,6 +503,8 @@ function escapeAttr(str) {
 }
 
 let _wheelStaticGradId = 0;
+var _miniWheelCache = new Map();
+var _MINI_CACHE_MAX = 100;
 
 // ── 정적 휠 (저장된 노트용) ──
 
@@ -557,13 +559,17 @@ function extractScores(flavorJson) {
 }
 
 function generateStaticWheelSvg(flavorJson, mode) {
+    const isMini = (mode === 'mini');
+
+    // 미니 모드 캐시 조회
+    if (isMini && flavorJson && _miniWheelCache.has(flavorJson)) {
+        return _miniWheelCache.get(flavorJson);
+    }
+
     const scores = extractScores(flavorJson);
     const hasAnyScore = scores.some(s => s > 0);
 
     if (!hasAnyScore) return '';
-
-    const isDark = false;
-    const isMini = (mode === 'mini');
 
     const vb = isMini ? 480 : W;
     const cx = vb / 2, cy = vb / 2;
@@ -629,8 +635,15 @@ function generateStaticWheelSvg(flavorJson, mode) {
         });
 
         svg += `</svg>`;
-        const wrapperClass = 'static-wheel-mini';
-        return `<div class="${wrapperClass}">${svg}</div>`;
+        const result = `<div class="static-wheel-mini">${svg}</div>`;
+        // 미니 캐시 저장
+        if (flavorJson) {
+            if (_miniWheelCache.size >= _MINI_CACHE_MAX) {
+                _miniWheelCache.delete(_miniWheelCache.keys().next().value);
+            }
+            _miniWheelCache.set(flavorJson, result);
+        }
+        return result;
     }
 
     // ── 풀 모드: 태그 링 + 6각형 레이더 안개 ──

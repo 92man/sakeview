@@ -9,6 +9,28 @@
 
 var communitySearchTimeout = null;
 
+// Lazy wheel rendering via IntersectionObserver
+var _wheelObserver = null;
+function observeWheels(container) {
+    if (!_wheelObserver) {
+        _wheelObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    var el = entry.target;
+                    var flavor = el.getAttribute('data-flavor');
+                    if (flavor && typeof generateStaticWheelSvg === 'function') {
+                        var svgHtml = generateStaticWheelSvg(flavor, 'mini');
+                        if (svgHtml) el.outerHTML = svgHtml;
+                    }
+                    _wheelObserver.unobserve(el);
+                }
+            });
+        }, { rootMargin: '200px' });
+    }
+    var placeholders = container.querySelectorAll('.static-wheel-mini[data-flavor]');
+    placeholders.forEach(function(el) { _wheelObserver.observe(el); });
+}
+
 async function loadCommunityStats() {
     try {
         const notesResult = await supabaseClient.from('tasting_notes').select('id', { count: 'exact', head: true });
@@ -39,9 +61,8 @@ async function loadCommunityFeed() {
 
     // sessionStorage 캐시 확인
     if (_feedCache && Date.now() - _feedCache.ts < _feedCacheTTL) {
-        await loadApprovedCerts();
         const userIds = [...new Set(_feedCache.data.map(n => n.user_id).filter(Boolean))];
-        await loadDisplayNames(userIds);
+        await Promise.all([loadApprovedCerts(), loadDisplayNames(userIds)]);
         displayCommunityFeed(_feedCache.data, container, buildAvgMap(_feedCache.data));
         return;
     }
@@ -53,7 +74,7 @@ async function loadCommunityFeed() {
             .from('tasting_notes')
             .select('id, sake_name, personal_review, overall_rating, created_at, user_id, flavor_description, photo')
             .order('created_at', { ascending: false })
-            .limit(3);
+            .limit(10);
 
         if (error) throw error;
         _feedCache = { ts: Date.now(), data: data || [] };
@@ -62,9 +83,8 @@ async function loadCommunityFeed() {
             var probePhoto = data.find(function(n) { return n.photo; });
             if (probePhoto) probeImageTransform(probePhoto.photo);
         }
-        await loadApprovedCerts();
         const userIds = [...new Set((data || []).map(n => n.user_id).filter(Boolean))];
-        await loadDisplayNames(userIds);
+        await Promise.all([loadApprovedCerts(), loadDisplayNames(userIds)]);
         displayCommunityFeed(data || [], container, buildAvgMap(data), true);
     } catch (e) {
         console.error('Community feed error:', e);
@@ -138,7 +158,7 @@ function displayCommunityFeed(notes, container, avgMap, showMore) {
                     <div class="community-feed-card-name">${escapeHtml(note.sake_name || '이름 없음')}${getCertBadgeHtml(uid)}</div>
                     <div class="community-feed-card-meta">Shared by <span class="community-feed-author" data-tooltip="${escapeAttr(userLabel)} 님의 노트만 보기" onclick="event.stopPropagation(); loadNotesByUser('${escapeAttr(uid)}')">${escapeHtml(userLabel)}</span> · ${timeAgo}</div>
                 </div>
-                ${typeof generateStaticWheelSvg === 'function' ? generateStaticWheelSvg(note.flavor_description, 'mini') : ''}
+                ${note.flavor_description ? `<div class="static-wheel-mini" data-flavor="${escapeAttr(note.flavor_description)}"></div>` : ''}
                 ${ratingDisplay}
             </div>
             ${allTagsHtml}
@@ -147,10 +167,11 @@ function displayCommunityFeed(notes, container, avgMap, showMore) {
     });
 
     let html = cards.join('');
-    if (showMore && notes.length >= 3) {
+    if (showMore && notes.length >= 10) {
         html += `<button class="community-feed-more-btn" onclick="loadMoreCommunityFeed(${notes.length})">더보기</button>`;
     }
     container.innerHTML = html;
+    observeWheels(container);
 }
 
 async function loadMoreCommunityFeed(offset) {
@@ -161,18 +182,19 @@ async function loadMoreCommunityFeed(offset) {
             .from('tasting_notes')
             .select('id, sake_name, personal_review, overall_rating, created_at, user_id, flavor_description, photo')
             .order('created_at', { ascending: false })
-            .range(offset, offset + 9);
+            .range(offset, offset + 19);
         if (error) throw error;
         if (!data || data.length === 0) { if (btn) btn.remove(); return; }
         const userIds = [...new Set(data.map(n => n.user_id).filter(Boolean))];
-        await loadDisplayNames(userIds);
+        await Promise.all([loadApprovedCerts(), loadDisplayNames(userIds)]);
         const container = document.getElementById('communityFeedList');
         if (btn) btn.remove();
         const avgMap = buildAvgMap(data);
         const tempDiv = document.createElement('div');
         displayCommunityFeed(data, tempDiv, avgMap, false);
         container.insertAdjacentHTML('beforeend', tempDiv.innerHTML);
-        if (data.length >= 10) {
+        observeWheels(container);
+        if (data.length >= 20) {
             container.insertAdjacentHTML('beforeend',
                 `<button class="community-feed-more-btn" onclick="loadMoreCommunityFeed(${offset + data.length})">더보기</button>`);
         }
