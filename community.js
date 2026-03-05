@@ -8,6 +8,9 @@
 //        SAKE_DATABASE (sake_database.js)
 
 var communitySearchTimeout = null;
+var communitySortBy = 'date';
+var communityViewMode = 'card';
+var _communityAllNotes = [];
 
 // Lazy wheel rendering via IntersectionObserver
 var _wheelObserver = null;
@@ -59,11 +62,17 @@ async function loadCommunityFeed() {
     const feedHeader = document.querySelector('.community-feed-header h3');
     if (feedHeader) feedHeader.textContent = 'New Tasting Notes';
 
+    // 정렬/뷰 초기화
+    communitySortBy = 'date';
+    communityViewMode = 'card';
+    _syncToolbarUI();
+
     // sessionStorage 캐시 확인
     if (_feedCache && Date.now() - _feedCache.ts < _feedCacheTTL) {
+        _communityAllNotes = _feedCache.data.slice();
         const userIds = [...new Set(_feedCache.data.map(n => n.user_id).filter(Boolean))];
         await Promise.all([loadApprovedCerts(), loadDisplayNames(userIds)]);
-        displayCommunityFeed(_feedCache.data, container, buildAvgMap(_feedCache.data));
+        _rerenderCommunityFeed(true);
         return;
     }
 
@@ -83,9 +92,10 @@ async function loadCommunityFeed() {
             var probePhoto = data.find(function(n) { return n.photo; });
             if (probePhoto) probeImageTransform(probePhoto.photo);
         }
-        const userIds = [...new Set((data || []).map(n => n.user_id).filter(Boolean))];
+        _communityAllNotes = (data || []).slice();
+        const userIds = [...new Set(_communityAllNotes.map(n => n.user_id).filter(Boolean))];
         await Promise.all([loadApprovedCerts(), loadDisplayNames(userIds)]);
-        displayCommunityFeed(data || [], container, buildAvgMap(data), true);
+        _rerenderCommunityFeed(true);
     } catch (e) {
         console.error('Community feed error:', e);
         container.innerHTML = `<div class="community-empty">
@@ -111,6 +121,106 @@ function buildAvgMap(notes) {
     });
     return avgMap;
 }
+
+// ── 정렬 / 뷰 전환 ──
+
+function _syncToolbarUI() {
+    document.querySelectorAll('.community-sort-btn').forEach(function(b) {
+        b.classList.toggle('active', b.dataset.sort === communitySortBy);
+    });
+    document.querySelectorAll('.community-view-btn').forEach(function(b) {
+        b.classList.toggle('active', b.dataset.view === communityViewMode);
+    });
+}
+
+function sortCommunityFeed(by) {
+    communitySortBy = by;
+    _syncToolbarUI();
+    _rerenderCommunityFeed(_communityAllNotes.length >= 10);
+}
+
+function setCommunityView(mode) {
+    communityViewMode = mode;
+    _syncToolbarUI();
+    _rerenderCommunityFeed(_communityAllNotes.length >= 10);
+}
+
+function _sortNotes(notes) {
+    var sorted = notes.slice();
+    if (communitySortBy === 'name') {
+        sorted.sort(function(a, b) { return (a.sake_name || '').localeCompare(b.sake_name || '', 'ko'); });
+    } else if (communitySortBy === 'rating') {
+        sorted.sort(function(a, b) { return (b.overall_rating || 0) - (a.overall_rating || 0); });
+    } else {
+        sorted.sort(function(a, b) { return new Date(b.created_at) - new Date(a.created_at); });
+    }
+    return sorted;
+}
+
+function _rerenderCommunityFeed(showMore) {
+    var container = document.getElementById('communityFeedList');
+    if (!container) return;
+    var sorted = _sortNotes(_communityAllNotes);
+    var avgMap = buildAvgMap(sorted);
+    if (communityViewMode === 'compact') {
+        _displayCompactFeed(sorted, container, avgMap, showMore);
+    } else {
+        displayCommunityFeed(sorted, container, avgMap, showMore);
+    }
+}
+
+function _displayCompactFeed(notes, container, avgMap, showMore) {
+    if (!notes || notes.length === 0) {
+        container.innerHTML = '<div class="community-empty"><div class="community-empty-icon">🍶</div><h3>아직 커뮤니티 노트가 없습니다</h3></div>';
+        return;
+    }
+    var rows = notes.map(function(note) {
+        var uid = note.user_id || 'anon';
+        var nickname = _displayNameMap[uid];
+        var userLabel = nickname || ('User' + uid.substring(0, 4));
+        var dateStr = '';
+        if (note.created_at) {
+            var d = new Date(note.created_at);
+            dateStr = (d.getMonth() + 1) + '.' + d.getDate();
+        }
+        var tags = extractTastingTags(note.flavor_description, ['aroma', 'taste', 'body']);
+        var tagsHtml = tags.slice(0, 3).map(function(t) {
+            return '<span class="community-compact-tag">' + escapeHtml(t) + '</span>';
+        }).join('');
+        var ratingHtml = note.overall_rating
+            ? '<span class="community-compact-rating">' + note.overall_rating + '<span class="community-compact-rating-max">/100</span></span>'
+            : '';
+        var wheelHtml = note.flavor_description
+            ? '<div class="community-compact-wheel"><div class="static-wheel-mini" data-flavor="' + escapeAttr(note.flavor_description) + '"></div></div>'
+            : '<div class="community-compact-wheel"></div>';
+
+        return '<div class="community-compact-item" onclick="showCommunityDetail(\'' + escapeAttr(note.id) + '\')">'
+            + '<span class="community-compact-date">' + escapeHtml(dateStr) + '</span>'
+            + '<span class="community-compact-name">' + escapeHtml(note.sake_name || '이름 없음') + getCertBadgeHtml(uid) + '</span>'
+            + '<span class="community-compact-author">' + escapeHtml(userLabel) + '</span>'
+            + '<span class="community-compact-tags">' + tagsHtml + '</span>'
+            + wheelHtml
+            + ratingHtml
+            + '</div>';
+    });
+
+    var html = '<div class="community-compact-list">' + rows.join('') + '</div>';
+    if (showMore) {
+        html += '<button class="community-feed-more-btn" onclick="loadMoreCommunityFeed(' + _communityAllNotes.length + ')">더보기</button>';
+    }
+    container.innerHTML = html;
+    observeWheels(container);
+}
+
+// ── 이벤트 바인딩 ──
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.community-sort-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() { sortCommunityFeed(this.dataset.sort); });
+    });
+    document.querySelectorAll('.community-view-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() { setCommunityView(this.dataset.view); });
+    });
+});
 
 function displayCommunityFeed(notes, container, avgMap, showMore) {
     avgMap = avgMap || {};
@@ -185,19 +295,11 @@ async function loadMoreCommunityFeed(offset) {
             .range(offset, offset + 19);
         if (error) throw error;
         if (!data || data.length === 0) { if (btn) btn.remove(); return; }
+        // 누적
+        _communityAllNotes = _communityAllNotes.concat(data);
         const userIds = [...new Set(data.map(n => n.user_id).filter(Boolean))];
         await Promise.all([loadApprovedCerts(), loadDisplayNames(userIds)]);
-        const container = document.getElementById('communityFeedList');
-        if (btn) btn.remove();
-        const avgMap = buildAvgMap(data);
-        const tempDiv = document.createElement('div');
-        displayCommunityFeed(data, tempDiv, avgMap, false);
-        container.insertAdjacentHTML('beforeend', tempDiv.innerHTML);
-        observeWheels(container);
-        if (data.length >= 20) {
-            container.insertAdjacentHTML('beforeend',
-                `<button class="community-feed-more-btn" onclick="loadMoreCommunityFeed(${offset + data.length})">더보기</button>`);
-        }
+        _rerenderCommunityFeed(data.length >= 20);
     } catch (e) {
         console.error('Load more error:', e);
         if (btn) btn.textContent = '더보기';

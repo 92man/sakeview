@@ -454,3 +454,223 @@ body.dark-mode .community-feed-card-rating {
 body.dark-mode .community-view-all-btn:hover {
     background: rgba(255,255,255,0.05);
 }
+
+/* ═══ Community Toolbar (정렬 + 뷰 전환) ═══ */
+.community-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    margin-bottom: 8px;
+}
+.community-sort-btns {
+    display: flex;
+    gap: 6px;
+}
+.community-sort-btn {
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border-card, #e2e8f0);
+    background: var(--bg-secondary, #fff);
+    color: var(--text-secondary, #64748b);
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.community-sort-btn.active {
+    background: var(--accent-primary, #383961);
+    color: #fff;
+    border-color: var(--accent-primary, #383961);
+}
+.community-view-toggle {
+    display: flex;
+    gap: 4px;
+}
+.community-view-btn {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    border: 1px solid var(--border-card, #e2e8f0);
+    background: var(--bg-secondary, #fff);
+    color: var(--text-secondary, #64748b);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.community-view-btn .material-symbols-outlined {
+    font-size: 20px;
+}
+.community-view-btn.active {
+    background: var(--accent-primary, #383961);
+    color: #fff;
+    border-color: var(--accent-primary, #383961);
+}
+
+/* ═══ Compact List View ═══ */
+.community-compact-list {
+    display: flex;
+    flex-direction: column;
+    background: var(--card-bg, #fff);
+    border-radius: 12px;
+    border: 1px solid var(--border-card, #e2e8f0);
+    overflow: hidden;
+}
+.community-compact-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-light, #f1f5f9);
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.community-compact-item:last-child {
+    border-bottom: none;
+}
+.community-compact-item:hover {
+    background: var(--bg-muted, #f8fafc);
+}
+.community-compact-date {
+    color: var(--text-muted, #94a3b8);
+    font-size: 0.8rem;
+    flex-shrink: 0;
+    width: 40px;
+    text-align: center;
+}
+.community-compact-name {
+    flex: 1;
+    min-width: 0;
+    font-weight: 600;
+    font-size: 0.92rem;
+    color: var(--text-primary, #1a1a1a);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.community-compact-author {
+    font-size: 0.78rem;
+    color: var(--text-muted, #94a3b8);
+    flex-shrink: 0;
+    max-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.community-compact-tags {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+}
+.community-compact-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: var(--bg-muted, #f1f5f9);
+    color: var(--text-secondary, #64748b);
+    font-size: 0.72rem;
+    white-space: nowrap;
+}
+.community-compact-wheel {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.community-compact-wheel .static-wheel-mini {
+    width: 48px;
+    height: 48px;
+    margin: 0;
+}
+.community-compact-rating {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--accent-primary, #383961);
+    flex-shrink: 0;
+    min-width: 36px;
+    text-align: right;
+    line-height: 1;
+}
+.community-compact-rating-max {
+    font-size: 0.6rem;
+    font-weight: 500;
+    color: var(--text-muted, #94a3b8);
+}
+
+/* ═══ Mobile: 카드 헤더 리레이아웃 ═══ */
+@media (max-width: 600px) {
+    .community-feed-card-header {
+        flex-wrap: wrap;
+    }
+    .community-feed-card-info {
+        flex: 1 1 calc(100% - 68px);
+        min-width: 0;
+    }
+    .community-feed-card-header .static-wheel-mini {
+        order: 10;
+        width: 56px;
+        height: 56px;
+        margin-left: 52px;
+    }
+    .community-feed-card-header .community-feed-card-rating {
+        order: 11;
+        margin-left: auto;
+    }
+    /* compact: 태그/작성자 숨기고 간결하게 */
+    .community-compact-tags {
+        display: none;
+    }
+    .community-compact-author {
+        display: none;
+    }
+    .community-toolbar {
+        padding: 6px 0;
+    }
+    .community-sort-btn {
+        padding: 4px 10px;
+        font-size: 0.78rem;
+    }
+}
+
+/* ═══ Dark Mode: Toolbar + Compact ═══ */
+body.dark-mode .community-sort-btn {
+    background: var(--bg-tertiary);
+    border-color: var(--border-card);
+    color: var(--text-secondary);
+}
+body.dark-mode .community-sort-btn.active {
+    background: var(--accent-primary);
+    color: #fff;
+    border-color: var(--accent-primary);
+}
+body.dark-mode .community-view-btn {
+    background: var(--bg-tertiary);
+    border-color: var(--border-card);
+    color: var(--text-secondary);
+}
+body.dark-mode .community-view-btn.active {
+    background: var(--accent-primary);
+    color: #fff;
+    border-color: var(--accent-primary);
+}
+body.dark-mode .community-compact-list {
+    background: var(--bg-tertiary);
+    border-color: var(--border-card);
+}
+body.dark-mode .community-compact-item {
+    border-color: var(--border-card);
+}
+body.dark-mode .community-compact-item:hover {
+    background: rgba(255,255,255,0.03);
+}
+body.dark-mode .community-compact-tag {
+    background: rgba(255,255,255,0.08);
+    color: var(--text-secondary);
+}
+body.dark-mode .community-compact-rating {
+    color: var(--accent-gold);
+}
