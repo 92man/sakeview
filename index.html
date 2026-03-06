@@ -630,6 +630,7 @@
                                 <button class="community-sort-btn active" data-sort="date">최신순</button>
                                 <button class="community-sort-btn" data-sort="rating">평점순</button>
                                 <button class="community-sort-btn" data-sort="name">이름순</button>
+                                <button class="community-sort-btn community-like-filter-btn" onclick="toggleCommunityLikeFilter()">🤍 좋아요</button>
                             </div>
                             <div class="community-view-toggle">
                                 <button class="community-view-btn active" data-view="card" title="카드 뷰">
@@ -648,7 +649,6 @@
 
                 <!-- 상세 보기 -->
                 <div id="detailView" class="view" role="tabpanel" aria-label="상세 보기">
-                    <button class="back-btn" onclick="switchTab('list')">← 목록으로</button>
                     <div id="detailContent"></div>
                 </div>
             </div>

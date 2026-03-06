@@ -1385,6 +1385,8 @@ function renderNoteDetail(note, showActions = true) {
             </div>
         </div>
 
+        <div class="note-detail-actions" data-note-id="${escapeAttr(note.id)}"></div>
+
         ${showActions ? `<button class="edit-btn" onclick="editNote('${escapeAttr(note.id)}')">✏️ 수정</button>
         <button class="delete-btn" onclick="deleteNote('${escapeAttr(note.id)}')">🗑️ 삭제</button>` : ''}
     `;

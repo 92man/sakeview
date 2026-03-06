@@ -674,3 +674,73 @@ body.dark-mode .community-compact-tag {
 body.dark-mode .community-compact-rating {
     color: var(--accent-gold);
 }
+
+/* ═══ Note Detail Actions (back + like) ═══ */
+.note-detail-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
+    gap: 12px;
+    margin-top: 16px;
+}
+.note-detail-actions:empty {
+    display: none;
+}
+.note-detail-actions .community-back-btn {
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    margin-bottom: 0 !important;
+}
+.note-like-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid var(--border-card, #e2e8f0);
+    background: var(--bg-secondary, #fff);
+    color: var(--text-secondary, #64748b);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.note-like-btn:hover {
+    border-color: #fca5a5;
+    background: #fff1f2;
+}
+.note-like-btn.liked {
+    background: #fef2f2;
+    border-color: #fca5a5;
+    color: #ef4444;
+}
+
+/* Like filter button active state */
+.community-like-filter-btn.active {
+    background: #ef4444 !important;
+    color: #fff !important;
+    border-color: #ef4444 !important;
+}
+
+/* ═══ Dark Mode: Like buttons ═══ */
+body.dark-mode .note-like-btn {
+    background: var(--bg-tertiary);
+    border-color: var(--border-card);
+    color: var(--text-secondary);
+}
+body.dark-mode .note-like-btn:hover {
+    border-color: rgba(239, 68, 68, 0.4);
+    background: rgba(239, 68, 68, 0.1);
+}
+body.dark-mode .note-like-btn.liked {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.4);
+    color: #f87171;
+}
+body.dark-mode .community-like-filter-btn.active {
+    background: #ef4444 !important;
+    color: #fff !important;
+    border-color: #ef4444 !important;
+}
