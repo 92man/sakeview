@@ -49,9 +49,12 @@ async function loadCommunityFeed() {
     // sessionStorage 캐시 확인
     if (_feedCache && Date.now() - _feedCache.ts < _feedCacheTTL) {
         _communityAllNotes = _feedCache.data.slice();
-        const userIds = [...new Set(_feedCache.data.map(n => n.user_id).filter(Boolean))];
-        await Promise.all([loadApprovedCerts(), loadDisplayNames(userIds)]);
+        // 먼저 렌더 후 백그라운드로 certs/names 보강
         _rerenderCommunityFeed(true);
+        const userIds = [...new Set(_feedCache.data.map(n => n.user_id).filter(Boolean))];
+        Promise.all([loadApprovedCerts(), loadDisplayNames(userIds)]).then(function() {
+            _rerenderCommunityFeed(true);
+        });
         return;
     }
 
@@ -72,9 +75,12 @@ async function loadCommunityFeed() {
             if (probePhoto) probeImageTransform(probePhoto.photo);
         }
         _communityAllNotes = (data || []).slice();
-        const userIds = [...new Set(_communityAllNotes.map(n => n.user_id).filter(Boolean))];
-        await Promise.all([loadApprovedCerts(), loadDisplayNames(userIds)]);
+        // 먼저 렌더 (이름/뱃지 없이) → 백그라운드로 보강
         _rerenderCommunityFeed(true);
+        const userIds = [...new Set(_communityAllNotes.map(n => n.user_id).filter(Boolean))];
+        Promise.all([loadApprovedCerts(), loadDisplayNames(userIds)]).then(function() {
+            _rerenderCommunityFeed(true);
+        });
     } catch (e) {
         console.error('Community feed error:', e);
         container.innerHTML = `<div class="community-empty">
@@ -160,7 +166,8 @@ function _displayCompactFeed(notes, container, avgMap, showMore) {
         container.innerHTML = '<div class="community-empty"><div class="community-empty-icon">🍶</div><h3>아직 커뮤니티 노트가 없습니다</h3></div>';
         return;
     }
-    var rows = notes.map(function(note) {
+    var compactWheelJobs = [];
+    var rows = notes.map(function(note, idx) {
         var uid = note.user_id || 'anon';
         var nickname = _displayNameMap[uid];
         var userLabel = nickname || ('User' + uid.substring(0, 4));
@@ -176,9 +183,11 @@ function _displayCompactFeed(notes, container, avgMap, showMore) {
         var ratingHtml = note.overall_rating
             ? '<span class="community-compact-rating">' + note.overall_rating + '<span class="community-compact-rating-max">/100</span></span>'
             : '';
-        var wheelHtml = note.flavor_description
-            ? '<div class="community-compact-wheel">' + (generateStaticWheelSvg(note.flavor_description, 'mini') || '') + '</div>'
-            : '<div class="community-compact-wheel"></div>';
+        var cwId = 'cw-ph-' + idx;
+        if (note.flavor_description) {
+            compactWheelJobs.push({ id: cwId, flavor: note.flavor_description });
+        }
+        var wheelHtml = '<div class="community-compact-wheel" id="' + cwId + '"></div>';
 
         return '<div class="community-compact-item" onclick="showCommunityDetail(\'' + escapeAttr(note.id) + '\')">'
             + '<span class="community-compact-date">' + escapeHtml(dateStr) + '</span>'
@@ -195,6 +204,18 @@ function _displayCompactFeed(notes, container, avgMap, showMore) {
         html += '<button class="community-feed-more-btn" onclick="loadMoreCommunityFeed(' + _communityAllNotes.length + ')">더보기</button>';
     }
     container.innerHTML = html;
+
+    if (compactWheelJobs.length > 0) {
+        requestAnimationFrame(function() {
+            compactWheelJobs.forEach(function(job) {
+                var el = document.getElementById(job.id);
+                if (el) {
+                    var svg = generateStaticWheelSvg(job.flavor, 'mini');
+                    if (svg) el.innerHTML = svg;
+                }
+            });
+        });
+    }
 }
 
 // ── 이벤트 바인딩 ──
@@ -217,6 +238,9 @@ function displayCommunityFeed(notes, container, avgMap, showMore) {
         </div>`;
         return;
     }
+
+    // 휠 데이터를 모아두고 카드는 placeholder로 먼저 렌더
+    const wheelJobs = [];
 
     const cards = notes.map((note, idx) => {
         const uid = note.user_id || 'anon';
@@ -245,6 +269,11 @@ function displayCommunityFeed(notes, container, avgMap, showMore) {
             ? '<div class="community-feed-card-tags">' + allTags.map(function(t) { return '<span class="community-tag">' + escapeHtml(t) + '</span>'; }).join('') + '</div>'
             : '';
 
+        // 휠은 placeholder로 두고 나중에 채움
+        const wheelId = 'wheel-ph-' + idx;
+        if (note.flavor_description) {
+            wheelJobs.push({ idx: idx, id: wheelId, flavor: note.flavor_description });
+        }
 
         return `<div class="community-feed-card" onclick="showCommunityDetail('${escapeAttr(note.id)}')">
             <div class="community-feed-card-header">
@@ -254,7 +283,7 @@ function displayCommunityFeed(notes, container, avgMap, showMore) {
                     <div class="community-feed-card-meta">Shared by <span class="community-feed-author" data-tooltip="${escapeAttr(userLabel)} 님의 노트만 보기" onclick="event.stopPropagation(); loadNotesByUser('${escapeAttr(uid)}')">${escapeHtml(userLabel)}</span> · ${timeAgo}</div>
                 </div>
                 ${ratingDisplay}
-                ${note.flavor_description ? (generateStaticWheelSvg(note.flavor_description, 'mini') || '') : ''}
+                <div id="${wheelId}"></div>
             </div>
             ${allTagsHtml}
             ${truncated ? `<div class="community-feed-card-text">${escapeHtml(truncated)}</div>` : ''}
@@ -266,6 +295,19 @@ function displayCommunityFeed(notes, container, avgMap, showMore) {
         html += `<button class="community-feed-more-btn" onclick="loadMoreCommunityFeed(${notes.length})">더보기</button>`;
     }
     container.innerHTML = html;
+
+    // 카드 렌더 후 휠 SVG를 비동기로 삽입
+    if (wheelJobs.length > 0) {
+        requestAnimationFrame(function() {
+            wheelJobs.forEach(function(job) {
+                var el = document.getElementById(job.id);
+                if (el) {
+                    var svg = generateStaticWheelSvg(job.flavor, 'mini');
+                    if (svg) el.outerHTML = svg;
+                }
+            });
+        });
+    }
 }
 
 async function loadMoreCommunityFeed(offset) {

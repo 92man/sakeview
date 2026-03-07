@@ -556,6 +556,8 @@ function extractScores(flavorJson) {
     });
 }
 
+var _svgMiniCache = new Map();
+
 function generateStaticWheelSvg(flavorJson, mode) {
     const isMini = (mode === 'mini');
 
@@ -563,6 +565,16 @@ function generateStaticWheelSvg(flavorJson, mode) {
     const hasAnyScore = scores.some(s => s > 0);
 
     if (!hasAnyScore) return '';
+
+    // 미니 모드: scores 기반 캐시 (clipPath ID만 교체)
+    if (isMini) {
+        const cacheKey = scores.join(',');
+        const cached = _svgMiniCache.get(cacheKey);
+        if (cached) {
+            const newId = ++_wheelStaticGradId;
+            return cached.replace(/mhc\d+/g, 'mhc' + newId);
+        }
+    }
 
     const vb = isMini ? 480 : W;
     const cx = vb / 2, cy = vb / 2;
@@ -628,7 +640,9 @@ function generateStaticWheelSvg(flavorJson, mode) {
         });
 
         svg += `</svg>`;
-        return `<div class="static-wheel-mini">${svg}</div>`;
+        const miniResult = `<div class="static-wheel-mini">${svg}</div>`;
+        _svgMiniCache.set(scores.join(','), miniResult);
+        return miniResult;
     }
 
     // ── 풀 모드: 태그 링 + 6각형 레이더 안개 ──
