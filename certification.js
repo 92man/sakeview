@@ -172,10 +172,7 @@ async function loadApprovedCerts() {
     const CACHE_TTL = 5 * 60 * 1000;
     if (Date.now() - approvedCertsLastLoaded < CACHE_TTL && Object.keys(approvedCertsMap).length > 0) return;
     try {
-        const { data, error } = await supabaseClient
-            .from('certifications')
-            .select('user_id, cert_type')
-            .eq('status', 'approved');
+        const { data, error } = await supabaseClient.rpc('get_approved_certs');
         if (error) throw error;
         approvedCertsMap = {};
         (data || []).forEach(cert => {

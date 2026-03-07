@@ -60,34 +60,44 @@ async function loadCommunityFeed() {
 
     container.innerHTML = '<div class="loading">커뮤니티 노트를 불러오는 중</div>';
 
-    try {
-        const { data, error } = await supabaseClient
-            .from('tasting_notes')
-            .select('id, sake_name, personal_review, overall_rating, created_at, user_id, flavor_description, photo')
-            .order('created_at', { ascending: false })
-            .limit(10);
+    var maxRetries = 2;
+    for (var attempt = 0; attempt <= maxRetries; attempt++) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('tasting_notes')
+                .select('id, sake_name, personal_review, overall_rating, created_at, user_id, flavor_description, photo')
+                .order('created_at', { ascending: false })
+                .limit(10);
 
-        if (error) throw error;
-        _feedCache = { ts: Date.now(), data: data || [] };
-        // Transform API 프로브 (최초 1회)
-        if (_imageTransformEnabled === null && data && data.length > 0) {
-            var probePhoto = data.find(function(n) { return n.photo; });
-            if (probePhoto) probeImageTransform(probePhoto.photo);
-        }
-        _communityAllNotes = (data || []).slice();
-        // 먼저 렌더 (이름/뱃지 없이) → 백그라운드로 보강
-        _rerenderCommunityFeed(true);
-        const userIds = [...new Set(_communityAllNotes.map(n => n.user_id).filter(Boolean))];
-        Promise.all([loadApprovedCerts(), loadDisplayNames(userIds)]).then(function() {
+            if (error) throw error;
+            _feedCache = { ts: Date.now(), data: data || [] };
+            // Transform API 프로브 (최초 1회)
+            if (_imageTransformEnabled === null && data && data.length > 0) {
+                var probePhoto = data.find(function(n) { return n.photo; });
+                if (probePhoto) probeImageTransform(probePhoto.photo);
+            }
+            _communityAllNotes = (data || []).slice();
+            // 먼저 렌더 (이름/뱃지 없이) → 백그라운드로 보강
             _rerenderCommunityFeed(true);
-        });
-    } catch (e) {
-        console.error('Community feed error:', e);
-        container.innerHTML = `<div class="community-empty">
-            <div class="community-empty-icon">📡</div>
-            <p>커뮤니티 노트를 불러올 수 없습니다.</p>
-            <p style="font-size:0.8rem; margin-top:8px; color:#f43f5e;">${escapeHtml(e.message || JSON.stringify(e))}</p>
-        </div>`;
+            const userIds = [...new Set(_communityAllNotes.map(n => n.user_id).filter(Boolean))];
+            Promise.all([loadApprovedCerts(), loadDisplayNames(userIds)]).then(function() {
+                _rerenderCommunityFeed(true);
+            });
+            break;
+        } catch (e) {
+            var isTimeout = e.message && e.message.indexOf('timeout') !== -1;
+            if (isTimeout && attempt < maxRetries) {
+                console.warn('Community feed timeout, retrying (' + (attempt + 1) + '/' + maxRetries + ')...');
+                await new Promise(function(r) { setTimeout(r, 1000 * (attempt + 1)); });
+                continue;
+            }
+            console.error('Community feed error:', e);
+            container.innerHTML = `<div class="community-empty">
+                <div class="community-empty-icon">📡</div>
+                <p>커뮤니티 노트를 불러올 수 없습니다.</p>
+                <p style="font-size:0.8rem; margin-top:8px; color:#f43f5e;">${escapeHtml(e.message || JSON.stringify(e))}</p>
+            </div>`;
+        }
     }
 }
 
