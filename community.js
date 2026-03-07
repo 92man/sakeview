@@ -263,13 +263,9 @@ function displayCommunityFeed(notes, container, avgMap, showMore) {
         const reviewText = note.personal_review || '';
         const truncated = reviewText.length > 120 ? reviewText.substring(0, 120) + '...' : reviewText;
 
-        // 평점: 같은 사케 노트 여러 개면 평균, 1개면 그냥 표시
-        const sakeAvg = avgMap[note.sake_name];
+        // 평점: 각 노트의 개별 평점 표시
         let ratingDisplay = '';
-        if (sakeAvg && sakeAvg.count > 1) {
-            const avgStr = sakeAvg.avg % 1 === 0 ? sakeAvg.avg.toFixed(0) : sakeAvg.avg.toFixed(1);
-            ratingDisplay = `<span class="community-feed-card-rating">${avgStr}<span class="community-feed-card-rating-max">/100</span></span>`;
-        } else if (note.overall_rating) {
+        if (note.overall_rating) {
             ratingDisplay = `<span class="community-feed-card-rating">${note.overall_rating}<span class="community-feed-card-rating-max">/100</span></span>`;
         }
 

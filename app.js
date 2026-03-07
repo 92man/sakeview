@@ -823,17 +823,23 @@ function updateProfileUI() {
     var email = currentUser.email || '';
     var initial = (displayName || email).charAt(0).toUpperCase();
 
-    // 헤더 트리거 텍스트 (닉네임 또는 이메일)
+    // 헤더 트리거 텍스트 (닉네임 또는 이메일) + 인증 배지
     var triggerName = document.getElementById('profileTriggerName');
-    if (triggerName) triggerName.textContent = displayName || email;
+    if (triggerName) {
+        var certBadge = typeof getCertBadgeHtml === 'function' ? getCertBadgeHtml(currentUser.id) : '';
+        triggerName.innerHTML = escapeHtml(displayName || email) + certBadge;
+    }
 
     // 드롭다운 아바타
     var dropdownAvatar = document.getElementById('dropdownAvatarLetter');
     if (dropdownAvatar) dropdownAvatar.textContent = initial;
 
-    // 드롭다운 닉네임
+    // 드롭다운 닉네임 + 인증 배지
     var nameEl = document.getElementById('dropdownDisplayName');
-    if (nameEl) nameEl.textContent = displayName || email.split('@')[0];
+    if (nameEl) {
+        var certBadge2 = typeof getCertBadgeHtml === 'function' ? getCertBadgeHtml(currentUser.id) : '';
+        nameEl.innerHTML = escapeHtml(displayName || email.split('@')[0]) + certBadge2;
+    }
 
     // 드롭다운 이메일
     var emailEl = document.getElementById('dropdownEmail');

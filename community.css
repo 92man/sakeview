@@ -451,7 +451,37 @@ body.dark-mode .community-categories button {
 body.dark-mode .community-feed-card-rating {
     color: var(--accent-gold);
 }
+body.dark-mode .community-view-all-btn {
+    color: var(--text-secondary);
+}
 body.dark-mode .community-view-all-btn:hover {
+    background: rgba(255,255,255,0.05);
+}
+body.dark-mode .community-stat-label,
+body.dark-mode .community-stat-sub {
+    color: var(--text-muted, #94a3b8);
+}
+body.dark-mode .community-categories button span {
+    color: var(--text-muted);
+}
+body.dark-mode .community-feed-card-meta,
+body.dark-mode .community-feed-card-rating-max {
+    color: var(--text-muted);
+}
+body.dark-mode .community-search-icon {
+    color: var(--text-muted);
+}
+body.dark-mode .community-empty {
+    color: var(--text-muted);
+}
+body.dark-mode .community-tag {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-secondary);
+}
+body.dark-mode .community-search-item:hover {
+    background: var(--bg-tertiary);
+}
+body.dark-mode .community-feed-more-btn:hover {
     background: rgba(255,255,255,0.05);
 }
 
