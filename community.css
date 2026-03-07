@@ -485,6 +485,115 @@ body.dark-mode .community-feed-more-btn:hover {
     background: rgba(255,255,255,0.05);
 }
 
+/* ═══ 사케 랭킹 ═══ */
+.community-ranking {
+    margin-bottom: 28px;
+}
+.community-ranking-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+.community-ranking-header h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+.ranking-scroll {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+}
+.ranking-scroll::-webkit-scrollbar {
+    height: 4px;
+}
+.ranking-scroll::-webkit-scrollbar-thumb {
+    background: var(--border-card);
+    border-radius: 4px;
+}
+.ranking-card {
+    flex-shrink: 0;
+    width: 160px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-card);
+    border-radius: 14px;
+    padding: 16px 14px;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 6px;
+}
+.ranking-card:hover {
+    border-color: var(--accent-gold);
+    box-shadow: 0 4px 12px rgba(56, 57, 97, 0.06);
+}
+.ranking-medal {
+    font-size: 1.5rem;
+    line-height: 1;
+}
+.ranking-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--bg-muted, #f1f5f9);
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+.ranking-info {
+    min-width: 0;
+    width: 100%;
+}
+.ranking-name {
+    font-weight: 700;
+    font-size: 0.82rem;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.ranking-meta {
+    font-size: 0.7rem;
+    color: var(--text-muted, #94a3b8);
+    margin-top: 2px;
+}
+.ranking-score {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--accent-primary, #383961);
+    line-height: 1;
+}
+
+/* 랭킹 다크모드 */
+body.dark-mode .ranking-card {
+    background: var(--bg-tertiary);
+    border-color: var(--border-card);
+}
+body.dark-mode .ranking-card:hover {
+    border-color: var(--accent-gold);
+}
+body.dark-mode .ranking-num {
+    background: rgba(255,255,255,0.08);
+    color: var(--text-secondary);
+}
+body.dark-mode .ranking-score {
+    color: var(--accent-gold);
+}
+body.dark-mode .ranking-meta {
+    color: var(--text-muted);
+}
+
 /* ═══ Community Toolbar (정렬 + 뷰 전환) ═══ */
 .community-toolbar {
     display: flex;

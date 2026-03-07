@@ -46,6 +46,9 @@ async function loadCommunityFeed() {
     communityFilterLiked = false;
     _syncToolbarUI();
 
+    // 랭킹 로드 (비차단)
+    loadSakeRanking();
+
     // sessionStorage 캐시 확인
     if (_feedCache && Date.now() - _feedCache.ts < _feedCacheTTL) {
         _communityAllNotes = _feedCache.data.slice();
@@ -115,6 +118,65 @@ function buildAvgMap(notes) {
         avgMap[name] = { avg, count: ratings.length };
     });
     return avgMap;
+}
+
+// ── 사케 랭킹 ──
+
+var _rankingCache = null;
+var _rankingCacheTTL = 300000; // 5분
+
+async function loadSakeRanking() {
+    var container = document.getElementById('communityRanking');
+    if (!container) return;
+
+    if (_rankingCache && Date.now() - _rankingCache.ts < _rankingCacheTTL) {
+        renderSakeRanking(_rankingCache.data);
+        return;
+    }
+
+    try {
+        var { data, error } = await supabaseClient
+            .from('tasting_notes')
+            .select('sake_name, overall_rating');
+        if (error) throw error;
+
+        var avgMap = buildAvgMap(data || []);
+        var ranked = Object.entries(avgMap)
+            .map(function(e) { return { name: e[0], avg: e[1].avg, count: e[1].count }; })
+            .sort(function(a, b) { return b.avg - a.avg; })
+            .slice(0, 10);
+
+        _rankingCache = { ts: Date.now(), data: ranked };
+        renderSakeRanking(ranked);
+    } catch (e) {
+        console.error('Sake ranking error:', e);
+    }
+}
+
+function renderSakeRanking(ranked) {
+    var container = document.getElementById('communityRanking');
+    if (!container || !ranked || ranked.length === 0) return;
+
+    var medals = ['🥇', '🥈', '🥉'];
+    var cards = ranked.map(function(item, i) {
+        var medal = i < 3 ? medals[i] : '<span class="ranking-num">' + (i + 1) + '</span>';
+        var avgStr = item.avg % 1 === 0 ? item.avg.toFixed(0) : item.avg.toFixed(1);
+        return '<div class="ranking-card" onclick="loadNotesBySakeName(\'' + escapeAttr(item.name) + '\')">'
+            + '<div class="ranking-medal">' + medal + '</div>'
+            + '<div class="ranking-info">'
+            + '<div class="ranking-name">' + escapeHtml(item.name) + '</div>'
+            + '<div class="ranking-meta">' + item.count + '건 리뷰</div>'
+            + '</div>'
+            + '<div class="ranking-score">' + avgStr + '</div>'
+            + '</div>';
+    }).join('');
+
+    container.innerHTML = '<div class="community-ranking">'
+        + '<div class="community-ranking-header">'
+        + '<h3>사케 랭킹</h3>'
+        + '</div>'
+        + '<div class="ranking-scroll">' + cards + '</div>'
+        + '</div>';
 }
 
 // ── 정렬 / 뷰 전환 ──
