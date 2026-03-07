@@ -158,11 +158,12 @@ function renderSakeRanking(ranked) {
     if (!container || !ranked || ranked.length === 0) return;
 
     var medals = ['🥇', '🥈', '🥉'];
-    var cards = ranked.map(function(item, i) {
-        var medal = i < 3 ? medals[i] : '<span class="ranking-num">' + (i + 1) + '</span>';
+    var rows = ranked.map(function(item, i) {
+        var medal = i < 3 ? '<span class="ranking-medal">' + medals[i] + '</span>'
+            : '<span class="ranking-num">' + (i + 1) + '</span>';
         var avgStr = item.avg % 1 === 0 ? item.avg.toFixed(0) : item.avg.toFixed(1);
-        return '<div class="ranking-card" onclick="loadNotesBySakeName(\'' + escapeAttr(item.name) + '\')">'
-            + '<div class="ranking-medal">' + medal + '</div>'
+        return '<div class="ranking-row" onclick="loadNotesBySakeName(\'' + escapeAttr(item.name) + '\')">'
+            + '<div class="ranking-rank">' + medal + '</div>'
             + '<div class="ranking-info">'
             + '<div class="ranking-name">' + escapeHtml(item.name) + '</div>'
             + '<div class="ranking-meta">' + item.count + '건 리뷰</div>'
@@ -175,7 +176,7 @@ function renderSakeRanking(ranked) {
         + '<div class="community-ranking-header">'
         + '<h3>사케 랭킹</h3>'
         + '</div>'
-        + '<div class="ranking-scroll">' + cards + '</div>'
+        + '<div class="ranking-list">' + rows + '</div>'
         + '</div>';
 }
 

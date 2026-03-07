@@ -501,87 +501,84 @@ body.dark-mode .community-feed-more-btn:hover {
     color: var(--text-primary);
     margin: 0;
 }
-.ranking-scroll {
-    display: flex;
-    gap: 10px;
-    overflow-x: auto;
-    padding-bottom: 8px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-}
-.ranking-scroll::-webkit-scrollbar {
-    height: 4px;
-}
-.ranking-scroll::-webkit-scrollbar-thumb {
-    background: var(--border-card);
-    border-radius: 4px;
-}
-.ranking-card {
-    flex-shrink: 0;
-    width: 160px;
+.ranking-list {
     background: var(--card-bg);
     border: 1px solid var(--border-card);
-    border-radius: 14px;
-    padding: 16px 14px;
-    cursor: pointer;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 6px;
+    border-radius: 12px;
+    overflow: hidden;
 }
-.ranking-card:hover {
-    border-color: var(--accent-gold);
-    box-shadow: 0 4px 12px rgba(56, 57, 97, 0.06);
+.ranking-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-light, #f1f5f9);
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.ranking-row:last-child {
+    border-bottom: none;
+}
+.ranking-row:hover {
+    background: var(--bg-muted, #f8fafc);
+}
+.ranking-rank {
+    flex-shrink: 0;
+    width: 32px;
+    text-align: center;
 }
 .ranking-medal {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     line-height: 1;
 }
 .ranking-num {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
     border-radius: 50%;
     background: var(--bg-muted, #f1f5f9);
     color: var(--text-secondary);
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     font-weight: 700;
 }
 .ranking-info {
+    flex: 1;
     min-width: 0;
-    width: 100%;
 }
 .ranking-name {
     font-weight: 700;
-    font-size: 0.82rem;
+    font-size: 0.9rem;
     color: var(--text-primary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 .ranking-meta {
-    font-size: 0.7rem;
+    font-size: 0.72rem;
     color: var(--text-muted, #94a3b8);
-    margin-top: 2px;
+    margin-top: 1px;
 }
 .ranking-score {
-    font-size: 1.6rem;
+    flex-shrink: 0;
+    font-size: 1.1rem;
     font-weight: 800;
     color: var(--accent-primary, #383961);
-    line-height: 1;
+    min-width: 36px;
+    text-align: right;
 }
 
 /* 랭킹 다크모드 */
-body.dark-mode .ranking-card {
+body.dark-mode .ranking-list {
     background: var(--bg-tertiary);
     border-color: var(--border-card);
 }
-body.dark-mode .ranking-card:hover {
-    border-color: var(--accent-gold);
+body.dark-mode .ranking-row {
+    border-color: var(--border-card);
+}
+body.dark-mode .ranking-row:hover {
+    background: rgba(255,255,255,0.03);
 }
 body.dark-mode .ranking-num {
     background: rgba(255,255,255,0.08);
