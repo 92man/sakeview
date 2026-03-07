@@ -614,11 +614,11 @@ body.dark-mode .community-view-all-btn:hover {
         order: 10;
         width: 56px;
         height: 56px;
-        margin-left: 52px;
+        margin-left: auto;
     }
     .community-feed-card-header .community-feed-card-rating {
         order: 11;
-        margin-left: auto;
+        margin-left: 8px;
     }
     /* compact: 태그/작성자 숨기고 간결하게 */
     .community-compact-tags {
