@@ -153,6 +153,8 @@ async function loadSakeRanking() {
     }
 }
 
+var _rankingExpanded = false;
+
 function renderSakeRanking(ranked) {
     var container = document.getElementById('communityRanking');
     if (!container || !ranked || ranked.length === 0) return;
@@ -162,7 +164,8 @@ function renderSakeRanking(ranked) {
         var medal = i < 3 ? '<span class="ranking-medal">' + medals[i] + '</span>'
             : '<span class="ranking-num">' + (i + 1) + '</span>';
         var avgStr = item.avg % 1 === 0 ? item.avg.toFixed(0) : item.avg.toFixed(1);
-        return '<div class="ranking-row" onclick="loadNotesBySakeName(\'' + escapeAttr(item.name) + '\')">'
+        var hiddenClass = (!_rankingExpanded && i >= 3) ? ' ranking-row-hidden' : '';
+        return '<div class="ranking-row' + hiddenClass + '" onclick="loadNotesBySakeName(\'' + escapeAttr(item.name) + '\')">'
             + '<div class="ranking-rank">' + medal + '</div>'
             + '<div class="ranking-info">'
             + '<div class="ranking-name">' + escapeHtml(item.name) + '</div>'
@@ -172,12 +175,32 @@ function renderSakeRanking(ranked) {
             + '</div>';
     }).join('');
 
+    var toggleBtn = ranked.length > 3
+        ? '<button class="ranking-toggle-btn" onclick="toggleRankingExpand()">'
+            + (_rankingExpanded ? '접기' : '전체 랭킹 보기 (' + ranked.length + ')') + '</button>'
+        : '';
+
     container.innerHTML = '<div class="community-ranking">'
         + '<div class="community-ranking-header">'
         + '<h3>사케 랭킹</h3>'
         + '</div>'
         + '<div class="ranking-list">' + rows + '</div>'
+        + toggleBtn
         + '</div>';
+}
+
+function toggleRankingExpand() {
+    _rankingExpanded = !_rankingExpanded;
+    if (_rankingCache && _rankingCache.data) {
+        renderSakeRanking(_rankingCache.data);
+    }
+}
+
+var _feedExpanded = false;
+
+function toggleFeedExpand() {
+    _feedExpanded = !_feedExpanded;
+    _rerenderCommunityFeed(_communityAllNotes.length >= 10);
 }
 
 // ── 정렬 / 뷰 전환 ──
@@ -262,7 +285,8 @@ function _displayCompactFeed(notes, container, avgMap, showMore) {
         }
         var wheelHtml = '<div class="community-compact-wheel" id="' + cwId + '"></div>';
 
-        return '<div class="community-compact-item" onclick="showCommunityDetail(\'' + escapeAttr(note.id) + '\')">'
+        var hiddenClass = (!_feedExpanded && idx >= 3) ? ' community-compact-item-hidden' : '';
+        return '<div class="community-compact-item' + hiddenClass + '" onclick="showCommunityDetail(\'' + escapeAttr(note.id) + '\')">'
             + '<span class="community-compact-date">' + escapeHtml(dateStr) + '</span>'
             + '<span class="community-compact-name">' + escapeHtml(note.sake_name || '이름 없음') + getCertBadgeHtml(uid) + '</span>'
             + '<span class="community-compact-author">' + escapeHtml(userLabel) + '</span>'
@@ -273,8 +297,13 @@ function _displayCompactFeed(notes, container, avgMap, showMore) {
     });
 
     var html = '<div class="community-compact-list">' + rows.join('') + '</div>';
-    if (showMore) {
-        html += '<button class="community-feed-more-btn" onclick="loadMoreCommunityFeed(' + _communityAllNotes.length + ')">더보기</button>';
+    if (!_feedExpanded && notes.length > 3) {
+        html += '<button class="community-feed-more-btn" onclick="toggleFeedExpand()">전체 노트 보기 (' + notes.length + ')</button>';
+    } else if (_feedExpanded && notes.length > 3) {
+        if (showMore) {
+            html += '<button class="community-feed-more-btn" onclick="loadMoreCommunityFeed(' + _communityAllNotes.length + ')">더보기</button>';
+        }
+        html += '<button class="community-feed-more-btn" onclick="toggleFeedExpand()">접기</button>';
     }
     container.innerHTML = html;
 
@@ -344,7 +373,8 @@ function displayCommunityFeed(notes, container, avgMap, showMore) {
             wheelJobs.push({ idx: idx, id: wheelId, flavor: note.flavor_description });
         }
 
-        return `<div class="community-feed-card" onclick="showCommunityDetail('${escapeAttr(note.id)}')">
+        var hiddenClass = (!_feedExpanded && idx >= 3) ? ' community-feed-card-hidden' : '';
+        return `<div class="community-feed-card${hiddenClass}" onclick="showCommunityDetail('${escapeAttr(note.id)}')">
             <div class="community-feed-card-header">
                 ${thumbHtml}
                 <div class="community-feed-card-info">
@@ -360,8 +390,13 @@ function displayCommunityFeed(notes, container, avgMap, showMore) {
     });
 
     let html = cards.join('');
-    if (showMore && notes.length >= 10) {
-        html += `<button class="community-feed-more-btn" onclick="loadMoreCommunityFeed(${notes.length})">더보기</button>`;
+    if (!_feedExpanded && notes.length > 3) {
+        html += `<button class="community-feed-more-btn" onclick="toggleFeedExpand()">전체 노트 보기 (${notes.length})</button>`;
+    } else if (_feedExpanded && notes.length > 3) {
+        if (showMore && notes.length >= 10) {
+            html += `<button class="community-feed-more-btn" onclick="loadMoreCommunityFeed(${notes.length})">더보기</button>`;
+        }
+        html += `<button class="community-feed-more-btn" onclick="toggleFeedExpand()">접기</button>`;
     }
     container.innerHTML = html;
 

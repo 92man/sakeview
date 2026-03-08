@@ -569,6 +569,30 @@ body.dark-mode .community-feed-more-btn:hover {
     text-align: right;
 }
 
+.ranking-row-hidden {
+    display: none;
+}
+.ranking-toggle-btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    background: transparent;
+    border: 1px solid var(--border-light, #e2e8f0);
+    border-radius: 12px;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.ranking-toggle-btn:hover {
+    background: var(--bg-muted, #f8fafc);
+}
+.community-compact-item-hidden {
+    display: none;
+}
+
 /* 랭킹 다크모드 */
 body.dark-mode .ranking-list {
     background: var(--bg-tertiary);
@@ -589,6 +613,13 @@ body.dark-mode .ranking-score {
 }
 body.dark-mode .ranking-meta {
     color: var(--text-muted);
+}
+body.dark-mode .ranking-toggle-btn {
+    border-color: var(--border-card);
+    color: var(--text-secondary);
+}
+body.dark-mode .ranking-toggle-btn:hover {
+    background: rgba(255,255,255,0.03);
 }
 
 /* ═══ Community Toolbar (정렬 + 뷰 전환) ═══ */
