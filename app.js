@@ -471,6 +471,10 @@ function showMainApp() {
         var profileWrapper = document.getElementById('profileMenuWrapper');
         if (profileWrapper) profileWrapper.style.display = 'block';
         updateProfileUI();
+        // 인증 배지 로드 후 헤더 닉네임에 배지 반영
+        if (typeof loadApprovedCerts === 'function') {
+            loadApprovedCerts().then(function() { updateProfileUI(); });
+        }
         loadNotes();
         updateSidebar();
         loadPendingSakes();
