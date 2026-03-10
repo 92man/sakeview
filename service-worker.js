@@ -1,25 +1,25 @@
-const CACHE_VERSION = 'sakeview-v90';
+const CACHE_VERSION = 'sakeview-v91';
 const IMAGE_CACHE = 'sakeview-images-v1';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
-  '/styles.css?v=58',
+  '/styles.css?v=59',
   '/sake-selector.css?v=2',
-  '/community.css?v=10',
+  '/community.css?v=11',
   '/certification.css?v=2',
   '/flavor-wheel.css?v=2',
-  '/chat.css?v=1',
+  '/chat.css?v=2',
   '/age-consent.js?v=2',
-  '/utils.js?v=3',
+  '/utils.js?v=4',
   '/featured.js?v=2',
   '/sake-selector.js?v=1',
-  '/certification.js?v=3',
-  '/app.js?v=47',
+  '/certification.js?v=4',
+  '/app.js?v=48',
   '/community.js?v=8',
   '/flavor_wheel.js?v=29',
   '/policy_pages.js?v=12',
   '/sake_database.js?v=13',
-  '/sake_chat.js?v=5',
+  '/sake_chat.js?v=6',
   '/tasting_dictionary.js?v=14',
   '/icon.svg',
   '/manifest.json'
