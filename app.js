@@ -713,9 +713,22 @@ document.addEventListener('input', function(e) {
     _nickCheckTimer = setTimeout(function() { checkNickname(name); }, 400);
 });
 
+var _reservedNicknames = ['사케뷰', 'sakeview', 'sake view', 'sake_view'];
+function isReservedNickname(name) {
+    var lower = name.toLowerCase().replace(/[\s_\-]/g, '');
+    return _reservedNicknames.some(function(w) {
+        return lower.indexOf(w.toLowerCase().replace(/[\s_\-]/g, '')) !== -1;
+    });
+}
+
 async function checkNickname(name) {
     var statusEl = document.getElementById('nickStatus');
     if (!currentUser || !name) return;
+    if (isReservedNickname(name)) {
+        statusEl.textContent = '사용할 수 없는 닉네임입니다';
+        statusEl.className = 'profile-nick-status error';
+        return;
+    }
     try {
         var { data, error } = await supabaseClient
             .from('profiles')
@@ -752,6 +765,10 @@ async function saveProfile() {
     // 닉네임 검증
     if (displayName.length > 20) {
         alert('닉네임은 20자 이하로 입력해주세요.');
+        return;
+    }
+    if (displayName && isReservedNickname(displayName)) {
+        alert('사용할 수 없는 닉네임입니다.');
         return;
     }
 

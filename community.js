@@ -288,8 +288,8 @@ function _displayCompactFeed(notes, container, avgMap, showMore) {
         var hiddenClass = (!_feedExpanded && idx >= 3) ? ' community-compact-item-hidden' : '';
         return '<div class="community-compact-item' + hiddenClass + '" onclick="showCommunityDetail(\'' + escapeAttr(note.id) + '\')">'
             + '<span class="community-compact-date">' + escapeHtml(dateStr) + '</span>'
-            + '<span class="community-compact-name">' + escapeHtml(note.sake_name || '이름 없음') + getCertBadgeHtml(uid) + '</span>'
-            + '<span class="community-compact-author">' + escapeHtml(userLabel) + '</span>'
+            + '<span class="community-compact-name">' + escapeHtml(note.sake_name || '이름 없음') + '</span>'
+            + '<span class="community-compact-author">' + getCertBadgeHtml(uid) + escapeHtml(userLabel) + '</span>'
             + '<span class="community-compact-tags">' + tagsHtml + '</span>'
             + wheelHtml
             + ratingHtml
@@ -378,8 +378,8 @@ function displayCommunityFeed(notes, container, avgMap, showMore) {
             <div class="community-feed-card-header">
                 ${thumbHtml}
                 <div class="community-feed-card-info">
-                    <div class="community-feed-card-name">${escapeHtml(note.sake_name || '이름 없음')}${getCertBadgeHtml(uid)}</div>
-                    <div class="community-feed-card-meta">Shared by <span class="community-feed-author" data-tooltip="${escapeAttr(userLabel)} 님의 노트만 보기" onclick="event.stopPropagation(); loadNotesByUser('${escapeAttr(uid)}')">${escapeHtml(userLabel)}</span> · ${timeAgo}</div>
+                    <div class="community-feed-card-name">${escapeHtml(note.sake_name || '이름 없음')}</div>
+                    <div class="community-feed-card-meta">Shared by <span class="community-feed-author" data-tooltip="${escapeAttr(userLabel)} 님의 노트만 보기" onclick="event.stopPropagation(); loadNotesByUser('${escapeAttr(uid)}')">${getCertBadgeHtml(uid)}${escapeHtml(userLabel)}</span> · ${timeAgo}</div>
                 </div>
                 ${ratingDisplay}
                 <div id="${wheelId}"></div>
@@ -608,7 +608,7 @@ async function showCommunityDetail(id) {
         detailContent.innerHTML = `
             <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
                 ${detailThumbHtml}
-                <span style="font-size:0.85rem;color:#64748b;">Shared by <span class="community-feed-author" data-tooltip="${escapeAttr(userLabel)} 님의 노트만 보기" onclick="loadNotesByUser('${escapeAttr(uid)}')">${escapeHtml(userLabel)}</span>${getCertBadgeHtml(uid)}</span>
+                <span style="font-size:0.85rem;color:#64748b;">Shared by <span class="community-feed-author" data-tooltip="${escapeAttr(userLabel)} 님의 노트만 보기" onclick="loadNotesByUser('${escapeAttr(uid)}')">${getCertBadgeHtml(uid)}${escapeHtml(userLabel)}</span></span>
             </div>
             ${noteDetailHtml}
         `;
