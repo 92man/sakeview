@@ -848,7 +848,7 @@ function updateProfileUI() {
     var triggerName = document.getElementById('profileTriggerName');
     if (triggerName) {
         var certBadge = typeof getCertBadgeHtml === 'function' ? getCertBadgeHtml(currentUser.id) : '';
-        triggerName.innerHTML = escapeHtml(displayName || email) + certBadge;
+        triggerName.innerHTML = certBadge + escapeHtml(displayName || email);
     }
 
     // 드롭다운 아바타
@@ -859,7 +859,7 @@ function updateProfileUI() {
     var nameEl = document.getElementById('dropdownDisplayName');
     if (nameEl) {
         var certBadge2 = typeof getCertBadgeHtml === 'function' ? getCertBadgeHtml(currentUser.id) : '';
-        nameEl.innerHTML = escapeHtml(displayName || email.split('@')[0]) + certBadge2;
+        nameEl.innerHTML = certBadge2 + escapeHtml(displayName || email.split('@')[0]);
     }
 
     // 드롭다운 이메일
