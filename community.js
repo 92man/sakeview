@@ -136,15 +136,12 @@ async function loadSakeRanking() {
 
     try {
         var { data, error } = await supabaseClient
-            .from('tasting_notes')
-            .select('sake_name, overall_rating');
+            .rpc('get_sake_ranking', { limit_count: 10 });
         if (error) throw error;
 
-        var avgMap = buildAvgMap(data || []);
-        var ranked = Object.entries(avgMap)
-            .map(function(e) { return { name: e[0], avg: e[1].avg, count: e[1].count }; })
-            .sort(function(a, b) { return b.avg - a.avg; })
-            .slice(0, 10);
+        var ranked = (data || []).map(function(r) {
+            return { name: r.name, avg: parseFloat(r.avg_rating), count: parseInt(r.review_count) };
+        });
 
         _rankingCache = { ts: Date.now(), data: ranked };
         renderSakeRanking(ranked);
