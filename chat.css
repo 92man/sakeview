@@ -121,8 +121,9 @@
 .sake-chat-header-actions button:hover {
     background: rgba(255, 255, 255, 0.2);
 }
-.sake-chat-header-actions .material-symbols-outlined {
-    font-size: 20px;
+.sake-chat-header-actions .lucide {
+    width: 20px;
+    height: 20px;
 }
 
 /* --- Message Body --- */
@@ -298,8 +299,9 @@ body.dark-mode .sake-chat-input-wrap:focus-within {
 .sake-chat-send-btn.sake-chat-stop-mode {
     background: #e05050;
 }
-.sake-chat-send-btn .material-symbols-outlined {
-    font-size: 20px;
+.sake-chat-send-btn .lucide {
+    width: 20px;
+    height: 20px;
 }
 .sake-chat-disclaimer {
     text-align: center;

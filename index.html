@@ -93,13 +93,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Serif+KR:wght@400;500;700;900&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <link rel="stylesheet" href="styles.css?v=58">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <link rel="stylesheet" href="styles.css?v=59">
     <link rel="stylesheet" href="sake-selector.css?v=2">
-    <link rel="stylesheet" href="community.css?v=10">
+    <link rel="stylesheet" href="community.css?v=11">
     <link rel="stylesheet" href="certification.css?v=2">
     <link rel="stylesheet" href="flavor-wheel.css?v=2">
-    <link rel="stylesheet" href="chat.css?v=1">
+    <link rel="stylesheet" href="chat.css?v=2">
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1907306190071217"
          crossorigin="anonymous"></script>
@@ -218,7 +218,7 @@
                             </select>
                             <div class="cert-photo-upload" onclick="document.getElementById('signupCertPhoto').click()">
                                 <input type="file" id="signupCertPhoto" accept="image/*" onchange="handleCertPhotoUpload(event, 'signupCertPreview')" style="display:none;">
-                                <div id="signupCertUploadText"><span class="material-symbols-outlined" style="font-size:24px;">upload_file</span><br>자격증 사진 업로드</div>
+                                <div id="signupCertUploadText"><i data-lucide="upload" style="width:24px;height:24px;"></i><br>자격증 사진 업로드</div>
                                 <div id="signupCertPreview" class="cert-photo-preview"></div>
                             </div>
                         </div>
@@ -273,17 +273,17 @@
                     </div>
                     <div class="header-right">
                         <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="테마 전환">
-                            <span class="material-symbols-outlined" id="themeIcon" style="font-size:20px;">light_mode</span>
+                            <i data-lucide="sun" id="themeIcon" style="width:20px;height:20px;"></i>
                         </button>
                         <div class="user-info" id="userInfoSection">
                             <button class="login-btn header-avatar" id="loginBtn" onclick="showAuthContainer()">
-                                <span class="material-symbols-outlined" style="font-size:18px;">person</span>
+                                <i data-lucide="user" style="width:18px;height:18px;"></i>
                             </button>
                             <div class="profile-menu-wrapper" id="profileMenuWrapper" style="display:none;">
                                 <button class="profile-trigger" id="profileTrigger"
                                         onclick="toggleProfileDropdown()" aria-haspopup="true" aria-expanded="false">
                                     <span class="profile-trigger-name" id="profileTriggerName">사용자</span>
-                                    <span class="material-symbols-outlined profile-trigger-icon">expand_more</span>
+                                    <i data-lucide="chevron-down" class="profile-trigger-icon" style="width:16px;height:16px;"></i>
                                 </button>
                                 <div class="profile-dropdown" id="profileDropdown" role="menu" aria-label="사용자 메뉴">
                                     <div class="profile-dropdown-header">
@@ -334,18 +334,18 @@
                                     </div>
                                     <div class="profile-dropdown-section" style="padding-top:4px;">
                                         <button class="profile-save-btn" id="profileSaveBtn" onclick="saveProfile()">
-                                            <span class="material-symbols-outlined" style="font-size:16px;">save</span>
+                                            <i data-lucide="save" style="width:16px;height:16px;"></i>
                                             저장
                                         </button>
                                     </div>
                                     <div class="profile-dropdown-divider"></div>
                                     <button class="profile-dropdown-item" onclick="openCertModal(); closeProfileDropdown();" role="menuitem">
-                                        <span class="material-symbols-outlined" style="font-size:18px;">verified</span>
+                                        <i data-lucide="badge-check" style="width:18px;height:18px;"></i>
                                         자격증 인증
                                     </button>
                                     <div class="profile-dropdown-divider"></div>
                                     <button class="profile-dropdown-item profile-dropdown-logout" onclick="handleLogout(); closeProfileDropdown();" role="menuitem">
-                                        <span class="material-symbols-outlined" style="font-size:18px;">logout</span>
+                                        <i data-lucide="log-out" style="width:18px;height:18px;"></i>
                                         로그아웃
                                     </button>
                                 </div>
@@ -428,7 +428,7 @@
                 <!-- 새 노트 작성 -->
                 <div id="newView" class="view" role="tabpanel" aria-labelledby="tab-new">
                     <div class="content-card-header">
-                        <span class="material-symbols-outlined">add_circle</span>
+                        <i data-lucide="plus-circle"></i>
                         새 노트 작성
                     </div>
                     <form id="tastingForm" onsubmit="saveTastingNote(event)">
@@ -483,7 +483,7 @@
                                     <div class="photo-upload-label">앞면 (병)</div>
                                     <div class="photo-upload" onclick="document.getElementById('photoInput').click()">
                                         <input type="file" id="photoInput" accept="image/*" onchange="handlePhotoUpload(event)">
-                                        <div id="uploadText"><span class="material-symbols-outlined upload-icon">add_a_photo</span>앞면</div>
+                                        <div id="uploadText"><i data-lucide="camera" class="upload-icon"></i>앞면</div>
                                         <div id="photoPreview" class="photo-preview"></div>
                                     </div>
                                 </div>
@@ -491,7 +491,7 @@
                                     <div class="photo-upload-label">뒷면 (라벨)</div>
                                     <div class="photo-upload" onclick="document.getElementById('photoBackInput').click()">
                                         <input type="file" id="photoBackInput" accept="image/*" onchange="handlePhotoBackUpload(event)">
-                                        <div id="uploadBackText"><span class="material-symbols-outlined upload-icon">add_a_photo</span>뒷면</div>
+                                        <div id="uploadBackText"><i data-lucide="camera" class="upload-icon"></i>뒷면</div>
                                         <div id="photoBackPreview" class="photo-preview"></div>
                                     </div>
                                 </div>
@@ -572,20 +572,20 @@
                 <div id="listView" class="view" role="tabpanel" aria-labelledby="tab-list">
                     <div class="list-view-header">
                         <div class="content-card-header content-card-header-flush">
-                            <span class="material-symbols-outlined">menu_book</span>
+                            <i data-lucide="book-open"></i>
                             나의 노트
                             <span id="pendingBadge" class="pending-badge" style="display:none;">0</span>
                         </div>
                         <button class="list-view-home-btn" onclick="switchTab('new')">
-                            <span class="material-symbols-outlined" style="font-size:18px;">home</span> 홈
+                            <i data-lucide="home" style="width:18px;height:18px;"></i> 홈
                         </button>
                     </div>
                     <!-- 라벨 검토 대기 섹션 -->
                     <div id="pendingSection" class="pending-section" style="display:none;">
                         <div class="pending-section-header" onclick="document.getElementById('pendingList').classList.toggle('collapsed')">
-                            <span class="material-symbols-outlined" style="font-size:18px;">label</span>
+                            <i data-lucide="tag" style="width:18px;height:18px;"></i>
                             라벨 검토 대기
-                            <span class="material-symbols-outlined pending-toggle">expand_more</span>
+                            <i data-lucide="chevron-down" class="pending-toggle" style="width:18px;height:18px;"></i>
                         </div>
                         <div id="pendingList" class="pending-list"></div>
                     </div>
@@ -597,10 +597,10 @@
                         </div>
                         <div class="notes-view-toggle">
                             <button class="notes-view-btn active" data-view="card" title="카드 뷰">
-                                <span class="material-symbols-outlined">grid_view</span>
+                                <i data-lucide="grid-2x2"></i>
                             </button>
                             <button class="notes-view-btn" data-view="compact" title="리스트 뷰">
-                                <span class="material-symbols-outlined">view_list</span>
+                                <i data-lucide="list"></i>
                             </button>
                         </div>
                     </div>
@@ -635,10 +635,10 @@
                             </div>
                             <div class="community-view-toggle">
                                 <button class="community-view-btn active" data-view="card" title="카드 뷰">
-                                    <span class="material-symbols-outlined">grid_view</span>
+                                    <i data-lucide="grid-2x2"></i>
                                 </button>
                                 <button class="community-view-btn" data-view="compact" title="리스트 뷰">
-                                    <span class="material-symbols-outlined">view_list</span>
+                                    <i data-lucide="list"></i>
                                 </button>
                             </div>
                         </div>
@@ -659,7 +659,7 @@
             <div class="dashboard-sidebar">
                 <h3 class="community-sidebar-title">Search Database</h3>
                 <div class="community-search-wrap">
-                    <span class="material-symbols-outlined community-search-icon">search</span>
+                    <i data-lucide="search" class="community-search-icon"></i>
                     <input type="text" id="communitySearchInput" placeholder="사케 이름으로 검색..." oninput="searchCommunityNotes(this.value)">
                 </div>
                 <div id="communitySearchResults"></div>
@@ -727,14 +727,14 @@
     <script defer src="flavor_wheel.js?v=29"></script>
     <script defer src="policy_pages.js?v=12"></script>
     <script defer src="age-consent.js?v=2"></script>
-    <script defer src="utils.js?v=3"></script>
+    <script defer src="utils.js?v=4"></script>
     <script defer src="featured.js?v=2"></script>
     <script defer src="sake-selector.js?v=1"></script>
     <script defer src="ocr.js?v=1"></script>
     <script defer src="community.js?v=8"></script>
-    <script defer src="certification.js?v=3"></script>
-    <script defer src="app.js?v=47"></script>
-    <script defer src="sake_chat.js?v=5"></script>
+    <script defer src="certification.js?v=4"></script>
+    <script defer src="app.js?v=48"></script>
+    <script defer src="sake_chat.js?v=6"></script>
 
 
     <!-- OCR Modal -->
@@ -799,6 +799,16 @@
         }
     });
     </script>
+    <script>document.addEventListener('DOMContentLoaded', function() {
+    if (window.lucide) {
+        lucide.createIcons();
+        // 다크모드일 때 테마 아이콘을 moon으로 교체
+        if (document.body.classList.contains('dark-mode')) {
+            var btn = document.getElementById('themeToggle');
+            if (btn) { btn.innerHTML = '<i data-lucide="moon" id="themeIcon" style="width:20px;height:20px;"></i>'; lucide.createIcons({nodes: [btn]}); }
+        }
+    }
+});</script>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"c268f029452b4c718cfc112352f6ff95","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>

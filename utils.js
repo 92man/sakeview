@@ -160,21 +160,20 @@ function getTimeAgo(dateStr) {
 
 // 테마 설정
 function loadTheme() {
-    const savedTheme = localStorage.getItem('sakeAppTheme');
-    const themeIcon = document.getElementById('themeIcon');
+    var savedTheme = localStorage.getItem('sakeAppTheme');
     if (savedTheme === 'dark') {
         document.body.classList.add('dark-mode');
-        if (themeIcon) themeIcon.textContent = 'dark_mode';
-    } else {
-        if (themeIcon) themeIcon.textContent = 'light_mode';
     }
 }
 
 function toggleTheme() {
     document.body.classList.toggle('dark-mode');
-    const isDark = document.body.classList.contains('dark-mode');
-    const themeIcon = document.getElementById('themeIcon');
-    if (themeIcon) themeIcon.textContent = isDark ? 'dark_mode' : 'light_mode';
+    var isDark = document.body.classList.contains('dark-mode');
+    var btn = document.getElementById('themeToggle');
+    if (btn) {
+        btn.innerHTML = '<i data-lucide="' + (isDark ? 'moon' : 'sun') + '" id="themeIcon" style="width:20px;height:20px;"></i>';
+        if (window.lucide) lucide.createIcons({nodes: [btn]});
+    }
     localStorage.setItem('sakeAppTheme', isDark ? 'dark' : 'light');
 }
 

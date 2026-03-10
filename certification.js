@@ -75,6 +75,7 @@ function renderCertModalContent(certs) {
     html += '<hr style="border:none;border-top:1px solid var(--border-card);margin:20px 0;">';
     html += renderCertTypeSection('sommelier', '사케 소믈리에', sommelier);
     body.innerHTML = html;
+    if (window.lucide) lucide.createIcons({nodes: [body]});
 }
 
 function renderCertTypeSection(certType, label, certRecord) {
@@ -88,7 +89,7 @@ function renderCertTypeSection(certType, label, certRecord) {
                 <div class="cert-photo-upload" onclick="document.getElementById('certPhotoInput_${certType}').click()">
                     <input type="file" id="certPhotoInput_${certType}" accept="image/*"
                            onchange="handleCertPhotoUpload(event, 'certPreview_${certType}')" style="display:none;">
-                    <div id="certUploadText_${certType}"><span class="material-symbols-outlined" style="font-size:24px;">upload_file</span><br>자격증 사진 업로드</div>
+                    <div id="certUploadText_${certType}"><i data-lucide="upload" style="width:24px;height:24px;"></i><br>자격증 사진 업로드</div>
                     <div id="certPreview_${certType}" class="cert-photo-preview"></div>
                 </div>
                 <button class="auth-btn" style="margin-top:12px;width:100%;" onclick="submitCertApplication('${certType}')">
@@ -124,7 +125,7 @@ function renderCertTypeSection(certType, label, certRecord) {
                 <div class="cert-photo-upload" onclick="document.getElementById('certPhotoInput_${certType}').click()">
                     <input type="file" id="certPhotoInput_${certType}" accept="image/*"
                            onchange="handleCertPhotoUpload(event, 'certPreview_${certType}')" style="display:none;">
-                    <div id="certUploadText_${certType}"><span class="material-symbols-outlined" style="font-size:24px;">upload_file</span><br>자격증 사진 다시 업로드</div>
+                    <div id="certUploadText_${certType}"><i data-lucide="upload" style="width:24px;height:24px;"></i><br>자격증 사진 다시 업로드</div>
                     <div id="certPreview_${certType}" class="cert-photo-preview"></div>
                 </div>
                 <button class="auth-btn" style="margin-top:12px;width:100%;" onclick="submitCertApplication('${certType}')">

@@ -65,10 +65,10 @@
                 '</div>' +
                 '<div class="sake-chat-header-actions">' +
                     '<button class="sake-chat-clear-btn" title="\uB300\uD654 \uCD08\uAE30\uD654">' +
-                        '<span class="material-symbols-outlined">delete_sweep</span>' +
+                        '<i data-lucide="trash-2"></i>' +
                     '</button>' +
                     '<button class="sake-chat-close-btn" title="\uB2EB\uAE30">' +
-                        '<span class="material-symbols-outlined">close</span>' +
+                        '<i data-lucide="x"></i>' +
                     '</button>' +
                 '</div>' +
             '</div>' +
@@ -84,12 +84,13 @@
                 '<div class="sake-chat-input-wrap">' +
                     '<textarea class="sake-chat-input" id="sakeChatInput" placeholder="\uC0AC\uCF00\uC5D0 \uB300\uD574 \uBB3C\uC5B4\uBCF4\uC138\uC694..." rows="1"></textarea>' +
                     '<button class="sake-chat-send-btn" id="sakeChatSendBtn" disabled>' +
-                        '<span class="material-symbols-outlined">send</span>' +
+                        '<i data-lucide="send"></i>' +
                     '</button>' +
                 '</div>' +
                 '<div class="sake-chat-disclaimer">\uB85C\uCEEC AI (Ollama) \xB7 sake-ai \uBAA8\uB378</div>' +
             '</div>';
         document.body.appendChild(win);
+        if (window.lucide) lucide.createIcons({nodes: [win]});
 
         // Cache references
         els = {
@@ -441,16 +442,17 @@
     }
 
     function updateSendButton(loading) {
-        var icon = els.sendBtn.querySelector('.material-symbols-outlined');
+        var svg = els.sendBtn.querySelector('svg') || els.sendBtn.querySelector('[data-lucide]');
         if (loading) {
-            icon.textContent = 'stop';
+            els.sendBtn.innerHTML = '<i data-lucide="square" style="width:18px;height:18px;"></i>';
             els.sendBtn.disabled = false;
             els.sendBtn.classList.add('sake-chat-stop-mode');
         } else {
-            icon.textContent = 'send';
+            els.sendBtn.innerHTML = '<i data-lucide="send"></i>';
             els.sendBtn.disabled = !els.input.value.trim();
             els.sendBtn.classList.remove('sake-chat-stop-mode');
         }
+        if (window.lucide) lucide.createIcons({nodes: [els.sendBtn]});
     }
 
     function trimHistory() {

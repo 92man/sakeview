@@ -667,8 +667,9 @@ body.dark-mode .ranking-toggle-btn:hover {
     cursor: pointer;
     transition: all 0.15s;
 }
-.community-view-btn .material-symbols-outlined {
-    font-size: 20px;
+.community-view-btn .lucide {
+    width: 20px;
+    height: 20px;
 }
 .community-view-btn.active {
     background: var(--accent-primary, #383961);

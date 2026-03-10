@@ -819,9 +819,9 @@ async function saveProfile() {
         updateProfileUI();
 
         // 성공 피드백
-        btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;">done_all</span> 저장 완료';
+        btn.innerHTML = '<i data-lucide="check-check" style="width:16px;height:16px;"></i> 저장 완료'; if (window.lucide) lucide.createIcons({nodes: [btn]});
         setTimeout(function() {
-            btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;">save</span> 저장';
+            btn.innerHTML = '<i data-lucide="save" style="width:16px;height:16px;"></i> 저장'; if (window.lucide) lucide.createIcons({nodes: [btn]});
             btn.disabled = false;
         }, 1500);
 
