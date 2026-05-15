@@ -3609,7 +3609,7 @@ body.has-age-banner {
         gap: 10px;
     }
     .age-banner-buttons {
-        justify-content: center;
+        justify-content: stretch;
     }
     .age-banner .age-btn {
         flex: 1;
