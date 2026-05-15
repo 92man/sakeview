@@ -42,13 +42,55 @@ def load_flavor_profiles():
     return {p["brandKo"]: p for p in data}
 
 # ------------------------------------------------------------------
-# 2. URL slug
+# 2. URL slug (한글 → ASCII 로마자)
 # ------------------------------------------------------------------
 
+# 한글 자모 → 로마자 매핑 (단순화된 한국어 표준 로마자 표기법 기반)
+_INITIAL = ['g', 'kk', 'n', 'd', 'tt', 'r', 'm', 'b', 'pp', 's',
+            'ss', '', 'j', 'jj', 'ch', 'k', 't', 'p', 'h']
+_MEDIAL = ['a', 'ae', 'ya', 'yae', 'eo', 'e', 'yeo', 'ye', 'o', 'wa',
+           'wae', 'oe', 'yo', 'u', 'wo', 'we', 'wi', 'yu', 'eu', 'ui', 'i']
+# 받침은 7종성법으로 단순화 (k, n, t, l, m, p, ng)
+_FINAL = ['', 'k', 'k', 'k', 'n', 'n', 'n', 't', 'l', 'k',
+          'm', 'p', 'l', 'l', 'p', 'l', 'm', 'p', 'p', 't',
+          't', 'ng', 't', 't', 'k', 't', 'p', 't']
+
+# 메인 페이지에서 직접 링크되는 10개 브랜드는 일본어 헵번 표기 고정
+# (이미 배포된 ASCII URL과의 일관성 유지)
+_EXPLICIT_SLUG = {
+    '닷사이': 'dassai',
+    '쿠보타': 'kubota',
+    '핫카이산': 'hakkaisan',
+    '하쿠츠루': 'hakutsuru',
+    '기쿠마사무네': 'kikumasamune',
+    '가류바이': 'garyubai',
+    '나베시마': 'nabeshima',
+    '데와자쿠라': 'dewazakura',
+    '키쿠히메': 'kikuhime',
+    '카모츠루': 'kamotsuru',
+}
+
+def _hangul_to_roman(text: str) -> str:
+    out = []
+    for ch in text:
+        code = ord(ch)
+        if 0xAC00 <= code <= 0xD7A3:  # 한글 음절
+            offset = code - 0xAC00
+            ini = offset // (21 * 28)
+            med = (offset % (21 * 28)) // 28
+            fin = offset % 28
+            out.append(_INITIAL[ini] + _MEDIAL[med] + _FINAL[fin])
+        elif ch.isascii() and (ch.isalnum() or ch in '-_'):
+            out.append(ch.lower())
+        elif ch.isspace() or ch == '-':
+            out.append('-')
+        # 그 외(한자, 특수기호 등)는 무시
+    return ''.join(out)
+
 def make_slug(brand_ko: str) -> str:
-    s = brand_ko.strip().lower()
-    s = re.sub(r"\s+", "-", s)
-    s = re.sub(r"[^a-z0-9가-힣\-]", "", s)
+    if brand_ko in _EXPLICIT_SLUG:
+        return _EXPLICIT_SLUG[brand_ko]
+    s = _hangul_to_roman(brand_ko.strip())
     s = re.sub(r"-+", "-", s).strip("-")
     return s or hashlib.md5(brand_ko.encode("utf-8")).hexdigest()[:8]
 
