@@ -158,9 +158,4 @@ function offlineFallback() {
     <h1>오프라인 상태입니다</h1>
     <p>인터넷 연결을 확인한 후 다시 시도해 주세요.</p>
     <button onclick="location.reload()">다시 시도</button>
-  </div>
-</body>
-</html>`,
-    { headers: { 'Content-Type': 'text/html; charset=utf-8' } }
-  );
-}
+  </d

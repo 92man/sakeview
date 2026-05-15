@@ -2,7 +2,8 @@
 (function() {
     const ageVerified = localStorage.getItem('ageVerified');
     if (!ageVerified) {
-        showEl('ageModal', 'flex');
+        showEl('ageModal', 'block');
+        document.body.classList.add('has-age-banner');
     }
 
     const cookieConsent = localStorage.getItem('cookieConsent');
@@ -17,6 +18,7 @@ function confirmAge(isAdult) {
     if (isAdult) {
         localStorage.setItem('ageVerified', 'true');
         hideEl('ageModal');
+        document.body.classList.remove('has-age-banner');
 
         const cookieConsent = localStorage.getItem('cookieConsent');
         if (!cookieConsent) {

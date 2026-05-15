@@ -1,6 +1,7 @@
 # Backup directories
 backup/
 backup-300/
+backup-pre-sake-pages-*/
 
 # Build artifacts & tool caches
 .wrangler/

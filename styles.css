@@ -3343,3 +3343,276 @@ body.dark-mode .notes-compact-rating {
         scroll-behavior: auto !important;
     }
 }
+
+/* ── Featured Brands Section (static SEO cards on homepage) ── */
+.featured-brands-section {
+    margin: 90px auto 40px;
+    padding: 60px 20px;
+    background: linear-gradient(180deg, rgba(248,246,242,0.6) 0%, rgba(253,252,250,1) 100%);
+}
+body.dark-mode .featured-brands-section {
+    background: linear-gradient(180deg, rgba(18,18,26,0.6) 0%, rgba(10,10,15,1) 100%);
+}
+.featured-brands-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.featured-brands-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+.featured-brands-header h2 {
+    font-family: 'Cormorant Garamond', 'Noto Serif KR', serif;
+    font-size: 2.2em;
+    color: #383961;
+    margin-bottom: 12px;
+}
+body.dark-mode .featured-brands-header h2 {
+    color: #c7c9f0;
+}
+.featured-brands-header p {
+    color: #5a5a5a;
+    max-width: 720px;
+    margin: 0 auto;
+    font-size: 15px;
+    line-height: 1.7;
+}
+body.dark-mode .featured-brands-header p {
+    color: #a0a0a0;
+}
+.featured-brands-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 22px;
+}
+.featured-brand-card {
+    background: #fff;
+    border: 1px solid rgba(56,57,97,0.08);
+    border-radius: 16px;
+    padding: 24px;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    display: flex;
+    flex-direction: column;
+}
+body.dark-mode .featured-brand-card {
+    background: #12121a;
+    border-color: rgba(199,201,240,0.1);
+}
+.featured-brand-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 28px rgba(56,57,97,0.10);
+    border-color: rgba(56,57,97,0.18);
+}
+.fbc-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+.fbc-header h3 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 1.25em;
+    margin: 0;
+    line-height: 1.3;
+}
+.fbc-header h3 a {
+    color: #383961;
+    text-decoration: none;
+}
+body.dark-mode .fbc-header h3 a {
+    color: #c7c9f0;
+}
+.fbc-header h3 a:hover {
+    text-decoration: underline;
+}
+.fbc-jp {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 0.78em;
+    color: #888;
+    margin-left: 4px;
+    font-weight: 400;
+}
+body.dark-mode .fbc-jp {
+    color: #888;
+}
+.fbc-region {
+    font-size: 11px;
+    color: #888;
+    background: rgba(56,57,97,0.06);
+    padding: 3px 8px;
+    border-radius: 10px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 4px;
+}
+body.dark-mode .fbc-region {
+    background: rgba(199,201,240,0.08);
+    color: #aaa;
+}
+.fbc-tagline {
+    font-size: 13px;
+    color: #B8956C;
+    font-weight: 500;
+    margin-bottom: 10px;
+    line-height: 1.5;
+}
+body.dark-mode .fbc-tagline {
+    color: #D4B58A;
+}
+.fbc-desc {
+    font-size: 14px;
+    color: #5a5a5a;
+    line-height: 1.7;
+    margin-bottom: 16px;
+    flex: 1;
+}
+body.dark-mode .fbc-desc {
+    color: #a0a0a0;
+}
+.fbc-link {
+    font-size: 13px;
+    color: #383961;
+    text-decoration: none;
+    font-weight: 500;
+    margin-top: auto;
+    transition: color 0.18s ease;
+}
+body.dark-mode .fbc-link {
+    color: #c7c9f0;
+}
+.fbc-link:hover {
+    color: #5a5a8f;
+    text-decoration: underline;
+}
+.featured-brands-footer {
+    text-align: center;
+    margin-top: 36px;
+}
+.featured-brands-cta {
+    display: inline-block;
+    padding: 12px 26px;
+    background: #383961;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: transform 0.18s ease, background 0.18s ease;
+}
+.featured-brands-cta:hover {
+    background: #5a5a8f;
+    transform: translateY(-1px);
+}
+body.dark-mode .featured-brands-cta {
+    background: #5a5a8f;
+}
+body.dark-mode .featured-brands-cta:hover {
+    background: #7A7CB0;
+}
+@media (max-width: 640px) {
+    .featured-brands-section {
+        margin-top: 70px;
+        padding: 40px 16px;
+    }
+    .featured-brands-header h2 {
+        font-size: 1.7em;
+    }
+    .featured-brands-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+    .featured-brand-card {
+        padding: 18px;
+    }
+}
+
+/* ── Age Verification Banner (non-blocking top bar) ── */
+body.has-age-banner {
+    padding-top: 78px;
+}
+@media (max-width: 640px) {
+    body.has-age-banner {
+        padding-top: 128px;
+    }
+}
+.age-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9998;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: #fff;
+    border-bottom: 2px solid #d4af37;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    padding: 12px 16px;
+}
+.age-banner-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.age-banner-text {
+    flex: 1;
+    min-width: 240px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+.age-banner-text strong {
+    color: #d4af37;
+}
+.age-banner-sub {
+    display: block;
+    font-size: 12px;
+    color: #c9c9d4;
+    margin-top: 4px;
+}
+.age-banner-buttons {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+.age-banner .age-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+}
+.age-banner .age-btn-yes {
+    background: #d4af37;
+    color: #1a1a2e;
+}
+.age-banner .age-btn-no {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.3);
+}
+.age-banner .age-btn:hover {
+    transform: translateY(-1px);
+    opacity: 0.92;
+}
+@media (max-width: 640px) {
+    .age-banner {
+        padding: 10px 12px;
+    }
+    .age-banner-content {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+    .age-banner-buttons {
+        justify-content: center;
+    }
+    .age-banner .age-btn {
+        flex: 1;
+        padding: 10px 12px;
+    }
+}
