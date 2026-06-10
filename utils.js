@@ -160,7 +160,7 @@ function getTimeAgo(dateStr) {
 
 // 테마 설정
 function loadTheme() {
-    var savedTheme = localStorage.getItem('sakeAppTheme');
+    var savedTheme = safeStorageGet('sakeAppTheme');
     if (savedTheme === 'dark') {
         document.body.classList.add('dark-mode');
     }
@@ -174,7 +174,7 @@ function toggleTheme() {
         btn.innerHTML = '<i data-lucide="' + (isDark ? 'moon' : 'sun') + '" id="themeIcon" style="width:20px;height:20px;"></i>';
         if (window.lucide) lucide.createIcons({nodes: [btn]});
     }
-    localStorage.setItem('sakeAppTheme', isDark ? 'dark' : 'light');
+    safeStorageSet('sakeAppTheme', isDark ? 'dark' : 'light');
 }
 
 // 날짜 기본값
@@ -197,6 +197,17 @@ function showEl(id, displayType) {
 function hideEl(id) {
     var el = document.getElementById(id);
     if (el) el.style.display = 'none';
+}
+
+// === localStorage 안전 헬퍼 ===
+// (프라이빗 모드/저장소 차단 환경에서 localStorage 접근이 예외를 던질 수 있음)
+
+function safeStorageGet(key) {
+    try { return localStorage.getItem(key); } catch (e) { return null; }
+}
+
+function safeStorageSet(key, value) {
+    try { localStorage.setItem(key, value); } catch (e) { /* 저장 불가 환경 — 무시 */ }
 }
 
 // === 테이스팅 태그 추출 ===

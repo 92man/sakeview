@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'sakeview-v93';
+const CACHE_VERSION = 'sakeview-v94';
 const IMAGE_CACHE = 'sakeview-images-v1';
 const STATIC_ASSETS = [
   '/',
@@ -8,9 +8,9 @@ const STATIC_ASSETS = [
   '/community.css?v=11',
   '/certification.css?v=2',
   '/flavor-wheel.css?v=2',
-  '/age-consent.js?v=2',
-  '/utils.js?v=4',
-  '/featured.js?v=2',
+  '/utils.js?v=5',
+  '/age-consent.js?v=4',
+  '/featured.js?v=3',
   '/sake-selector.js?v=1',
   '/certification.js?v=4',
   '/app.js?v=48',
@@ -156,4 +156,9 @@ function offlineFallback() {
     <h1>오프라인 상태입니다</h1>
     <p>인터넷 연결을 확인한 후 다시 시도해 주세요.</p>
     <button onclick="location.reload()">다시 시도</button>
-  </d
+  </div>
+</body>
+</html>`,
+    { headers: { 'Content-Type': 'text/html; charset=utf-8' } }
+  );
+}

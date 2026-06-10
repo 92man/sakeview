@@ -8,6 +8,7 @@ backup-pre-sake-pages-*/
 node_modules/
 dist/
 .cache/
+__pycache__/
 
 # Syncthing
 .stfolder/

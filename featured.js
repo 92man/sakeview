@@ -56,12 +56,12 @@ function hideFeatured() {
 
 function hideFeaturedToday() {
     const today = new Date().toDateString();
-    localStorage.setItem('hideFeaturedUntil', today);
+    safeStorageSet('hideFeaturedUntil', today);
     hideFeatured();
 }
 
 function checkFeaturedVisibility() {
-    const hiddenUntil = localStorage.getItem('hideFeaturedUntil');
+    const hiddenUntil = safeStorageGet('hideFeaturedUntil');
     const today = new Date().toDateString();
 
     if (hiddenUntil === today) {

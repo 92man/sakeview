@@ -775,8 +775,9 @@ def build_brand_page(brand_ko: str, brand_data: dict, db: dict, flavors: dict, s
         </section>""")
 
     # ----- 조립 -----
-    today = date.today().isoformat()
-    today_kr = date.today().strftime("%Y년 %-m월" if os.name != "nt" else "%Y년 %#m월")
+    _t = date.today()
+    today = _t.isoformat()
+    today_kr = f"{_t.year}년 {_t.month}월"  # 플랫폼 독립적 (이전: %-m / %#m 분기)
 
     brand_jp_block = f'<div class="brand-jp">{esc(brand_jp)}</div>' if brand_jp else ""
 

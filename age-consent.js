@@ -1,12 +1,12 @@
 // Age Verification & Cookie Consent
 (function() {
-    const ageVerified = localStorage.getItem('ageVerified');
+    const ageVerified = safeStorageGet('ageVerified');
     if (!ageVerified) {
         showEl('ageModal', 'block');
         document.body.classList.add('has-age-banner');
     }
 
-    const cookieConsent = localStorage.getItem('cookieConsent');
+    const cookieConsent = safeStorageGet('cookieConsent');
     if (!cookieConsent && ageVerified) {
         setTimeout(() => {
             showEl('cookieConsent');
@@ -16,11 +16,11 @@
 
 function confirmAge(isAdult) {
     if (isAdult) {
-        localStorage.setItem('ageVerified', 'true');
+        safeStorageSet('ageVerified', 'true');
         hideEl('ageModal');
         document.body.classList.remove('has-age-banner');
 
-        const cookieConsent = localStorage.getItem('cookieConsent');
+        const cookieConsent = safeStorageGet('cookieConsent');
         if (!cookieConsent) {
             setTimeout(() => {
                 showEl('cookieConsent');
@@ -33,11 +33,11 @@ function confirmAge(isAdult) {
 }
 
 function acceptCookies() {
-    localStorage.setItem('cookieConsent', 'accepted');
+    safeStorageSet('cookieConsent', 'accepted');
     hideEl('cookieConsent');
 }
 
 function declineCookies() {
-    localStorage.setItem('cookieConsent', 'declined');
+    safeStorageSet('cookieConsent', 'declined');
     hideEl('cookieConsent');
 }
