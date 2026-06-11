@@ -3700,3 +3700,82 @@ body.dark-mode .brand-page-link {
     color: var(--accent-gold, #E5E8C0);
     border-bottom-color: var(--accent-gold, #E5E8C0);
 }
+
+/* ═══ 모바일 하단 탭바 ═══ */
+.bottom-nav {
+    display: none;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 80;
+    background: rgba(250, 248, 242, 0.94);
+    backdrop-filter: blur(16px) saturate(1.2);
+    -webkit-backdrop-filter: blur(16px) saturate(1.2);
+    border-top: 1px solid var(--border-card, #e2e8f0);
+    padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px));
+}
+.bottom-nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 6px 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--text-muted, #9a9a9a);
+    font-size: 0.68rem;
+    font-weight: 600;
+    border-radius: 10px;
+    transition: color 0.2s ease;
+}
+.bottom-nav-item i, .bottom-nav-item svg {
+    width: 22px;
+    height: 22px;
+}
+.bottom-nav-item.active {
+    color: var(--accent-primary, #383961);
+}
+.bottom-nav-write-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    margin-top: -20px;
+    border-radius: 50%;
+    background: var(--accent-primary, #383961);
+    color: #DBDFAC;
+    box-shadow: 0 6px 16px rgba(56, 57, 97, 0.35);
+    border: 3px solid var(--bg-primary, #f6f3ec);
+}
+.bottom-nav-write-circle i, .bottom-nav-write-circle svg {
+    width: 20px;
+    height: 20px;
+}
+.bottom-nav-write.active .bottom-nav-write-circle {
+    background: #45477e;
+}
+
+@media (max-width: 768px) {
+    .bottom-nav {
+        display: flex;
+    }
+    /* 고정 탭바에 가리지 않도록 하단 여백 확보 */
+    body {
+        padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+    }
+    /* 상단 모바일 탭은 그대로 두되, 하단 탭바와 중복되는 만큼 시각적 부담을 줄임 */
+}
+
+body.dark-mode .bottom-nav {
+    background: rgba(16, 15, 20, 0.92);
+    border-top-color: var(--border-card);
+}
+body.dark-mode .bottom-nav-write-circle {
+    border-color: var(--bg-primary);
+}

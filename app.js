@@ -924,6 +924,7 @@ function handlePhotoBackUpload(event) {
 function switchTab(tab) {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    syncBottomNav(tab);
 
     if (tab === 'community') {
         document.querySelector('.tab:nth-child(1)').classList.add('active');
@@ -951,6 +952,13 @@ function switchTab(tab) {
 function setActiveNav(el) {
     document.querySelectorAll('.bottom-nav-item').forEach(i => i.classList.remove('active'));
     if (el) el.classList.add('active');
+}
+
+// 하단 탭바 활성 상태를 현재 탭과 동기화
+function syncBottomNav(tab) {
+    document.querySelectorAll('.bottom-nav-item[data-nav]').forEach(function(i) {
+        i.classList.toggle('active', i.dataset.nav === tab);
+    });
 }
 
 async function updateSidebar() {
