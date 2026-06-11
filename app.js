@@ -1400,7 +1400,11 @@ function renderNoteDetail(note, showActions = true) {
             ${note.photo_back && sanitizePhotoUrl(note.photo_back) ? buildPhotoImg(note.photo_back, 800, 800, 'detail-photo', '사케 뒷면') : ''}
         </div>` : ''}
         <h2 style="color: var(--accent-primary, #383961); margin-bottom: 10px;">${escapeHtml(note.sake_name)}</h2>
-        <p style="color: #666; margin-bottom: 30px;">📅 ${escapeHtml(note.date)}</p>
+        <p style="color: #666; margin-bottom: 8px;">📅 ${escapeHtml(note.date)}</p>
+        ${(function() {
+            var b = (typeof findBrandPageUrl === 'function') ? findBrandPageUrl(note.sake_name) : null;
+            return b ? '<p style="margin-bottom: 30px;"><a class="brand-page-link" href="' + b.url + '" target="_blank" rel="noopener">📖 ' + escapeHtml(b.brand) + ' 브랜드 정보 · 등급별 라인업 보기 →</a></p>' : '<div style="margin-bottom: 30px;"></div>';
+        })()}
 
         ${tastingHtml}
 

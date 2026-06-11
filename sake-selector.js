@@ -107,6 +107,7 @@ function selectProduct(idx) {
 function updateSakeDisplay() {
     const display = document.getElementById('sakeSelectedDisplay');
     const hidden = document.getElementById('sakeName');
+    const brandLink = document.getElementById('sakeBrandLink');
 
     if (selectedBrand && selectedProduct) {
         const fullName = selectedBrand + ' ' + selectedProduct.name;
@@ -117,9 +118,21 @@ function updateSakeDisplay() {
         document.getElementById('sakeSelectedSub').textContent = japaneseName || '';
         display.classList.add('visible');
         hidden.value = displayName;
+
+        // 브랜드 정보 페이지 링크
+        if (brandLink && typeof findBrandPageUrl === 'function') {
+            var info = findBrandPageUrl(selectedBrand);
+            if (info) {
+                brandLink.href = info.url;
+                brandLink.style.display = 'inline-block';
+            } else {
+                brandLink.style.display = 'none';
+            }
+        }
     } else {
         display.classList.remove('visible');
         hidden.value = '';
+        if (brandLink) brandLink.style.display = 'none';
     }
 }
 

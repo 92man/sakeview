@@ -3680,3 +3680,23 @@ body.dark-mode .guest-notice {
     background: var(--bg-tertiary);
     border-color: var(--border-card);
 }
+
+/* ═══ 브랜드 정보 페이지 링크 ═══ */
+.brand-page-link {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: var(--accent-primary, #383961);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--accent-primary, #383961);
+    padding-bottom: 1px;
+    transition: opacity 0.2s ease;
+}
+.brand-page-link:hover {
+    opacity: 0.75;
+}
+body.dark-mode .brand-page-link {
+    color: var(--accent-gold, #E5E8C0);
+    border-bottom-color: var(--accent-gold, #E5E8C0);
+}

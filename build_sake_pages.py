@@ -986,6 +986,12 @@ def main():
     # sitemap.xml 갱신
     update_sitemap(slug_map)
 
+    # 브랜드 → 슬러그 JS 맵 (메인 앱에서 브랜드 페이지 링크용)
+    slug_js = "// 자동 생성: 브랜드명 → /sake/ 페이지 슬러그 (build_sake_pages.py가 갱신)\n"
+    slug_js += "var SAKE_SLUG_MAP = " + json.dumps(slug_map, ensure_ascii=False, sort_keys=True) + ";\n"
+    (ROOT / "sake_slug_map.js").write_text(slug_js, encoding="utf-8")
+    print(f"  - sake_slug_map.js: {len(slug_map)}개 브랜드 매핑")
+
     print(f"\n✅ 완료")
     print(f"  - 개별 브랜드 페이지: {len(db)}개 → /sake/")
     print(f"  - 허브 페이지: /sake/index.html")

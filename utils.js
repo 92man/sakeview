@@ -210,6 +210,21 @@ function safeStorageSet(key, value) {
     try { localStorage.setItem(key, value); } catch (e) { /* 저장 불가 환경 — 무시 */ }
 }
 
+// === 브랜드 페이지 연결 ===
+// 사케 이름(예: "닷사이 준마이 다이긴죠 23")에서 브랜드를 찾아 /sake/ 페이지 URL 반환
+// 가장 긴 브랜드명 매칭 우선 (예: "간바레 오또상" > "간기")
+function findBrandPageUrl(sakeName) {
+    if (!sakeName || typeof SAKE_SLUG_MAP === 'undefined') return null;
+    var name = String(sakeName).trim();
+    var best = null;
+    for (var brand in SAKE_SLUG_MAP) {
+        if (name.indexOf(brand) === 0 && (!best || brand.length > best.length)) {
+            best = brand;
+        }
+    }
+    return best ? { brand: best, url: '/sake/' + SAKE_SLUG_MAP[best] + '.html' } : null;
+}
+
 // === 테이스팅 태그 추출 ===
 
 // flavor_description JSON에서 태그 배열 추출
