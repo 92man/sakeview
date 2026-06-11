@@ -46,16 +46,18 @@ async function loadCommunityFeed() {
     communityFilterLiked = false;
     _syncToolbarUI();
 
-    // 랭킹 로드 (비차단)
+    // 랭킹 + 하이라이트 로드 (비차단)
     loadSakeRanking();
+    loadCommunityHighlights();
 
     // sessionStorage 캐시 확인
     if (_feedCache && Date.now() - _feedCache.ts < _feedCacheTTL) {
         _communityAllNotes = _feedCache.data.slice();
-        // 먼저 렌더 후 백그라운드로 certs/names 보강
+        // 먼저 렌더 후 백그라운드로 certs/names/likes 보강
         _rerenderCommunityFeed(true);
         const userIds = [...new Set(_feedCache.data.map(n => n.user_id).filter(Boolean))];
-        Promise.all([loadApprovedCerts(), loadDisplayNames(userIds)]).then(function() {
+        const noteIds = _feedCache.data.map(n => n.id);
+        Promise.all([loadApprovedCerts(), loadDisplayNames(userIds), loadMyLikes(), loadLikeCounts(noteIds)]).then(function() {
             _rerenderCommunityFeed(true);
         });
         return;
@@ -83,7 +85,8 @@ async function loadCommunityFeed() {
             // 먼저 렌더 (이름/뱃지 없이) → 백그라운드로 보강
             _rerenderCommunityFeed(true);
             const userIds = [...new Set(_communityAllNotes.map(n => n.user_id).filter(Boolean))];
-            Promise.all([loadApprovedCerts(), loadDisplayNames(userIds)]).then(function() {
+            const noteIds = _communityAllNotes.map(n => n.id);
+            Promise.all([loadApprovedCerts(), loadDisplayNames(userIds), loadMyLikes(), loadLikeCounts(noteIds)]).then(function() {
                 _rerenderCommunityFeed(true);
             });
             break;
@@ -236,6 +239,11 @@ function _sortNotes(notes) {
         sorted.sort(function(a, b) { return (a.sake_name || '').localeCompare(b.sake_name || '', 'ko'); });
     } else if (communitySortBy === 'rating') {
         sorted.sort(function(a, b) { return (b.overall_rating || 0) - (a.overall_rating || 0); });
+    } else if (communitySortBy === 'likes') {
+        sorted.sort(function(a, b) {
+            var diff = getLikeCount(b.id) - getLikeCount(a.id);
+            return diff !== 0 ? diff : new Date(b.created_at) - new Date(a.created_at);
+        });
     } else {
         sorted.sort(function(a, b) { return new Date(b.created_at) - new Date(a.created_at); });
     }
@@ -290,6 +298,7 @@ function _displayCompactFeed(notes, container, avgMap, showMore) {
             + '<span class="community-compact-tags">' + tagsHtml + '</span>'
             + wheelHtml
             + ratingHtml
+            + _likeBtnHtml(note.id, true)
             + '</div>';
     });
 
@@ -383,6 +392,7 @@ function displayCommunityFeed(notes, container, avgMap, showMore) {
             </div>
             ${allTagsHtml}
             ${truncated ? `<div class="community-feed-card-text">${escapeHtml(truncated)}</div>` : ''}
+            <div class="community-feed-card-footer">${_likeBtnHtml(note.id)}</div>
         </div>`;
     });
 
@@ -425,7 +435,7 @@ async function loadMoreCommunityFeed(offset) {
         // 누적
         _communityAllNotes = _communityAllNotes.concat(data);
         const userIds = [...new Set(data.map(n => n.user_id).filter(Boolean))];
-        await Promise.all([loadApprovedCerts(), loadDisplayNames(userIds)]);
+        await Promise.all([loadApprovedCerts(), loadDisplayNames(userIds), loadLikeCounts(data.map(n => n.id))]);
         _rerenderCommunityFeed(data.length >= 20);
     } catch (e) {
         console.error('Load more error:', e);
@@ -614,10 +624,12 @@ async function showCommunityDetail(id) {
         var actionsRow = detailContent.querySelector('.note-detail-actions');
         if (actionsRow) {
             var noteId = actionsRow.dataset.noteId;
-            var liked = isNoteLiked(noteId);
             actionsRow.innerHTML = '<button class="back-btn community-back-btn" onclick="switchTab(\'community\')">← 커뮤니티로</button>'
-                + '<button class="note-like-btn ' + (liked ? 'liked' : '') + '" onclick="event.stopPropagation(); toggleNoteLike(\'' + escapeAttr(noteId) + '\', this)">'
-                + (liked ? '❤️ 좋아요' : '🤍 좋아요') + '</button>';
+                + _likeBtnHtml(noteId);
+            // 좋아요 수/상태를 서버에서 보강 후 버튼 갱신
+            Promise.all([loadMyLikes(), loadLikeCounts([noteId])]).then(function() {
+                _updateLikeButtons(noteId);
+            });
         }
     } catch (error) {
         detailContent.innerHTML = `<div class="empty-state">
@@ -628,33 +640,117 @@ async function showCommunityDetail(id) {
     }
 }
 
-// ── 좋아요 (Like) 기능 ──
+// ── 좋아요 (Like) 기능 — Supabase note_likes 테이블 기반 ──
 
 var communityFilterLiked = false;
+var _myLikes = {};          // noteId → true (내가 좋아요한 노트)
+var _myLikesUserId = null;  // _myLikes가 어느 유저 기준인지
+var _likeCountMap = {};     // noteId → 좋아요 수
+var _likePending = {};      // noteId → true (요청 진행 중, 연타 방지)
 
-function getLikedNotes() {
-    try { return JSON.parse(localStorage.getItem('sakeview_liked_notes') || '[]'); }
-    catch(e) { return []; }
+// 내 좋아요 목록 로드 (로그인 시)
+async function loadMyLikes() {
+    if (!currentUser) { _myLikes = {}; _myLikesUserId = null; return; }
+    if (_myLikesUserId === currentUser.id) return; // 이미 로드됨
+    try {
+        var { data, error } = await supabaseClient
+            .from('note_likes')
+            .select('note_id')
+            .eq('user_id', currentUser.id);
+        if (error) throw error;
+        _myLikes = {};
+        (data || []).forEach(function(r) { _myLikes[r.note_id] = true; });
+        _myLikesUserId = currentUser.id;
+    } catch (e) {
+        console.error('loadMyLikes error:', e);
+    }
+}
+
+// 노트 ID 배열의 좋아요 수 로드
+async function loadLikeCounts(noteIds) {
+    var missing = (noteIds || []).filter(function(id) { return id && !(id in _likeCountMap); });
+    if (missing.length === 0) return;
+    try {
+        var { data, error } = await supabaseClient
+            .rpc('get_like_counts', { note_ids: missing });
+        if (error) throw error;
+        missing.forEach(function(id) { _likeCountMap[id] = 0; });
+        (data || []).forEach(function(r) { _likeCountMap[r.note_id] = parseInt(r.like_count) || 0; });
+    } catch (e) {
+        console.error('loadLikeCounts error:', e);
+    }
 }
 
 function isNoteLiked(noteId) {
-    return getLikedNotes().indexOf(noteId) >= 0;
+    return !!_myLikes[noteId];
 }
 
-function toggleNoteLike(noteId, btnEl) {
-    var liked = getLikedNotes();
-    var idx = liked.indexOf(noteId);
-    if (idx >= 0) {
-        liked.splice(idx, 1);
-    } else {
-        liked.push(noteId);
+function getLikeCount(noteId) {
+    return _likeCountMap[noteId] || 0;
+}
+
+function _likeBtnLabel(noteId) {
+    var count = getLikeCount(noteId);
+    return (isNoteLiked(noteId) ? '❤️' : '🤍') + ' ' + (count > 0 ? count : '좋아요');
+}
+
+// 카드/리스트용 좋아요 버튼 HTML
+function _likeBtnHtml(noteId, compact) {
+    var liked = isNoteLiked(noteId);
+    var cls = 'note-like-btn feed-like-btn' + (liked ? ' liked' : '') + (compact ? ' compact' : '');
+    return '<button class="' + cls + '" data-note-id="' + escapeAttr(noteId) + '"'
+        + ' onclick="event.stopPropagation(); toggleNoteLike(\'' + escapeAttr(noteId) + '\', this)"'
+        + ' aria-label="좋아요">' + _likeBtnLabel(noteId) + '</button>';
+}
+
+// 좋아요 토글 (낙관적 UI + 서버 동기화)
+async function toggleNoteLike(noteId, btnEl) {
+    if (!currentUser) {
+        alert('좋아요는 로그인 후 누를 수 있어요!');
+        return;
     }
-    localStorage.setItem('sakeview_liked_notes', JSON.stringify(liked));
-    if (btnEl) {
-        var isLiked = liked.indexOf(noteId) >= 0;
-        btnEl.classList.toggle('liked', isLiked);
-        btnEl.innerHTML = isLiked ? '❤️ 좋아요' : '🤍 좋아요';
+    if (_likePending[noteId]) return;
+    _likePending[noteId] = true;
+
+    var wasLiked = isNoteLiked(noteId);
+
+    // 낙관적 업데이트
+    if (wasLiked) { delete _myLikes[noteId]; _likeCountMap[noteId] = Math.max(0, getLikeCount(noteId) - 1); }
+    else { _myLikes[noteId] = true; _likeCountMap[noteId] = getLikeCount(noteId) + 1; }
+    _updateLikeButtons(noteId);
+
+    try {
+        if (wasLiked) {
+            var del = await supabaseClient
+                .from('note_likes')
+                .delete()
+                .eq('note_id', noteId)
+                .eq('user_id', currentUser.id);
+            if (del.error) throw del.error;
+        } else {
+            var ins = await supabaseClient
+                .from('note_likes')
+                .insert({ note_id: noteId, user_id: currentUser.id });
+            // 23505 = 이미 좋아요 (중복) — 무시
+            if (ins.error && ins.error.code !== '23505') throw ins.error;
+        }
+    } catch (e) {
+        console.error('toggleNoteLike error:', e);
+        // 실패 시 롤백
+        if (wasLiked) { _myLikes[noteId] = true; _likeCountMap[noteId] = getLikeCount(noteId) + 1; }
+        else { delete _myLikes[noteId]; _likeCountMap[noteId] = Math.max(0, getLikeCount(noteId) - 1); }
+        _updateLikeButtons(noteId);
+    } finally {
+        delete _likePending[noteId];
     }
+}
+
+// 화면의 같은 노트 좋아요 버튼 일괄 갱신
+function _updateLikeButtons(noteId) {
+    document.querySelectorAll('.note-like-btn[data-note-id="' + noteId + '"]').forEach(function(b) {
+        b.classList.toggle('liked', isNoteLiked(noteId));
+        b.innerHTML = _likeBtnLabel(noteId);
+    });
 }
 
 async function toggleCommunityLikeFilter() {
@@ -667,19 +763,28 @@ async function toggleCommunityLikeFilter() {
     }
 }
 
+// 내가 좋아요한 노트만 보기
 async function loadLikedNotes() {
-    var likedIds = getLikedNotes();
     var container = document.getElementById('communityFeedList');
     if (!container) return;
 
-    if (likedIds.length === 0) {
-        container.innerHTML = '<div class="community-empty"><div class="community-empty-icon">🤍</div><h3>좋아요한 노트가 없습니다</h3><p>커뮤니티 노트에서 좋아요를 눌러보세요!</p></div>';
+    if (!currentUser) {
+        container.innerHTML = '<div class="community-empty"><div class="community-empty-icon">🤍</div><h3>로그인 후 이용할 수 있어요</h3><p>좋아요한 노트를 모아보려면 로그인해주세요.</p></div>';
         return;
     }
 
     container.innerHTML = '<div class="loading">좋아요 노트를 불러오는 중</div>';
 
     try {
+        _myLikesUserId = null; // 강제 새로고침
+        await loadMyLikes();
+        var likedIds = Object.keys(_myLikes);
+
+        if (likedIds.length === 0) {
+            container.innerHTML = '<div class="community-empty"><div class="community-empty-icon">🤍</div><h3>좋아요한 노트가 없습니다</h3><p>커뮤니티 노트에서 좋아요를 눌러보세요!</p></div>';
+            return;
+        }
+
         var result = await supabaseClient
             .from('tasting_notes')
             .select('id, sake_name, personal_review, overall_rating, created_at, user_id, flavor_description, photo')
@@ -689,7 +794,7 @@ async function loadLikedNotes() {
         if (result.error) throw result.error;
         var notes = result.data || [];
         var userIds = [...new Set(notes.map(function(n) { return n.user_id; }).filter(Boolean))];
-        await Promise.all([loadApprovedCerts(), loadDisplayNames(userIds)]);
+        await Promise.all([loadApprovedCerts(), loadDisplayNames(userIds), loadLikeCounts(likedIds)]);
         var sorted = _sortNotes(notes);
         if (communityViewMode === 'compact') {
             _displayCompactFeed(sorted, container, buildAvgMap(sorted), false);
@@ -700,4 +805,113 @@ async function loadLikedNotes() {
         console.error('Load liked notes error:', e);
         container.innerHTML = '<div class="community-empty"><p>좋아요 노트를 불러올 수 없습니다.</p></div>';
     }
+}
+
+// ── 커뮤니티 하이라이트: 인기 노트 + 톱 리뷰어 ──
+
+var _highlightsCache = null;
+var _highlightsCacheTTL = 300000; // 5분
+
+async function loadCommunityHighlights() {
+    var container = document.getElementById('communityHighlights');
+    if (!container) return;
+
+    if (_highlightsCache && Date.now() - _highlightsCache.ts < _highlightsCacheTTL) {
+        renderCommunityHighlights(_highlightsCache.notes, _highlightsCache.reviewers);
+        return;
+    }
+
+    try {
+        var topRes = await Promise.all([
+            supabaseClient.rpc('get_top_liked_notes', { limit_count: 3 }),
+            supabaseClient.rpc('get_top_reviewers', { limit_count: 3 })
+        ]);
+        var topLiked = topRes[0].data || [];
+        var reviewers = (topRes[1].data || []).filter(function(r) { return r.note_count > 0; });
+
+        // 인기 노트 상세 로드
+        var notes = [];
+        if (topLiked.length > 0) {
+            var ids = topLiked.map(function(r) { return r.note_id; });
+            var noteRes = await supabaseClient
+                .from('tasting_notes')
+                .select('id, sake_name, overall_rating, created_at, user_id, photo')
+                .in('id', ids);
+            var byId = {};
+            (noteRes.data || []).forEach(function(n) { byId[n.id] = n; });
+            notes = topLiked.map(function(r) {
+                var n = byId[r.note_id];
+                if (n) { _likeCountMap[n.id] = parseInt(r.like_count) || 0; }
+                return n;
+            }).filter(Boolean);
+
+            var uids = [...new Set(notes.map(function(n) { return n.user_id; }).filter(Boolean))];
+            await loadDisplayNames(uids.concat(reviewers.map(function(r) { return r.user_id; })));
+        } else if (reviewers.length > 0) {
+            await loadDisplayNames(reviewers.map(function(r) { return r.user_id; }));
+        }
+
+        _highlightsCache = { ts: Date.now(), notes: notes, reviewers: reviewers };
+        renderCommunityHighlights(notes, reviewers);
+    } catch (e) {
+        console.error('Community highlights error:', e);
+        container.innerHTML = '';
+    }
+}
+
+function renderCommunityHighlights(notes, reviewers) {
+    var container = document.getElementById('communityHighlights');
+    if (!container) return;
+
+    var hasNotes = notes && notes.length > 0;
+    var hasReviewers = reviewers && reviewers.length > 0;
+    if (!hasNotes && !hasReviewers) { container.innerHTML = ''; return; }
+
+    var medals = ['🥇', '🥈', '🥉'];
+
+    var notesHtml = '';
+    if (hasNotes) {
+        var noteRows = notes.map(function(n, i) {
+            var uid = n.user_id || 'anon';
+            var name = _displayNameMap[uid] || ('User' + uid.substring(0, 4));
+            var thumb = n.photo
+                ? '<img class="highlight-thumb" src="' + escapeAttr(getTransformedPhotoUrl(n.photo, 64, 64)) + '" alt="" loading="lazy" onerror="imgTransformFallback(this)">'
+                : '<span class="highlight-thumb highlight-thumb-default">🍶</span>';
+            return '<div class="highlight-row" onclick="showCommunityDetail(\'' + escapeAttr(n.id) + '\')">'
+                + '<span class="highlight-medal">' + medals[i] + '</span>'
+                + thumb
+                + '<div class="highlight-info">'
+                + '<div class="highlight-name">' + escapeHtml(n.sake_name || '이름 없음') + '</div>'
+                + '<div class="highlight-meta">' + escapeHtml(name) + (n.overall_rating ? ' · ' + n.overall_rating + '점' : '') + '</div>'
+                + '</div>'
+                + '<span class="highlight-likes">❤️ ' + getLikeCount(n.id) + '</span>'
+                + '</div>';
+        }).join('');
+        notesHtml = '<div class="highlight-card">'
+            + '<h3 class="highlight-title">인기 테이스팅 노트</h3>'
+            + noteRows + '</div>';
+    }
+
+    var reviewersHtml = '';
+    if (hasReviewers) {
+        var revRows = reviewers.map(function(r, i) {
+            var name = (r.display_name && r.display_name.trim())
+                || _displayNameMap[r.user_id]
+                || ('User' + String(r.user_id).substring(0, 4));
+            return '<div class="highlight-row" onclick="loadNotesByUser(\'' + escapeAttr(r.user_id) + '\')">'
+                + '<span class="highlight-medal">' + medals[i] + '</span>'
+                + '<span class="highlight-avatar" style="background:' + getAvatarColor(r.user_id) + '">' + getAvatarInitial(r.user_id) + '</span>'
+                + '<div class="highlight-info">'
+                + '<div class="highlight-name">' + getCertBadgeHtml(r.user_id) + escapeHtml(name) + '</div>'
+                + '<div class="highlight-meta">노트 ' + r.note_count + '개</div>'
+                + '</div>'
+                + '<span class="highlight-likes">❤️ ' + r.like_count + '</span>'
+                + '</div>';
+        }).join('');
+        reviewersHtml = '<div class="highlight-card">'
+            + '<h3 class="highlight-title">톱 리뷰어</h3>'
+            + revRows + '</div>';
+    }
+
+    container.innerHTML = '<div class="community-highlights">' + notesHtml + reviewersHtml + '</div>';
 }

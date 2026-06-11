@@ -97,7 +97,7 @@
     <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.469.0/dist/umd/lucide.min.js"></script>
     <link rel="stylesheet" href="styles.css?v=59">
     <link rel="stylesheet" href="sake-selector.css?v=2">
-    <link rel="stylesheet" href="community.css?v=11">
+    <link rel="stylesheet" href="community.css?v=12">
     <link rel="stylesheet" href="certification.css?v=2">
     <link rel="stylesheet" href="flavor-wheel.css?v=2">
     <link rel="stylesheet" href="design-refresh.css?v=1">
@@ -615,6 +615,7 @@
                             <span class="community-stat-value" id="communitySakeDb">—</span>
                         </div>
                     </div>
+                    <div id="communityHighlights"></div>
                     <div id="communityRanking"></div>
                     <div class="community-feed-section">
                         <div class="community-feed-header">
@@ -626,6 +627,7 @@
                                 <button class="community-sort-btn active" data-sort="date">최신순</button>
                                 <button class="community-sort-btn" data-sort="rating">평점순</button>
                                 <button class="community-sort-btn" data-sort="name">이름순</button>
+                                <button class="community-sort-btn" data-sort="likes">좋아요순</button>
                                 <button class="community-sort-btn community-like-filter-btn" onclick="toggleCommunityLikeFilter()">🤍 좋아요</button>
                             </div>
                             <div class="community-view-toggle">
@@ -831,7 +833,7 @@
     <script defer src="featured.js?v=3"></script>
     <script defer src="sake-selector.js?v=1"></script>
     <script defer src="ocr.js?v=1"></script>
-    <script defer src="community.js?v=9"></script>
+    <script defer src="community.js?v=10"></script>
     <script defer src="certification.js?v=4"></script>
     <script defer src="app.js?v=48"></script>
 

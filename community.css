@@ -912,3 +912,122 @@ body.dark-mode .community-like-filter-btn.active {
     color: #fff !important;
     border-color: #ef4444 !important;
 }
+
+/* ═══ 카드/리스트 내 좋아요 버튼 ═══ */
+.community-feed-card-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+.feed-like-btn {
+    padding: 5px 12px;
+    font-size: 0.8rem;
+}
+.feed-like-btn.compact {
+    padding: 3px 9px;
+    font-size: 0.75rem;
+    margin-left: 8px;
+    flex-shrink: 0;
+}
+
+/* ═══ 커뮤니티 하이라이트 (인기 노트 / 톱 리뷰어) ═══ */
+.community-highlights {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+.highlight-card {
+    background: var(--card-bg, #fff);
+    border: 1px solid var(--border-card, #e2e8f0);
+    border-radius: 12px;
+    padding: 18px 20px;
+}
+.highlight-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0 0 12px;
+    color: var(--text-primary, #1a1a1a);
+}
+.highlight-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 6px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.18s ease;
+}
+.highlight-row:hover {
+    background: var(--bg-muted, #f1f5f9);
+}
+.highlight-medal {
+    font-size: 1.05rem;
+    width: 24px;
+    text-align: center;
+    flex-shrink: 0;
+}
+.highlight-thumb {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+.highlight-thumb-default {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-muted, #f1f5f9);
+    font-size: 1rem;
+}
+.highlight-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+.highlight-info {
+    flex: 1;
+    min-width: 0;
+}
+.highlight-name {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-primary, #1a1a1a);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.highlight-meta {
+    font-size: 0.75rem;
+    color: var(--text-muted, #9a9a9a);
+}
+.highlight-likes {
+    font-size: 0.8rem;
+    color: var(--text-secondary, #5a5a5a);
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 640px) {
+    .community-highlights {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+}
+
+body.dark-mode .highlight-card {
+    background: var(--card-bg);
+    border-color: var(--border-card);
+}
+body.dark-mode .highlight-row:hover {
+    background: var(--bg-tertiary);
+}
