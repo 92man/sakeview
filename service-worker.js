@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'sakeview-v97';
+const CACHE_VERSION = 'sakeview-v98';
 const IMAGE_CACHE = 'sakeview-images-v1';
 const STATIC_ASSETS = [
   '/',
@@ -11,7 +11,7 @@ const STATIC_ASSETS = [
   '/design-refresh.css?v=3',
   '/utils.js?v=6',
   '/age-consent.js?v=4',
-  '/featured.js?v=3',
+  '/featured.js?v=4',
   '/sake-selector.js?v=2',
   '/certification.js?v=4',
   '/app.js?v=51',
