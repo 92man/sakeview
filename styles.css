@@ -3616,3 +3616,67 @@ body.has-age-banner {
         padding: 10px 12px;
     }
 }
+
+/* ═══ 비로그인 구경 모드 ═══ */
+.guest-notice {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 13px 18px;
+    margin-bottom: 20px;
+    background: var(--bg-subtle, #f8fafc);
+    border: 1px solid var(--border-card, #e2e8f0);
+    border-left: 3px solid var(--accent-gold, #DBDFAC);
+    border-radius: 0 10px 10px 0;
+    font-size: 0.88rem;
+    color: var(--text-secondary, #5a5a5a);
+    line-height: 1.5;
+}
+.guest-notice b { color: var(--text-primary, #1a1a1a); }
+.guest-notice-btn {
+    flex-shrink: 0;
+    padding: 9px 18px;
+    border: none;
+    border-radius: 10px;
+    background: var(--accent-primary, #383961);
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.guest-notice-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(56, 57, 97, 0.28);
+}
+.sidebar-guest-cta {
+    text-align: left;
+}
+.sidebar-guest-text {
+    font-size: 0.85rem;
+    color: var(--text-secondary, #5a5a5a);
+    line-height: 1.6;
+    margin: 10px 0 14px;
+}
+.sidebar-guest-btn {
+    width: 100%;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 10px;
+    background: var(--accent-primary, #383961);
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.sidebar-guest-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(56, 57, 97, 0.28);
+}
+body.dark-mode .guest-notice {
+    background: var(--bg-tertiary);
+    border-color: var(--border-card);
+}

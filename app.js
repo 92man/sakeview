@@ -468,6 +468,11 @@ function showMainApp() {
     // 로그인 상태에 따라 버튼 표시/숨김
     if (currentUser) {
         hideEl('loginBtn');
+        // 구경 모드 UI 해제
+        hideEl('guestNoticeNew');
+        hideEl('sidebarGuestCta');
+        showEl('sidebarMyStats');
+        showEl('sidebarRecentSection');
         var profileWrapper = document.getElementById('profileMenuWrapper');
         if (profileWrapper) profileWrapper.style.display = 'block';
         updateProfileUI();
@@ -484,6 +489,11 @@ function showMainApp() {
         showEl('loginBtn', 'inline-block');
         var profileWrapper = document.getElementById('profileMenuWrapper');
         if (profileWrapper) profileWrapper.style.display = 'none';
+        // 구경 모드: 작성 탭 안내 배너 + 사이드바 가입 유도
+        showEl('guestNoticeNew', 'flex');
+        showEl('sidebarGuestCta');
+        hideEl('sidebarMyStats');
+        hideEl('sidebarRecentSection');
     }
     // 기본 탭이 커뮤니티이므로 초기 로드
     loadCommunityStats();
@@ -923,9 +933,10 @@ function switchTab(tab) {
     } else if (tab === 'new') {
         document.querySelector('.tab:nth-child(2)').classList.add('active');
         document.getElementById('newView').classList.add('active');
-        if (!editingNoteId) {
+        if (!editingNoteId && !window._guestDraftPending) {
             resetForm();
         }
+        window._guestDraftPending = false;
     } else if (tab === 'list') {
         document.querySelector('.tab:nth-child(3)').classList.add('active');
         document.getElementById('listView').classList.add('active');
@@ -999,7 +1010,8 @@ async function saveTastingNote(event) {
     
     // 로그인 체크
     if (!currentUser) {
-        alert('⚠️ 노트를 저장하려면 로그인이 필요합니다.');
+        window._guestDraftPending = true; // 로그인 후 작성 탭 복귀 시 초안 유지
+        alert('작성하신 내용이 멋지네요! 저장하려면 로그인이 필요해요 🍶\n로그인 화면으로 이동합니다. (작성 내용은 유지됩니다)');
         showAuthContainer();
         return;
     }
@@ -1155,13 +1167,14 @@ document.addEventListener('DOMContentLoaded', function() {
 async function loadNotes() {
     const container = document.getElementById('notesList');
     
-    // 로그인 체크
+    // 로그인 체크 — 구경 모드 안내 + 가입 유도
     if (!currentUser) {
         container.innerHTML = `
             <div class="empty-state">
-                <div class="empty-state-icon">🔒</div>
-                <h3>로그인이 필요합니다</h3>
-                <p>저장된 노트를 보려면 로그인해주세요.</p>
+                <div class="empty-state-icon">🍶</div>
+                <h3>나의 노트는 로그인 후 볼 수 있어요</h3>
+                <p>마셔본 사케를 기록하면 이곳에 차곡차곡 쌓입니다.<br>커뮤니티 노트는 로그인 없이도 자유롭게 구경할 수 있어요.</p>
+                <button type="button" class="guest-notice-btn" style="margin-top:14px;" onclick="showAuthContainer()">로그인 / 무료 가입</button>
             </div>
         `;
         return;

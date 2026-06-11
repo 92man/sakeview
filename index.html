@@ -95,7 +95,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Serif+KR:wght@400;500;700;900&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.469.0/dist/umd/lucide.min.js"></script>
-    <link rel="stylesheet" href="styles.css?v=59">
+    <link rel="stylesheet" href="styles.css?v=60">
     <link rel="stylesheet" href="sake-selector.css?v=2">
     <link rel="stylesheet" href="community.css?v=12">
     <link rel="stylesheet" href="certification.css?v=2">
@@ -426,6 +426,10 @@
                         <i data-lucide="plus-circle"></i>
                         새 노트 작성
                     </div>
+                    <div id="guestNoticeNew" class="guest-notice" style="display:none;">
+                        <span>👀 지금은 구경 모드예요 — 노트를 자유롭게 작성해볼 수 있지만, <b>저장하려면 로그인</b>이 필요해요.</span>
+                        <button type="button" class="guest-notice-btn" onclick="showAuthContainer()">로그인 / 무료 가입</button>
+                    </div>
                     <form id="tastingForm" onsubmit="saveTastingNote(event)">
                         <div class="form-row-2col">
                             <div class="form-group">
@@ -660,8 +664,14 @@
                     <input type="text" id="communitySearchInput" placeholder="사케 이름으로 검색..." oninput="searchCommunityNotes(this.value)">
                 </div>
                 <div id="communitySearchResults"></div>
+                <!-- 비로그인 가입 유도 -->
+                <div id="sidebarGuestCta" class="sidebar-card sidebar-guest-cta" style="display:none;">
+                    <h4 class="sidebar-card-title">나만의 사케 기록장</h4>
+                    <p class="sidebar-guest-text">마셔본 사케를 기록하고, 취향이 닮은 사람들의 노트와 비교해보세요. 가입은 1분이면 충분해요.</p>
+                    <button type="button" class="sidebar-guest-btn" onclick="showAuthContainer()">무료로 시작하기</button>
+                </div>
                 <!-- 나의 기록 -->
-                <div class="sidebar-card">
+                <div class="sidebar-card" id="sidebarMyStats">
                     <h4 class="sidebar-card-title">나의 기록</h4>
                     <div class="sidebar-stat-row">
                         <span class="sidebar-stat-label">총 리뷰</span>
@@ -678,7 +688,7 @@
                 </div>
 
                 <!-- 최근 활동 -->
-                <div class="sidebar-section">
+                <div class="sidebar-section" id="sidebarRecentSection">
                     <h4 class="sidebar-section-title">최근 활동</h4>
                     <div id="sidebarRecentNotes" class="sidebar-recent-list">
                         <p class="sidebar-empty-text">노트를 작성해보세요!</p>
@@ -835,7 +845,7 @@
     <script defer src="ocr.js?v=1"></script>
     <script defer src="community.js?v=10"></script>
     <script defer src="certification.js?v=4"></script>
-    <script defer src="app.js?v=48"></script>
+    <script defer src="app.js?v=49"></script>
 
 
     <!-- OCR Modal -->
