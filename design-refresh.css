@@ -1,0 +1,245 @@
+/* ============================================================
+   SakeView Design Refresh — 고급 일본 감성 (和 · 료칸 무드)
+   styles.css 뒤에 로드되는 오버라이드 레이어.
+   기존 클래스/마크업은 변경하지 않음. 제거하면 원래 디자인으로 복귀.
+   ============================================================ */
+
+/* ── 1. 디자인 토큰 보강 ───────────────────────────────── */
+:root {
+    /* 화지(和紙) 느낌의 따뜻한 배경 */
+    --bg-primary: #f6f3ec;
+    --bg-tertiary: #f1ede4;
+    --bg-subtle: #faf8f2;
+    --bg-muted: #efebe1;
+
+    /* 먹(墨)에 가까운 본문 색 */
+    --text-primary: #26242e;
+    --text-secondary: #5c5a64;
+
+    /* 주인(朱印) 포인트 — 낙관 도장의 주홍 */
+    --accent-shu: #b5483d;
+
+    /* 금박 라인 */
+    --accent-kin: #c9a96a;
+
+    /* 따뜻한 헤어라인 보더 */
+    --border-card: #e6e0d2;
+    --border-card-hover: #d4ccb8;
+    --border-light: rgba(56, 57, 97, 0.07);
+
+    /* 그림자: 푸른기 → 먹색 따뜻한 톤 */
+    --shadow-soft: 0 2px 16px rgba(58, 50, 40, 0.05);
+    --shadow-medium: 0 10px 36px rgba(58, 50, 40, 0.09);
+    --shadow-elevated: 0 20px 64px rgba(58, 50, 40, 0.13);
+
+    --serif-display: 'Noto Serif KR', 'Cormorant Garamond', serif;
+}
+
+body.dark-mode {
+    --bg-primary: #100f14;
+    --bg-secondary: #17161d;
+    --bg-tertiary: #1d1c24;
+    --bg-subtle: #15141b;
+    --bg-muted: #1b1a22;
+    --border-card: #29272f;
+    --border-card-hover: #38353f;
+    --accent-shu: #cf6a5e;
+    --accent-kin: #b59a6b;
+    --card-bg: #17161d;
+}
+
+/* ── 2. 전역 질감/타이포 ───────────────────────────────── */
+body {
+    background-color: var(--bg-primary);
+    /* 화지 그레인: 아주 옅은 점 텍스처 */
+    background-image: radial-gradient(rgba(56, 57, 97, 0.022) 1px, transparent 1px);
+    background-size: 22px 22px;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+body.dark-mode {
+    background-image: radial-gradient(rgba(219, 223, 172, 0.018) 1px, transparent 1px);
+}
+
+::selection {
+    background: rgba(56, 57, 97, 0.85);
+    color: #DBDFAC;
+}
+
+/* 부드러운 마이크로 인터랙션 공통 */
+.note-card, .sidebar-card, .community-stat-card, .featured-brand-card,
+.tab, .btn-primary, .auth-btn, .featured-hero-card {
+    transition: transform .28s cubic-bezier(.22,.61,.36,1),
+                box-shadow .28s cubic-bezier(.22,.61,.36,1),
+                border-color .28s ease, background-color .28s ease;
+}
+
+/* 스크롤바 — 가늘고 차분하게 */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+    background: rgba(56, 57, 97, 0.22);
+    border-radius: 8px;
+    border: 2.5px solid var(--bg-primary);
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(56, 57, 97, 0.4); }
+
+/* ── 3. 헤더 — 화지 위 먹 글씨 ─────────────────────────── */
+.header {
+    background: rgba(250, 248, 242, 0.88);
+    backdrop-filter: blur(16px) saturate(1.2);
+    -webkit-backdrop-filter: blur(16px) saturate(1.2);
+    border-bottom: 1px solid var(--border-card);
+}
+
+body.dark-mode .header {
+    background: rgba(16, 15, 20, 0.86);
+}
+
+.header h1 {
+    font-family: var(--serif-display);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+/* ── 4. 히어로 추천 카드 — 남색 바탕 + 세이가이하(청해파) 문양 ── */
+.featured-hero-card {
+    border-radius: 14px;
+    background:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='60' viewBox='0 0 120 60'%3E%3Cg fill='none' stroke='%23DBDFAC' stroke-opacity='0.07' stroke-width='1.5'%3E%3Cpath d='M0 60a30 30 0 0 1 60 0M60 60a30 30 0 0 1 60 0M-30 60a30 30 0 0 1 60 0M90 60a30 30 0 0 1 60 0'/%3E%3Cpath d='M0 60a18 18 0 0 1 36 0M12 60a18 18 0 0 1-24 0' transform='translate(12 0)'/%3E%3Cpath d='M60 60a18 18 0 0 1 36 0' transform='translate(12 0)'/%3E%3Cpath d='M30 30a30 30 0 0 1 60 0M-30 30a30 30 0 0 1 60 0M90 30a30 30 0 0 1 60 0M30 30a18 18 0 0 1 36 0' /%3E%3C/g%3E%3C/svg%3E"),
+        linear-gradient(150deg, #2c2d4e 0%, #383961 48%, #45477e 100%);
+    box-shadow: 0 18px 48px rgba(44, 45, 78, 0.28);
+    border: 1px solid rgba(219, 223, 172, 0.14);
+    overflow: hidden;
+    position: relative;
+}
+
+/* 상단 금박 헤어라인 */
+.featured-hero-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent-kin) 30%, #e8d5a8 50%, var(--accent-kin) 70%, transparent);
+    opacity: 0.85;
+    z-index: 1;
+}
+
+.featured-title {
+    font-family: var(--serif-display);
+    letter-spacing: 0.01em;
+}
+
+/* ── 5. 탭 — 붓선 언더라인 스타일 ──────────────────────── */
+.tab {
+    border-radius: 10px;
+    background: transparent;
+    border: 1px solid transparent;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+
+.tab:hover {
+    background: var(--bg-muted);
+    border-color: var(--border-card);
+}
+
+.tab[aria-selected="true"], .tab.active {
+    background: var(--accent-primary, #383961);
+    box-shadow: 0 6px 18px rgba(56, 57, 97, 0.28);
+}
+
+/* ── 6. 카드류 — 종이 질감 + 절제된 라운드 ─────────────── */
+.note-card, .community-stat-card {
+    border-radius: 12px;
+    border: 1px solid var(--border-card);
+    box-shadow: var(--shadow-soft);
+}
+
+.note-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--border-card-hover);
+    box-shadow: var(--shadow-medium);
+}
+
+.sidebar-card {
+    border-radius: 12px;
+    border: 1px solid var(--border-card);
+    border-left: 3px solid var(--accent-kin);
+    background: var(--bg-subtle);
+}
+
+/* 브랜드 카드 — 세리프 + 주인 도장 점 + 금박 호버 */
+.featured-brand-card {
+    border-radius: 12px;
+    border: 1px solid var(--border-card);
+    box-shadow: var(--shadow-soft);
+    position: relative;
+}
+
+.featured-brand-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent-kin);
+    box-shadow: var(--shadow-medium);
+}
+
+.fbc-header h3 { letter-spacing: 0.01em; }
+
+.fbc-jp { color: var(--accent-shu); opacity: 0.92; }
+
+/* ── 7. 섹션 헤딩 — 세리프 + 주홍 단선 ─────────────────── */
+.featured-brands-header h2 {
+    font-family: var(--serif-display);
+    font-weight: 700;
+    letter-spacing: 0.015em;
+}
+
+.featured-brands-header h2::after {
+    content: '';
+    display: block;
+    width: 44px; height: 3px;
+    margin: 14px auto 0;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent-shu), #d4756a);
+}
+
+/* ── 8. 버튼/입력 — 정제된 포커스 ──────────────────────── */
+.btn-primary, .auth-btn {
+    border-radius: 11px;
+    letter-spacing: 0.02em;
+}
+
+.btn-primary:hover, .auth-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 28px rgba(56, 57, 97, 0.32);
+}
+
+.btn-primary:active, .auth-btn:active {
+    transform: translateY(0);
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: var(--accent-primary, #383961);
+    box-shadow: 0 0 0 3px rgba(56, 57, 97, 0.12);
+}
+
+/* ── 9. 푸터 — 차분한 마감 ─────────────────────────────── */
+.app-footer {
+    border-top: 1px solid var(--border-card);
+    background: var(--bg-subtle);
+}
+
+/* ── 10. 모바일 미세 조정 ──────────────────────────────── */
+@media (max-width: 768px) {
+    .featured-hero-card { border-radius: 12px; }
+    .featured-brands-header h2::after { margin-top: 10px; }
+}
+
+/* 접근성: 모션 최소화 환경 존중 */
+@media (prefers-reduced-motion: reduce) {
+    .note-card, .sidebar-card, .community-stat-card, .featured-brand-card,
+    .tab, .btn-primary, .auth-btn, .featured-hero-card {
+        transition: none;
+    }
+}
